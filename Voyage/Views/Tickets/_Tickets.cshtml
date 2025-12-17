@@ -1,0 +1,75 @@
+﻿@using Voyage.Utilities
+@model TicketsVM
+
+<link href="~/css/_tickets.css" rel="stylesheet" />
+
+<h1>Tickets</h1>
+
+<hr />
+<h4>Sprint @Model.Sprint.SprintId ---------------------------------------------------------------- @Model.Sprint.StartDate - @Model.Sprint.EndDate</h4>
+<hr />
+
+@foreach (Section s in Model.Sections)
+{
+    List<TicketVM> tickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).ToList();
+
+    <h4>@s.Title</h4>
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th class="app-table-header"></th>
+                <th class="app-table-header">Ticket #</th>
+                <th class="app-table-header">@nameof(TicketVM.Title)</th>
+                <th class="app-table-header">@nameof(TicketVM.Status)</th>
+                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
+                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
+                <th class="app-table-header">Last Edit</th>
+                <th class="app-table-header">Editor</th>
+                <th class="app-table-header">Created</th>
+                <th class="app-table-header">Author</th>
+
+                @if (s.Title != "Discontinued" && s.Title != "Completed")
+                {
+                <th class="app-table-header">
+                    <button class="btnAddTicket" data-section="@s.Title">Add</button>
+                </th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+
+        @foreach(TicketVM ticket in tickets)
+        {
+            <tr>
+                <td class="app-table-data">
+                    <input type="checkbox" />
+                </td>
+                <td class="app-table-data">
+                    <a href="#" class="goto-ticket">@ticket.TicketId</a>
+                </td>
+                <td class="app-table-data">
+                    <a href="#" class="goto-ticket">@ticket.Title</a>
+                </td>
+                <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.Status)</td>
+                <td class="app-table-data">@ticket.AssignedTo</td>
+                <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.PriorityLevel)</td>
+                <td class="app-table-data">@ticket.ModifiedDate</td>
+                <td class="app-table-data">@ticket.ModifiedBy</td>
+                <td class="app-table-data">@ticket.CreatedDate</td>
+                <td class="app-table-data">@ticket.CreatedBy</td>
+
+                @if (s.Title != "Discontinued" && s.Title != "Completed")
+                {
+                <td class="app-table-data">
+                    <button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button>
+                </td>
+                }
+            </tr>
+        }
+
+        </tbody>
+    </table>
+    <br />
+}
+

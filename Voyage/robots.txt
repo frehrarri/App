@@ -1,0 +1,18 @@
+﻿
+//internal authority trust signals
+look into schema markup for seo (check google's docs),
+keywords 
+content writing from user perspective
+- cover topics from all angles
+add business page in wikipedia and wikidata
+create presence on aggregation websites of industry
+create social media presence
+
+
+//external authority trust signals
+quality backlinks
+mentions in industry publications
+Positive reviews
+inclusion in best of lists
+
+make everything unambiguous for ai and search engine to parse.

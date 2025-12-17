@@ -1,0 +1,12 @@
+﻿.view.hidden {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
+.nav-item.active {
+    background-color: #222;
+    color: #fff;
+}

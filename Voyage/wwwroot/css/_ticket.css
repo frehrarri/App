@@ -1,0 +1,62 @@
+﻿#ticket-notes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.ticket-note {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    background: #f9f9f9;
+}
+
+    .ticket-note.saved {
+        background: #fff;
+    }
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.note-author {
+    font-weight: bold;
+}
+
+.note-date {
+    font-style: italic;
+}
+
+.note-content {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.note-content-display {
+    padding: 8px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.note-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-save-note, .btn-cancel-note {
+    padding: 5px 15px;
+    cursor: pointer;
+}

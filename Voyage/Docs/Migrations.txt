@@ -1,0 +1,13 @@
+﻿
+
+/// Add a migration
+Add-Migration <migration_name>
+
+/// Apply migration
+Update-Database
+
+/// Roll back last migration
+Update-Database <PreviousMigrationName>
+
+///Roll back to specific migration (undo all that are applied AFTER that migration)
+Update-Database <MigrationToStopAt>

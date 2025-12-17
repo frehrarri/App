@@ -1,0 +1,535 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutApp.cshtml";
+}
+
+@* <link href="~/css/app/register.css" rel="stylesheet" /> *@
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <h1 class="mb-4">Register</h1>
+
+        <form id="registrationForm">
+            @Html.AntiForgeryToken()
+
+            <!-- Step 0: Account -->
+            <div class="form-step active" data-step="0">
+                <!-- Username -->
+                <div id="error-username-exists" class="text-error">@Voyage.Utilities.Constants.ErrUsernameExists</div>
+                <div id="error-username-req" class="text-error">@Voyage.Utilities.Constants.ErrUsernameIsReq</div>
+                <div id="error-username-min" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMinLen</div>
+                <div id="error-username-max" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMaxLen</div>
+                <div class="formfield-container mb-3">
+                    <label for="userName" class="form-label">Username</label>
+                    <input type="text" id="userName" class="form-control" required>
+                </div>
+
+                <!-- Email -->
+                <div id="error-email-req" class="text-error">@Voyage.Utilities.Constants.ErrInvalidEmail</div>
+                <div class="formfield-container mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+
+                <!-- Password -->
+                <div id="error-password-min" class="text-error">@Voyage.Utilities.Constants.ErrPassMinLen</div>
+                <div id="error-password-max" class="text-error">@Voyage.Utilities.Constants.ErrPassMaxLen</div>
+                <div class="formfield-container mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+
+                <button id="account-btn" type="button" class="btn btn-primary next-btn">Next</button>
+            </div>
+
+            <!-- Step 1: Name -->
+            <div class="form-step" data-step="1">
+                <div id="error-firstname-req" class="text-error">@Voyage.Utilities.Constants.ErrFirstNameReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" id="firstName" class="form-control" required>
+                </div>
+
+                <div class="formfield-container mb-3">
+                    <label for="middleName" class="form-label">Middle Name</label>
+                    <input type="text" id="middleName" class="form-control">
+                </div>
+
+                <div id="error-lastname-req" class="text-error">@Voyage.Utilities.Constants.ErrLastNameReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" id="lastName" class="form-control" required>
+                </div>
+
+                <button id="name-btn" type="button" class="btn btn-primary next-btn">Next</button>
+            </div>
+
+            <!-- Step 2: Phone -->
+            <div class="form-step" data-step="2">
+                <div class="formfield-container mb-3">
+                    <label for="phoneCountryCode" class="form-label">Phone Country Code</label>
+                    <select id="phoneCountryCode" class="form-control" required>
+                        <option value="" disabled selected>Select country code</option>
+                        <option value="+1">🇺🇸 United States (+1)</option>
+                        <option value="+44">🇬🇧 United Kingdom (+44)</option>
+                        <option value="+61">🇦🇺 Australia (+61)</option>
+                        <option value="+64">🇳🇿 New Zealand (+64)</option>
+                        <option value="+1">🇨🇦 Canada (+1)</option>
+                        <option value="+91">🇮🇳 India (+91)</option>
+                        <option value="+81">🇯🇵 Japan (+81)</option>
+                        <option value="+82">🇰🇷 South Korea (+82)</option>
+                        <option value="+49">🇩🇪 Germany (+49)</option>
+                        <option value="+33">🇫🇷 France (+33)</option>
+                        <option value="+39">🇮🇹 Italy (+39)</option>
+                        <option value="+34">🇪🇸 Spain (+34)</option>
+                        <option value="+31">🇳🇱 Netherlands (+31)</option>
+                        <option value="+46">🇸🇪 Sweden (+46)</option>
+                        <option value="+47">🇳🇴 Norway (+47)</option>
+                        <option value="+41">🇨🇭 Switzerland (+41)</option>
+                        <option value="+65">🇸🇬 Singapore (+65)</option>
+                        <option value="+852">🇭🇰 Hong Kong (+852)</option>
+                        <option value="+971">🇦🇪 UAE (+971)</option>
+                        <option value="+86">🇨🇳 China (+86)</option>
+                        <option value="+55">🇧🇷 Brazil (+55)</option>
+                        <option value="+27">🇿🇦 South Africa (+27)</option>
+                    </select>
+                </div>
+
+                <div id="error-phoneareacode-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeIsReq</div>
+                <div id="error-phoneareacode-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeMaxLen</div>
+                <div class="formfield-container mb-3">
+                    <label for="phoneAreaCode" class="form-label">Phone Area Code</label>
+                    <input type="number" id="phoneAreaCode" class="form-control" required>
+                </div>
+
+                <div id="error-phone-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumReq</div>
+                <div id="error-phone-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMaxLen</div>
+                <div id="error-phone-min" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMinLen</div>
+                <div class="formfield-container mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="number" id="phone" class="form-control" required>
+                </div>
+
+                <button id="phone-btn" type="button" class="btn btn-primary next-btn">Next</button>
+            </div>
+
+            <!-- Step 3: Address -->
+            <div class="form-step" data-step="3">
+                <div id="error-streetaddress-req" class="text-error">@Voyage.Utilities.Constants.ErrStreetAddrReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="streetAddress" class="form-label">Street Address</label>
+                    <input type="text" id="streetAddress" class="form-control" required>
+                </div>
+
+                <div class="formfield-container mb-3">
+                    <label for="unitNumber" class="form-label">Unit Number</label>
+                    <input type="number" id="unitNumber" class="form-control">
+                </div>
+
+                <div id="error-city-req" class="text-error">@Voyage.Utilities.Constants.ErrCityReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" id="city" class="form-control" required>
+                </div>
+
+                <div id="error-state-req" class="text-error">@Voyage.Utilities.Constants.ErrStateReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" id="state" class="form-control" required>
+                </div>
+
+                <div id="error-country-req" class="text-error">@Voyage.Utilities.Constants.ErrCountryReq</div>
+                <div class="formfield-container mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <select id="country" name="country" class="form-control" required>
+                        <option value="" disabled selected>Select your country</option>
+                        <option value="AU">Australia</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="NZ">New Zealand</option>
+                        <option value="IN">India</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="JP">Japan</option>
+                        <option value="CN">China</option>
+                    </select>
+                </div>
+
+                <div id="error-postal-req" class="text-error">@Voyage.Utilities.Constants.ErrPostalCode</div>
+                <div id="error-postal-min" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMinLen</div>
+                <div id="error-postal-max" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMaxLen</div>
+                <div class="formfield-container mb-3">
+                    <label for="zipCode" class="form-label">Postal Code</label>
+                    <input type="number" id="zipCode" class="form-control" required>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="signUpBtn">Sign Up</button>
+            </div>
+
+            <span class="register-link" onclick="redirect()">Back to Login</span>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        hideErrors();
+
+        // document.getElementByClassName("form-step").addEventListener('click', async () => {
+        // });
+
+        //validation per step
+        // document.getElementById('account-btn').addEventListener('click', async () => {
+        //     const data = getRegistrationData();
+        //     await validateUsername(data);
+        //     await validatePassword(data)
+        //     await validateEmail(data);
+        // });
+
+        // document.getElementById('name-btn').addEventListener('click', async () => {
+        //     const data = getRegistrationData();
+        //     await validateName(data);
+        // });
+
+        // document.getElementById('phone-btn').addEventListener('click', async () => {
+        //     const data = getRegistrationData();
+        //     await validatePhone(data);
+        // });
+
+        // document.getElementById('phone-btn').addEventListener('click', async () => {
+        //     const data = getRegistrationData();
+        //     await validatePhone(data);
+        // });
+
+        // document.getElementById('address-btn').addEventListener('click', async () => {
+        //     const data = getRegistrationData();
+        //     await validateAddress(data);
+        // });
+
+        document.getElementById('signUpBtn').addEventListener('click', async () => {
+            await registerUser();
+        });
+
+        //allow keyboard Enter to trigger next step
+        document.getElementById("registrationForm").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                if (currentStep < formSteps.length - 1) showStep(currentStep + 1);
+            }
+        });
+    });
+
+    const registerUser = async () => {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const registrationData = getRegistrationData();
+        const isValid = await validate(registrationData);
+
+        if (isValid) {
+            try {
+                const response = await axios.post('@Url.Action("RegisterUser", "User")', registrationData, {
+                    headers: { 'X-CSRF-TOKEN': token }
+                });
+
+                if (response.data.statusCode === 200) {
+                    alert('Registration successful! Redirecting to login...');
+                    window.location.href = "@Url.Action("Login", "User")";
+                } else {
+                    alert('Registration failed: ' + response.data.message);
+                }
+            } catch (error) {
+                alert('Server error, please try again.');
+                console.error(error);
+            }
+        }
+    };
+
+
+    function getRegistrationData(){
+        return registrationData = {
+            userName: document.getElementById("userName").value,
+            firstname: document.getElementById("firstName").value,
+            middlename: document.getElementById("middleName").value,
+            lastname: document.getElementById("lastName").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            phoneCountryCode: parseInt(document.getElementById("phoneCountryCode").value),
+            phoneAreaCode: parseInt(document.getElementById("phoneAreaCode").value),
+            phone: parseInt(document.getElementById("phone").value),
+            streetAddress: document.getElementById("streetAddress").value,
+            unitNumber: parseInt(document.getElementById("unitNumber").value) || 0,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            country: document.getElementById("country").value,
+            zipCode: parseInt(document.getElementById("zipCode").value)
+        };
+    }
+
+    function redirect() {
+        window.location.href = '@Url.Action("Login", "App")';
+    }
+
+    async function validate(data) {
+
+        hideErrors();
+
+        let input = null;
+
+        await validateUsername(data);
+        await validateName(data);
+        await validatePassword(data);
+        await validatePhone(data);
+        await validateEmail(data);
+        await validateAddress(input, data);
+
+        //look for visible errors
+        const errorsExist = Array.from(document.querySelectorAll('.text-error')).some(el =>
+            el.offsetParent !== null
+        );
+
+        if (errorsExist){
+            return false;
+        }
+
+        return true;
+    }
+
+    async function validateUsername(data){
+
+        let input = document.getElementById('userName');
+
+        if (!data.userName){
+            document.getElementById('error-username-req').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.userName.length < 5) {
+            document.getElementById('error-username-min').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.userName.length > 20) {
+            document.getElementById('error-username-max').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (await CheckUsernameExists(data) === true){
+            document.getElementById('error-username-exists').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+    }
+
+    async function CheckUsernameExists(data){
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        let response;
+
+        try {
+            response = await axios.get('@Url.Action("CheckUsernameExists", "User")', {
+                params:  { username: data.userName },
+                headers: { 'X-CSRF-TOKEN': token }
+            });
+        } catch(error){
+            console.error("error", error)
+            return false;
+        }
+
+        return response.data;
+    }
+
+    async function validateName(data){
+
+        if (!data.firstname) {
+            document.getElementById('error-firstname-req').style.display = 'block';
+            document.getElementById('firstName').classList.add('border-error');
+        }
+
+        if (!data.lastname) {
+            document.getElementById('error-lastname-req').style.display = 'block';
+            document.getElementById('lastName').classList.add('border-error');
+        }
+    }
+
+    async function validatePassword(data){
+
+        let input = document.getElementById('password');
+
+        //TODO: regex to check if the password has special characters, letter casing, and numbers
+
+        if (!data.password || data.password.length < 8){
+            document.getElementById('error-password-min').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.password && data.password.length > 20){
+            document.getElementById('error-password-max').style.display = 'block';
+            input.classList.add('border-error');
+        }
+    }
+
+    async function validatePhone(data){
+
+        //phone area code
+        let input = document.getElementById('phoneAreaCode');
+
+        if (!data.phoneAreaCode){
+            document.getElementById('error-phoneareacode-req').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.phoneAreaCode && data.phoneAreaCode.toString().length > 5){
+            document.getElementById('error-phoneareacode-max').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        //phone
+        input = document.getElementById('phone');
+
+        if (!data.phone) {
+            document.getElementById('error-phone-req').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.phone && data.phone.toString().length > 10) {
+            document.getElementById('error-phone-max').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.phone && data.phone.toString().length < 3) {
+            document.getElementById('error-phone-min').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        //set phone country code using country
+        // const locale = navigator.language || navigator.userLanguage; // en-US
+        // const countryCode = locale.split('-')[1]; // US
+        
+    }
+
+    async function validateEmail(data){
+
+        if (!data.email || !/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(data.email)){
+            document.getElementById('error-email-req').style.display = 'block';
+            document.getElementById('email').classList.add('border-error');
+        }
+    }
+
+    async function validateAddress(data){
+        if (!data.streetAddress){
+            document.getElementById('error-streetaddress-req').style.display = 'block';
+            document.getElementById('streetAddress').classList.add('border-error');
+        }
+
+        if (!data.city){
+            document.getElementById('error-city-req').style.display = 'block';
+            document.getElementById('city').classList.add('border-error');
+        }
+
+        if (!data.state){
+            document.getElementById('error-state-req').style.display = 'block';
+            document.getElementById('state').classList.add('border-error');
+        }
+
+        if (!data.country){
+            document.getElementById('error-country-req').style.display = 'block';
+            document.getElementById('country').classList.add('border-error');
+        }
+
+        //post code
+        let input = document.getElementById('zipCode');
+
+        if (!data.zipCode) {
+            document.getElementById('error-postal-req').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.zipCode && data.zipCode.toString().length < 3) {
+            document.getElementById('error-postal-min').style.display = 'block';
+            input.classList.add('border-error');
+        }
+
+        if (data.zipCode && data.zipCode.toString().length > 10) {
+            document.getElementById('error-postal-max').style.display = 'block';
+            input.classList.add('border-error');
+        }
+    }
+
+
+    function hideErrors(){
+        Array.from(document.getElementsByClassName('text-error')).forEach(el => el.style.display = 'none');
+        Array.from(document.querySelectorAll('.form-control')).forEach(el => el.classList.remove('border-error'));
+    }
+
+    // const formSteps = document.getElementsByClassName("form-step");
+    // let currentStep = 0;
+
+    // // Initially show only the first step
+    // for (let i = 0; i < formSteps.length; i++) {
+    //     formSteps[i].style.display = i === 0 ? "block" : "none";
+    //     formSteps[i].style.transition = "transform 0.5s ease, opacity 0.5s ease";
+    //     formSteps[i].style.opacity = i === 0 ? "1" : "0";
+    // }
+
+    // function showStep(index) {
+    //     if (index < 0 || index >= formSteps.length) return;
+
+    //     for (let i = 0; i < formSteps.length; i++) {
+
+    //         if (i === index) {
+    //             formSteps[i].style.display = "block";
+    //             formSteps[i].style.transform = "translateX(0)";
+    //             formSteps[i].style.opacity = "1";
+    //         } else {
+    //             // Slide out: left for previous, right for next
+    //             formSteps[i].style.transform = i < index ? "translateX(-100%)" : "translateX(100%)";
+    //             formSteps[i].style.opacity = "0";
+    //             setTimeout(() => formSteps[i].style.display = "none", 500);
+    //         }
+    //     }
+    //     currentStep = index;
+    // }
+
+    // // Attach next button events for all steps
+    // const nextButtons = document.getElementsByClassName("next-btn");
+    // for (let i = 0; i < nextButtons.length; i++) {
+    //     nextButtons[i].addEventListener("click", (e) => {
+
+    //         hideErrors();
+
+    //         const data = getRegistrationData();
+
+    //         //trigger validation for specific steps
+    //         switch(i){
+    //             case 0:
+    //                 await validateUsername(data);
+    //                 await validatePassword(data)
+    //                 await validateEmail(data);
+    //                 break;
+    //             case 1:
+    //                 await validateName(data);
+    //                 break;
+    //             case 2:
+    //                 await validatePhone(data);
+    //                 break;
+    //             case 3:
+    //                 await validateAddress(data);
+    //                 break;
+    //             default:
+    //                 break;
+    //         }
+
+    //         //look for visible errors,
+    //         const errorsExist = Array.from(document.querySelectorAll('.text-error')).some(el =>
+    //             el.offsetParent !== null
+    //         );
+
+    //         //if visible errors exist then don't allow next step
+    //         if (errorsExist){
+    //             return;
+    //         }
+
+    //         showStep(currentStep + 1);
+    //     });
+    // }
+
+
+</script>

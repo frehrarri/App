@@ -1,0 +1,72 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutApp.cshtml";
+}
+
+<link href="~/css/app/login.css" rel="stylesheet" />
+
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <h1>Voyage</h1>
+
+        <form id="loginForm">
+            @Html.AntiForgeryToken()
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <label>
+                <input type="checkbox" id="rememberMe"> Remember Me
+            </label>
+            <div id="error-login" class="text-error">Invalid login</div>
+            <button type="button" onclick="loginUser()">Login</button>
+            <span class="register-link" onclick="redirect()">Don't have an account? Register</span>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function hideErrors() {
+        document.getElementById('error-login').style.display = 'none';
+    }
+
+    async function loginUser() {
+        hideErrors();
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe')?.checked || false;
+
+        if (!email || !password) {
+            const err = document.getElementById('error-login');
+            err.textContent = 'Please enter both email and password.';
+            err.style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await axios.post('@Url.Action("Login", "User")',
+                { email, password, rememberMe },
+                { headers: { 'X-CSRF-TOKEN': token } }
+            );
+
+            if (response.data.statusCode === 200) {
+                window.location.href = '@Url.Action("Index", "Website")';
+            } else {
+                const err = document.getElementById('error-login');
+                err.textContent = response.data.message || 'Login failed';
+                err.style.display = 'block';
+            }
+        } catch (e) {
+            const err = document.getElementById('error-login');
+            err.textContent = 'Server error, please try again.';
+            err.style.display = 'block';
+            console.error(e);
+        }
+    }
+
+
+    function redirect() {
+         window.location.href = '@String.Format("{0}{1}", Constants.BaseUrl, Url.Action("Register", "PWA"))';
+    }
+
+</script>

@@ -1,0 +1,36 @@
+{
+  "name": "voyage-pwa",
+  "version": "1.0.0",
+  "description": "Voyage PWA Electron Wrapper",
+  "main": "ElectronHost.js",
+  "author": "Your Name",
+  "scripts": {
+    "start": "electron ElectronHost.js",
+    "build": "set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.voyage.pwa",
+    "productName": "VoyagePWA",
+    "electronVersion": "33.2.0",
+    "files": [
+      "ElectronHost.js",
+      "preload.js",
+      "package.json",
+      "wwwroot/**/*"
+    ],
+    "win": {
+      "target": "portable",
+      "sign": false
+    },
+    "portable": {
+      "artifactName": "VoyagePWA-v${version}.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  }
+}

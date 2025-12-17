@@ -1,0 +1,13 @@
+﻿@model MainVM
+
+@{
+    Layout = "~/Views/Shared/_LayoutApp.cshtml";
+}
+
+<script type="module" src="~/js/main.js"></script>
+
+ @{ 
+    await Html.RenderPartialAsync("~/Views/Shared/_SideNav.cshtml");
+    await Html.RenderPartialAsync("~/Views/App/Main.cshtml"); 
+}
+

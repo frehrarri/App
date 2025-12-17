@@ -1,0 +1,38 @@
+﻿@model TicketVM
+<link href="~/css/_ticket.css" rel="stylesheet" />
+
+<div id="ticket-container">
+    <div>
+        <label id="lblTicketId">@Model.TicketId</label>
+        <label id ="lblTicketTitle">@Model.Title</label>
+        <label id="lblTicketDesc">@Model.Description</label>
+        <label id="lblTicketStatus">@Model.Status</label>
+        <label id="lblTicketAssignedTo">@Model.AssignedTo</label>
+        <label id="lblTicketPriorityLvl">@Model.PriorityLevel</label>
+        <label id="lblTicketCreatedBy">@Model.CreatedBy</label>
+        <label id="lblTicketCreatedDate">@Model.CreatedDate</label>
+        <label id="lblTicketParentId">@Model.ParentTicketId</label>
+        <label id="lblTicketDueDate">@Model.DueDate</label>
+        <label id="lblTicketDueDate">@Model.SectionTitle</label>
+    </div>
+
+    <div class="form-buttons">
+        <button type="button" id="btnTicketAddNote">Add</button>
+        <button type="button" id="btnGoToTickets">Back</button>
+    </div>
+
+    <br />
+
+    <h3>Notes</h3>
+    <br />
+    <form>
+        @Html.AntiForgeryToken()
+
+        <div id="ticket-notes-container">
+        </div>
+    </form>
+
+
+</div>
+
+

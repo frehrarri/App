@@ -1,0 +1,37 @@
+﻿
+
+------------- Native App ----------------
+Electron allows us to install our web app by wrapping it in a container that works like a native app.
+
+Can be used offline (functionality that requires httprequests will not work ie. login, registration, etc.)
+
+ElectronHost.js
+preload.js
+
+run build
+
+powershell:
+cd C:\Users\User\source\repos\Voyage\Voyage - change to root project directory 
+npm start - run electron in dev mode
+
+to run in prod really just means a user has downloaded the executable or is on the prod web app
+
+
+---------- Partial views loaded via ajax ------------
+1. must be registered in main.js:
+
+const moduleRegistry = {
+    sideNav: () => import("./_SideNav.js"),
+};
+
+2. must be imported to use inside the script and then used:
+
+import { loadModule } from "./main.js"; //top statement
+loadModule("manageTicket", { ticketId }); //inside function
+
+3. add event listeners that are exported on import:
+
+export function init() {
+    document.getElementById("cancel")?.addEventListener("click", () => getTicketsPartial());
+}
+

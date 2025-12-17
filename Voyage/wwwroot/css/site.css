@@ -1,0 +1,66 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.border-error {
+    border: 1px solid red !important;
+}
+
+.text-error {
+    color: red !important;
+}
+
+.app-table{
+    border-collapse: collapse; /*remove double borders*/
+    width: 100%;
+}
+
+    .app-table, .app-table-header, .app-table-data {
+        border: 1px solid #000000
+    }
+
+    .app-table-header, .app-table-data {
+        padding: 8px;
+        text-align: left;
+    }
+
+.message-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4caf50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity .4s ease;
+    z-index: 9999;
+}
+
+    .message-popup.show {
+        opacity: 1;
+    }
+
+.hidden {
+    display: none;
+}

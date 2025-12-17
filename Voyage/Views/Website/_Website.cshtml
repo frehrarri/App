@@ -1,0 +1,73 @@
+﻿<!-- Hero Section -->
+<div class="bg-light py-5 text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-primary mb-3">
+            Welcome to My MVC App 🌟
+        </h1>
+        <p class="lead text-muted mb-4">
+            A modern ASP.NET Core MVC application — fast, secure, and easy to use.
+        </p>
+
+        <!-- Login and Register Buttons -->
+        <div class="d-flex justify-content-center gap-3">
+            <a href="@Url.Action("Login", "User")" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Login
+            </a>
+            <a href="@Url.Action("Register", "User")" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-person-plus me-2"></i> Register
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-semibold mb-5">Why Choose This App?</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 text-primary mb-3">⚡</div>
+                        <h5 class="card-title fw-bold">Fast Performance</h5>
+                        <p class="card-text text-muted">
+                            Built with .NET 8 MVC for high speed and optimized performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 text-success mb-3">🧩</div>
+                        <h5 class="card-title fw-bold">Modular Design</h5>
+                        <p class="card-text text-muted">
+                            Easily extend features and integrate APIs or Razor Pages as needed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center">
+                        <div class="display-6 text-danger mb-3">💎</div>
+                        <h5 class="card-title fw-bold">Beautiful UI</h5>
+                        <p class="card-text text-muted">
+                            Styled with Bootstrap 5 — responsive and clean right out of the box.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">© @DateTime.Now.Year My MVC App. All rights reserved.</p>
+    </div>
+</footer>

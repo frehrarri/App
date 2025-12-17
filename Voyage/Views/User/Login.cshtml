@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<h1 class="mb-4">Login</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form id="loginForm">
+            @Html.AntiForgeryToken()
+            <div id="error-login" class="text-error mb-2" style="display:none;"></div>
+
+            <div class="formfield-container mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" id="email" class="form-control" required>
+            </div>
+
+            <div class="formfield-container mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" class="form-control" required>
+            </div>
+
+            <button type="button" id="btn-login" class="btn btn-primary w-100" onclick="loginUser()">Login</button>
+        </form>
+    </div>
+</div>
+
+<script>
+     document.addEventListener('DOMContentLoaded', () => {
+        hideErrors();
+
+        // Remove error on input change
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => input.addEventListener('input', () => hideErrors()));
+
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Enter'){
+                loginUser();
+            }
+        });
+
+    });
+
+    function hideErrors() {
+        document.getElementById('error-login').style.display = 'none';
+    }
+
+    async function loginUser() {
+        hideErrors();
+
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        const loginData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        if (!loginData.email || !loginData.password) {
+            document.getElementById('error-login').innerText = 'Please fill in both fields.';
+            document.getElementById('error-login').style.display = 'block';
+            return;
+        }
+
+        try {
+            const response = await axios.post('@Url.Action("LoginUser", "User")', loginData, {
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    }
+            });
+
+            if (response.data.statusCode === 200){
+                window.location.href = response.data.redirectURL;        
+            }
+            else if (response.data.statusCode === 401) {
+                document.getElementById('error-login').innerText = response.data.message;
+                document.getElementById('error-login').style.display = 'block';
+            }
+
+        } catch (error) {
+            document.getElementById('error-login').innerText = 'Server error. Please try again.';
+            document.getElementById('error-login').style.display = 'block';
+            console.error(error);
+        }
+    }
+
+</script>

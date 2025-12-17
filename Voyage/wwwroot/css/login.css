@@ -1,0 +1,121 @@
+﻿/* Remove centering from body since we have a titlebar now */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #162447);
+    color: #fff;
+    min-height: 100vh;
+    padding-top: 32px; /* Account for titlebar */
+}
+
+/* Add a wrapper to center the content */
+.auth-wrapper {
+    min-height: calc(100vh - 32px); /* Full height minus titlebar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container */
+.auth-container {
+    background: #1f1f3d;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    width: 350px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.6s ease-out;
+}
+
+    /* Heading */
+    .auth-container h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        letter-spacing: 2px;
+    }
+
+    /* Inputs */
+    .auth-container input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border: none;
+        border-radius: 10px;
+        background: #2a2a4a;
+        color: #fff;
+        font-size: 1rem;
+        outline: none;
+        transition: background 0.3s, box-shadow 0.3s;
+    }
+
+        .auth-container input:focus {
+            background: #3a3a5a;
+            box-shadow: 0 0 0 2px #4ecca3;
+        }
+
+/* Remove number input arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Error message */
+.text-error {
+    color: #ff6b6b;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: none;
+    text-align: center;
+}
+
+/* Button */
+.auth-container button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 12px;
+    background: #4ecca3;
+    color: #1f1f3d;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .auth-container button:hover {
+        background: #38b48b;
+    }
+
+/* Register link */
+.register-link {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+    .register-link:hover {
+        color: #4ecca3;
+    }
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

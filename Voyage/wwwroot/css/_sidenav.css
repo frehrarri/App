@@ -1,0 +1,39 @@
+﻿.side-nav {
+    width: 240px;
+    height: 100vh;
+    background: #111827;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 20px;
+}
+
+    .side-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .side-nav .nav-item {
+        padding: 14px 20px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .side-nav .nav-item:hover {
+            background: #1f2933;
+        }
+
+        .side-nav .nav-item.active {
+            background: #2563eb;
+        }
+
+.view {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}

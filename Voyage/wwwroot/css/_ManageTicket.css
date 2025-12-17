@@ -1,0 +1,48 @@
+﻿form {
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto;
+    gap: 12px; /* vertical spacing between rows */
+}
+
+/* Row container for multiple fields */
+.form-row {
+    display: flex;
+    gap: 12px; /* horizontal spacing */
+}
+
+/* Each field container inside a row */
+.form-field {
+    flex: 1; /* equal width */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Labels */
+label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Inputs, selects, textarea */
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Buttons row */
+.form-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+}

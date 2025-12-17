@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Voyage.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/_LayoutApp.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="electron-titlebar">
+        <span class="app-title">Voyage Download</span>
+        <div class="window-controls">
+            <button onclick="window.electronAPI?.minimizeWindow()">−</button>
+            <button onclick="window.electronAPI?.maximizeWindow()">□</button>
+            <button onclick="window.electronAPI?.closeWindow()">×</button>
+        </div>
+    </div>
+
+    <div class="app-wrapper">
+         @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

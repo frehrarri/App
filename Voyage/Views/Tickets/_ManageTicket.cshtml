@@ -1,0 +1,116 @@
+﻿@using Voyage.Utilities;
+@model TicketVM
+
+<link href="~/css/_manageticket.css" rel="stylesheet" />
+
+@{
+    string verb = "Edit";
+    if (Model.TicketId != 0)
+    {
+        <h1>@verb Ticket</h1>
+    }
+    else
+    {
+        verb = "Add";
+        <h1>@verb Ticket</h1>
+    }
+
+    //need to make section titles load dynamically from db
+    List<string> sectionTitles = new List<string>()
+    {
+        "Dev",
+        "Review",
+        "QA",
+        //"UAT",
+        //"Completed",
+        //"Discontinued",
+        "Backlog"
+    };
+}
+
+<div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
+
+<form>
+    @Html.AntiForgeryToken()
+
+    <!-- Row 1: Ticket #, Parent Ticket #, Section -->
+    <div class="form-row">
+        <div class="form-field">
+            <label for="ticketId">Ticket #</label>
+            <input type="text" id="ticketId" value="@(Model?.TicketId == 0 ? null : Model?.TicketId)" readonly />
+        </div>
+        <div class="form-field">
+            <label for="ticketParent">Parent Ticket #</label>
+            <input type="text" id="ticketParent" value="@Model?.ParentTicketId" />
+        </div>
+        <!-- need to make section titles load dynamically from db  -->
+        <div class="form-field">
+            <label for="ticketSectionTitle">Section</label>
+            <select id="ticketSectionTitle" name="SectionTitle">
+                @foreach (var title in sectionTitles)
+                {
+                    <option value="@title" selected="@(Model?.SectionTitle == title)">
+                        @title
+                    </option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Row 2: Title -->
+    <div class="form-row">
+        <div class="form-field" style="flex: 1;">
+            <label for="ticketTitle">Title</label>
+            <input type="text" id="ticketTitle" value="@Model?.Title" />
+        </div>
+    </div>
+
+    <!-- Row 3: Description -->
+    <div class="form-row">
+        <div class="form-field" style="flex: 1;">
+            <label for="ticketDesc">Description</label>
+            <textarea id="ticketDesc" rows="3">@Model?.Description</textarea>
+        </div>
+    </div>
+
+    <!-- Row 4: Assigned To, Priority Level -->
+    <!-- make this auto populate from list of users matching query as they type -->
+    <div class="form-row">
+        <div class="form-field">
+            <label for="ticketAssignedTo">Assigned To</label>
+            <input type="text" id="ticketAssignedTo" value="@Model?.AssignedTo" />
+        </div>
+        <div class="form-field">
+            <label for="ticketPrioLvl">Priority Level</label>
+            <select id="ticketPrioLvl">
+                <option value="Low" selected="@(Model?.PriorityLevel == "Low")">Low</option>
+                <option value="Medium" selected="@(Model?.PriorityLevel == "Medium")">Medium</option>
+                <option value="High" selected="@(Model?.PriorityLevel == "High")">High</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Row 5: Due Date, Status -->
+    <div class="form-row">
+        <div class="form-field">
+            <label for="ticketDueDate">Due Date</label>
+            <input type="date" id="ticketDueDate" value="@Model?.DueDate" />
+        </div>
+        <div class="form-field">
+            <label for="ticketStatus">Status</label>
+            <select id="ticketStatus" name="Status">
+                <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
+                <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
+                <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
+                <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinued</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="form-buttons">
+        <button type="button" id="submitTicket">Save</button>
+        <button type="button" id="deleteTicket">Delete</button>
+        <button type="button" id="cancel">Cancel</button>
+    </div>
+</form>
