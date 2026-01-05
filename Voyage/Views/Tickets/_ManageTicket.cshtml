@@ -23,7 +23,7 @@
         "QA",
         //"UAT",
         //"Completed",
-        //"Discontinued",
+        "Discontinued",
         "Backlog"
     };
 }
@@ -103,7 +103,7 @@
                 <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
                 <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
                 <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
-                <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinued</option>
+                <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
             </select>
         </div>
     </div>

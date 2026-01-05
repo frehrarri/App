@@ -94,6 +94,13 @@ namespace Voyage.Controllers
             return await _ticketsB.SaveTicket(ticketDTO);
         }
 
+        [HttpDelete]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task<bool> DeleteTicket(int ticketId)
+        {
+            return await _ticketsB.DeleteTicket(ticketId);
+        }
+
         private Sprint SetSprint()
         {
             Sprint sprint = new Sprint();
@@ -195,12 +202,7 @@ namespace Voyage.Controllers
 
 
 
-        //[HttpDelete]
-        //[ValidateHeaderAntiForgeryToken]
-        //public async Task<bool> DeleteTicket(int ticketId)
-        //{
-        //    return await _ticketsB.DeleteTicket(ticketId);
-        //}
+
 
         //public void MoveTicket(int ticketId)
         //{

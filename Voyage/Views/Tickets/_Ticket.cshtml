@@ -10,8 +10,8 @@
         <label id="lblTicketDueDate">Section: @Model.SectionTitle</label>
 
         <br /><label id="lblTicketIdTitle">Ticket #: </label>
-        <span><label id="lblTicketVersion">v@(Model.TicketVersion)</label></span>
         <span><label id="lblTicketId">@Model.TicketId</label></span>
+        <span>v<label id="lblTicketVersion">@Model.TicketVersion</label></span>
         <label id="lblTicketTitle">Title: @Model.Title</label>
         <label id="lblTicketParentId">Parent Ticket: @Model.ParentTicketId</label>
 
@@ -27,6 +27,7 @@
         <br /><label>@Model.Description</label>
     </div>
     <input id="hdnUser" value="@user" type="hidden" />
+    <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
 
     <form>
         @Html.AntiForgeryToken()

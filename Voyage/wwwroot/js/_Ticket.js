@@ -75,7 +75,7 @@ function addNote() {
 }
 
 async function saveNote(noteDiv) {
-    
+
     const content = noteDiv.querySelector('.note-content').innerHTML.trim()
         .replace(/&ZeroWidthSpace;/g, '')    // remove zero-width spaces
         .replace(/<\/div><div>/g, '<br>')    // convert divs to line breaks
@@ -86,6 +86,8 @@ async function saveNote(noteDiv) {
         alert('Please enter a note');
         return;
     }
+
+    debugger;
     
     const detailsId = noteDiv.querySelector('.note-header').dataset.detailsid ?? 0;
     const ticketId = document.getElementById('lblTicketId').textContent;

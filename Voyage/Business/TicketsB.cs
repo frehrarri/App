@@ -6,10 +6,9 @@ using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
-using static System.Collections.Specialized.BitVector32;
 using static Voyage.Utilities.Constants;
 using static Voyage.Utilities.HelperMethods;
-using Section = Voyage.Models.App.Section;
+using static Voyage.Models.App.Section;
 
 namespace Voyage.Business
 {
@@ -58,14 +57,25 @@ namespace Voyage.Business
             if (ticketDTO.Status == null)
                 return false;
 
-            //move tickets with a status to the associated section title
-            if (ticketDTO.Status == nameof(Constants.TicketStatus.Completed) || ticketDTO.Status == nameof(Constants.TicketStatus.Discontinued))
+            //Set section and statuses for specific statuses/sections
+            if (ticketDTO.Status == nameof(Constants.TicketStatus.Completed))
                 ticketDTO.SectionTitle = ticketDTO.Status;
+
+            if (ticketDTO.Status == nameof(Constants.TicketStatus.Discontinued) || ticketDTO.SectionTitle == nameof(Constants.TicketStatus.Discontinued))
+            {
+                ticketDTO.SectionTitle = nameof(Constants.TicketStatus.Discontinued);
+                ticketDTO.Status = nameof(Constants.TicketStatus.Discontinued);
+            }
 
             if (String.IsNullOrEmpty(ticketDTO.AssignedTo))
                 ticketDTO.AssignedTo = nameof(Constants.Roles.Unassigned);
 
             return await _ticketsD.SaveTicket(ticketDTO);
+        }
+
+        public async Task<bool> DeleteTicket(int ticketId)
+        {
+            return await _ticketsD.DeleteTicket(ticketId);
         }
 
         public async Task<List<TicketDetailsDTO>> GetTicketDetails(int ticketId)
@@ -101,13 +111,6 @@ namespace Voyage.Business
 
             return await _ticketsD.SaveTicketDetails(details);
         }
-
-
-
-        //public async Task<bool> DeleteTicket(int ticketId)
-        //{
-        //    return await _ticketsD.DeleteTicket(ticketId);
-        //}
 
         //public void AssignTicket(string userId, int? ticketId)
         //{

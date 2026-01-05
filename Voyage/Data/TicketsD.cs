@@ -296,12 +296,14 @@ namespace Voyage.Data
                 if (!details.TicketId.HasValue)
                     return null;
 
-                decimal maxVersion = await _db.TicketDetails
-                    .Where(td => td.TicketId == details.TicketId.Value)
-                    .Select(td => td.TicketVersion)
-                    .MaxAsync() ?? 0.0M;
+                var ticket = await _db.Tickets
+                    .Where(t => t.TicketId == details.TicketId.Value
+                        && t.IsActive == true
+                        && t.IsLatest == true)
+                    .FirstOrDefaultAsync();
 
-                decimal newVersion = maxVersion == 0 ? 1.0M : maxVersion + 1;
+                if (ticket == null)
+                    throw new Exception("Ticket not found");
 
                 // update existing note
                 if (details.TicketDetailsId > 0)
@@ -320,7 +322,7 @@ namespace Voyage.Data
                     var newVersionDetail = new TicketDetails
                     {
                         TicketId = existing.TicketId,
-                        TicketVersion = newVersion,
+                        TicketVersion = ticket.TicketVersion,
                         Note = details.Note,
                         Author = details.Author,
                         CreatedBy = existing.CreatedBy,
@@ -352,7 +354,7 @@ namespace Voyage.Data
                 var ticketDetails = new TicketDetails
                 {
                     TicketId = details.TicketId.Value,
-                    TicketVersion = newVersion,
+                    TicketVersion = ticket.TicketVersion,
                     Note = details.Note,
                     CreatedBy = details.CreatedBy,
                     CreatedDate = DateTime.UtcNow,
@@ -385,32 +387,34 @@ namespace Voyage.Data
         }
 
 
-        //public async Task<bool> DeleteTicket(int ticketId)
-        //{
-        //    try
-        //    {
-        //        ////Ticket? existingTicket = await GetTicket(ticketId);
-        //        //if (existingTicket != null)
-        //        //{
-        //        //    existingTicket.IsActive = false;
-        //        //    existingTicket.IsLatest = false;
-        //        //    _db.Tickets.Update(existingTicket);
-        //        //}
+        public async Task<bool> DeleteTicket(int ticketId)
+        {
+            try
+            {
+                var ticket = await _db.Tickets
+                   .Include(t => t.TicketDetails)
+                   .Where(t =>
+                       t.TicketId == ticketId
+                       && t.IsActive == true
+                       && t.IsLatest == true)
+                   .SingleOrDefaultAsync();
 
-        //        await _db.SaveChangesAsync();
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //        return false;
-        //    }
-        //}
+                if (ticket != null)
+                {
+                    ticket.IsActive = false;
+                    ticket.IsLatest = false;
+                    _db.Tickets.Update(ticket);
+                }
 
-
-
-
-
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
 
     }
 }
