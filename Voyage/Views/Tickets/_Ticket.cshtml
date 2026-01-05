@@ -1,37 +1,39 @@
 ﻿@model TicketVM
-<link href="~/css/_ticket.css" rel="stylesheet" />
+<link href="@(Url.Content("~/css/_ticket.css"))" rel="stylesheet" asp-append-version="true" />
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
 
 <div id="ticket-container">
-    <div>
-        <label id="lblTicketId">@Model.TicketId</label>
-        <label id ="lblTicketTitle">@Model.Title</label>
-        <label id="lblTicketDesc">@Model.Description</label>
-        <label id="lblTicketStatus">@Model.Status</label>
-        <label id="lblTicketAssignedTo">@Model.AssignedTo</label>
-        <label id="lblTicketPriorityLvl">@Model.PriorityLevel</label>
-        <label id="lblTicketCreatedBy">@Model.CreatedBy</label>
-        <label id="lblTicketCreatedDate">@Model.CreatedDate</label>
-        <label id="lblTicketParentId">@Model.ParentTicketId</label>
-        <label id="lblTicketDueDate">@Model.DueDate</label>
-        <label id="lblTicketDueDate">@Model.SectionTitle</label>
+    <div id="ticket-header">
+        <label id="lblTicketDueDate">Section: @Model.SectionTitle</label>
+
+        <br /><label id="lblTicketIdTitle">Ticket #: </label>
+        <span><label id="lblTicketVersion">v@(Model.TicketVersion)</label></span>
+        <span><label id="lblTicketId">@Model.TicketId</label></span>
+        <label id="lblTicketTitle">Title: @Model.Title</label>
+        <label id="lblTicketParentId">Parent Ticket: @Model.ParentTicketId</label>
+
+        <br><label id="lblTicketAssignedTo">Owner: @Model.AssignedTo</label>
+        <label id="lblTicketStatus">Status: @Model.Status</label>
+        <label id="lblTicketDueDate">Due Date: @Model.DueDate</label>
+
+        <br><label id="lblTicketPriorityLvl">Priority Level: @Model.PriorityLevel</label>
+        <br><label id="lblTicketCreatedBy">Created By: @Model.CreatedBy</label>
+        <br><label id="lblTicketCreatedDate">Created Date: @Model.CreatedDate</label>
+        
+        <br /><label id="lblTicketDesc">Description:</label>
+        <br /><label>@Model.Description</label>
     </div>
+    <input id="hdnUser" value="@user" type="hidden" />
 
-    <div class="form-buttons">
-        <button type="button" id="btnTicketAddNote">Add</button>
-        <button type="button" id="btnGoToTickets">Back</button>
-    </div>
-
-    <br />
-
-    <h3>Notes</h3>
-    <br />
     <form>
         @Html.AntiForgeryToken()
-
-        <div id="ticket-notes-container">
-        </div>
+        <div id="ticket-notes-container"></div>
     </form>
 
+    <button type="button" id="btnGoToTickets">Back</button>
 
 </div>
 

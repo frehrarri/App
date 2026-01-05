@@ -79,13 +79,14 @@
         <div class="form-field">
             <label for="ticketAssignedTo">Assigned To</label>
             <input type="text" id="ticketAssignedTo" value="@Model?.AssignedTo" />
+            <ul id="userResults" class="autocomplete-list"></ul>
         </div>
         <div class="form-field">
             <label for="ticketPrioLvl">Priority Level</label>
             <select id="ticketPrioLvl">
-                <option value="Low" selected="@(Model?.PriorityLevel == "Low")">Low</option>
-                <option value="Medium" selected="@(Model?.PriorityLevel == "Medium")">Medium</option>
-                <option value="High" selected="@(Model?.PriorityLevel == "High")">High</option>
+                <option value="0" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Low)">Low</option>
+                <option value="1" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Medium)">Medium</option>
+                <option value="2" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.High)">High</option>
             </select>
         </div>
     </div>
@@ -114,3 +115,5 @@
         <button type="button" id="cancel">Cancel</button>
     </div>
 </form>
+
+<input id="hdnUniqueId" type="hidden" value="@Model.Id" />

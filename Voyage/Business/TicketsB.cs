@@ -1,89 +1,145 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using System.Text.Encodings.Web;
 using Voyage.Data;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
+using Voyage.Models.DTO;
 using Voyage.Utilities;
+using static System.Collections.Specialized.BitVector32;
+using static Voyage.Utilities.Constants;
+using static Voyage.Utilities.HelperMethods;
+using Section = Voyage.Models.App.Section;
 
 namespace Voyage.Business
 {
     public class TicketsB
     {
+        private readonly ILogger<TicketsB> _logger;
         private readonly UserManager<AppUser> _userManager;
-        TicketsD _ticketsD;
+        private TicketsD _ticketsD;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public TicketsB(UserManager<AppUser> userManager, TicketsD ticketsD)
+
+        public TicketsB(UserManager<AppUser> userManager, TicketsD ticketsD, IHttpContextAccessor httpContextAccessor, ILogger<TicketsB> logger)
         {
             _userManager = userManager;
             _ticketsD = ticketsD;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
-        public async Task<List<TicketVM>> GetTickets()
+        public async Task<List<TicketDTO>> GetTickets(DateTime date)
         {
-            List<Ticket> tickets = await _ticketsD.GetTickets();
-
-            return tickets.Select(t => new TicketVM
-            {
-                TicketId = t.TicketId,
-                ParentTicketId = t.ParentTicketId,
-                Title = t.Title,
-                SectionTitle = t.SectionTitle,
-                AssignedTo = t.AssignedTo,
-                CreatedBy = t.CreatedBy,
-                Description = t.Description,
-                CreatedDate = t.CreatedDate,
-                DueDate = t.DueDate,
-                ModifiedBy = t.ModifiedBy,
-                ModifiedDate = t.ModifiedDate,
-                PriorityLevel = t.PriorityLevel,
-                Status = t.Status
-            }).ToList();
+            return await _ticketsD.GetTickets(date);
         }
 
-        public async Task<TicketVM> GetTicket(int ticketId)
+        public async Task<List<TicketDTO>> GetTickets(int sprintId)
         {
-            Ticket? t = await _ticketsD.GetTicket(ticketId);
+            return await _ticketsD.GetTickets(sprintId);
+        }
 
-            return new TicketVM
+        public async Task<TicketDTO?> GetTicket(int ticketId)
+        {
+            TicketDTO? ticketDTO = await _ticketsD.GetTicket(ticketId);
+
+            return ticketDTO;
+        }
+
+        public async Task<bool> SaveTicket(TicketDTO ticketDTO)
+        {
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+
+            if (user == null)
+                throw new InvalidOperationException("Authenticated user not found.");
+            else
+                ticketDTO.CreatedBy = user.UserName ?? string.Empty;
+
+            if (ticketDTO.Status == null)
+                return false;
+
+            //move tickets with a status to the associated section title
+            if (ticketDTO.Status == nameof(Constants.TicketStatus.Completed) || ticketDTO.Status == nameof(Constants.TicketStatus.Discontinued))
+                ticketDTO.SectionTitle = ticketDTO.Status;
+
+            if (String.IsNullOrEmpty(ticketDTO.AssignedTo))
+                ticketDTO.AssignedTo = nameof(Constants.Roles.Unassigned);
+
+            return await _ticketsD.SaveTicket(ticketDTO);
+        }
+
+        public async Task<List<TicketDetailsDTO>> GetTicketDetails(int ticketId)
+        {
+            var dto = await _ticketsD.GetTicketDetails(ticketId);
+            return dto;
+        }
+
+
+        public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
+        {
+            details.Note = SanitizeHtmlForXSS(details.Note);
+
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+
+            if (user == null)
+                throw new InvalidOperationException("Authenticated user not found.");
+
+            if (details.TicketDetailsId != 0)
             {
-                TicketId = t.TicketId,
-                ParentTicketId = t.ParentTicketId,
-                Title = t.Title,
-                SectionTitle = t.SectionTitle,
-                AssignedTo = t.AssignedTo,
-                CreatedBy = t.CreatedBy,
-                Description = t.Description,
-                CreatedDate = t.CreatedDate,
-                DueDate = t.DueDate,
-                ModifiedBy = t.ModifiedBy,
-                ModifiedDate = t.ModifiedDate,
-                PriorityLevel = t.PriorityLevel,
-                Status = t.Status
+                details.Author = user.UserName ?? string.Empty;
+                details.ModifiedBy = user.UserName ?? string.Empty;
+                details.ModifiedDate = DateTime.UtcNow;
+            }
+            else
+            {
+                details.Author = user.UserName ?? string.Empty;
+                details.CreatedBy = user.UserName ?? string.Empty;
+                details.CreatedDate = DateTime.UtcNow;
+                details.ModifiedBy = string.Empty;
+                details.ModifiedDate = null;
+            }
+
+            return await _ticketsD.SaveTicketDetails(details);
+        }
+
+
+
+        //public async Task<bool> DeleteTicket(int ticketId)
+        //{
+        //    return await _ticketsD.DeleteTicket(ticketId);
+        //}
+
+        //public void AssignTicket(string userId, int? ticketId)
+        //{
+
+        //}
+
+        public List<Section> SetSectionsDevelopment()
+        {
+            List<Section> sections = new List<Section>();
+
+            List<string> sectionTitles = new List<string>()
+            {
+                "Dev",
+                "Review",
+                "QA",
+                //"UAT",
+                "Completed",
+                "Discontinued",
+                "Backlog"
             };
-        }
 
-        public async Task<bool> SaveTicket(Ticket ticket)
-        {
-            if (ticket.Status == nameof(Constants.TicketStatus.Completed) || ticket.Status == nameof(Constants.TicketStatus.Discontinued))
+            for (int i = 0; i < sectionTitles.Count(); i++)
             {
-                ticket.SectionTitle = ticket.Status;
+                Section section = new Section();
+                section.SectionId = i + 1;
+                section.Title = sectionTitles[i];
+                section.SectionOrder = i + 1;
+
+                sections.Add(section);
             }
 
-            if (String.IsNullOrEmpty(ticket.AssignedTo))
-            {
-                ticket.AssignedTo = nameof(Constants.Roles.Unassigned);
-            }
-
-            return await _ticketsD.SaveTicket(ticket);
-        }
-
-        public async Task<bool> DeleteTicket(int ticketId)
-        {
-            return await _ticketsD.DeleteTicket(ticketId);
-        }
-
-        public void AssignTicket(string userId, int? ticketId)
-        {
-
+            return sections;
         }
     }
 }

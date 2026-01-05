@@ -12,6 +12,7 @@ namespace Voyage.Data
         public DbSet<_MasterEF> _Master { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<TicketDetails> TicketDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

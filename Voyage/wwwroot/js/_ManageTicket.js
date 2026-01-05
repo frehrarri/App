@@ -13,28 +13,32 @@ export function init(params) {
     document.getElementById("submitTicket")?.addEventListener("click", saveTicket);
     document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
     document.getElementById("cancel")?.addEventListener("click", () => getTicketsPartial());
+
+    addUserSearchEventListener("ticketAssignedTo", "userResults");
 }
 
 async function saveTicket() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-    const ticket = {
+    const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').value,
         Title: document.getElementById('ticketTitle').value,
         Description: document.getElementById('ticketDesc').value,
         Status: document.getElementById('ticketStatus').value,
         AssignedTo: document.getElementById('ticketAssignedTo').value,
-        PriorityLevel: document.getElementById('ticketPrioLvl').value,
+        PriorityLevel: parseInt(document.getElementById('ticketPrioLvl').value),
         DueDate: document.getElementById('ticketDueDate').value ? new Date(document.getElementById('ticketDueDate').value).toISOString() : null,
         ParentTicketId: document.getElementById('ticketParent').value ? parseInt(document.getElementById('ticketParent').value) : null
     }
     let response;
     
     try {
-        response = await axios.post('Tickets/SaveTicket', ticket, {
-            headers: { 'X-CSRF-TOKEN': token },
-            'Content-Type': 'application/json'
+        response = await axios.post('/Tickets/SaveTicket', ticketDTO, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
         });
         showSuccess(true);
         // Go back to tickets list after successful save
@@ -80,3 +84,7 @@ async function deleteTicket() {
 
     return response.data; // bool
 }
+
+
+
+

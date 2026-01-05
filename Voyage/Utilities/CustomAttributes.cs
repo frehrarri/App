@@ -17,7 +17,7 @@ namespace Voyage.Utilities
                 public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
                 {
                     var antiforgery = context.HttpContext.RequestServices.GetService<IAntiforgery>();
-                    await antiforgery.ValidateRequestAsync(context.HttpContext);
+                    await antiforgery!.ValidateRequestAsync(context.HttpContext);
                 }
             }
         }

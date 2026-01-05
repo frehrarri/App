@@ -20,15 +20,9 @@ namespace Voyage.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             MainVM mainVM = new MainVM();
-
-            if (mainVM.TicketsVM != null)
-            {
-                mainVM.TicketsVM.SetSectionsDevelopment();
-                mainVM.TicketsVM.Tickets = await _ticketsB.GetTickets();
-            }
 
             return View("Website", mainVM);
         }

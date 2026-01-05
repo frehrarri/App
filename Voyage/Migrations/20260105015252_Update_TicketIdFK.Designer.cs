@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20251210100248_UpdateTable_BaseClassProps")]
-    partial class UpdateTable_BaseClassProps
+    [Migration("20260105015252_Update_TicketIdFK")]
+    partial class Update_TicketIdFK
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,6 +169,9 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -251,6 +254,8 @@ namespace Voyage.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -259,6 +264,47 @@ namespace Voyage.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Company", b =>
+                {
+                    b.Property<int>("CompanyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CompanyId"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CompanyId");
+
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
@@ -277,9 +323,8 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CreatedDate")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -298,9 +343,8 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ModifiedDate")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("ParentTicketId")
                         .HasColumnType("integer");
@@ -312,9 +356,21 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("SprintEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SprintStartDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("TicketVersion")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -322,7 +378,58 @@ namespace Voyage.Migrations
 
                     b.HasKey("TicketId");
 
+                    b.HasIndex("TicketId", "TicketVersion")
+                        .IsUnique();
+
+                    b.HasIndex("TicketId", "IsLatest", "IsActive");
+
                     b.ToTable("Tickets", (string)null);
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.TicketDetails", b =>
+                {
+                    b.Property<int>("TicketDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TicketDetailsId"));
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsLatest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TicketDetailsId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketDetails", (string)null);
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels._MasterEF", b =>
@@ -390,6 +497,36 @@ namespace Voyage.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.AppUser", b =>
+                {
+                    b.HasOne("Voyage.Data.TableModels.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.TicketDetails", b =>
+                {
+                    b.HasOne("Voyage.Data.TableModels.Ticket", "Ticket")
+                        .WithMany("TicketDetails")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Company", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
+                {
+                    b.Navigation("TicketDetails");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,8 @@ obj/
 .vs/
 *.user
 *.suo
+wwwroot/lib/
+
 
 # Config
 appsettings.Development.json

@@ -1,6 +1,8 @@
-﻿namespace Voyage.Utilities
+﻿using Ganss.Xss;
+
+namespace Voyage.Utilities
 {
-    public class HelperMethods
+    public static class HelperMethods
     {
         public static string AddSpacesToSentence(string sentence, int spaces = 1)
         {
@@ -14,6 +16,30 @@
             spaced = spaced.Replace("_", " ");
 
             return spaced;
+        }
+
+        public static string SanitizeHtmlForXSS(string html)
+        {
+            if (string.IsNullOrWhiteSpace(html))
+                return string.Empty;
+
+            HtmlSanitizer sanitizer = new HtmlSanitizer();
+
+            // Start from zero trust
+            sanitizer.AllowedTags.Clear();
+            sanitizer.AllowedAttributes.Clear();
+            sanitizer.AllowedCssProperties.Clear();
+            sanitizer.AllowedSchemes.Clear();
+
+            // Allowed formatting tags for ticket notes
+            sanitizer.AllowedTags.Add("br");
+            sanitizer.AllowedTags.Add("b");
+            sanitizer.AllowedTags.Add("strong");
+            sanitizer.AllowedTags.Add("i");
+            sanitizer.AllowedTags.Add("em");
+            sanitizer.AllowedTags.Add("u");
+
+            return sanitizer.Sanitize(html);
         }
     }
 }

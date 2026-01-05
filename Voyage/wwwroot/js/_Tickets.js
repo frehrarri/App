@@ -1,13 +1,15 @@
 ﻿import { loadModule } from "./main.js";
 
 async function getManageTicketPartial(ticketId, sectionTitle) {
+    
     try {
         const response = await axios.get(`/Tickets/ManageTicketPartial`, {
             params: { ticketId: ticketId }
         });
+        debugger;
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        loadModule("manageTicket", { ticketId, sectionTitle });
+        await loadModule("manageTicket", { ticketId, sectionTitle });
         return true;
     } catch (error) {
         console.error("error", error);
@@ -15,11 +17,14 @@ async function getManageTicketPartial(ticketId, sectionTitle) {
     }
 }
 
-export async function getTicketPartial() {
+export async function getTicketPartial(ticketId) {
     try {
-        const response = await axios.get(`/Tickets/TicketPartial`);
+        const response = await axios.get('/Tickets/TicketPartial', {
+            params: { ticketId: ticketId }
+        });
+
         document.getElementById("ticket-view").innerHTML = response.data;
-        loadModule("ticket");
+        await loadModule("ticket", { ticketId });
         return true;
     } catch (error) {
         console.error("error", error);
@@ -30,8 +35,9 @@ export async function getTicketPartial() {
 export async function getTicketsPartial() {
     try {
         const response = await axios.get(`/Tickets/TicketsPartial`);
+
         document.getElementById("ticket-view").innerHTML = response.data;
-        loadModule("tickets");
+        await loadModule("tickets");
         return true;
     } catch (error) {
         console.error("error", error);
@@ -52,8 +58,7 @@ export function init() {
 
     document.querySelectorAll(".goto-ticket").forEach(btn =>
         btn.addEventListener("click", (e) => {
-            debugger;
-            getTicketPartial()
+            getTicketPartial(btn.dataset.id);
         }
-        ));
+     ));
 }

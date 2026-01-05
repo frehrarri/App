@@ -46,3 +46,10 @@ textarea {
     gap: 6px;
     margin-top: 12px;
 }
+
+#noteContent {
+    white-space: pre-wrap; /* preserves whitespace & line breaks */
+    min-height: 50px;
+    border: 1px solid #ccc;
+    padding: 8px;
+}

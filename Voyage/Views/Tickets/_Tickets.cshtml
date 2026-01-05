@@ -46,14 +46,14 @@
                     <input type="checkbox" />
                 </td>
                 <td class="app-table-data">
-                    <a href="#" class="goto-ticket">@ticket.TicketId</a>
+                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
                 </td>
                 <td class="app-table-data">
-                    <a href="#" class="goto-ticket">@ticket.Title</a>
+                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
                 </td>
                 <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.Status)</td>
                 <td class="app-table-data">@ticket.AssignedTo</td>
-                <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.PriorityLevel)</td>
+                <td class="app-table-data">@ticket.PriorityLevel</td>
                 <td class="app-table-data">@ticket.ModifiedDate</td>
                 <td class="app-table-data">@ticket.ModifiedBy</td>
                 <td class="app-table-data">@ticket.CreatedDate</td>
@@ -62,7 +62,8 @@
                 @if (s.Title != "Discontinued" && s.Title != "Completed")
                 {
                 <td class="app-table-data">
-                    <button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button>
+                    <button id="btnViewTicket" class="goto-ticket" data-id="@ticket.TicketId">View</button>
+                    <span><button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button></span>
                 </td>
                 }
             </tr>
@@ -71,5 +72,6 @@
         </tbody>
     </table>
     <br />
+    <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint.SprintId" data-sprintStart="@Model.Sprint.StartDate" data-sprintEnd="@Model.Sprint.EndDate" />
 }
 

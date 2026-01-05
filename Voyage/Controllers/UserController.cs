@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -67,6 +68,11 @@ namespace Voyage.Controllers
             if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 return Ok();
 
+            if (user.Email == null)
+            {
+                return BadRequest();
+            }
+
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var callbackUrl = Url.Action("ResetPassword", "User", new { token, email = user.Email }, Request.Scheme);
@@ -105,13 +111,14 @@ namespace Voyage.Controllers
             if (user == null)
                 return RedirectToAction("Login");
 
-            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (!String.IsNullOrEmpty(model.Password))
+            {
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
 
-            if (result.Succeeded)
-                return RedirectToAction("Login");
+                if (result.Succeeded)
+                    return RedirectToAction("Login");
+            }
 
-            //foreach (var error in result.Errors)
-            //    ModelState.AddModelError("", error.Description);
 
             return View(model);
         }
@@ -159,7 +166,7 @@ namespace Voyage.Controllers
             if (result.Succeeded)
             {
                 //assign role
-                await _userManager.AddToRoleAsync(user, Enum.GetName(Constants.Roles.Unassigned));
+                await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
 
                 //sign in the user immediately
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -177,8 +184,27 @@ namespace Voyage.Controllers
              return Json(response);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(Enumerable.Empty<object>());
 
-        public async Task<bool> UsernameExists(string username)
+            var users = await _userManager.Users
+                .Where(u => (u.UserName ?? "").Contains(query) || (u.Email ?? "").Contains(query))
+                .OrderBy(u => u.UserName)
+                .Take(10)
+                .Select(u => new {
+                    id = u.Id,
+                    displayName = u.UserName,
+                    email = u.Email
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        public async Task<bool> UsernameExists(string? username)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -231,7 +257,7 @@ namespace Voyage.Controllers
                 var roles = await _userManager.GetRolesAsync(user);
                 if (roles.ToList().Any() == false)
                 {
-                    await _userManager.AddToRoleAsync(user, Enum.GetName(Constants.Roles.Unassigned));
+                    await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
                 }
                 await _signInManager.RefreshSignInAsync(user);
 
@@ -258,11 +284,11 @@ namespace Voyage.Controllers
             Response response = new Response();
 
             await ValidateUsername(details, response);
-            await ValidateName(details, response);
-            await ValidatePassword(details, response);
-            await ValidatePhone(details, response);
-            await ValidateEmail(details, response);
-            await ValidateAddress(details, response);
+            ValidateName(details, response);
+            ValidatePassword(details, response);
+            ValidatePhone(details, response);
+            ValidateEmail(details, response);
+            ValidateAddress(details, response);
 
             return response;
         }
@@ -290,7 +316,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private async Task ValidateName(RegistrationDetails details, Response response)
+        private void ValidateName(RegistrationDetails details, Response response)
         {
             if (string.IsNullOrEmpty(details.FirstName))
             {
@@ -303,7 +329,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private async Task ValidatePassword(RegistrationDetails details, Response response)
+        private void ValidatePassword(RegistrationDetails details, Response response)
         {
             if (string.IsNullOrEmpty(details.Password) || details.Password.Length < 8)
             {
@@ -316,7 +342,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private async Task ValidatePhone(RegistrationDetails details, Response response)
+        private void ValidatePhone(RegistrationDetails details, Response response)
         {
 
             if (details.PhoneAreaCode == 0)
@@ -346,7 +372,7 @@ namespace Voyage.Controllers
 
         }
 
-        private async Task ValidateEmail(RegistrationDetails details, Response response)
+        private void ValidateEmail(RegistrationDetails details, Response response)
         {
             var emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
 
@@ -356,7 +382,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private async Task ValidateAddress(RegistrationDetails details, Response response)
+        private void ValidateAddress(RegistrationDetails details, Response response)
         {
             if (string.IsNullOrEmpty(details.StreetAddress))
             {

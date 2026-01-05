@@ -23,31 +23,7 @@ namespace Voyage.Models.App
         public List<TicketVM> Tickets { get; set; }
         public List<Section> Sections { get; set; }
 
-        public void SetSectionsDevelopment()
-        {
-            Sections = new List<Section>();
-
-            List<string> sectionTitles = new List<string>()
-            {
-                "Dev",
-                "Review",
-                "QA",
-                //"UAT",
-                "Completed",
-                "Discontinued",
-                "Backlog"
-            };
-
-            for (int i = 0; i < sectionTitles.Count(); i++)
-            {
-                Section section = new Section();
-                section.SectionId = i + 1;
-                section.Title = sectionTitles[i];
-                section.SectionOrder = i + 1;
-
-                Sections.Add(section);
-            }
-        }
+   
 
     }
 }

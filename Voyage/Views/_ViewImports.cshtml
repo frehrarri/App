@@ -1,7 +1,10 @@
 ﻿@using Voyage
+@using Voyage.Data.TableModels
 @using Voyage.Models
 @using Voyage.Models.App
 @using Voyage.Utilities
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
+@inject UserManager<AppUser> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

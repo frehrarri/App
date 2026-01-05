@@ -23,6 +23,11 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
+// logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 //sessions
 builder.Services.AddDistributedMemoryCache(); 
 builder.Services.AddSession(options =>
