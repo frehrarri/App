@@ -305,52 +305,37 @@ namespace Voyage.Data
                 if (ticket == null)
                     throw new Exception("Ticket not found");
 
-                // update existing note
+                // Update existing note (on current version only)
                 if (details.TicketDetailsId > 0)
                 {
-                    var existing = await _db.TicketDetails.FirstOrDefaultAsync(td => td.TicketDetailsId == details.TicketDetailsId);
+                    var existing = await _db.TicketDetails
+                        .FirstOrDefaultAsync(td => td.TicketDetailsId == details.TicketDetailsId);
 
                     if (existing == null)
                         return null;
 
-                    // Mark old version as not latest
-                    existing.IsLatest = false;
+                    existing.Note = details.Note;
+                    existing.Author = details.Author;
                     existing.ModifiedBy = details.ModifiedBy;
                     existing.ModifiedDate = DateTime.UtcNow;
 
-                    // Create new version of the detail
-                    var newVersionDetail = new TicketDetails
-                    {
-                        TicketId = existing.TicketId,
-                        TicketVersion = ticket.TicketVersion,
-                        Note = details.Note,
-                        Author = details.Author,
-                        CreatedBy = existing.CreatedBy,
-                        CreatedDate = existing.CreatedDate,
-                        ModifiedBy = details.ModifiedBy,
-                        ModifiedDate = DateTime.UtcNow,
-                        IsActive = true,
-                        IsLatest = true
-                    };
-
-                    _db.TicketDetails.Add(newVersionDetail);
                     await _db.SaveChangesAsync();
 
                     return new TicketDetailsDTO
                     {
-                        TicketDetailsId = newVersionDetail.TicketDetailsId,
-                        TicketId = newVersionDetail.TicketId,
-                        TicketVersion = newVersionDetail.TicketVersion,
-                        Note = newVersionDetail.Note,
-                        Author = newVersionDetail.Author,
-                        CreatedBy = newVersionDetail.CreatedBy,
-                        CreatedDate = newVersionDetail.CreatedDate,
-                        ModifiedBy = newVersionDetail.ModifiedBy,
-                        ModifiedDate = newVersionDetail.ModifiedDate
+                        TicketDetailsId = existing.TicketDetailsId,
+                        TicketId = existing.TicketId,
+                        TicketVersion = existing.TicketVersion,
+                        Note = existing.Note,
+                        Author = existing.Author,
+                        CreatedBy = existing.CreatedBy,
+                        CreatedDate = existing.CreatedDate,
+                        ModifiedBy = existing.ModifiedBy,
+                        ModifiedDate = existing.ModifiedDate
                     };
                 }
 
-                // create new note
+                // Create new note (on current ticket version)
                 var ticketDetails = new TicketDetails
                 {
                     TicketId = details.TicketId.Value,
@@ -381,10 +366,107 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex.ToString());
+                _logger.LogError(ex, "Error saving ticket details");
                 throw;
             }
         }
+
+        //public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
+        //{
+        //    try
+        //    {
+        //        if (!details.TicketId.HasValue)
+        //            return null;
+
+        //        var ticket = await _db.Tickets
+        //            .Where(t => t.TicketId == details.TicketId.Value
+        //                && t.IsActive == true
+        //                && t.IsLatest == true)
+        //            .FirstOrDefaultAsync();
+
+        //        if (ticket == null)
+        //            throw new Exception("Ticket not found");
+
+        //        // update existing note
+        //        if (details.TicketDetailsId > 0)
+        //        {
+        //            var existing = await _db.TicketDetails.FirstOrDefaultAsync(td => td.TicketDetailsId == details.TicketDetailsId);
+
+        //            if (existing == null)
+        //                return null;
+
+        //            // Mark old version as not latest
+        //            existing.IsLatest = false;
+        //            existing.ModifiedBy = details.ModifiedBy;
+        //            existing.ModifiedDate = DateTime.UtcNow;
+
+        //            // Create new version of the detail
+        //            var newVersionDetail = new TicketDetails
+        //            {
+        //                TicketId = existing.TicketId,
+        //                TicketVersion = ticket.TicketVersion,
+        //                Note = details.Note,
+        //                Author = details.Author,
+        //                CreatedBy = existing.CreatedBy,
+        //                CreatedDate = existing.CreatedDate,
+        //                ModifiedBy = details.ModifiedBy,
+        //                ModifiedDate = DateTime.UtcNow,
+        //                IsActive = true,
+        //                IsLatest = true
+        //            };
+
+        //            _db.TicketDetails.Add(newVersionDetail);
+        //            await _db.SaveChangesAsync();
+
+        //            return new TicketDetailsDTO
+        //            {
+        //                TicketDetailsId = newVersionDetail.TicketDetailsId,
+        //                TicketId = newVersionDetail.TicketId,
+        //                TicketVersion = newVersionDetail.TicketVersion,
+        //                Note = newVersionDetail.Note,
+        //                Author = newVersionDetail.Author,
+        //                CreatedBy = newVersionDetail.CreatedBy,
+        //                CreatedDate = newVersionDetail.CreatedDate,
+        //                ModifiedBy = newVersionDetail.ModifiedBy,
+        //                ModifiedDate = newVersionDetail.ModifiedDate
+        //            };
+        //        }
+
+        //        // create new note
+        //        var ticketDetails = new TicketDetails
+        //        {
+        //            TicketId = details.TicketId.Value,
+        //            TicketVersion = ticket.TicketVersion,
+        //            Note = details.Note,
+        //            CreatedBy = details.CreatedBy,
+        //            CreatedDate = DateTime.UtcNow,
+        //            Author = details.Author,
+        //            IsActive = true,
+        //            IsLatest = true
+        //        };
+
+        //        _db.TicketDetails.Add(ticketDetails);
+        //        await _db.SaveChangesAsync();
+
+        //        return new TicketDetailsDTO
+        //        {
+        //            TicketDetailsId = ticketDetails.TicketDetailsId,
+        //            TicketId = ticketDetails.TicketId,
+        //            TicketVersion = ticketDetails.TicketVersion,
+        //            Note = ticketDetails.Note,
+        //            Author = ticketDetails.Author,
+        //            CreatedBy = ticketDetails.CreatedBy,
+        //            CreatedDate = ticketDetails.CreatedDate,
+        //            ModifiedBy = ticketDetails.ModifiedBy,
+        //            ModifiedDate = ticketDetails.ModifiedDate
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.Message, ex.ToString());
+        //        throw;
+        //    }
+        //}
 
 
         public async Task<bool> DeleteTicket(int ticketId)

@@ -1,10 +1,6 @@
 ﻿@model TicketVM
 <link href="@(Url.Content("~/css/_ticket.css"))" rel="stylesheet" asp-append-version="true" />
 
-@{
-    var user = await UserManager.GetUserAsync(User);
-}
-
 <div id="ticket-container">
     <div id="ticket-header">
         <label id="lblTicketDueDate">Section: @Model.SectionTitle</label>
@@ -25,8 +21,9 @@
         
         <br /><label id="lblTicketDesc">Description:</label>
         <br /><label>@Model.Description</label>
+        <button type="button" id="btnEditTicket">Edit</button>
     </div>
-    <input id="hdnUser" value="@user" type="hidden" />
+    
     <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
 
     <form>

@@ -12,7 +12,20 @@ export function init(params) {
 
     document.getElementById("submitTicket")?.addEventListener("click", saveTicket);
     document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
-    document.getElementById("cancel")?.addEventListener("click", () => getTicketsPartial());
+    document.getElementById("cancel")?.addEventListener("click", async () =>
+    {
+        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
+
+        if (isEdit) {
+            let ticketId = parseInt(document.getElementById('ticketId').value);
+            const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+            await ticketsModule.getTicketPartial(ticketId);
+        }
+        else {
+            const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+            await ticketsModule.getTicketsPartial();
+        }
+    });
 
     addUserSearchEventListener("ticketAssignedTo", "userResults");
 }
@@ -40,10 +53,23 @@ async function saveTicket() {
                 'Content-Type': 'application/json'
             }
         });
+
+        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
+
         showSuccess(true);
         // Go back to tickets list after successful save
         setTimeout(async () => {
-            await getTicketsPartial();
+
+            if (isEdit) {
+                let ticketId = parseInt(document.getElementById('ticketId').value);
+                const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+                await ticketsModule.getTicketPartial(ticketId);
+            }
+            else {
+                const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+                await ticketsModule.getTicketsPartial();
+            }
+            
         }, 1500);
 
         return response.data;

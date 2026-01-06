@@ -14,7 +14,7 @@ namespace Voyage.Data.TableModels
 
         public int TicketDetailsId { get; set; } 
         public int TicketId { get; set; }
-        public decimal? TicketVersion { get; set; }
+        public decimal TicketVersion { get; set; }
 
         public string Note { get; set; }
         public string Author { get; set; }
@@ -40,7 +40,7 @@ namespace Voyage.Data.TableModels
                         .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TicketDetails>()
-                .HasIndex(td => td.TicketId);
+                .HasIndex(td => new { td.TicketId, td.TicketVersion });
 
 
         }

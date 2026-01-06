@@ -5,6 +5,13 @@ export async function init() {
         await getTicketsPartial();
     });
 
+    document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
+        const ticketId = document.getElementById('lblTicketId').textContent;
+        const version = new Date().getTime();
+        const module = await import(`./_Tickets.js?v=${version}`);
+        await module.getManageTicketPartial(ticketId, null);
+    }); 
+
     //handle events for content editable div
     const noteDiv = document.getElementById('noteContent');
     if (noteDiv) {
@@ -37,6 +44,8 @@ async function loadTicketNotes() {
         //default to open add note
         addNote();
 
+        hideEditBtns();
+
     } catch (error) {
         console.error("Error loading notes:", error);
     }
@@ -50,7 +59,7 @@ function addNote() {
     noteDiv.innerHTML = `
         <div class="note-header">
             <span class="note-author">New Note</span>
-            <span class="note-date">${new Date().toLocaleString()}</span>
+            <span class="note-date">${formatUtc(new Date().toUTCString())}</span>
         </div>
         <div class="note-content" contenteditable="true" data-placeholder="Enter notes..."></div>
         <div class="note-actions">
@@ -87,8 +96,6 @@ async function saveNote(noteDiv) {
         return;
     }
 
-    debugger;
-    
     const detailsId = noteDiv.querySelector('.note-header').dataset.detailsid ?? 0;
     const ticketId = document.getElementById('lblTicketId').textContent;
     const ticketVersion = document.getElementById('lblTicketVersion').textContent;
@@ -113,12 +120,16 @@ async function saveNote(noteDiv) {
     noteDiv.dataset.detailsid = response.data.ticketDetailsId;
     noteDiv.innerHTML = `<div class="note-header" data-id="${response.data.id}" data-ticketId="${response.data.ticketId}" data-detailsId="${response.data.ticketDetailsId}">
 <span class="note-author">${response.data.author}</span>
-<span class="note-date">${response.data.createdDate}</span>
-${response.data.modifiedDate ? `<i>edited ${response.data.modifiedDate}</i>` : ''}
+<span class="note-date">${formatUtc(response.data.createdDate)}</span>
+${response.data.modifiedDate ? `<div class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></div>` : ''}
 </div><div class="note-content-display">${response.data.note}</div><button type="button" class="note-edit">Edit</button>`;
 
+    noteDiv.querySelector('.note-edit').addEventListener('click', () =>
+    {
+        enableEdit(noteDiv)
+    });
 
-    noteDiv.querySelector('.note-edit').addEventListener('click', () => enableEdit(noteDiv));
+    hideEditBtns();
 
     //open new add note after saving
     addNote();
@@ -130,14 +141,14 @@ function renderNote(note) {
 
     let edited = "";
     if (note.modifiedDate != null && note.modifiedDate != 0) {
-        edited = `<i>edited ${note.modifiedDate}</i>`;
+        edited = `<div class='modified-date'><i>edited ${formatUtc(note.modifiedDate)}</i></div>`;
     }
 
     const noteDiv = document.createElement('div');
     noteDiv.className = 'ticket-note saved';
 
     // Put everything on one line, no indentation around note.note
-    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span><span class="note-date">${note.createdDate}</span>${edited}</div><div class="note-content-display">${note.note}</div><button type="button" class="note-edit">Edit</button>`;
+    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span><span class="note-date">${formatUtc(note.createdDate)}</span>${edited}</div><div class="note-content-display">${note.note}</div><button type="button" class="note-edit">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', function () {
         enableEdit(noteDiv);
@@ -148,7 +159,6 @@ function renderNote(note) {
 
 
 function enableEdit(noteDiv) {
-
     //remove add note when editing
     removeAddNote();
 
@@ -159,7 +169,7 @@ function enableEdit(noteDiv) {
     noteDiv.innerHTML = `
         <div class="note-header" data-ticketId="${ticketid}" data-detailsId="${detailsid}">
             <span class="note-author">Editing</span>
-            <span class="note-date">${new Date().toLocaleString()}</span>
+            <span class="note-date">${formatUtc(new Date().toUTCString())}</span>
         </div>
         <div class="note-content" contenteditable="true">${contentText}</div>
         <div class="note-actions">
@@ -188,3 +198,19 @@ function clearNote(noteDiv) {
     noteDiv.querySelector('.note-content').innerHTML = "";
 }
 
+function hideEditBtns() {
+    let notes = document.querySelectorAll('.ticket-note.saved');
+    let user = document.getElementById('hdnUser').value;
+
+    for (let i = 0; i < notes.length; i++){
+        let author = notes[i].getElementsByClassName('note-author')[0];
+
+        if (author && author.textContent.trim() !== user) {
+            let editBtn = notes[i].getElementsByClassName('note-edit')[0];
+            if (editBtn) {
+                editBtn.style.display = 'none';
+            }
+            
+        }
+    }
+}

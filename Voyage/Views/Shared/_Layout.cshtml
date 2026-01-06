@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,6 +23,7 @@
             @RenderBody()
         </main>
     </div>
+    <input id="hdnUser" value="@user" type="hidden" />
 
     <footer class="border-top footer text-muted">
         <div class="container">

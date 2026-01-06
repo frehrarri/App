@@ -130,3 +130,13 @@ function handleFileDrop(e) {
         contentDiv.innerText = e.dataTransfer.files[0].name;
     }
 }
+
+function formatUtc(dateString) {
+
+    let date = new Date(dateString);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    return `${String(date.getUTCDate()).padStart(2, "0")} ${months[date.getUTCMonth()]
+        } ${date.getUTCFullYear()} ${String(date.getUTCHours()).padStart(2, "0")
+        }:${String(date.getUTCMinutes()).padStart(2, "0")}`;
+}
