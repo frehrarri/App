@@ -1,16 +1,34 @@
-﻿import { getTicketsPartial } from "./_Tickets.js";
+﻿import { getTicketsPartial } from "./_tickets.js";
 
 export async function init() {
+    //go to ticket
     document.getElementById("btnGoToTickets")?.addEventListener("click", async () => {
         await getTicketsPartial();
     });
 
+    //edit
     document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
         const ticketId = document.getElementById('lblTicketId').textContent;
         const version = new Date().getTime();
-        const module = await import(`./_Tickets.js?v=${version}`);
+        const module = await import(`./_tickets.js?v=${version}`);
         await module.getManageTicketPartial(ticketId, null);
     }); 
+
+    //versioning
+    const links = document.getElementsByClassName("versionHistoryLink");
+    for (const link of links) {
+        link.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            const version = parseInt(e.target.textContent);
+            const ticketId = parseInt(
+                document.getElementById("lblTicketId").textContent
+            );
+
+            const module = await import(`./_tickets.js?v=${Date.now()}`);
+            await module.getTicketPartial(ticketId, version);
+        });
+    }
 
     //handle events for content editable div
     const noteDiv = document.getElementById('noteContent');
@@ -24,25 +42,30 @@ export async function init() {
 }
 
 async function loadTicketNotes() {
-    const ticketId = document.getElementById('lblTicketId').textContent;
-    if (!ticketId) return;
-
     try {
-        const response = await axios.get('/Tickets/GetTicketDetails', {
-            params: { ticketId: ticketId }
+        const ticketId = document.getElementById('lblTicketId').textContent;
+        if (!ticketId) return;
+
+        const ticketVersion = document.getElementById('lblTicketVersion').textContent;
+
+        const response = await axios.get('/Tickets/GetTicket', {
+            params: { ticketId: ticketId, ticketVersion: ticketVersion }
         });
 
         const container = document.getElementById("ticket-notes-container");
         container.innerHTML = ''; // Clear existing
-        
-        response.data.forEach(note => {
-            if (note.ticketDetailsId) {
+
+        if (response.data.ticketDetails.length > 0) {
+            response.data.ticketDetails.forEach(note => {
                 renderNote(note);
-            }
-        });
+            });
+        }
 
         //default to open add note
-        addNote();
+        let isLatest = document.getElementById('hdnIsLatest').value;
+        if (isLatest != 'false') {
+            addNote();
+        }
 
         hideEditBtns();
 
@@ -120,8 +143,8 @@ async function saveNote(noteDiv) {
     noteDiv.dataset.detailsid = response.data.ticketDetailsId;
     noteDiv.innerHTML = `<div class="note-header" data-id="${response.data.id}" data-ticketId="${response.data.ticketId}" data-detailsId="${response.data.ticketDetailsId}">
 <span class="note-author">${response.data.author}</span>
+${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></span>` : ''}
 <span class="note-date">${formatUtc(response.data.createdDate)}</span>
-${response.data.modifiedDate ? `<div class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></div>` : ''}
 </div><div class="note-content-display">${response.data.note}</div><button type="button" class="note-edit">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', () =>
@@ -129,10 +152,13 @@ ${response.data.modifiedDate ? `<div class='modified-date'><i>edited ${formatUtc
         enableEdit(noteDiv)
     });
 
-    hideEditBtns();
-
     //open new add note after saving
-    addNote();
+    let isLatest = document.getElementById('hdnIsLatest').value;
+    if (isLatest) {
+        addNote();
+    }
+
+    hideEditBtns();
 }
 
 
@@ -148,7 +174,7 @@ function renderNote(note) {
     noteDiv.className = 'ticket-note saved';
 
     // Put everything on one line, no indentation around note.note
-    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span><span class="note-date">${formatUtc(note.createdDate)}</span>${edited}</div><div class="note-content-display">${note.note}</div><button type="button" class="note-edit">Edit</button>`;
+    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span>${edited}<span class="note-date">${formatUtc(note.createdDate)}</span></div><div class="note-content-display">${note.note}</div><button type="button" class="note-edit">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', function () {
         enableEdit(noteDiv);
@@ -199,18 +225,33 @@ function clearNote(noteDiv) {
 }
 
 function hideEditBtns() {
-    let notes = document.querySelectorAll('.ticket-note.saved');
     let user = document.getElementById('hdnUser').value;
+    let isLatest = document.getElementById('hdnIsLatest').value;
+
+    //disable header edit button
+    let editBtn = document.getElementById('btnEditTicket');
+    let author = document.getElementById("lblAuthor")?.textContent.trim();
+
+    if (isLatest == 'false' || (author && author !== user)) {
+        if (editBtn) {
+            editBtn.style.display = 'none';
+        }
+    }
+
+    //disable edit buttons for notes
+    let notes = document.querySelectorAll('.ticket-note.saved');
 
     for (let i = 0; i < notes.length; i++){
-        let author = notes[i].getElementsByClassName('note-author')[0];
+        author = notes[i].getElementsByClassName('note-author')[0];
 
-        if (author && author.textContent.trim() !== user) {
-            let editBtn = notes[i].getElementsByClassName('note-edit')[0];
+        if (isLatest == 'false' || (author && author.textContent.trim() !== user)) {
+
+            editBtn = notes[i].getElementsByClassName('note-edit')[0];
+
             if (editBtn) {
                 editBtn.style.display = 'none';
             }
-            
         }
+     
     }
 }

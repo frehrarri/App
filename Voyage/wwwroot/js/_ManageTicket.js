@@ -18,26 +18,32 @@ export function init(params) {
 
         if (isEdit) {
             let ticketId = parseInt(document.getElementById('ticketId').value);
-            const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+            const ticketsModule = await import(`./_tickets.js?v=${new Date().getTime()}`);
             await ticketsModule.getTicketPartial(ticketId);
         }
         else {
-            const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
+            const ticketsModule = await import(`./_tickets.js?v=${new Date().getTime()}`);
             await ticketsModule.getTicketsPartial();
         }
     });
+
+    //content editable div
+    const description = document.getElementById('ticketDesc');
+    if (description) {
+        description.addEventListener('keydown', handleEnter);
+    }
 
     addUserSearchEventListener("ticketAssignedTo", "userResults");
 }
 
 async function saveTicket() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
+    debugger;
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').value,
         Title: document.getElementById('ticketTitle').value,
-        Description: document.getElementById('ticketDesc').value,
+        Description: document.getElementById('ticketDesc').innerHTML,
         Status: document.getElementById('ticketStatus').value,
         AssignedTo: document.getElementById('ticketAssignedTo').value,
         PriorityLevel: parseInt(document.getElementById('ticketPrioLvl').value),

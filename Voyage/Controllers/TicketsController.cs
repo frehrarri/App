@@ -42,9 +42,9 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TicketPartial(int ticketId)
+        public async Task<IActionResult> TicketPartial(int ticketId, decimal? ticketVersion = null)
         {
-            TicketVM? vm = await GetTicket(ticketId);
+            TicketVM? vm = await GetTicket(ticketId, ticketVersion);
             return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
         }
 
@@ -112,23 +112,16 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<TicketVM> GetTicket(int ticketId)
+        public async Task<TicketVM> GetTicket(int ticketId, decimal? ticketVersion = null)
         {
             TicketVM vm = new TicketVM();
 
-            var tickets = await _ticketsB.GetTicket(ticketId);
+            var tickets = await _ticketsB.GetTicket(ticketId, ticketVersion);
 
             if (tickets != null)
                 vm = MapToVM(tickets);
 
             return vm;
-        }
-
-
-        [HttpGet]
-        public async Task<List<TicketDetailsDTO>> GetTicketDetails(int ticketId)
-        {
-            return await _ticketsB.GetTicketDetails(ticketId);
         }
 
         [HttpPost]
@@ -160,6 +153,8 @@ namespace Voyage.Controllers
                 PriorityLevel = t.PriorityLevel,
                 Status = t.Status,
                 SprintId = t.SprintId,
+                IsActive = t.IsActive,
+                IsLatest = t.IsLatest,
                 SprintStartDate = t.SprintStartDate.GetValueOrDefault(),
                 SprintEndDate = t.SprintEndDate.GetValueOrDefault()
             }).ToList();
@@ -184,36 +179,14 @@ namespace Voyage.Controllers
             ticketVM.PriorityLevel = ticket.PriorityLevel;
             ticketVM.Status = ticket.Status;
             ticketVM.TicketDetails = ticket.TicketDetailsDTOs;
+            ticketVM.VersionHistory = ticket.TicketVersionHistory;
+            ticketVM.IsActive = ticket.IsActive;
+            ticketVM.IsLatest = ticket.IsLatest;
 
             return ticketVM;
         }
 
         #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //public void MoveTicket(int ticketId)
-        //{
-
-        //}
-
-        //public void AssignTicket(string userId, int? ticketId = null)
-        //{
-        //    _ticketsB.AssignTicket(userId, ticketId);
-        //}
-
 
     }
 }

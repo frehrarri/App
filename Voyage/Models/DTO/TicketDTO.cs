@@ -8,6 +8,7 @@ namespace Voyage.Models.DTO
         public TicketDTO() 
         {
             TicketDetailsDTOs = new List<TicketDetailsDTO>();
+            TicketVersionHistory = new List<decimal>();
         }
 
         public int TicketId { get; set; }            
@@ -26,6 +27,8 @@ namespace Voyage.Models.DTO
         public int SprintId { get; set; }
         public DateTime? SprintStartDate { get; set; }
         public DateTime? SprintEndDate { get; set; }
+
+        public List<decimal> TicketVersionHistory { get; set; }
 
         public List<TicketDetailsDTO> TicketDetailsDTOs { get; set; }
 

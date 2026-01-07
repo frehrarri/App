@@ -3,28 +3,87 @@
 
 <div id="ticket-container">
     <div id="ticket-header">
-        <label id="lblTicketDueDate">Section: @Model.SectionTitle</label>
 
-        <br /><label id="lblTicketIdTitle">Ticket #: </label>
-        <span><label id="lblTicketId">@Model.TicketId</label></span>
-        <span>v<label id="lblTicketVersion">@Model.TicketVersion</label></span>
-        <label id="lblTicketTitle">Title: @Model.Title</label>
-        <label id="lblTicketParentId">Parent Ticket: @Model.ParentTicketId</label>
-
-        <br><label id="lblTicketAssignedTo">Owner: @Model.AssignedTo</label>
-        <label id="lblTicketStatus">Status: @Model.Status</label>
-        <label id="lblTicketDueDate">Due Date: @Model.DueDate</label>
-
-        <br><label id="lblTicketPriorityLvl">Priority Level: @Model.PriorityLevel</label>
-        <br><label id="lblTicketCreatedBy">Created By: @Model.CreatedBy</label>
-        <br><label id="lblTicketCreatedDate">Created Date: @Model.CreatedDate</label>
+        <div id="titleContainer" class="dataContainer">
+            <label id="lblTicketIdTitle" class="title">Ticket #: </label>
+            <label id="lblTicketId">@Model.TicketId</label>
+        </div>
+        <div id="versionContainer" class="dataContainer">
+            <label id="lblTicketVersionTitle" class="title">Version:</label>
+            <label id="lblTicketVersion">@(Model.TicketVersion)</label>
+        </div>
+        <div id="parentContainer" class="dataContainer">
+            <label id="lblParentTicketIdTitle" class="title">Parent Ticket: </label>
+            <label id="lblTicketParentId">@Model.ParentTicketId</label>
+        </div>
         
-        <br /><label id="lblTicketDesc">Description:</label>
-        <br /><label>@Model.Description</label>
+        <div id="sectionContainer" class="dataContainer">
+            <label id="lblSectionTitle" class="title">Section: </label>
+            <label id="lblSection">@Model.SectionTitle</label>
+        </div>
+
+        <br />
+
+        <div id="titleContainer" class="dataContainer">
+            <label id="lblTicketTitle" class="title">Title:</label>
+            <label id="lblTicketTitleData"> @Model.Title</label>
+        </div>
+
+        <br />
+        
+        <div id="DescContainer" class="dataContainer">
+            <label id="lblDescTitle" class="title">Description:</label>
+            <div id="lblDescription">@Html.Raw(Model.Description)</div>
+        </div>
+
+        <br />
+
+        <div id="prioContainer" class="dataContainer">
+            <label id="lblPriorityLvlTitle" class="title">Priority Level:</label>
+            <label id="lblPriorityLvl">@Model.PriorityLevel</label>
+        </div>
+
+        <div id="statusContainer" class="dataContainer">
+            <label id="lblStatusTitle" class="title">Status:</label>
+            <label id="lblStatus">@AddSpacesToSentence(Model.Status)</label>
+        </div>
+
+        <div id="assignContainer" class="dataContainer">
+            <label id="lblAssignedTitle" class="title">Assigned To:</label>
+            <label id="lblAssigned">@Model.AssignedTo</label>
+        </div>
+
+        <br />
+
+        <div id="dueDateContainer" class="dataContainer">
+            <label id="lblDueDateTitle" class="title">Due Date:</label>
+            <label id="lblDueDate">@FormatUtcDateTime(Model.DueDate)</label>
+        </div>
+
+        <div id="authorContainer" class="dataContainer">
+            <label id="lblAuthorTitle" class="title">Author:</label>
+            <label id="lblAuthor">@Model.CreatedBy</label>
+        </div>
+
+        <div id="createdDateContainer" class="dataContainer">
+            <label id="lblCreatedDateTitle" class="title">Created:</label>
+            <label id="lblCreatedDate">@FormatUtcDateTime(Model.CreatedDate)</label>
+        </div>
+
+        <br />
+
         <button type="button" id="btnEditTicket">Edit</button>
     </div>
     
-    <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
+
+    @if (!Model.IsLatest!.Value)
+    {
+        <br />
+        <div id="oldTicketVersion">
+            ! To make changes please visit the latest version: <a class="versionHistoryLink">@Model.VersionHistory.Max()</a>
+        </div>
+    }
+
 
     <form>
         @Html.AntiForgeryToken()
@@ -33,6 +92,31 @@
 
     <button type="button" id="btnGoToTickets">Back</button>
 
+    <br />
+    <br />
+
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th class="app-table-header">Version</th>
+                <th class="app-table-header">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var version in Model.VersionHistory.OrderByDescending(version => version))
+            {
+                <tr>
+                    <td class="app-table-data"><a class="versionHistoryLink">@version</a></td>
+                    <td class="app-table-data">action</td>
+                </tr>
+            }
+            
+        </tbody>
+    </table>
+
 </div>
+
+<input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
+<input id="hdnIsLatest" value="@(Model.IsLatest?.ToString().ToLower() ?? "")" type="hidden" />
 
 

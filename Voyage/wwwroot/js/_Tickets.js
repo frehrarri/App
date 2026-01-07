@@ -1,7 +1,6 @@
 ﻿import { loadModule } from "./main.js";
 
 export async function getManageTicketPartial(ticketId, sectionTitle) {
-    
     try {
         const response = await axios.get('/Tickets/ManageTicketPartial', {
             params: { ticketId: ticketId }
@@ -16,10 +15,10 @@ export async function getManageTicketPartial(ticketId, sectionTitle) {
     }
 }
 
-export async function getTicketPartial(ticketId) {
+export async function getTicketPartial(ticketId, ticketVersion) {
     try {
         const response = await axios.get('/Tickets/TicketPartial', {
-            params: { ticketId: ticketId }
+            params: { ticketId: ticketId, ticketVersion: ticketVersion }
         });
 
         document.getElementById("ticket-view").innerHTML = response.data;

@@ -6,7 +6,7 @@
 <h1>Tickets</h1>
 
 <hr />
-<h4>Sprint @Model.Sprint.SprintId ---------------------------------------------------------------- @Model.Sprint.StartDate - @Model.Sprint.EndDate</h4>
+<h4>Sprint @Model.Sprint.SprintId      -------------------------------------------------------------       @Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
 <hr />
 
 @foreach (Section s in Model.Sections)
@@ -22,6 +22,7 @@
                 <th class="app-table-header">@nameof(TicketVM.Title)</th>
                 <th class="app-table-header">@nameof(TicketVM.Status)</th>
                 <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
+                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
                 <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
                 <th class="app-table-header">Last Edit</th>
                 <th class="app-table-header">Editor</th>
@@ -53,10 +54,11 @@
                 </td>
                 <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.Status)</td>
                 <td class="app-table-data">@ticket.AssignedTo</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.DueDate)</td>
                 <td class="app-table-data">@ticket.PriorityLevel</td>
-                <td class="app-table-data">@ticket.ModifiedDate</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate)</td>
                 <td class="app-table-data">@ticket.ModifiedBy</td>
-                <td class="app-table-data">@ticket.CreatedDate</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate)</td>
                 <td class="app-table-data">@ticket.CreatedBy</td>
 
                 @if (s.Title != "Discontinued" && s.Title != "Completed")
@@ -72,6 +74,6 @@
         </tbody>
     </table>
     <br />
-    <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint.SprintId" data-sprintStart="@Model.Sprint.StartDate" data-sprintEnd="@Model.Sprint.EndDate" />
+    <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintEnd="@Model.Sprint?.EndDate" />
 }
 

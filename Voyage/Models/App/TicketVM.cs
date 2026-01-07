@@ -11,7 +11,6 @@ namespace Voyage.Models.App
             TicketDetails = new List<TicketDetailsDTO>();
         }
 
-        public int Id { get; set; }
         public int TicketId { get; set; }
         public decimal? TicketVersion { get; set; }  
         public string Title { get; set; } = string.Empty;
@@ -25,6 +24,7 @@ namespace Voyage.Models.App
         public int SprintId { get; set; }
         public DateTime SprintStartDate { get; set; }
         public DateTime SprintEndDate { get; set; }
+        public List<decimal> VersionHistory { get; set; }
         public List<TicketDetailsDTO> TicketDetails { get; set; }
 
     }

@@ -4,6 +4,7 @@ namespace Voyage.Utilities
 {
     public static class HelperMethods
     {
+
         public static string AddSpacesToSentence(string sentence, int spaces = 1)
         {
             if (string.IsNullOrWhiteSpace(sentence))
@@ -41,5 +42,42 @@ namespace Voyage.Utilities
 
             return sanitizer.Sanitize(html);
         }
+        public static string FormatUtcDateTime(DateTime? dateTime)
+        {
+            if (!dateTime.HasValue)
+                return string.Empty;
+
+            // Ensure it's UTC
+            DateTime? utcDate = dateTime.Value.Kind == DateTimeKind.Utc ? dateTime: dateTime.Value.ToUniversalTime();
+
+            return utcDate.Value.ToString("dd MMM yyyy HH:mm");
+        }
+
+
+        public static string FormatUtcDate(DateTime? dateTime)
+        {
+            if (!dateTime.HasValue)
+                return string.Empty;
+
+            // Ensure it's UTC
+            DateTime? utcDate = dateTime.Value.Kind == DateTimeKind.Utc ? dateTime : dateTime.Value.ToUniversalTime();
+
+            return utcDate.Value.ToString("dd MMM yyyy");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

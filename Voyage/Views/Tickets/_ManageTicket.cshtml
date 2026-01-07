@@ -69,7 +69,7 @@
     <div class="form-row">
         <div class="form-field" style="flex: 1;">
             <label for="ticketDesc">Description</label>
-            <textarea id="ticketDesc" rows="3">@Model?.Description</textarea>
+            <div id="ticketDesc" contenteditable="true">@Html.Raw(Model?.Description)</div>
         </div>
     </div>
 
@@ -116,4 +116,4 @@
     </div>
 </form>
 
-<input id="hdnUniqueId" type="hidden" value="@Model.Id" />
+@* <input id="hdnUniqueId" type="hidden" value="@Model.Id" /> *@

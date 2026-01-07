@@ -28,8 +28,7 @@ label {
 /* Inputs, selects, textarea */
 input[type="text"],
 input[type="date"],
-select,
-textarea {
+select {
     width: 100%;
     box-sizing: border-box;
     padding: 6px 8px;
@@ -52,4 +51,11 @@ textarea {
     min-height: 50px;
     border: 1px solid #ccc;
     padding: 8px;
+}
+
+#ticketDesc {
+    width: 100%;
+    border: 1px solid rgb(118, 118, 118);
+    padding: 6px 8px;
+    white-space: pre-wrap; /* preserves whitespace & line breaks */
 }

@@ -38,11 +38,14 @@ namespace Voyage.Business
             return await _ticketsD.GetTickets(sprintId);
         }
 
-        public async Task<TicketDTO?> GetTicket(int ticketId)
+        public async Task<TicketDTO?> GetTicket(int ticketId, decimal? ticketVersion)
         {
-            TicketDTO? ticketDTO = await _ticketsD.GetTicket(ticketId);
+            TicketDTO? ticket = await _ticketsD.GetTicket(ticketId, ticketVersion);
 
-            return ticketDTO;
+            if (ticket != null) 
+                ticket.TicketVersionHistory = await _ticketsD.GetAllTicketVersions(ticketId);
+
+            return ticket;
         }
 
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
@@ -54,10 +57,12 @@ namespace Voyage.Business
             else
                 ticketDTO.CreatedBy = user.UserName ?? string.Empty;
 
-            if (ticketDTO.Status == null)
-                return false;
+            ticketDTO.Description = SanitizeHtmlForXSS(ticketDTO.Description);
 
             //Set section and statuses for specific statuses/sections
+            if (ticketDTO.Status == null)
+                return false;
+            
             if (ticketDTO.Status == nameof(Constants.TicketStatus.Completed))
                 ticketDTO.SectionTitle = ticketDTO.Status;
 
@@ -78,11 +83,7 @@ namespace Voyage.Business
             return await _ticketsD.DeleteTicket(ticketId);
         }
 
-        public async Task<List<TicketDetailsDTO>> GetTicketDetails(int ticketId)
-        {
-            var dto = await _ticketsD.GetTicketDetails(ticketId);
-            return dto;
-        }
+
 
 
         public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
