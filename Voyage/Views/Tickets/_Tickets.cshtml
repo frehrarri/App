@@ -9,12 +9,20 @@
 <h4>Sprint @Model.Sprint.SprintId      -------------------------------------------------------------       @Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
 <hr />
 
-@foreach (Section s in Model.Sections)
+@foreach (var s in Model.Sections)
 {
-    List<TicketVM> tickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).ToList();
+    var sectionTickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).ToList();
+
+    int ticketCount = sectionTickets.Count();
+    int numOfPages = (int)Math.Ceiling(ticketCount / 5.0);
+
+    var tickets = sectionTickets.OrderByDescending(t => t.PriorityLevel)
+                                .Take(5)
+                                .ToList();
 
     <h4>@s.Title</h4>
-    <table class="app-table">
+    <div id="@(s.Title)-container">
+        <table class="app-table">
         <thead>
             <tr>
                 <th class="app-table-header"></th>
@@ -73,7 +81,40 @@
 
         </tbody>
     </table>
-    <br />
-    <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintEnd="@Model.Sprint?.EndDate" />
+
+        <br />
+
+        <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+
+        <button id="btn-left-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>&lt;--</button>
+    <span id="page-btn-container-@s.Title">
+    @for(int i = 1; i <= numOfPages; i++)
+    {
+        
+        @if (i == 1)
+        {
+            <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+        }
+        else
+        {
+            <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+        }
+    }
+    </span>
+        <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button">--></button>
+
+        <br />
+        <br />
+
+    </div>
+    <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
 }
+
+
+<input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintEnd="@Model.Sprint?.EndDate" />
 

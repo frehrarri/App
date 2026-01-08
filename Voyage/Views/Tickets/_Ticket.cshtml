@@ -72,16 +72,18 @@
 
         <br />
 
-        <button type="button" id="btnEditTicket">Edit</button>
     </div>
-    
+
+    <br />
+
+    <button type="button" id="btnGoToTickets">Back</button>
+    <button type="button" id="btnEditTicket">Edit</button>
 
     @if (!Model.IsLatest!.Value)
     {
-        <br />
-        <div id="oldTicketVersion">
+        <span id="oldTicketVersion">
             ! To make changes please visit the latest version: <a class="versionHistoryLink">@Model.VersionHistory.Max()</a>
-        </div>
+        </span>
     }
 
 
@@ -89,11 +91,6 @@
         @Html.AntiForgeryToken()
         <div id="ticket-notes-container"></div>
     </form>
-
-    <button type="button" id="btnGoToTickets">Back</button>
-
-    <br />
-    <br />
 
     <table class="app-table">
         <thead>

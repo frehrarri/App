@@ -9,6 +9,7 @@ namespace Voyage.Models.App
         public TicketVM() 
         {
             TicketDetails = new List<TicketDetailsDTO>();
+            VersionHistory = new List<decimal>();
         }
 
         public int TicketId { get; set; }

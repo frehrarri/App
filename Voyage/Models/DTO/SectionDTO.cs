@@ -1,6 +1,6 @@
-﻿namespace Voyage.Models.App
+﻿namespace Voyage.Models.DTO
 {
-    public class Section
+    public class SectionDTO
     {
         public int SectionId { get; set; }
         public string Title { get; set; } = string.Empty;

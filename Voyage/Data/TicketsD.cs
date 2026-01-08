@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Voyage.Data.TableModels;
+using Voyage.Models.App;
 using Voyage.Models.DTO;
 using static Voyage.Utilities.Constants;
 
@@ -96,6 +97,44 @@ namespace Voyage.Data
             }
         }
 
+        public async Task<TicketsDTO> GetPaginatedTickets(int sprintId, string sectionTitle, int pageNumber, int pageSize)
+        {
+            TicketsDTO ticketsDTO = new TicketsDTO();
+
+            List<TicketDTO> tickets = await GetTickets(sprintId);
+
+            ticketsDTO.Tickets = tickets
+                .Where(t => t.SectionTitle == sectionTitle)
+                .OrderByDescending(t => t.PriorityLevel)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(t => new TicketDTO
+                {
+                    TicketId = t.TicketId,
+                    TicketVersion = t.TicketVersion,
+                    Title = t.Title,
+                    Status = t.Status,
+                    Description = t.Description,
+                    AssignedTo = t.AssignedTo,
+                    PriorityLevel = t.PriorityLevel,
+                    DueDate = t.DueDate,
+                    ParentTicketId = t.ParentTicketId,
+                    SectionTitle = t.SectionTitle,
+                    SprintId = t.SprintId,
+                    SprintStartDate = t.SprintStartDate,
+                    SprintEndDate = t.SprintEndDate,
+                    CreatedBy = t.CreatedBy,
+                    CreatedDate = t.CreatedDate,
+                    ModifiedBy = t.ModifiedBy,
+                    ModifiedDate = t.ModifiedDate
+                })
+                .ToList();
+
+            ticketsDTO.ResultCount = ticketsDTO.Tickets.Count();
+
+            return ticketsDTO;
+        }
+
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
         {
             await using var transaction = await _db.Database.BeginTransactionAsync();
@@ -185,35 +224,6 @@ namespace Voyage.Data
                 throw;
             }
         }
-
-
-        //public async Task<List<TicketVM>> GetPaginatedTickets(string sectionTitle, int pageNumber, int pageSize)
-        //{
-        //    return await _db.Tickets
-        //        .Where(t => t.IsActive &&
-        //                    t.IsLatest &&
-        //                    t.SectionTitle == sectionTitle)
-        //        .OrderBy(t => t.PriorityLevel)
-        //        .Skip((pageNumber - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .Select(t => new TicketVM
-        //        {
-        //            TicketId = t.TicketId,
-        //            ParentTicketId = t.ParentTicketId,
-        //            Title = t.Title,
-        //            SectionTitle = t.SectionTitle,
-        //            AssignedTo = t.AssignedTo,
-        //            CreatedBy = t.CreatedBy,
-        //            Description = t.Description,
-        //            CreatedDate = t.CreatedDate,
-        //            DueDate = t.DueDate,
-        //            ModifiedBy = t.ModifiedBy,
-        //            ModifiedDate = t.ModifiedDate,
-        //            PriorityLevel = t.PriorityLevel,
-        //            Status = t.Status
-        //        })
-        //        .ToListAsync();
-        //}
 
         public async Task<TicketDTO?> GetTicket(int ticketId, decimal? ticketVersion = null)
         {

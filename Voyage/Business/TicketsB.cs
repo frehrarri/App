@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Encodings.Web;
 using Voyage.Data;
 using Voyage.Data.TableModels;
-using Voyage.Models.App;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
 using static Voyage.Utilities.Constants;
 using static Voyage.Utilities.HelperMethods;
-using static Voyage.Models.App.Section;
+using static Voyage.Models.DTO.SectionDTO;
 
 namespace Voyage.Business
 {
@@ -36,6 +35,11 @@ namespace Voyage.Business
         public async Task<List<TicketDTO>> GetTickets(int sprintId)
         {
             return await _ticketsD.GetTickets(sprintId);
+        }
+
+        public async Task<TicketsDTO> GetPaginatedTickets(int sprintId, string sectionTitle, int pageNumber, int pageSize)
+        {
+            return await _ticketsD.GetPaginatedTickets(sprintId, sectionTitle, pageNumber, pageSize);
         }
 
         public async Task<TicketDTO?> GetTicket(int ticketId, decimal? ticketVersion)
@@ -112,15 +116,9 @@ namespace Voyage.Business
 
             return await _ticketsD.SaveTicketDetails(details);
         }
-
-        //public void AssignTicket(string userId, int? ticketId)
-        //{
-
-        //}
-
-        public List<Section> SetSectionsDevelopment()
+        public List<SectionDTO> SetSectionsDevelopment()
         {
-            List<Section> sections = new List<Section>();
+            List<SectionDTO> sections = new List<SectionDTO>();
 
             List<string> sectionTitles = new List<string>()
             {
@@ -135,7 +133,7 @@ namespace Voyage.Business
 
             for (int i = 0; i < sectionTitles.Count(); i++)
             {
-                Section section = new Section();
+                SectionDTO section = new SectionDTO();
                 section.SectionId = i + 1;
                 section.Title = sectionTitles[i];
                 section.SectionOrder = i + 1;

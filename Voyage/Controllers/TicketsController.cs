@@ -83,6 +83,12 @@ namespace Voyage.Controllers
             return list;
         }
 
+        [HttpGet]
+        public async Task<TicketsDTO> GetPaginatedTickets(int sprintId, string sectionTitle, int pageNumber = 1, int pageSize = 5)
+        {
+            return await _ticketsB.GetPaginatedTickets(sprintId, sectionTitle, pageNumber, pageSize);
+        }
+
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public async Task<bool> SaveTicket([FromBody] TicketDTO ticketDTO)

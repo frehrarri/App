@@ -1,5 +1,5 @@
 ﻿
-using static System.Collections.Specialized.BitVector32;
+using Voyage.Models.DTO;
 
 namespace Voyage.Models.App
 {
@@ -7,12 +7,12 @@ namespace Voyage.Models.App
     {
         public TicketsVM() 
         {
-            Sections = new List<Section>();
+            Sections = new List<SectionDTO>();
             Tickets = new List<TicketVM>(); 
             Sprint = new Sprint();
         }
 
-        public TicketsVM(List<TicketVM> tickets, List<Section> sections) 
+        public TicketsVM(List<TicketVM> tickets, List<SectionDTO> sections) 
         {
             Sections = sections;
             Tickets = tickets;
@@ -21,7 +21,7 @@ namespace Voyage.Models.App
 
         public Sprint Sprint { get; set; }
         public List<TicketVM> Tickets { get; set; }
-        public List<Section> Sections { get; set; }
+        public List<SectionDTO> Sections { get; set; }
 
    
 
