@@ -1,5 +1,4 @@
-﻿@using Voyage.Utilities
-@model TicketsVM
+﻿@model TicketsVM
 
 <link href="~/css/_tickets.css" rel="stylesheet" />
 
@@ -29,9 +28,9 @@
                 <th class="app-table-header">Ticket #</th>
                 <th class="app-table-header">@nameof(TicketVM.Title)</th>
                 <th class="app-table-header">@nameof(TicketVM.Status)</th>
-                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
-                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
-                <th class="app-table-header">@HelperMethods.AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
+                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
+                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
+                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
                 <th class="app-table-header">Last Edit</th>
                 <th class="app-table-header">Editor</th>
                 <th class="app-table-header">Created</th>
@@ -60,13 +59,13 @@
                 <td class="app-table-data">
                     <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
                 </td>
-                <td class="app-table-data">@HelperMethods.AddSpacesToSentence(ticket.Status)</td>
+                <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
                 <td class="app-table-data">@ticket.AssignedTo</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.DueDate)</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
                 <td class="app-table-data">@ticket.PriorityLevel</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate)</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
                 <td class="app-table-data">@ticket.ModifiedBy</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate)</td>
+                <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
                 <td class="app-table-data">@ticket.CreatedBy</td>
 
                 @if (s.Title != "Discontinued" && s.Title != "Completed")

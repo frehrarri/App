@@ -81,7 +81,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td4 = document.createElement('td');
             td4.className = 'app-table-data';
-            td4.innerText = `${ticket.status}`;
+            td4.innerText = `${addSpacesToSentence(ticket.status)}`;
             row.appendChild(td4);
 
             const td5 = document.createElement('td');
@@ -91,17 +91,17 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td6 = document.createElement('td');
             td6.className = 'app-table-data';
-            td6.innerText = `${formatUtc(ticket.dueDate)}`;
+            td6.innerText = `${formatUtc(ticket.dueDate, false)}`;
             row.appendChild(td6);
 
             const td7 = document.createElement('td');
             td7.className = 'app-table-data';
-            td7.innerText = `${ticket.priorityLevel}`;
+            td7.innerText = `${handlePriorityLevel(ticket.priorityLevel)}`;
             row.appendChild(td7);
 
             const td8 = document.createElement('td');
             td8.className = 'app-table-data';
-            td8.innerText = `${formatUtc(ticket.modifiedDate)}`;
+            td8.innerText = `${formatUtc(ticket.modifiedDate, false)}`;
             row.appendChild(td8);
 
             const td9 = document.createElement('td');
@@ -111,7 +111,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td10 = document.createElement('td');
             td10.className = 'app-table-data';
-            td10.innerText = `${formatUtc(ticket.createdDate)}`;
+            td10.innerText = `${formatUtc(ticket.createdDate, false)}`;
             row.appendChild(td10);
 
             const td11 = document.createElement('td');
@@ -210,6 +210,15 @@ function updatePaginatedUI(e, sectionTitle) {
 
     leftBtn.disabled = targetPage === 1;
     rightBtn.disabled = targetPage === numOfPages;
+}
+
+function handlePriorityLevel(priorityLevel) {
+    switch (priorityLevel) {
+        case 0: return "Low";
+        case 1: return "Medium";
+        case 2: return "High";
+        default: break;
+    }
 }
 
 export function init() {

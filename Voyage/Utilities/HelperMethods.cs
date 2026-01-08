@@ -54,7 +54,7 @@ namespace Voyage.Utilities
         }
 
 
-        public static string FormatUtcDate(DateTime? dateTime)
+        public static string FormatUtcDate(DateTime? dateTime, bool includeYear = true)
         {
             if (!dateTime.HasValue)
                 return string.Empty;
@@ -62,7 +62,12 @@ namespace Voyage.Utilities
             // Ensure it's UTC
             DateTime? utcDate = dateTime.Value.Kind == DateTimeKind.Utc ? dateTime : dateTime.Value.ToUniversalTime();
 
-            return utcDate.Value.ToString("dd MMM yyyy");
+            if (includeYear)
+            {
+                return utcDate.Value.ToString("dd MMM yyyy");
+            }
+            
+            return utcDate.Value.ToString("dd MMM");
         }
 
 

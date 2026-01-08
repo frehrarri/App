@@ -131,12 +131,35 @@ function handleFileDrop(e) {
     }
 }
 
-function formatUtc(dateString) {
+function formatUtc(dateString, includeYear = true) {
 
     let date = new Date(dateString);
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    return `${String(date.getUTCDate()).padStart(2, "0")} ${months[date.getUTCMonth()]
-        } ${date.getUTCFullYear()} ${String(date.getUTCHours()).padStart(2, "0")
-        }:${String(date.getUTCMinutes()).padStart(2, "0")}`;
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = months[date.getUTCMonth()];
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+    if (includeYear) {
+        return `${day} ${month} ${date.getUTCFullYear()}`;
+    }
+
+    return `${day} ${month}`;
+}
+
+function addSpacesToSentence(sentence, spaces = 1) {
+    if (!sentence || !sentence.trim()) {
+        return sentence;
+    }
+
+    // Insert space(s) between lowercase → uppercase
+    const spaceStr = " ".repeat(spaces);
+
+    let spaced = sentence.replace(/([a-z])([A-Z])/g, `$1${spaceStr}$2`);
+
+    // Replace underscores with spaces
+    spaced = spaced.replace(/_/g, spaceStr);
+
+    return spaced;
 }

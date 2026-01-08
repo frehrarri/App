@@ -38,7 +38,7 @@ export function init(params) {
 
 async function saveTicket() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    debugger;
+    
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').value,
