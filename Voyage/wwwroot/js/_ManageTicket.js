@@ -1,6 +1,4 @@
-﻿import { getTicketsPartial } from "./_Tickets.js";
-
-export function init(params) {
+﻿export function init(params) {
 
     //set section dropdown based on which table the user clicks the add button for
     if (params?.sectionTitle) {
@@ -16,14 +14,15 @@ export function init(params) {
     {
         let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
 
+        const module = await window.loadModule("tickets");
+
         if (isEdit) {
             let ticketId = parseInt(document.getElementById('ticketId').value);
-            const ticketsModule = await import(`./_tickets.js?v=${new Date().getTime()}`);
-            await ticketsModule.getTicketPartial(ticketId);
+
+            await module.getTicketPartial(ticketId);
         }
         else {
-            const ticketsModule = await import(`./_tickets.js?v=${new Date().getTime()}`);
-            await ticketsModule.getTicketsPartial();
+            await module.getTicketsPartial();
         }
     });
 
@@ -68,15 +67,15 @@ async function saveTicket() {
         showSuccess(true);
         // Go back to tickets list after successful save
         setTimeout(async () => {
+            const module = await window.loadModule("tickets");
 
             if (isEdit) {
                 let ticketId = parseInt(document.getElementById('ticketId').value);
-                const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
-                await ticketsModule.getTicketPartial(ticketId);
+                
+                await module.getTicketPartial(ticketId);
             }
             else {
-                const ticketsModule = await import(`./_Tickets.js?v=${new Date().getTime()}`);
-                await ticketsModule.getTicketsPartial();
+                await module.getTicketsPartial();
             }
             
         }, 1500);
@@ -108,7 +107,10 @@ async function deleteTicket() {
         });
 
         showSuccess(true);
-        await getTicketsPartial();
+
+        const module = await window.loadModule("tickets");
+        await module.getTicketsPartial();
+
         return response.data;
 
     } catch (error) {

@@ -1,13 +1,11 @@
-﻿import { loadModule } from "./main.js";
-
-export async function getManageTicketPartial(ticketId, sectionTitle) {
+﻿export async function getManageTicketPartial(ticketId, sectionTitle) {
     try {
         const response = await axios.get('/Tickets/ManageTicketPartial', {
             params: { ticketId: ticketId }
         });
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("manageTicket", { ticketId, sectionTitle });
+        await window.loadModule("manageTicket");
         return true;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
@@ -22,7 +20,7 @@ export async function getTicketPartial(ticketId, ticketVersion) {
         });
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("ticket", { ticketId });
+        await window.loadModule("ticket");
         return true;
     } catch (error) {
         console.error("error: getTicketPartial", error);
@@ -35,7 +33,7 @@ export async function getTicketsPartial() {
         const response = await axios.get('/Tickets/TicketsPartial');
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("tickets");
+        await window.loadModule("tickets");
         return true;
     } catch (error) {
         console.error("error: getTicketsPartial", error);

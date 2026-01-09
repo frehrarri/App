@@ -1,20 +1,15 @@
-﻿import { getTicketsPartial } from "./_tickets.js";
-
-export async function init() {
+﻿export async function init() {
     //go to ticket
     document.getElementById("btnGoToTickets")?.addEventListener("click", async () => {
-        await getTicketsPartial();
+        const module = await window.loadModule("tickets");
+        await module.getTicketsPartial();
     });
 
     //edit
     document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
         const ticketId = document.getElementById('lblTicketId').textContent;
 
-        //const module = await loadModule("tickets");
-        //await module.getManageTicketPartial(ticketId, null);
-
-        const version = new Date().getTime();
-        const module = await import(`./_tickets.js?v=${version}`);
+        const module = await window.loadModule("tickets");
         await module.getManageTicketPartial(ticketId, null);
     }); 
 
@@ -29,8 +24,7 @@ export async function init() {
                 document.getElementById("lblTicketId").textContent
             );
 
-            const module = await import(`./_tickets.js?v=${new Date().getTime()}`);
-           /* const module = await loadModule("tickets");*/
+            const module = await window.loadModule("tickets");
             await module.getTicketPartial(ticketId, version);
         });
     }
