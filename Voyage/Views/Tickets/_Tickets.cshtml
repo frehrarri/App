@@ -19,67 +19,67 @@
                                 .Take(5)
                                 .ToList();
 
-    <h4>@s.Title</h4>
-    <div id="@(s.Title)-container">
+    <div id="@(s.Title)-container" tabindex="0">
+        <h4 id="heading-@(s.Title)">@s.Title</h4>
         <table class="app-table">
-        <thead>
-            <tr>
-                <th class="app-table-header"></th>
-                <th class="app-table-header">Ticket #</th>
-                <th class="app-table-header">@nameof(TicketVM.Title)</th>
-                <th class="app-table-header">@nameof(TicketVM.Status)</th>
-                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
-                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
-                <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
-                <th class="app-table-header">Last Edit</th>
-                <th class="app-table-header">Editor</th>
-                <th class="app-table-header">Created</th>
-                <th class="app-table-header">Author</th>
+            <thead>
+                <tr>
+                    <th class="app-table-header"></th>
+                    <th class="app-table-header">Ticket #</th>
+                    <th class="app-table-header">@nameof(TicketVM.Title)</th>
+                    <th class="app-table-header">@nameof(TicketVM.Status)</th>
+                    <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
+                    <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
+                    <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
+                    <th class="app-table-header">Last Edit</th>
+                    <th class="app-table-header">Editor</th>
+                    <th class="app-table-header">Created</th>
+                    <th class="app-table-header">Author</th>
 
-                @if (s.Title != "Discontinued" && s.Title != "Completed")
+                    @if (s.Title != "Discontinued" && s.Title != "Completed")
+                    {
+                        <th class="app-table-header">
+                            <button class="btnAddTicket" data-section="@s.Title">Add</button>
+                        </th>
+                    }
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (TicketVM ticket in tickets)
                 {
-                <th class="app-table-header">
-                    <button class="btnAddTicket" data-section="@s.Title">Add</button>
-                </th>
+                    <tr>
+                        <td class="app-table-data">
+                            <input type="checkbox" />
+                        </td>
+                        <td class="app-table-data">
+                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
+                        </td>
+                        <td class="app-table-data">
+                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
+                        </td>
+                        <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
+                        <td class="app-table-data">@ticket.AssignedTo</td>
+                        <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
+                        <td class="app-table-data">@ticket.PriorityLevel</td>
+                        <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
+                        <td class="app-table-data">@ticket.ModifiedBy</td>
+                        <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
+                        <td class="app-table-data">@ticket.CreatedBy</td>
+
+                        @if (s.Title != "Discontinued" && s.Title != "Completed")
+                        {
+                            <td class="app-table-data">
+                                <button id="btnViewTicket" class="goto-ticket" data-id="@ticket.TicketId">View</button>
+                                <span><button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button></span>
+                            </td>
+                        }
+                    </tr>
                 }
 
-            </tr>
-        </thead>
-        <tbody>
-
-        @foreach(TicketVM ticket in tickets)
-        {
-            <tr>
-                <td class="app-table-data">
-                    <input type="checkbox" />
-                </td>
-                <td class="app-table-data">
-                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
-                </td>
-                <td class="app-table-data">
-                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
-                </td>
-                <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
-                <td class="app-table-data">@ticket.AssignedTo</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
-                <td class="app-table-data">@ticket.PriorityLevel</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
-                <td class="app-table-data">@ticket.ModifiedBy</td>
-                <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
-                <td class="app-table-data">@ticket.CreatedBy</td>
-
-                @if (s.Title != "Discontinued" && s.Title != "Completed")
-                {
-                <td class="app-table-data">
-                    <button id="btnViewTicket" class="goto-ticket" data-id="@ticket.TicketId">View</button>
-                    <span><button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button></span>
-                </td>
-                }
-            </tr>
-        }
-
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
         <br />
 
@@ -91,21 +91,39 @@
         </select>
 
         <button id="btn-left-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>&lt;--</button>
-    <span id="page-btn-container-@s.Title">
-    @for(int i = 1; i <= numOfPages; i++)
-    {
-        
-        @if (i == 1)
+
+        <span id="page-btn-container-@s.Title">
+
+            @if (sectionTickets.Count() > 0)
+            {
+                for (int i = 1; i <= numOfPages; i++)
+                {
+                    @if (i == 1)
+                    {
+                        <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+                    }
+                    else
+                    {
+                        <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+                    }
+                }
+            }
+            else
+            {
+                <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
+            }
+
+        </span>
+
+        @if (numOfPages < 2 || sectionTickets.Count() == 0)
         {
-            <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+            <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>--></button>
         }
         else
         {
-            <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+            <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button">--></button>
         }
-    }
-    </span>
-        <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button">--></button>
+
 
         <br />
         <br />
