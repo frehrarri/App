@@ -49,6 +49,9 @@
             <select id="ticketSectionTitle" name="SectionTitle">
                 @foreach (var title in sectionTitles)
                 {
+                    if (title == "Discontinued")
+                        continue;
+
                     <option value="@title" selected="@(Model?.SectionTitle == title)">
                         @title
                     </option>

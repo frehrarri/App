@@ -62,8 +62,11 @@ async function loadTicketNotes() {
         }
 
         //default to open add note
-        let isLatest = document.getElementById('hdnIsLatest').value;
-        if (isLatest != 'false') {
+        const isLatest = document.getElementById('hdnIsLatest').value;
+        const section = document.getElementById('lblSection').innerText;
+        const isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+
+        if (isEditable) {
             addNote();
         }
 
@@ -153,8 +156,11 @@ ${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUt
     });
 
     //open new add note after saving
-    let isLatest = document.getElementById('hdnIsLatest').value;
-    if (isLatest) {
+    const isLatest = document.getElementById('hdnIsLatest').value;
+    const section = document.getElementById('lblSection').innerText;
+    const isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+
+    if (isEditable) {
         addNote();
     }
 
@@ -227,12 +233,15 @@ function clearNote(noteDiv) {
 function hideEditBtns() {
     let user = document.getElementById('hdnUser').value;
     let isLatest = document.getElementById('hdnIsLatest').value;
+    const section = document.getElementById('lblSection').innerText;
 
     //disable header edit button
     let editBtn = document.getElementById('btnEditTicket');
     let author = document.getElementById("lblAuthor")?.textContent.trim();
 
-    if (isLatest == 'false' || (author && author !== user)) {
+    let isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+
+    if (isEditable == false || (author && author !== user)) {
         if (editBtn) {
             editBtn.style.display = 'none';
         }
@@ -244,7 +253,7 @@ function hideEditBtns() {
     for (let i = 0; i < notes.length; i++){
         author = notes[i].getElementsByClassName('note-author')[0];
 
-        if (isLatest == 'false' || (author && author.textContent.trim() !== user)) {
+        if (isEditable == false || (author && author.textContent.trim() !== user)) {
 
             editBtn = notes[i].getElementsByClassName('note-edit')[0];
 
