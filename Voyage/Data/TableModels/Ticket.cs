@@ -15,10 +15,12 @@ namespace Voyage.Data.TableModels
             PriorityLevel = PriorityLevel.Low;
             SectionTitle = string.Empty;
             TicketDetails = new List<TicketDetails>();
+            TicketChangeAction = string.Empty;
         }
 
         public int TicketId { get; set; } 
         public decimal TicketVersion { get; set; }
+        public string TicketChangeAction { get; set; }
 
         public string Title { get; set; }
         public string Status { get; set; } 

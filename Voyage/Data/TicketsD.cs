@@ -180,7 +180,8 @@ namespace Voyage.Data
                         CreatedBy = existingTicket.CreatedBy,
                         CreatedDate = existingTicket.CreatedDate,
                         ModifiedBy = ticketDTO.CreatedBy,
-                        ModifiedDate = DateTime.UtcNow
+                        ModifiedDate = DateTime.UtcNow,
+                        TicketChangeAction = ticketDTO.TicketChangeAction
                     };
 
                     await _db.Tickets.AddAsync(newVersion);
@@ -207,7 +208,8 @@ namespace Voyage.Data
                         SprintStartDate = ticketDTO.SprintStartDate,
                         SprintEndDate = ticketDTO.SprintEndDate,
                         CreatedBy = ticketDTO.CreatedBy,
-                        CreatedDate = DateTime.UtcNow
+                        CreatedDate = DateTime.UtcNow,
+                        TicketChangeAction = ticketDTO.TicketChangeAction
                     };
 
                     await _db.Tickets.AddAsync(newTicket);
@@ -279,6 +281,7 @@ namespace Voyage.Data
                     ModifiedDate = t.ModifiedDate,
                     IsLatest = t.IsLatest,
                     IsActive = t.IsActive,
+                    TicketChangeAction = t.TicketChangeAction,
                     TicketDetailsDTOs = ticketDetails
                         .Select(td => new TicketDetailsDTO
                         {
@@ -304,13 +307,17 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<decimal>> GetAllTicketVersions(int ticketId)
+        public async Task<List<TicketVersionDTO>> GetAllTicketVersions(int ticketId)
         {
             try
             {
                 return await _db.Tickets
                     .Where(t => t.TicketId == ticketId)
-                    .Select(t => t.TicketVersion)
+                    .Select(t => new TicketVersionDTO
+                    { 
+                        TicketVersion = t.TicketVersion,
+                        TicketChangeAction = t.TicketChangeAction
+                    })
                     .ToListAsync();
             }
             catch (Exception ex)

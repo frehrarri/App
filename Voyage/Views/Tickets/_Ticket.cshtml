@@ -57,7 +57,7 @@
 
         <div id="dueDateContainer" class="dataContainer">
             <label id="lblDueDateTitle" class="title">Due Date:</label>
-            <label id="lblDueDate">@FormatUtcDateTime(Model.DueDate)</label>
+            <label id="lblDueDate">@FormatUtcDate(Model.DueDate)</label>
         </div>
 
         <div id="authorContainer" class="dataContainer">
@@ -100,11 +100,11 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var version in Model.VersionHistory.OrderByDescending(version => version))
+            @foreach(var v in Model.VersionHistory.OrderByDescending(v => v.TicketVersion))
             {
                 <tr>
-                    <td class="app-table-data"><a class="versionHistoryLink">@version</a></td>
-                    <td class="app-table-data">action</td>
+                    <td class="app-table-data"><a class="versionHistoryLink">@v.TicketVersion</a></td>
+                    <td class="app-table-data">@Html.Raw(v.TicketChangeAction)</td>
                 </tr>
             }
             

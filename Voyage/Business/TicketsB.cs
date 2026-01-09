@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
+using System.Text;
 using System.Text.Encodings.Web;
 using Voyage.Data;
 using Voyage.Data.TableModels;
+using Voyage.Models.App;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
+using static Voyage.Models.DTO.SectionDTO;
 using static Voyage.Utilities.Constants;
 using static Voyage.Utilities.HelperMethods;
-using static Voyage.Models.DTO.SectionDTO;
 
 namespace Voyage.Business
 {
@@ -46,9 +49,19 @@ namespace Voyage.Business
         {
             TicketDTO? ticket = await _ticketsD.GetTicket(ticketId, ticketVersion);
 
-            if (ticket != null) 
-                ticket.TicketVersionHistory = await _ticketsD.GetAllTicketVersions(ticketId);
+            if (ticket != null)
+            {
+                var history = await _ticketsD.GetAllTicketVersions(ticketId);
+                foreach (var h in history)
+                {
+                    if (!string.IsNullOrEmpty(h.TicketChangeAction))
+                    {
+                        h.TicketChangeAction = h.TicketChangeAction.Replace("\n", "<br />");
+                    }
 
+                    ticket.TicketVersionHistory = history;
+                }
+            }
             return ticket;
         }
 
@@ -78,6 +91,8 @@ namespace Voyage.Business
 
             if (String.IsNullOrEmpty(ticketDTO.AssignedTo))
                 ticketDTO.AssignedTo = nameof(Constants.Roles.Unassigned);
+
+            ticketDTO.TicketChangeAction = await HandleTicketChangeAction(ticketDTO);
 
             return await _ticketsD.SaveTicket(ticketDTO);
         }
@@ -113,6 +128,92 @@ namespace Voyage.Business
 
             return await _ticketsD.SaveTicketDetails(details);
         }
+
+        public async Task<string> HandleTicketChangeAction(TicketDTO ticketToSave)
+        {
+            TicketDTO? ticket = await GetTicket(ticketToSave.TicketId, null);
+
+            if (ticket == null)
+                return AddSpacesToSentence(Constants.TicketChangeAction.CreatedTicket.ToString());
+
+            StringBuilder sb = new StringBuilder();
+
+            if (ticketToSave.SectionTitle != ticket.SectionTitle)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>", 
+                    AddSpacesToSentence(Constants.TicketChangeAction.SectionChanged.ToString()),
+                    ticket.SectionTitle,
+                    ticketToSave.SectionTitle)
+                );
+            }
+
+            if (ticketToSave.Status != ticket.Status)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.StatusChanged.ToString()),
+                    ticket.Status,
+                    ticketToSave.Status)
+                );
+            }
+
+            if (ticketToSave.Title != ticket.Title)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.TitleChanged.ToString()),
+                    ticket.Title,
+                    ticketToSave.Title)
+                );
+            }
+
+            if (ticketToSave.Description != ticket.Description)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.DescriptionChanged.ToString()),
+                    ticket.Description,
+                    ticketToSave.Description)
+                );
+            }
+
+            if (ticketToSave.AssignedTo != ticket.AssignedTo)
+            {
+                TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+                string user = textInfo.ToTitleCase(ticketToSave.AssignedTo);
+
+                sb.AppendLine(AddSpacesToSentence(Constants.TicketChangeAction.AssignedTo.ToString() + " " + user));
+            }
+
+            if (ticketToSave.PriorityLevel != ticket.PriorityLevel)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.PriorityLevelChanged.ToString()),
+                    ticket.PriorityLevel,
+                    ticketToSave.PriorityLevel)
+                );
+            }
+
+            if (ticketToSave.DueDate != ticket.DueDate)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.DueDateChanged.ToString()),
+                    ticket.DueDate,
+                    ticketToSave.DueDate)
+                );
+            }
+
+            if (ticketToSave.ParentTicketId != ticket.ParentTicketId)
+            {
+                sb.AppendLine(String.Format("<b>{0}</b> from <b>{1}</b> to <b>{2}</b>",
+                    AddSpacesToSentence(Constants.TicketChangeAction.ParentTicketChanged.ToString()),
+                    ticket.ParentTicketId,
+                    ticketToSave.ParentTicketId)
+                );
+            }
+
+            return sb.ToString();
+        }
+
+
+
         public List<SectionDTO> SetSectionsDevelopment()
         {
             List<SectionDTO> sections = new List<SectionDTO>();
@@ -140,5 +241,7 @@ namespace Voyage.Business
 
             return sections;
         }
+
+
     }
 }

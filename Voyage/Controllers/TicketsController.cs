@@ -7,6 +7,7 @@ using Voyage.Data;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
+using static Voyage.Utilities.Constants;
 using static Voyage.Utilities.CustomAttributes;
 
 namespace Voyage.Controllers
@@ -162,7 +163,8 @@ namespace Voyage.Controllers
                 IsActive = t.IsActive,
                 IsLatest = t.IsLatest,
                 SprintStartDate = t.SprintStartDate.GetValueOrDefault(),
-                SprintEndDate = t.SprintEndDate.GetValueOrDefault()
+                SprintEndDate = t.SprintEndDate.GetValueOrDefault(),
+                TicketChangeAction = t.TicketChangeAction
             }).ToList();
         }
 
@@ -188,6 +190,7 @@ namespace Voyage.Controllers
             ticketVM.VersionHistory = ticket.TicketVersionHistory;
             ticketVM.IsActive = ticket.IsActive;
             ticketVM.IsLatest = ticket.IsLatest;
+            ticketVM.TicketChangeAction = ticket.TicketChangeAction;
 
             return ticketVM;
         }

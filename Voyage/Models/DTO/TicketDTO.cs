@@ -8,11 +8,12 @@ namespace Voyage.Models.DTO
         public TicketDTO() 
         {
             TicketDetailsDTOs = new List<TicketDetailsDTO>();
-            TicketVersionHistory = new List<decimal>();
+            TicketVersionHistory = new List<TicketVersionDTO>();
         }
 
         public int TicketId { get; set; }            
         public decimal TicketVersion { get; set; }
+        public string TicketChangeAction { get; set; } = string.Empty;
 
         public string Title { get; set; } = string.Empty;
         public string Status { get; set; } = TicketStatus.NotStarted.ToString();
@@ -28,7 +29,7 @@ namespace Voyage.Models.DTO
         public DateTime? SprintStartDate { get; set; }
         public DateTime? SprintEndDate { get; set; }
 
-        public List<decimal> TicketVersionHistory { get; set; }
+        public List<TicketVersionDTO> TicketVersionHistory { get; set; }
 
         public List<TicketDetailsDTO> TicketDetailsDTOs { get; set; }
 

@@ -89,7 +89,6 @@
         #endregion
 
 
-
         #region enums
         public enum LogSeverity
         {
@@ -135,6 +134,18 @@
             Discontinued
         }
 
+        public enum TicketChangeAction
+        {
+            CreatedTicket,
+            SectionChanged,
+            StatusChanged,
+            TitleChanged,
+            DescriptionChanged,
+            AssignedTo,
+            PriorityLevelChanged,
+            DueDateChanged,
+            ParentTicketChanged
+        }
         #endregion
 
 
