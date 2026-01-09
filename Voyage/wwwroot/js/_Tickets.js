@@ -148,26 +148,34 @@ function updatePaginatedUI(e, sectionTitle) {
     const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
     let numPages = Math.ceil(totalTicketCount / numResults);
 
-    getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
-
-    //go left by take amount
+    //left arrow button
     if (e.target.id == `btn-left-section${sectionTitle}`) {
         targetPage = currentPage - 1;
-    }
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
 
-    //go right by take amount
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        selectedPageButton.classList.add("selected");
+        selectedPageButton.disabled = true;
+    }
+    //right arrow button
     if (e.target.id == `btn-right-section${sectionTitle}`) {
         targetPage = currentPage + 1;
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
+
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        selectedPageButton.classList.add("selected");
+        selectedPageButton.disabled = true;
     }
 
-    //go to the target page
+    //specific page button
     if (e.target.classList.contains('page')) {
         targetPage = parseInt(e.target.dataset.page);
 
         //remove selected/disabled from previous page button
-        let currentPageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`);
-        currentPageBtn.classList.remove("selected");
-        currentPageBtn.disabled = false;
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
 
         //update selected/disabled to the target page button
         e.target.classList.add("selected");
@@ -200,16 +208,20 @@ function updatePaginatedUI(e, sectionTitle) {
                 btn.disabled = true;
             }
 
+            btn.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle));
+
             container.appendChild(btn);
         }
     }
+
+    getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
 
     //disable/enable left/right arrows 
     const leftBtn = document.getElementById(`btn-left-section${sectionTitle}`);
     const rightBtn = document.getElementById(`btn-right-section${sectionTitle}`);
 
     leftBtn.disabled = targetPage === 1;
-    rightBtn.disabled = targetPage === numOfPages;
+    rightBtn.disabled = targetPage === numPages;
 }
 
 function handlePriorityLevel(priorityLevel) {
