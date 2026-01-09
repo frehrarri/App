@@ -87,9 +87,6 @@ namespace Voyage.Business
             return await _ticketsD.DeleteTicket(ticketId);
         }
 
-
-
-
         public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
         {
             details.Note = SanitizeHtmlForXSS(details.Note);

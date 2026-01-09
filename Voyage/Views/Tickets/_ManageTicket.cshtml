@@ -102,8 +102,12 @@
             <select id="ticketStatus" name="Status">
                 <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
                 <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
-                <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
                 <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
+                @if (Model?.SectionTitle == "QA")
+                {
+                    <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
+                }
+                
             </select>
         </div>
     </div>
