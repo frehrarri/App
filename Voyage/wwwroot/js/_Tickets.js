@@ -268,7 +268,6 @@ export function init() {
 
         //add change event for select list
         if (el.id.includes(`sel-take-section`)) {
-            /*const preChangeResultNum = parseInt(document.querySelector(`select.paginate[data-section="${sectionTitle}"]`).value);*/
             el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
         }
         //click events for buttons

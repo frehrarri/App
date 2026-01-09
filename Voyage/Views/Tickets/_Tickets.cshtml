@@ -5,8 +5,14 @@
 <h1>Tickets</h1>
 
 <hr />
-<h4>Sprint @Model.Sprint.SprintId      -------------------------------------------------------------       @Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+
+<div id="sprint-header">
+    <h4>Sprint @Model.Sprint.SprintId</h4>
+    <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+</div>
+
 <hr />
+<br />
 
 @foreach (var s in Model.Sections)
 {
@@ -25,7 +31,7 @@
             <thead>
                 <tr>
                     <th class="app-table-header"></th>
-                    <th class="app-table-header">Ticket #</th>
+                    <th class="app-table-header">ID</th>
                     <th class="app-table-header">@nameof(TicketVM.Title)</th>
                     <th class="app-table-header">@nameof(TicketVM.Status)</th>
                     <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>

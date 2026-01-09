@@ -33,6 +33,9 @@ export function init(params) {
         description.addEventListener('keydown', handleEnter);
     }
 
+    const assignedTo = document.getElementById('ticketAssignedTo');
+    assignedTo.addEventListener("click", (e) => assignedTo.value = "");
+
     addUserSearchEventListener("ticketAssignedTo", "userResults");
 }
 

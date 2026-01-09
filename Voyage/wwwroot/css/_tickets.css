@@ -1,1 +1,8 @@
-﻿
+﻿#sprint-header {
+    display: flex;
+    align-items: center;
+}
+
+    #sprint-header h4:last-child {
+        margin-left: auto;
+    }
