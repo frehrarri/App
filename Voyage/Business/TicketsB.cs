@@ -140,36 +140,32 @@ namespace Voyage.Business
 
             if (ticketToSave.SectionTitle != ticket.SectionTitle)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>", 
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}", 
                     AddSpacesToSentence(Constants.TicketChangeAction.SectionChanged.ToString()),
-                    ticket.SectionTitle,
                     ticketToSave.SectionTitle)
                 );
             }
 
             if (ticketToSave.Status != ticket.Status)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.StatusChanged.ToString()),
-                    ticket.Status,
                     ticketToSave.Status)
                 );
             }
 
             if (ticketToSave.Title != ticket.Title)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.TitleChanged.ToString()),
-                    ticket.Title,
                     ticketToSave.Title)
                 );
             }
 
             if (ticketToSave.Description != ticket.Description)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.DescriptionChanged.ToString()),
-                    ticket.Description,
                     ticketToSave.Description)
                 );
             }
@@ -178,36 +174,34 @@ namespace Voyage.Business
             {
                 TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
                 string user = textInfo.ToTitleCase(ticketToSave.AssignedTo);
+                string oldUser = textInfo.ToTitleCase(ticket.AssignedTo);
 
-                sb.AppendLine(String.Format("<b>{0}</b> <u>{1}</u>", 
-                    AddSpacesToSentence(Constants.TicketChangeAction.AssignedTo.ToString()),
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
+                    Constants.TicketChangeAction.Assigned.ToString(),
                     user)
                 );
             }
 
             if (ticketToSave.PriorityLevel != ticket.PriorityLevel)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.PriorityLevelChanged.ToString()),
-                    ticket.PriorityLevel,
                     ticketToSave.PriorityLevel)
                 );
             }
 
             if (ticketToSave.DueDate != ticket.DueDate)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.DueDateChanged.ToString()),
-                    ticket.DueDate,
                     ticketToSave.DueDate)
                 );
             }
 
             if (ticketToSave.ParentTicketId != ticket.ParentTicketId)
             {
-                sb.AppendLine(String.Format("<b>{0}</b> from <u>{1}</u> to <u>{2}</u>",
+                sb.AppendLine(String.Format("<b>{0}:</b> {1}",
                     AddSpacesToSentence(Constants.TicketChangeAction.ParentTicketChanged.ToString()),
-                    ticket.ParentTicketId,
                     ticketToSave.ParentTicketId)
                 );
             }

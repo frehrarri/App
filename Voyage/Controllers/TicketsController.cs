@@ -43,10 +43,19 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        [IgnoreAntiforgeryToken]
         public async Task<IActionResult> TicketPartial(int ticketId, decimal? ticketVersion = null)
         {
             TicketVM? vm = await GetTicket(ticketId, ticketVersion);
-            return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
+            try
+            {
+                return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+            //return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
         }
 
         [HttpGet]

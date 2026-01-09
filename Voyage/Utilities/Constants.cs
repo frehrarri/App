@@ -141,7 +141,7 @@
             StatusChanged,
             TitleChanged,
             DescriptionChanged,
-            AssignedTo,
+            Assigned,
             PriorityLevelChanged,
             DueDateChanged,
             ParentTicketChanged

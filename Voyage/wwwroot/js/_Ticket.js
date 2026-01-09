@@ -9,6 +9,10 @@ export async function init() {
     //edit
     document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
         const ticketId = document.getElementById('lblTicketId').textContent;
+
+        //const module = await loadModule("tickets");
+        //await module.getManageTicketPartial(ticketId, null);
+
         const version = new Date().getTime();
         const module = await import(`./_tickets.js?v=${version}`);
         await module.getManageTicketPartial(ticketId, null);
@@ -25,7 +29,8 @@ export async function init() {
                 document.getElementById("lblTicketId").textContent
             );
 
-            const module = await import(`./_tickets.js?v=${Date.now()}`);
+            const module = await import(`./_tickets.js?v=${new Date().getTime()}`);
+           /* const module = await loadModule("tickets");*/
             await module.getTicketPartial(ticketId, version);
         });
     }

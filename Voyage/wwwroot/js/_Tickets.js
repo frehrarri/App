@@ -10,7 +10,7 @@ export async function getManageTicketPartial(ticketId, sectionTitle) {
         await loadModule("manageTicket", { ticketId, sectionTitle });
         return true;
     } catch (error) {
-        console.error("error", error);
+        console.error("error: getManageTicketPartial", error);
         return false;
     }
 }
@@ -25,7 +25,7 @@ export async function getTicketPartial(ticketId, ticketVersion) {
         await loadModule("ticket", { ticketId });
         return true;
     } catch (error) {
-        console.error("error", error);
+        console.error("error: getTicketPartial", error);
         return false;
     }
 }
@@ -38,7 +38,7 @@ export async function getTicketsPartial() {
         await loadModule("tickets");
         return true;
     } catch (error) {
-        console.error("error", error);
+        console.error("error: getTicketsPartial", error);
         return false;
     }
 }
@@ -144,7 +144,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
         return true;
     } catch (error) {
-        console.error("error", error);
+        console.error("error: getPaginatedTickets", error);
         return false;
     }
 }

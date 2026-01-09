@@ -82,7 +82,7 @@
     @if (!Model.IsLatest!.Value)
     {
         <span id="oldTicketVersion">
-            ! To make changes please visit the latest version: <a class="versionHistoryLink">@Model.VersionHistory.Max()</a>
+            ! To make changes please visit the latest version: <a class="versionHistoryLink">@Model.VersionHistory.Max(v => v.TicketVersion)</a>
         </span>
     }
 
