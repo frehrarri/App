@@ -236,6 +236,8 @@ function updatePaginatedUI(e, sectionTitle) {
 
     leftBtn.disabled = targetPage === 1;
     rightBtn.disabled = targetPage === numPages;
+
+    //document.getElementById(`heading-${sectionTitle}`).focus();
 }
 
 function handlePriorityLevel(priorityLevel) {
