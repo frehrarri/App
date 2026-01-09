@@ -121,11 +121,25 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td12 = document.createElement('td');
             td12.className = 'app-table-data';
-            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket" data-id="${ticket.ticketId}">View</button>`;
+            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" data-id="${ticket.ticketId}">Edit</button></span>`;
             row.appendChild(td12);
 
             //append the row to the table body
             tableBody.appendChild(row);
+
+            //event listeners
+            document.querySelectorAll(".goto-ticket").forEach(btn =>
+                btn.addEventListener("click", (e) => getTicketPartial(btn.dataset.id))
+            );
+
+            document.querySelectorAll(".btnAddTicket").forEach(btn =>
+                btn.addEventListener("click", () => getManageTicketPartial(null, btn.dataset.section))
+            );
+
+            document.querySelectorAll("#btnEditTicket").forEach(btn =>
+                btn.addEventListener("click", () => getManageTicketPartial(btn.dataset.id, null))
+            );
+
         });
 
         return true;
@@ -229,7 +243,7 @@ function handlePriorityLevel(priorityLevel) {
         case 0: return "Low";
         case 1: return "Medium";
         case 2: return "High";
-        default: break;
+        default: return;
     }
 }
 
