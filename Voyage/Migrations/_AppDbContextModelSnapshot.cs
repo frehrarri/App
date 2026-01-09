@@ -301,7 +301,7 @@ namespace Voyage.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>

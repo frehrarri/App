@@ -19,7 +19,7 @@
                                 .Take(5)
                                 .ToList();
 
-    <h4 id="heading-@(s.Title)" tabindex="0">@s.Title</h4>
+    <h4>@s.Title</h4>
     <div id="@(s.Title)-container">
         <table class="app-table">
         <thead>
@@ -81,52 +81,34 @@
         </tbody>
     </table>
 
-    <br />
+        <br />
 
-    <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
-        <option value="5" selected>5</option>
-        <option value="10">10</option>
-        <option value="15">15</option>
-        <option value="20">20</option>
-    </select>
+        <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
 
-    <button id="btn-left-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>&lt;--</button>
-
+        <button id="btn-left-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>&lt;--</button>
     <span id="page-btn-container-@s.Title">
-
-    @if(sectionTickets.Count() > 0)
+    @for(int i = 1; i <= numOfPages; i++)
     {
-        for(int i = 1; i <= numOfPages; i++)
+        
+        @if (i == 1)
         {
-            @if (i == 1)
-            {
-                <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
-            }
-            else
-            {
-                <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
-            }
+            <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+        }
+        else
+        {
+            <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
         }
     }
-    else
-    {
-        <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
-    }
-    
     </span>
-
-    @if(numOfPages < 2 || sectionTickets.Count() == 0)
-    {
-        <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>--></button>
-    }
-    else
-    {
         <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button">--></button>
-    }
 
-
-    <br />
-    <br />
+        <br />
+        <br />
 
     </div>
     <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
