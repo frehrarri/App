@@ -1,5 +1,6 @@
 ﻿import { loadModule } from './__moduleLoader.js';
 
+
 export function init(params) {
 
     //set section dropdown based on which table the user clicks the add button for
@@ -12,21 +13,8 @@ export function init(params) {
 
     document.getElementById("submitTicket")?.addEventListener("click", saveTicket);
     document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
-    document.getElementById("cancel")?.addEventListener("click", async () =>
-    {
-        const module = await loadModule("tickets");
-
-        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
-
-        if (isEdit) {
-            let ticketId = parseInt(document.getElementById('ticketId').value);
-
-            await module.getTicketPartial(ticketId);
-        }
-        else {
-            await module.getTicketsPartial();
-        }
-    });
+    document.getElementById("undo-button")?.addEventListener("click", undo);
+    document.getElementById("cancel")?.addEventListener("click", cancel);
 
     //content editable div
     const description = document.getElementById('ticketDesc');
@@ -37,6 +25,10 @@ export function init(params) {
     const assignedTo = document.getElementById('ticketAssignedTo');
     assignedTo.addEventListener("click", (e) => assignedTo.value = "");
 
+    //undo
+    addUndoEventListeners();
+
+    //debounced search
     addUserSearchEventListener("ticketAssignedTo", "userResults");
 }
 
@@ -126,5 +118,49 @@ async function deleteTicket() {
 }
 
 
+let preChangeValues = new Map();
 
+function undo() {
+    for (const [input, value] of preChangeValues.entries()) {
+        if (input.type === "checkbox" || input.type === "radio") {
+            input.checked = value;
+        } else if (input.isContentEditable) {
+            input.innerText = value;
+        } else {
+            input.value = value;
+        }
+    }
+}
+
+function addUndoEventListeners() {
+    const form = document.getElementById('ticket-form');
+    if (form) {
+
+        for (const input of form.querySelectorAll("input, textarea, select, div[contenteditable='true']")) {
+
+            if (input.type === "checkbox" || input.type === "radio") {
+                preChangeValues.set(input, input.checked);
+            } else if (input.isContentEditable) {
+                preChangeValues.set(input, input.innerText);
+            } else {
+                preChangeValues.set(input, input.value);
+            }
+        }
+    }
+}
+
+async function cancel() {
+    const module = await loadModule("tickets");
+
+    let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
+
+    if (isEdit) {
+        let ticketId = parseInt(document.getElementById('ticketId').value);
+
+        await module.getTicketPartial(ticketId);
+    }
+    else {
+        await module.getTicketsPartial();
+    }
+}
 

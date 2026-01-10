@@ -18,7 +18,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #86b7fe17;
 }
 
 .border-error {
@@ -27,6 +28,10 @@ body {
 
 .text-error {
     color: red !important;
+}
+
+.app-main {
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .app-table{
@@ -64,3 +69,42 @@ body {
 .hidden {
     display: none;
 }
+
+.primary-btn {
+    padding: 4px 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    border-radius: 6px;
+    border: none;
+    color: #fff;
+    background: #4B91F7;
+    background-origin: border-box;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    /*user-select: none;*/
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.secondary-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    border-radius: 6px;
+    color: #3D3D3D;
+    background: #fff;
+    border: none;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.app-table-row:nth-child(odd) {
+    background-color: #86b7fe17;
+}
+
+.app-table-row:nth-child(even) {
+    background-color: #f8f9fa;
+}
+

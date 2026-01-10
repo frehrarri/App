@@ -63,6 +63,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
         response.data.tickets.forEach(ticket => {
             //create new row
             const row = document.createElement('tr');
+            row.className = 'app-table-row';
 
             //create new cells
             const td1 = document.createElement('td');
@@ -122,7 +123,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td12 = document.createElement('td');
             td12.className = 'app-table-data';
-            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" class="edit-btn" data-id="${ticket.ticketId}" data-author="${ticket.createdBy}">Edit</button></span>`;
+            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket primary-btn" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="${ticket.ticketId}" data-author="${ticket.createdBy}">Edit</button></span>`;
             row.appendChild(td12);
 
             //append the row to the table body
@@ -164,9 +165,13 @@ function updatePaginatedUI(e, sectionTitle) {
     
     const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
     let numPages = Math.ceil(totalTicketCount / numResults);
+    debugger;
+
+    const selectedBtn = e.target.closest(".paginate");
 
     //left arrow button
-    if (e.target.id == `btn-left-section${sectionTitle}`) {
+    if (selectedBtn.id == `btn-left-section${sectionTitle}`) {
+        
         targetPage = currentPage - 1;
         pageBtn.classList.remove("selected");
         pageBtn.disabled = false;
@@ -176,7 +181,7 @@ function updatePaginatedUI(e, sectionTitle) {
         selectedPageButton.disabled = true;
     }
     //right arrow button
-    if (e.target.id == `btn-right-section${sectionTitle}`) {
+    if (selectedBtn.id == `btn-right-section${sectionTitle}`) {
         targetPage = currentPage + 1;
         pageBtn.classList.remove("selected");
         pageBtn.disabled = false;
@@ -187,7 +192,7 @@ function updatePaginatedUI(e, sectionTitle) {
     }
 
     //specific page button
-    if (e.target.classList.contains('page')) {
+    if (selectedBtn.classList.contains('page')) {
         targetPage = parseInt(e.target.dataset.page);
 
         //remove selected/disabled from previous page button
@@ -241,6 +246,8 @@ function updatePaginatedUI(e, sectionTitle) {
     rightBtn.disabled = targetPage === numPages;
 
     toggleEditBtns();
+
+    styleTable();
     
     document.getElementById(`${sectionTitle}-container`).focus();
 }
@@ -264,6 +271,45 @@ function toggleEditBtns() {
         }
     }
 }
+
+function styleTable(container = document) {
+    // Style primary buttons
+    container.querySelectorAll(".primary-btn").forEach(btn => {
+        btn.style.padding = "4px 12px";
+        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+        btn.style.borderRadius = "6px";
+        btn.style.border = "none";
+        btn.style.color = "#fff";
+        btn.style.background = "#4B91F7";
+        btn.style.backgroundOrigin = "border-box";
+        btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
+        btn.style.webkitUserSelect = "none";
+        btn.style.touchAction = "manipulation";
+    });
+
+    // Style secondary buttons
+    container.querySelectorAll(".secondary-btn").forEach(btn => {
+        btn.style.display = "flex";
+        btn.style.flexDirection = "column";
+        btn.style.alignItems = "center";
+        btn.style.padding = "4px 12px";
+        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+        btn.style.borderRadius = "6px";
+        btn.style.color = "#3D3D3D";
+        btn.style.background = "#fff";
+        btn.style.border = "none";
+        btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
+        btn.style.userSelect = "none";
+        btn.style.webkitUserSelect = "none";
+        btn.style.touchAction = "manipulation";
+    });
+
+    // Style table rows (zebra stripes)
+    container.querySelectorAll(".app-table-row").forEach((row, i) => {
+        row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
+    });
+}
+
 
 export function init() {
     document.querySelectorAll(".btnAddTicket").forEach(btn =>

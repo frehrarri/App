@@ -89,8 +89,8 @@ function addNote() {
         </div>
         <div class="note-content" contenteditable="true" data-placeholder="Enter notes..."></div>
         <div class="note-actions">
-            <button type="button" class="btn-save-note">Save</button>
-            <button type="button" class="btn-clear-note">Clear</button>
+            <button type="button" class="btn-save-note primary-btn">Save</button>
+            <button type="button" class="btn-clear-note secondary-btn">Clear</button>
         </div>
     `;
 
@@ -148,7 +148,7 @@ async function saveNote(noteDiv) {
 <span class="note-author">${response.data.author}</span>
 ${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></span>` : ''}
 <span class="note-date">${formatUtc(response.data.createdDate)}</span>
-</div><div class="note-content-display">${response.data.note}</div><button type="button" class="note-edit">Edit</button>`;
+</div><div class="note-content-display">${response.data.note}</div><button type="button" class="note-edit secondary-btn">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', () =>
     {
@@ -205,8 +205,8 @@ function enableEdit(noteDiv) {
         </div>
         <div class="note-content" contenteditable="true">${contentText}</div>
         <div class="note-actions">
-            <button type="button" class="btn-save-note">Save</button>
-            <button type="button" class="btn-cancel-note">Cancel</button>
+            <button type="button" class="btn-save-note primary-btn">Save</button>
+            <button type="button" class="btn-cancel-note secondary-btn">Cancel</button>
         </div>
     `;
 

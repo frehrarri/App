@@ -30,7 +30,7 @@
 
 <div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
 
-<form>
+<form id="ticket-form">
     @Html.AntiForgeryToken()
 
     <!-- Row 1: Ticket #, Parent Ticket #, Section -->
@@ -119,6 +119,7 @@
     <div class="form-buttons">
         <button type="button" id="submitTicket">Save</button>
         <button type="button" id="deleteTicket">Delete</button>
+        <button type="button" id="undo-button">Undo</button>
         <button type="button" id="cancel">Cancel</button>
     </div>
 </form>

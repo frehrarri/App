@@ -1,26 +1,60 @@
 ﻿const scriptVersion = new Date().getTime(); //append version to avoid caching issues
 
 //when a partial view is rendered loadModule is called
-//if the module name is in the module registry it loads the external.js script
 const moduleRegistry = {
-    sideNav: () => import(`./_sidenav.js?v=${scriptVersion}`),
-    manageTicket: () => import(`./_manageTicket.js?v=${scriptVersion}`),
-    tickets: () => import(`./_tickets.js?v=${scriptVersion}`),
-    ticket: () => import(`./_ticket.js?v=${scriptVersion}`)
+    sideNav: {
+        js: () => import(`./_sidenav.js?v=${scriptVersion}`),
+        css: `/css/_sidenav.css?v=${scriptVersion}`
+    },
+    manageTicket: {
+        js: () => import(`./_manageTicket.js?v=${scriptVersion}`),
+        css: `/css/_manageTicket.css?v=${scriptVersion}`
+    },
+    tickets: {
+        js: () => import(`./_tickets.js?v=${scriptVersion}`),
+        css: `/css/_tickets.css?v=${scriptVersion}`
+    },
+    ticket: {
+        js: () => import(`./_ticket.js?v=${scriptVersion}`),
+        css: `/css/_ticket.css?v=${scriptVersion}`
+    }
 };
 
+// Dynamically load CSS if not already loaded
+function loadCss(href) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`link[href="${href}"]`)) {
+            resolve(); // already loaded
+            return;
+        }
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        link.onload = () => resolve();
+        link.onerror = () => reject(`Failed to load CSS: ${href}`);
+        document.head.appendChild(link);
+    });
+}
 
 export async function loadModule(name, params) {
-    if (!moduleRegistry[name]) {
+    const mod = moduleRegistry[name];
+    if (!mod) {
         console.warn(`Module '${name}' not registered`);
         return;
     }
 
-    const module = await moduleRegistry[name]();
-
-    if (typeof module.init === "function") {
-        module.init(params);
+    // 1️⃣ Load CSS first if exists
+    if (mod.css) {
+        await loadCss(mod.css);
     }
 
-    return module;
+    // 2️⃣ Load JS module
+    const jsModule = await mod.js();
+
+    // 3️⃣ Call init if available
+    if (typeof jsModule.init === "function") {
+        jsModule.init(params);
+    }
+
+    return jsModule;
 }

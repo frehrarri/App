@@ -29,7 +29,7 @@
         <h4 id="heading-@(s.Title)">@s.Title</h4>
         <table class="app-table">
             <thead>
-                <tr>
+                <tr class="app-table-row">
                     <th class="app-table-header"></th>
                     <th class="app-table-header">ID</th>
                     <th class="app-table-header">@nameof(TicketVM.Title)</th>
@@ -45,7 +45,7 @@
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
                         <th class="app-table-header">
-                            <button class="btnAddTicket" data-section="@s.Title">Add</button>
+                            <button class="btnAddTicket primary-btn" data-section="@s.Title">Add</button>
                         </th>
                     }
 
@@ -55,7 +55,7 @@
 
                 @foreach (TicketVM ticket in tickets)
                 {
-                    <tr>
+                    <tr class ="app-table-row">
                         <td class="app-table-data">
                             <input type="checkbox" />
                         </td>
@@ -77,10 +77,10 @@
                         @if (s.Title != "Discontinued" && s.Title != "Completed")
                         {
                             <td class="app-table-data">
-                                <button id="btnViewTicket" class="goto-ticket" data-id="@ticket.TicketId">View</button>
+                                <button id="btnViewTicket" class="goto-ticket primary-btn" data-id="@ticket.TicketId">View</button>
                                 @if (ticket.CreatedBy == User.Identity?.Name)
                                 {
-                                    <span><button id="btnEditTicket" class="edit-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
+                                    <span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
                                 }
                                 
                             </td>
@@ -91,18 +91,19 @@
             </tbody>
         </table>
 
-        <br />
+        <div class="pagination-container">
+            <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
 
-        <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
-            <option value="5" selected>5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-        </select>
+            <button id="btn-left-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
 
-        <button id="btn-left-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>&lt;--</button>
-
-        <span id="page-btn-container-@s.Title">
+            <span id="page-btn-container-@s.Title">
 
             @if (sectionTickets.Count() > 0)
             {
@@ -123,22 +124,26 @@
                 <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
             }
 
-        </span>
+            </span>
 
-        @if (numOfPages < 2 || sectionTickets.Count() == 0)
-        {
-            <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button" disabled>--></button>
-        }
-        else
-        {
-            <button id="btn-right-section@(s.Title)" class="paginate" data-section="@s.Title" type="button">--></button>
-        }
+            @if (numOfPages < 2 || sectionTickets.Count() == 0)
+            {
+                <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            }
+            else
+            {
+                <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            }
 
+            </div>
+            <br />
+            <br />
 
-        <br />
-        <br />
-
-    </div>
+         </div>
     <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
 }
 
