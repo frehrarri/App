@@ -1,4 +1,7 @@
-﻿//Initialize side nav when the page loads
+﻿import { loadModule } from './__moduleLoader.js';
+
+//Initialize side nav when the page loads
 document.addEventListener("DOMContentLoaded", async () => {
-    await window.loadModule("sideNav");
+    await loadModule("sideNav");
 });
+

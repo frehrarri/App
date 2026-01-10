@@ -1,10 +1,10 @@
-﻿import { loadModule } from "./main.js";
+﻿import { loadModule } from "./__moduleLoader.js";
 
 async function getTicketsPartial() {
     try {
         const response = await axios.get(`/Tickets/TicketsPartial`);
         document.getElementById("ticket-view").innerHTML = response.data;
-        loadModule("tickets");
+        await loadModule("tickets");
         return true;
     } catch (error) {
         console.error("error", error);

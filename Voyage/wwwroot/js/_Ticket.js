@@ -1,15 +1,16 @@
-﻿export async function init() {
+﻿import { loadModule } from './__moduleLoader.js';
+
+export async function init() {
     //go to ticket
     document.getElementById("btnGoToTickets")?.addEventListener("click", async () => {
-        const module = await window.loadModule("tickets");
+        const module = await loadModule("tickets");
         await module.getTicketsPartial();
     });
 
     //edit
     document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
         const ticketId = document.getElementById('lblTicketId').textContent;
-
-        const module = await window.loadModule("tickets");
+        const module = await loadModule("tickets");
         await module.getManageTicketPartial(ticketId, null);
     }); 
 
@@ -24,7 +25,7 @@
                 document.getElementById("lblTicketId").textContent
             );
 
-            const module = await window.loadModule("tickets");
+            const module = await loadModule("tickets");
             await module.getTicketPartial(ticketId, version);
         });
     }
@@ -63,7 +64,7 @@ async function loadTicketNotes() {
         //default to open add note
         const isLatest = document.getElementById('hdnIsLatest').value;
         const section = document.getElementById('lblSection').innerText;
-        const isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+        const isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
 
         if (isEditable) {
             addNote();
@@ -157,7 +158,7 @@ ${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUt
     //open new add note after saving
     const isLatest = document.getElementById('hdnIsLatest').value;
     const section = document.getElementById('lblSection').innerText;
-    const isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+    const isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
 
     if (isEditable) {
         addNote();
@@ -238,7 +239,7 @@ function hideEditBtns() {
     let editBtn = document.getElementById('btnEditTicket');
     let author = document.getElementById("lblAuthor")?.textContent.trim();
 
-    let isEditable = isLatest === 'false' || (section !== 'Completed' && section !== 'Discontinued');
+    let isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
 
     if (isEditable == false || (author && author !== user)) {
         if (editBtn) {

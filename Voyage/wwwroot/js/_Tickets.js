@@ -1,11 +1,14 @@
-﻿export async function getManageTicketPartial(ticketId, sectionTitle) {
+﻿import { loadModule } from './__moduleLoader.js';
+
+export async function getManageTicketPartial(ticketId, sectionTitle) {
     try {
         const response = await axios.get('/Tickets/ManageTicketPartial', {
             params: { ticketId: ticketId }
         });
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await window.loadModule("manageTicket");
+        await loadModule("manageTicket");
+
         return true;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
@@ -20,7 +23,7 @@ export async function getTicketPartial(ticketId, ticketVersion) {
         });
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await window.loadModule("ticket");
+        await loadModule("ticket")
         return true;
     } catch (error) {
         console.error("error: getTicketPartial", error);
@@ -33,7 +36,7 @@ export async function getTicketsPartial() {
         const response = await axios.get('/Tickets/TicketsPartial');
 
         document.getElementById("ticket-view").innerHTML = response.data;
-        await window.loadModule("tickets");
+        await loadModule("tickets");
         return true;
     } catch (error) {
         console.error("error: getTicketsPartial", error);
@@ -119,7 +122,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             const td12 = document.createElement('td');
             td12.className = 'app-table-data';
-            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" data-id="${ticket.ticketId}">Edit</button></span>`;
+            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" class="edit-btn" data-id="${ticket.ticketId}" data-author="${ticket.createdBy}">Edit</button></span>`;
             row.appendChild(td12);
 
             //append the row to the table body
@@ -139,6 +142,8 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
             );
 
         });
+
+        toggleEditBtns();
 
         return true;
     } catch (error) {
@@ -235,6 +240,7 @@ function updatePaginatedUI(e, sectionTitle) {
     leftBtn.disabled = targetPage === 1;
     rightBtn.disabled = targetPage === numPages;
 
+    toggleEditBtns();
     
     document.getElementById(`${sectionTitle}-container`).focus();
 }
@@ -245,6 +251,17 @@ function handlePriorityLevel(priorityLevel) {
         case 1: return "Medium";
         case 2: return "High";
         default: return;
+    }
+}
+
+function toggleEditBtns() {
+    let editBtns = document.querySelectorAll('.edit-btn');
+    const user = document.getElementById('hdnUser').value;
+
+    for (const btn of editBtns) {
+        if (btn.dataset.author !== user) {
+            btn.style.display = 'none';
+        }
     }
 }
 
@@ -272,6 +289,7 @@ export function init() {
         else {
             el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
         }
-        
     });
+
+
 }

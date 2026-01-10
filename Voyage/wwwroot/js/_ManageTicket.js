@@ -1,4 +1,6 @@
-﻿export function init(params) {
+﻿import { loadModule } from './__moduleLoader.js';
+
+export function init(params) {
 
     //set section dropdown based on which table the user clicks the add button for
     if (params?.sectionTitle) {
@@ -12,9 +14,9 @@
     document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
     document.getElementById("cancel")?.addEventListener("click", async () =>
     {
-        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
+        const module = await loadModule("tickets");
 
-        const module = await window.loadModule("tickets");
+        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
 
         if (isEdit) {
             let ticketId = parseInt(document.getElementById('ticketId').value);
@@ -67,11 +69,12 @@ async function saveTicket() {
         showSuccess(true);
         // Go back to tickets list after successful save
         setTimeout(async () => {
-            const module = await window.loadModule("tickets");
+
+            const module = await loadModule("tickets");
 
             if (isEdit) {
                 let ticketId = parseInt(document.getElementById('ticketId').value);
-                
+
                 await module.getTicketPartial(ticketId);
             }
             else {
@@ -108,7 +111,7 @@ async function deleteTicket() {
 
         showSuccess(true);
 
-        const module = await window.loadModule("tickets");
+        const module = await loadModule("tickets");
         await module.getTicketsPartial();
 
         return response.data;

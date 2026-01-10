@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script type="module" src="~/js/main.js"></script>
+<script type="module" src="~/js/main.js" asp-append-version="true"></script>
 
 @{
     await Html.RenderPartialAsync("~/Views/Shared/_SideNav.cshtml");

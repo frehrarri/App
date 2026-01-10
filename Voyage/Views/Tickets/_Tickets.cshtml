@@ -78,7 +78,11 @@
                         {
                             <td class="app-table-data">
                                 <button id="btnViewTicket" class="goto-ticket" data-id="@ticket.TicketId">View</button>
-                                <span><button id="btnEditTicket" data-id="@ticket.TicketId">Edit</button></span>
+                                @if (ticket.CreatedBy == User.Identity?.Name)
+                                {
+                                    <span><button id="btnEditTicket" class="edit-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
+                                }
+                                
                             </td>
                         }
                     </tr>
