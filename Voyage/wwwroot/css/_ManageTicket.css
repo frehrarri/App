@@ -1,61 +1,64 @@
-﻿form {
+﻿#manage-ticket-container {
     display: flex;
     flex-direction: column;
-    max-width: 900px;
-    margin: 0 auto;
-    gap: 12px; /* vertical spacing between rows */
+    gap: 15px;
+    /*margin: 20px 0;*/
+    /*max-height: 500px;*/
+    /*min-height: 70vh;*/
+    width: 1000px;
+    overflow-y: auto;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    background-color: #e8f0fe;
+    padding: 30px 20px;
 }
 
-/* Row container for multiple fields */
-.form-row {
-    display: flex;
-    gap: 12px; /* horizontal spacing */
+form {
+    margin: 0;
 }
 
-/* Each field container inside a row */
-.form-field {
-    flex: 1; /* equal width */
-    display: flex;
-    flex-direction: column;
-}
-
-/* Labels */
 label {
     font-weight: bold;
     margin-bottom: 4px;
 }
 
-/* Inputs, selects, textarea */
-input[type="text"],
-input[type="date"],
-select {
-    width: 100%;
-    box-sizing: border-box;
+.form-row{
+    display:flex;
+    gap: 50px;
+    margin-bottom: 10px;
+}
+
+    .form-row > div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* Make single-field rows full width */
+    /*.form-row.single > div {
+        flex: 0 0 100%;
+    }*/
+
+.form-field {
+    background-color: ghostwhite;
+    border: 1px solid lightgray;
+    border-radius: 5px;
     padding: 6px 8px;
-    font-size: 14px;
 }
 
-textarea {
-    resize: vertical;
-}
 
-/* Buttons row */
 .form-buttons {
     display: flex;
     gap: 6px;
-    margin-top: 12px;
-}
-
-#noteContent {
-    white-space: pre-wrap; /* preserves whitespace & line breaks */
-    min-height: 50px;
-    border: 1px solid #ccc;
-    padding: 8px;
+    margin-top: 30px;
 }
 
 #ticketDesc {
+    background-color: ghostwhite;
     width: 100%;
-    border: 1px solid rgb(118, 118, 118);
-    padding: 6px 8px;
     white-space: pre-wrap; /* preserves whitespace & line breaks */
 }

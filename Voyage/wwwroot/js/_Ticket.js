@@ -154,7 +154,7 @@ async function saveNote(noteDiv) {
 <span class="note-author">${response.data.author}</span>
 ${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></span>` : ''}
 <span class="note-date">${formatUtc(response.data.createdDate)}</span>
-</div><div class="note-content-display">${response.data.note}</div><button type="button" class="note-edit secondary-btn">Edit</button>`;
+</div><div class="note-content-display">${response.data.note}</div><br><button type="button" class="note-edit primary-btn">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', () =>
     {
@@ -186,7 +186,7 @@ function renderNote(note) {
     noteDiv.className = 'ticket-note saved';
 
     // Put everything on one line, no indentation around note.note
-    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span>${edited}<span class="note-date">${formatUtc(note.createdDate)}</span></div><div class="note-content-display">${note.note}</div><button type="button" class="note-edit">Edit</button>`;
+    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span>${edited}<span class="note-date">${formatUtc(note.createdDate)}</span></div><div class="note-content-display">${note.note}</div><br><button type="button" class="note-edit primary-btn">Edit</button>`;
 
     noteDiv.querySelector('.note-edit').addEventListener('click', function () {
         enableEdit(noteDiv);

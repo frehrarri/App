@@ -38,6 +38,7 @@ function addSearchEventListener({
         // Avoid server calls for short or empty input
         if (query.length < minLength) {
             resultsContainer.innerHTML = '';
+            resultsContainer.classList.remove('show');
             return;
         }
 
@@ -63,6 +64,9 @@ function addSearchEventListener({
 
                     resultsContainer.appendChild(element);
                 });
+
+                resultsContainer.classList.toggle('show', response.data.length > 0);
+
             } catch (err) {
                 console.error('Autocomplete search failed:', err);
             }
@@ -71,10 +75,32 @@ function addSearchEventListener({
 
 }
 
+//function addUserSearchEventListener(inputId, resultsContainerId) {
+//    addSearchEventListener({
+//        inputId: inputId,
+//        resultsContainerId: resultsContainerId,
+//        url: '/User/Search',
+
+//        renderItem: (user) => {
+//            const li = document.createElement('li');
+//            li.textContent = `${user.displayName} (${user.email})`;
+//            li.dataset.userId = user.id;
+//            return li;
+//        },
+
+//        onSelect: (user) => {
+//            const input = document.getElementById(inputId);
+//            input.value = user.displayName;
+//            input.dataset.userId = user.id;
+//        }
+
+//    });
+//}
+
 function addUserSearchEventListener(inputId, resultsContainerId) {
     addSearchEventListener({
-        inputId: inputId,
-        resultsContainerId: resultsContainerId,
+        inputId,
+        resultsContainerId,
         url: '/User/Search',
 
         renderItem: (user) => {
@@ -88,9 +114,13 @@ function addUserSearchEventListener(inputId, resultsContainerId) {
             const input = document.getElementById(inputId);
             input.value = user.displayName;
             input.dataset.userId = user.id;
+
+            // hide dropdown on select
+            document.getElementById(resultsContainerId).classList.remove('show');
         }
     });
 }
+
 
 async function handlePaste(e) {
     e.preventDefault();

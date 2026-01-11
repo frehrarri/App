@@ -10,7 +10,7 @@
     border-radius: 5px;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     display: block;
-    background-color: #e8f0fe;
+    background-color: ghostwhite;
     
 }
 
@@ -74,13 +74,10 @@
     border: 1px solid gray;
     border-radius: 5px;
     padding: 15px;
-    background-color: #f0f5fc;
+    background-color: ghostwhite;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
 }
 
-    .ticket-note.saved {
-        background: #fff;
-    }
 
 .note-header {
     display: flex;
@@ -103,7 +100,7 @@
     min-height: 80px;
     padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 5px;
     font-family: inherit;
     resize: vertical;
     background-color:white;
@@ -125,7 +122,6 @@
 }
 
 .btn-save-note, .btn-cancel-note {
-    padding: 5px 15px;
     cursor: pointer;
 }
 

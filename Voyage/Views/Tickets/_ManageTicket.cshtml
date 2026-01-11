@@ -30,98 +30,101 @@
 
 <div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
 
-<form id="ticket-form">
-    @Html.AntiForgeryToken()
+<br />
+<button type="button" id="cancel" class="primary-btn">Back</button>
+<br />
+<br />
 
-    <!-- Row 1: Ticket #, Parent Ticket #, Section -->
-    <div class="form-row">
-        <div class="form-field">
-            <label for="ticketId">Ticket #</label>
-            <input type="text" id="ticketId" value="@(Model?.TicketId == 0 ? null : Model?.TicketId)" readonly />
-        </div>
-        <div class="form-field">
-            <label for="ticketParent">Parent Ticket #</label>
-            <input type="text" id="ticketParent" value="@Model?.ParentTicketId" />
-        </div>
-        <!-- need to make section titles load dynamically from db  -->
-        <div class="form-field">
-            <label for="ticketSectionTitle">Section</label>
-            <select id="ticketSectionTitle" name="SectionTitle">
-                @foreach (var title in sectionTitles)
-                {
-                    if (title == "Discontinued")
-                        continue;
+<div id="manage-ticket-container">
+    <form id="ticket-form">
+        @Html.AntiForgeryToken()
 
-                    <option value="@title" selected="@(Model?.SectionTitle == title)">
-                        @title
-                    </option>
-                }
-            </select>
-        </div>
-    </div>
+        <!-- Row 1: Ticket #, Parent Ticket #, Section -->
+        <div class="form-row">
+            <div>
+                <label for="ticketId">Ticket #</label>
+                <input type="text" id="ticketId" class="form-field" value="@(Model?.TicketId == 0 ? null : Model?.TicketId)" readonly />
+            </div>
+            <div>
+                <label for="ticketParent">Parent Ticket #</label>
+                <input type="text" id="ticketParent" class="form-field" value="@Model?.ParentTicketId" />
+            </div>
+            <!-- need to make section titles load dynamically from db  -->
+            <div>
+                <label for="ticketSectionTitle">Section</label>
+                <select id="ticketSectionTitle" class="form-field" name="SectionTitle">
+                    @foreach (var title in sectionTitles)
+                    {
+                        if (title == "Discontinued")
+                            continue;
 
-    <!-- Row 2: Title -->
-    <div class="form-row">
-        <div class="form-field" style="flex: 1;">
-            <label for="ticketTitle">Title</label>
-            <input type="text" id="ticketTitle" value="@Model?.Title" />
+                        <option value="@title" selected="@(Model?.SectionTitle == title)">
+                            @title
+                        </option>
+                    }
+                </select>
+            </div>
         </div>
-    </div>
 
-    <!-- Row 3: Description -->
-    <div class="form-row">
-        <div class="form-field" style="flex: 1;">
-            <label for="ticketDesc">Description</label>
-            <div id="ticketDesc" contenteditable="true">@Html.Raw(Model?.Description)</div>
+        <!-- Row 2: Title -->
+        <div class="form-row">
+            <div>
+                <label for="ticketTitle">Title</label>
+                <input type="text" class="form-field" id="ticketTitle" value="@Model?.Title" />
+            </div>
         </div>
-    </div>
 
-    <!-- Row 4: Assigned To, Priority Level -->
-    <!-- make this auto populate from list of users matching query as they type -->
-    <div class="form-row">
-        <div class="form-field">
-            <label for="ticketAssignedTo">Assigned To</label>
-            <input type="text" id="ticketAssignedTo" value="@Model?.AssignedTo" />
-            <ul id="userResults" class="autocomplete-list"></ul>
+        <!-- Row 3: Description -->
+        <div class="form-row">
+            <div>
+                <label for="ticketDesc">Description</label>
+                <div id="ticketDesc" class="form-field" contenteditable="true">@Html.Raw(Model?.Description)</div>
+            </div>
         </div>
-        <div class="form-field">
-            <label for="ticketPrioLvl">Priority Level</label>
-            <select id="ticketPrioLvl">
-                <option value="0" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Low)">Low</option>
-                <option value="1" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Medium)">Medium</option>
-                <option value="2" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.High)">High</option>
-            </select>
-        </div>
-    </div>
 
-    <!-- Row 5: Due Date, Status -->
-    <div class="form-row">
-        <div class="form-field">
-            <label for="ticketDueDate">Due Date</label>
-            <input type="date" id="ticketDueDate" value="@Model?.DueDate" />
+        <!-- Row 4: Assigned To, Priority Level -->
+        <!-- make this auto populate from list of users matching query as they type -->
+        <div class="form-row">
+            <div >
+                <label for="ticketAssignedTo">Assigned To</label>
+                <input type="text" class="form-field" id="ticketAssignedTo" value="@Model?.AssignedTo" />
+                <ul id="userResults" class="autocomplete-list"></ul>
+            </div>
+            <div >
+                <label for="ticketPrioLvl">Priority Level</label>
+                <select id="ticketPrioLvl" class="form-field">
+                    <option value="0" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Low)">Low</option>
+                    <option value="1" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Medium)">Medium</option>
+                    <option value="2" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.High)">High</option>
+                </select>
+            </div>
         </div>
-        <div class="form-field">
-            <label for="ticketStatus">Status</label>
-            <select id="ticketStatus" name="Status">
-                <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
-                <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
-                <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
-                @if (Model?.SectionTitle == "QA")
-                {
-                    <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
-                }
+
+        <!-- Row 5: Due Date, Status -->
+        <div class="form-row">
+            <div>
+                <label for="ticketDueDate">Due Date</label>
+                <input type="date" class="form-field" id="ticketDueDate" value="@Model?.DueDate" />
+            </div>
+            <div >
+                <label for="ticketStatus">Status</label>
+                <select id="ticketStatus" class="form-field" name="Status">
+                    <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
+                    <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
+                    <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
+                    @if (Model?.SectionTitle == "QA")
+                    {
+                        <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
+                    }
                 
-            </select>
+                </select>
+            </div>
         </div>
-    </div>
 
-    <!-- Buttons -->
-    <div class="form-buttons">
-        <button type="button" id="submitTicket">Save</button>
-        <button type="button" id="deleteTicket">Delete</button>
-        <button type="button" id="undo-button">Undo</button>
-        <button type="button" id="cancel">Cancel</button>
-    </div>
-</form>
-
-@* <input id="hdnUniqueId" type="hidden" value="@Model.Id" /> *@
+        <div class="form-buttons">
+            <button type="button" id="submitTicket" class="primary-btn">Save</button>
+            <button type="button" id="undo-button" class="secondary-btn">Undo</button>
+            <button type="button" id="deleteTicket" class="warning-btn">Delete</button>
+        </div>
+    </form>
+</div>

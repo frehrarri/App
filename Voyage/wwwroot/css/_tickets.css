@@ -27,8 +27,9 @@
 .paginate {
     border: none;
     box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.5);
-    background-color: ghostwhite;
+    background-color: white;
     max-height: 24px;
+    border-radius: 3px;
 }
 
 .pagination-container {

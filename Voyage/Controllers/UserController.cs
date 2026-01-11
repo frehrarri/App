@@ -193,7 +193,7 @@ namespace Voyage.Controllers
             var users = await _userManager.Users
                 .Where(u => (u.UserName ?? "").Contains(query) || (u.Email ?? "").Contains(query))
                 .OrderBy(u => u.UserName)
-                .Take(10)
+                .Take(5)
                 .Select(u => new {
                     id = u.Id,
                     displayName = u.UserName,
