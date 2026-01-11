@@ -1,4 +1,5 @@
-﻿#ticket-container {
+﻿
+#ticket-container {
     min-height: 100vh;
 }
 
@@ -7,9 +8,10 @@
 #ticket-header {
     border: 1px solid gray;
     border-radius: 5px;
-    box-shadow: gray 2px 2px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     display: block;
-    background-color: #86b7fe17;
+    background-color: #e8f0fe;
+    
 }
 
 .title{
@@ -62,17 +64,18 @@
     border: 1px solid gray;
     box-sizing: border-box;
     border-radius: 5px;
-    box-shadow: gray 2px 2px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     padding: 10px;
-    background-color: #86b7fe17;
+    background-color: #e8f0fe;
     min-height: 70vh;
 }
 
 .ticket-note {
-    border: 1px solid #ddd;
+    border: 1px solid gray;
     border-radius: 5px;
     padding: 15px;
-    background: #f9f9f9;
+    background-color: #f0f5fc;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
 }
 
     .ticket-note.saved {
@@ -103,6 +106,7 @@
     border-radius: 3px;
     font-family: inherit;
     resize: vertical;
+    background-color:white;
 }
 
 .note-content-display {

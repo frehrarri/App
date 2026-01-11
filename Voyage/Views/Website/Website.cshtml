@@ -1,5 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Home";
 }
+<div id="homepage-container">
+    @await Html.PartialAsync("_Website");
+</div>
 
-@await Html.PartialAsync("_Website");
+<link href="~/css/website.css" rel="stylesheet" asp-append-version="true" />

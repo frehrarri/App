@@ -25,7 +25,7 @@
                                 .Take(5)
                                 .ToList();
 
-    <div id="@(s.Title)-container" tabindex="0">
+    <div id="@(s.Title)-container" class="section-container" tabindex="0">
         <h4 id="heading-@(s.Title)">@s.Title</h4>
         <table class="app-table">
             <thead>
@@ -139,11 +139,9 @@
                 </button>
             }
 
-            </div>
-            <br />
-            <br />
-
-         </div>
+        </div>
+    </div>
+    <br />
     <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
 }
 

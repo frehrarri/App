@@ -1,8 +1,15 @@
 ﻿import { loadModule } from './__moduleLoader.js';
 
 export async function init() {
+
+    //adjust container
+    document.getElementById('ticket-view').style.width = '1200px';
+
     //go to ticket
     document.getElementById("btnGoToTickets")?.addEventListener("click", async () => {
+        //adjust container
+        document.getElementById('ticket-view').style.width = '1400px';
+
         const module = await loadModule("tickets");
         await module.getTicketsPartial();
     });
@@ -38,7 +45,6 @@ export async function init() {
     }
 
     await loadTicketNotes();
-
 }
 
 async function loadTicketNotes() {

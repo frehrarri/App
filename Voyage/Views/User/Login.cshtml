@@ -2,26 +2,30 @@
     ViewData["Title"] = "Login";
 }
 
-<h1 class="mb-4">Login</h1>
+<link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <form id="loginForm">
-            @Html.AntiForgeryToken()
-            <div id="error-login" class="text-error mb-2" style="display:none;"></div>
+<div id="login-container">
+    <h1 class="mb-4">Login</h1>
 
-            <div class="formfield-container mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" id="email" class="form-control" required>
-            </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form id="loginForm">
+                @Html.AntiForgeryToken()
+                <div id="error-login" class="text-error mb-2" style="display:none;"></div>
 
-            <div class="formfield-container mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" required>
-            </div>
+                <div class="formfield-container mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" id="email" class="form-control" required>
+                </div>
 
-            <button type="button" id="btn-login" class="btn btn-primary w-100" onclick="loginUser()">Login</button>
-        </form>
+                <div class="formfield-container mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+
+                <button type="button" id="btn-login" class="btn btn-primary w-100" onclick="loginUser()">Login</button>
+            </form>
+        </div>
     </div>
 </div>
 

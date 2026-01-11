@@ -1,4 +1,9 @@
-﻿#sprint-header {
+﻿#ticket-view{
+    width: 1400px;
+    margin-top: 30px;
+}
+
+#sprint-header {
     display: flex;
     align-items: center;
 }
@@ -6,6 +11,13 @@
     #sprint-header h4:last-child {
         margin-left: auto;
     }
+
+.section-container {
+    background-color: #e8f0fe;
+    padding: 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+}
 
 .goto-ticket primary-btn {
     margin-bottom: 2px;
@@ -15,7 +27,7 @@
 .paginate {
     border: none;
     box-shadow: 0px 0.5px 1px rgba(0, 0, 0, 0.5);
-    background-color: #86b7fe17;
+    background-color: ghostwhite;
     max-height: 24px;
 }
 
@@ -25,3 +37,4 @@
     gap: 8px; /* space between buttons */
     margin-top: 10px;  /*spacing from table */
 }
+

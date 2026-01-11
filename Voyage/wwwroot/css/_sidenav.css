@@ -1,12 +1,12 @@
 ﻿.side-nav {
-    width: 240px;
-    height: 100vh;
-    background: #111827;
-    color: white;
     position: fixed;
+    top: 56px; /* same as navbar height */
     left: 0;
-    top: 0;
-    padding-top: 20px;
+    width: 240px; /* whatever width you want */
+    height: calc(100vh - 56px); /* full height minus navbar */
+    overflow-y: auto;
+    background-color: #e8f0fe; /* optional for clarity */
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
 }
 
     .side-nav ul {

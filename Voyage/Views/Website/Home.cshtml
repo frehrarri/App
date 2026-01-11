@@ -1,16 +1,20 @@
-﻿<div id="pre-install-container" style="display:block;">
-    <h3>Install the app</h3>
-    <button id="installBtn" class="btn btn-primary" onclick="downloadApp()">Download Desktop App</button>
-</div>
+﻿<link href="~/css/home.css" rel="stylesheet" asp-append-version="true"/>
 
-<div id="post-install-container" style="display:none;">
-    <h3>Thank you for installing</h3>
-    <button id="goToDashboard" class="btn btn-primary">Go to app</button>
-</div>
+<div id="home-container">
+    <div id="pre-install-container" style="display:block;">
+        <h3>Install the app</h3>
+        <button id="installBtn" class="btn btn-primary" onclick="downloadApp()">Download Desktop App</button>
+    </div>
 
-<div id="goToWebApp">
-    <h3>Thank you for installing</h3>
-    <button id="goToDashboard" class="btn btn-primary" onclick="goToWebApp();">Go to app</button>
+    <div id="post-install-container" style="display:none;">
+        <h3>Thank you for installing</h3>
+        <button id="goToDashboard" class="btn btn-primary">Go to app</button>
+    </div>
+
+    <div id="goToWebApp">
+        <h3>Thank you for installing</h3>
+        <button id="goToDashboard" class="btn btn-primary" onclick="goToWebApp();">Go to app</button>
+    </div>
 </div>
 
 <script>

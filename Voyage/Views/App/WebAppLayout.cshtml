@@ -1,12 +1,11 @@
 ﻿@model MainVM
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutApp.cshtml";
 }
 
 <script type="module" src="~/js/main.js" asp-append-version="true"></script>
 
-@{
-    await Html.RenderPartialAsync("~/Views/Shared/_SideNav.cshtml");
-    await Html.RenderPartialAsync("~/Views/App/Main.cshtml");
-}
+<div class="app-layout">
+    @{ await Html.RenderPartialAsync("~/Views/App/Main.cshtml"); }
+</div>
