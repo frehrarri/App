@@ -310,6 +310,15 @@ function styleTable(container = document) {
     });
 }
 
+async function getTicketSettings() {
+    const response = await getPartial("Tickets", "SettingsPartial");
+
+    if (response.data) {
+        document.getElementById("ticket-view").innerHTML = response.data;
+    }
+
+    await loadModule("ticketSettings");
+}
 
 export function init() {
     document.querySelectorAll(".btnAddTicket").forEach(btn =>
@@ -337,5 +346,6 @@ export function init() {
         }
     });
 
+    document.querySelector(".settings-btn").addEventListener("click", async (e) => getTicketSettings());
 
 }

@@ -193,3 +193,13 @@ function addSpacesToSentence(sentence, spaces = 1) {
 
     return spaced;
 }
+
+async function getPartial(controller, action) {
+    try {
+        let route = `/${controller}/${action}`;
+        return await axios.get(route);
+    }
+    catch (error) {
+        console.error("error: getManageTicketPartial", error);
+    }
+}

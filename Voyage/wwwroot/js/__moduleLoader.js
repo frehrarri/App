@@ -2,10 +2,14 @@
 
 //when a partial view is rendered loadModule is called
 const moduleRegistry = {
+
+    //shared
     sideNav: {
         js: () => import(`./_sidenav.js?v=${scriptVersion}`),
         css: `/css/_sidenav.css?v=${scriptVersion}`
     },
+
+    //tickets
     manageTicket: {
         js: () => import(`./_manageTicket.js?v=${scriptVersion}`),
         css: `/css/_manageTicket.css?v=${scriptVersion}`
@@ -17,6 +21,10 @@ const moduleRegistry = {
     ticket: {
         js: () => import(`./_ticket.js?v=${scriptVersion}`),
         css: `/css/_ticket.css?v=${scriptVersion}`
+    },
+    ticketSettings: {
+        js: () => import(`./_ticketsettings.js?v=${scriptVersion}`)//,
+        //css: `/css/_ticket.css?v=${scriptVersion}`
     }
 };
 
@@ -47,7 +55,6 @@ export async function loadModule(name, params) {
     if (mod.css) {
         await loadCss(mod.css);
     }
-
     // 2️⃣ Load JS module
     const jsModule = await mod.js();
 

@@ -1,0 +1,54 @@
+﻿@model TicketSettingsVM
+
+
+<link href="~/css/_ticketsettings.css" rel="stylesheet" asp-append-version="true"/>
+
+<h1>Settings</h1>
+<div id="ticket-settings-container">
+    <form asp-controller="Tickets" asp-action="SaveSettings" method="post">
+    
+        <h3>Section Settings</h3>
+        <div id="section-settings">
+        </div>
+        <button id="add-section-btn" class="primary-btn" type="button">Add</button>
+        <input id="section-title-input" type="text" placeholder="section name"/>
+        
+
+        <br />
+        <br />
+
+        <h3>Sprint Settings</h3>
+        <label>Repeat:</label>
+        <br />
+        <label for="rdo-repeat-daily">Daily</label>
+        <input id="rdo-repeat-daily" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Daily)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Daily) />
+
+        <label for="rdo-repeat-weekly">Weekly</label>
+        <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Weekly) />
+
+        <label for="rdo-repeat-biweekly">Biweekly</label>
+        <input id="rdo-repeat-biweekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.BiWeekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.BiWeekly) />
+
+        <label for="rdo-repeat-monthly">Monthly</label>
+        <input id="rdo-repeat-monthly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Monthly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Monthly) />
+
+        <label for="rdo-repeat-custom">Custom</label>
+        <input id="rdo-repeat-custom" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Custom)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Custom) />
+    
+        @if(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Custom)
+        {
+            <label for="start-date">Start Date</label>
+            <input id="start-date" type="date" value="@Model.SprintStart" />
+
+            <label for="end-date">End Date</label>
+            <input id="end-date" type="date" value="@Model.SprintEnd" />
+        }
+
+        <br />
+        <br />
+        <button id="save-settings-btn" class="primary-btn" type="submit">Save</button>
+    </form>
+    
+    
+</div>
+

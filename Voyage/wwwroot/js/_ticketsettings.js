@@ -1,0 +1,56 @@
+﻿import { loadModule } from './__moduleLoader.js';
+
+export async function init() {
+    document.getElementById('add-section-btn').addEventListener("click", (e) => addSection());
+}
+
+function addSection() {
+    const input = document.getElementById('section-title-input').value.trim();
+    if (!input) return;
+
+    let newSection = document.createElement("span")
+    newSection.className = "delete-section";
+    newSection.innerHTML = `${input} <span class='delete'>x</span>`;
+
+    document.getElementById('section-settings').prepend(newSection);
+}
+
+function removeSection() {
+
+}
+
+//async function save() {
+
+//    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+//    const repeatOption = document.querySelector("[name='rdo-repeat']:checked").value;
+//    const sprintStart = document.getElementById('start-date').value;
+//    const sprintEnd = document.getElementById('end-date').value;
+
+//    const ticketSettingsDTO = {
+//        RepeatSprintOption: repeatOption,
+//        SprintStart: sprintStart,
+//        SprintEnd: sprintEnd 
+//    }
+
+//    let response;
+
+//    try {
+//        response = await axios.post('/Tickets/SaveSettings', ticketSettingsDTO, {
+//            headers: {
+//                'X-CSRF-TOKEN': token,
+//                'Content-Type': 'application/json'
+//            }
+//        });
+
+//        showSuccess(true);
+//        return true;
+//    } catch (error) {
+//        showSuccess(false);
+//        console.error("error: /Tickets/SaveSettings", error);
+//        return false;
+//    }
+
+//    return response.data; // bool
+
+//}

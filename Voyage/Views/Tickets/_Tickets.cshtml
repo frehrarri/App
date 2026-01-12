@@ -2,7 +2,14 @@
 
 <link href="~/css/_tickets.css" rel="stylesheet" />
 
-<h1>Tickets</h1>
+<div id="heading-setting-container">
+    <h1>Tickets</h1>
+    <button class="settings-btn">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+    
+</div>
+
 
 <hr />
 
@@ -16,6 +23,7 @@
 
 @foreach (var s in Model.Sections)
 {
+    
     var sectionTickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).ToList();
 
     int ticketCount = sectionTickets.Count();
@@ -25,8 +33,14 @@
                                 .Take(5)
                                 .ToList();
 
+
+
     <div id="@(s.Title)-container" class="section-container" tabindex="0">
-        <h4 id="heading-@(s.Title)">@s.Title</h4>
+
+        <h4 id="heading-@(s.Title)">
+            @s.Title
+        </h4>
+
         <table class="app-table">
             <thead>
                 <tr class="app-table-row">

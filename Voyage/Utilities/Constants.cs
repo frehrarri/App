@@ -146,6 +146,16 @@
             DueDateChanged,
             ParentTicketChanged
         }
+
+        public enum RepeatSprint { 
+            Daily,
+            Weekly,
+            BiWeekly,
+            Monthly,
+            Custom
+        }
+
+
         #endregion
 
 

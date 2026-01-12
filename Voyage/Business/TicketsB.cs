@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -209,7 +210,15 @@ namespace Voyage.Business
             return sb.ToString();
         }
 
+        public async Task<TicketSettingsDTO> GetSettings()
+        {
+            return await _ticketsD.GetSettings();
+        }
 
+        public async Task<bool> SaveSettings(TicketSettingsDTO dto)
+        {
+            return await _ticketsD.SaveSettings(dto);
+        }
 
         public List<SectionDTO> SetSectionsDevelopment()
         {

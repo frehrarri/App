@@ -1,7 +1,9 @@
 ﻿using AngleSharp.Dom;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Voyage.Business;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
@@ -435,6 +437,19 @@ namespace Voyage.Data
                 Console.WriteLine(ex.ToString());
                 return false;
             }
+        }
+
+        public async Task<TicketSettingsDTO> GetSettings()
+        {
+            TicketSettingsDTO dto = new TicketSettingsDTO();
+            await _db.SaveChangesAsync();
+            return dto;
+        }
+
+        public async Task<bool> SaveSettings(TicketSettingsDTO dto)
+        {
+            await _db.SaveChangesAsync();
+            return true;
         }
 
     }

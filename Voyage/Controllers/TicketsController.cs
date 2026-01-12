@@ -71,6 +71,14 @@ namespace Voyage.Controllers
             return PartialView("~/Views/Tickets/_ManageTicket.cshtml", vm);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SettingsPartial()
+        {
+            TicketSettingsDTO dto = await GetSettings();
+            return PartialView("~/Views/Tickets/_TicketSettings.cshtml", MapToVM(dto));
+        }
+
+
         #endregion
 
 
@@ -148,6 +156,20 @@ namespace Voyage.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<TicketSettingsDTO> GetSettings()
+        {
+            return await _ticketsB.GetSettings();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<bool> SaveSettings([FromBody] TicketSettingsDTO dto)
+        {
+            return await _ticketsB.SaveSettings(dto);
+        }
+
+
         #region VM Mappings
 
         private List<TicketVM> MapToVM(List<TicketDTO> tickets)
@@ -204,6 +226,14 @@ namespace Voyage.Controllers
             return ticketVM;
         }
 
+        private TicketSettingsVM MapToVM(TicketSettingsDTO dto)
+        {
+            TicketSettingsVM vm = new TicketSettingsVM();
+            vm.SprintStart = dto.SprintStart!.Value;
+            vm.SprintEnd = dto.SprintEnd!.Value;
+            vm.RepeatSprintOption = (int)dto.RepeatSprintOption;
+            return vm;
+        }
         #endregion
 
     }

@@ -39,3 +39,13 @@
     margin-top: 10px;  /*spacing from table */
 }
 
+#heading-setting-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.settings-btn {
+    margin-top: 25px;
+    border: none;
+    background-color: inherit;
+}
