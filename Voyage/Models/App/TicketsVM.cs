@@ -10,6 +10,7 @@ namespace Voyage.Models.App
             Sections = new List<SectionDTO>();
             Tickets = new List<TicketVM>(); 
             Sprint = new Sprint();
+            Settings = new TicketSettingsDTO();
         }
 
         public TicketsVM(List<TicketVM> tickets, List<SectionDTO> sections) 
@@ -17,12 +18,13 @@ namespace Voyage.Models.App
             Sections = sections;
             Tickets = tickets;
             Sprint = new Sprint();
+            Settings = new TicketSettingsDTO();
         }
 
         public Sprint Sprint { get; set; }
         public List<TicketVM> Tickets { get; set; }
         public List<SectionDTO> Sections { get; set; }
-
+        public TicketSettingsDTO Settings { get; set; }
    
 
     }

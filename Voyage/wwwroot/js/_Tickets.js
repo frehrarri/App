@@ -346,6 +346,6 @@ export function init() {
         }
     });
 
-    document.querySelector(".settings-btn").addEventListener("click", async (e) => getTicketSettings());
+    document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
 
 }

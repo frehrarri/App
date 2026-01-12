@@ -2,7 +2,6 @@
 
 
 export function init(params) {
-
     //set section dropdown based on which table the user clicks the add button for
     if (params?.sectionTitle) {
         const sectionDropdown = document.getElementById('ticketSectionTitle');
@@ -14,7 +13,7 @@ export function init(params) {
     document.getElementById("submitTicket")?.addEventListener("click", saveTicket);
     document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
     document.getElementById("undo-button")?.addEventListener("click", undo);
-    document.getElementById("cancel")?.addEventListener("click", cancel);
+    document.getElementById("btn-back")?.addEventListener("click", back);
 
     //content editable div
     const description = document.getElementById('ticketDesc');
@@ -23,7 +22,7 @@ export function init(params) {
     }
 
     const assignedTo = document.getElementById('ticketAssignedTo');
-    assignedTo.addEventListener("click", (e) => assignedTo.value = "");
+    assignedTo?.addEventListener("click", (e) => assignedTo.value = "");
 
     //undo
     addUndoEventListeners();
@@ -149,7 +148,7 @@ function addUndoEventListeners() {
     }
 }
 
-async function cancel() {
+async function back() {
     const module = await loadModule("tickets");
 
     let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");

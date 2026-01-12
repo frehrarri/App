@@ -1,4 +1,16 @@
-﻿function showSuccess(success) {
+﻿
+//prevent submitting of form inputs by enter key
+document.addEventListener("keydown", (e) => {
+    if (
+        e.key === "Enter" &&
+        e.target instanceof HTMLInputElement &&
+        e.target.form
+    ) {
+        e.preventDefault();
+    }
+});
+
+function showSuccess(success) {
     const popup = document.getElementById('messagePopup');
     if (!popup) return;
 

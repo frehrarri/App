@@ -10,8 +10,10 @@ namespace Voyage.Data
         public _AppDbContext(DbContextOptions<_AppDbContext> options): base(options) { }
 
         public DbSet<_MasterEF> _Master { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Settings> Settings { get; set; }
+        public DbSet<Section> Sections { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketDetails> TicketDetails { get; set; }
 
 

@@ -155,6 +155,11 @@
             Custom
         }
 
+        public enum Feature
+        {
+            Tickets
+        }
+
 
         #endregion
 

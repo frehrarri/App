@@ -7,6 +7,7 @@ using Voyage.Business;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
+using Voyage.Utilities;
 using static Voyage.Utilities.Constants;
 
 namespace Voyage.Data
@@ -434,22 +435,103 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex, "Error deleting ticket");
                 return false;
             }
         }
 
-        public async Task<TicketSettingsDTO> GetSettings()
+        public async Task<TicketSettingsDTO?> GetSettings()
         {
-            TicketSettingsDTO dto = new TicketSettingsDTO();
-            await _db.SaveChangesAsync();
-            return dto;
+            try
+            {
+                TicketSettingsDTO? dto = new TicketSettingsDTO();
+
+                dto = await _db.Settings.Include(s => s.Sections)
+                    .Where(s => s.Feature == Constants.Feature.Tickets
+                        && s.IsActive == true
+                        && s.IsLatest == true)
+                    .Select(s => new TicketSettingsDTO()
+                    {
+                        SettingsId = s.SettingsId,
+                        RepeatSprintOption = s.RepeatSprintOption,
+                        SprintEnd = s.SprintEndDate,
+                        SprintStart = s.SprintStartDate,
+
+                        Sections = s.Sections.Select(s => new SectionDTO
+                        {
+                            SectionId = s.SectionId,
+                            Title = s.Title,
+                            SectionOrder = s.SectionOrder,
+                        }).ToList()
+                    })
+                    .SingleOrDefaultAsync();
+
+                return dto;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving ticket settings.");
+                return null;
+            }
+            
         }
 
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)
         {
-            await _db.SaveChangesAsync();
-            return true;
+            try
+            {
+                Settings? settings;
+                bool isUpdate = true;
+
+                settings = await _db.Settings
+                    .Include(s => s.Sections)
+                   .Where(s =>
+                       s.SettingsId == dto.SettingsId
+                       && s.Feature == Constants.Feature.Tickets
+                       && s.IsActive == true
+                       && s.IsLatest == true)
+                   .SingleOrDefaultAsync();
+
+
+                if (settings == null) //create new
+                {
+                    settings = new Settings();
+                    isUpdate = false;
+                }
+                else //empty previous sections to be replaced
+                {
+                    settings.Sections.Clear();
+                }
+
+                settings.RepeatSprintOption = dto.RepeatSprintOption;
+                settings.SprintEndDate = dto.SprintEnd!.Value;
+                settings.SprintStartDate = dto.SprintStart!.Value;
+                settings.Feature = Constants.Feature.Tickets;
+                settings!.IsLatest = true;
+                settings.IsActive = true;
+
+                settings.Sections = dto.Sections.Select(s => new Section()
+                {
+                    Settings = settings,
+                    Title = s.Title,
+                    SectionOrder = s.SectionOrder
+                })
+                .ToList();
+
+                //tracked entities are updated automatically so dont need update
+                if (!isUpdate) 
+                {
+                    await _db.Settings.AddAsync(settings);
+                }
+
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving ticket settings.");
+                return false;
+            }
         }
 
     }

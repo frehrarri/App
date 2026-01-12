@@ -210,7 +210,7 @@ namespace Voyage.Business
             return sb.ToString();
         }
 
-        public async Task<TicketSettingsDTO> GetSettings()
+        public async Task<TicketSettingsDTO?> GetSettings()
         {
             return await _ticketsD.GetSettings();
         }

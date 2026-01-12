@@ -74,8 +74,14 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<IActionResult> SettingsPartial()
         {
-            TicketSettingsDTO dto = await GetSettings();
-            return PartialView("~/Views/Tickets/_TicketSettings.cshtml", MapToVM(dto));
+            TicketSettingsVM vm = new TicketSettingsVM();
+
+            TicketSettingsDTO? dto = await GetSettings();
+
+            if (dto != null)
+                vm = MapToVM(dto);
+
+            return PartialView("~/Views/Tickets/_TicketSettings.cshtml", vm);
         }
 
 
@@ -157,7 +163,7 @@ namespace Voyage.Controllers
 
 
         [HttpGet]
-        public async Task<TicketSettingsDTO> GetSettings()
+        public async Task<TicketSettingsDTO?> GetSettings()
         {
             return await _ticketsB.GetSettings();
         }
@@ -229,11 +235,14 @@ namespace Voyage.Controllers
         private TicketSettingsVM MapToVM(TicketSettingsDTO dto)
         {
             TicketSettingsVM vm = new TicketSettingsVM();
+            vm.SettingsId = dto.SettingsId;
             vm.SprintStart = dto.SprintStart!.Value;
             vm.SprintEnd = dto.SprintEnd!.Value;
             vm.RepeatSprintOption = (int)dto.RepeatSprintOption;
+            vm.Sections = dto.Sections;
             return vm;
         }
+
         #endregion
 
     }

@@ -4,10 +4,14 @@
 <link href="~/css/_ticketsettings.css" rel="stylesheet" asp-append-version="true"/>
 
 <h1>Settings</h1>
+
+<br />
+
 <div id="ticket-settings-container">
-    <form asp-controller="Tickets" asp-action="SaveSettings" method="post">
+    <form id="ticket-settings-form">
     
-        <h3>Section Settings</h3>
+        @Html.AntiForgeryToken()
+        <h4>Section</h4>
         <div id="section-settings">
         </div>
 
@@ -19,36 +23,51 @@
         <br />
         <br />
 
-        <h3>Sprint Settings</h3>
-        <label>Repeat:</label>
+        <h4>Sprint</h4>
         <br />
-        <label for="rdo-repeat-daily">Daily</label>
-        <input id="rdo-repeat-daily" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Daily)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Daily) />
 
-        <label for="rdo-repeat-weekly">Weekly</label>
-        <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Weekly) />
-
-        <label for="rdo-repeat-biweekly">Biweekly</label>
-        <input id="rdo-repeat-biweekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.BiWeekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.BiWeekly) />
-
-        <label for="rdo-repeat-monthly">Monthly</label>
-        <input id="rdo-repeat-monthly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Monthly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Monthly) />
-
-        <label for="rdo-repeat-custom">Custom</label>
-        <input id="rdo-repeat-custom" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Custom)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Custom) />
-    
-        @if(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Custom)
+        @if (Model.RepeatSprintOption != (int)Constants.RepeatSprint.Daily)
         {
-            <label for="start-date">Start Date</label>
-            <input id="start-date" type="date" value="@Model.SprintStart" />
+            <div id="sprint-dates-container">
+                <label for="start-date">Start Date</label>
+                <input id="start-date" type="date" value="@Model.SprintStart" />
 
-            <label for="end-date">End Date</label>
-            <input id="end-date" type="date" value="@Model.SprintEnd" />
+                <label for="end-date">End Date</label>
+                <input id="end-date" type="date" value="@Model.SprintEnd" />
+            </div>
+            <br />
         }
 
+        <label><b>Repeat:</b></label>
+
+        <span id="rdo-repeat-container">
+            <input id="rdo-repeat-daily" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Daily)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Daily) />
+            <label for="rdo-repeat-daily">Daily</label>
+            
+            <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Weekly) />
+            <label for="rdo-repeat-weekly">Weekly</label>
+            
+            <input id="rdo-repeat-biweekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.BiWeekly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.BiWeekly) />
+            <label for="rdo-repeat-biweekly">Biweekly</label>
+            
+            <input id="rdo-repeat-monthly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Monthly)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Monthly) />
+            <label for="rdo-repeat-monthly">Monthly</label>
+            
+            <input id="rdo-repeat-custom" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Custom)" @Html.CheckedIf(Model.RepeatSprintOption, Constants.RepeatSprint.Custom) />
+            <label for="rdo-repeat-custom">Custom</label>
+        </span>
+
+    
+        
+
         <br />
         <br />
-        <button id="save-settings-btn" class="primary-btn" type="submit">Save</button>
+        <div id="btn-container">
+            <button id="save-settings-btn" class="primary-btn" type="button">Save</button>
+            <button type="button" id="back-btn" class="secondary-btn">Back</button>
+        </div>
+
+        
     </form>
     
     

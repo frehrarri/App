@@ -33,3 +33,24 @@
     border-radius:5px;
     background-color: ghostwhite;
 }
+
+#btn-container{
+    display:flex;
+}
+
+#sprint-dates-container{
+    display: flex;
+}
+
+#start-date, #end-date, label[for='end-date'] {
+    margin-left: 10px;
+}
+
+#start-date, #end-date{
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#rdo-repeat-container {
+    margin-left: 5px;
+}

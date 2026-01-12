@@ -10,16 +10,18 @@
     
 </div>
 
+@if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Daily)
+{
+    <hr />
 
-<hr />
+    <div id="sprint-header">
+        <h4>Sprint @Model.Sprint.SprintId</h4>
+        <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+    </div>
 
-<div id="sprint-header">
-    <h4>Sprint @Model.Sprint.SprintId</h4>
-    <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
-</div>
-
-<hr />
-<br />
+    <hr />
+    <br />
+}
 
 @foreach (var s in Model.Sections)
 {
