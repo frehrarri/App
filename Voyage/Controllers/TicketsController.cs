@@ -236,8 +236,8 @@ namespace Voyage.Controllers
         {
             TicketSettingsVM vm = new TicketSettingsVM();
             vm.SettingsId = dto.SettingsId;
-            vm.SprintStart = dto.SprintStart!.Value;
-            vm.SprintEnd = dto.SprintEnd!.Value;
+            vm.SprintStart = dto.SprintStart!.Value.Date;
+            vm.SprintEnd = dto.SprintEnd!.Value.Date;
             vm.RepeatSprintOption = (int)dto.RepeatSprintOption;
             vm.Sections = dto.Sections;
             return vm;

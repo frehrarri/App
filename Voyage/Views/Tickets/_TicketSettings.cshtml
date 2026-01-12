@@ -22,21 +22,21 @@
 
         <br />
         <br />
+        <br />
 
         <h4>Sprint</h4>
         <br />
 
-        @if (Model.RepeatSprintOption != (int)Constants.RepeatSprint.Daily)
-        {
-            <div id="sprint-dates-container">
-                <label for="start-date">Start Date</label>
-                <input id="start-date" type="date" value="@Model.SprintStart" />
+        <div id="sprint-dates-container" class="@Html.HiddenIf(Model.RepeatSprintOption, (int)Constants.RepeatSprint.Daily)">
+            <label for="start-date">Start Date</label>
+            <input id="start-date" type="date" value="@FormatUtcDatePicker(Model.SprintStart)" />
 
+            <div id="dv-end-date">
                 <label for="end-date">End Date</label>
-                <input id="end-date" type="date" value="@Model.SprintEnd" />
+                <input id="end-date" type="date" value="@FormatUtcDatePicker(Model.SprintEnd)" />
             </div>
-            <br />
-        }
+        </div>
+        
 
         <label><b>Repeat:</b></label>
 

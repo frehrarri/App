@@ -9,6 +9,10 @@ export async function init() {
         const module = await loadModule("tickets");
         await module.getTicketsPartial();
     });
+
+    document.querySelectorAll("[name='rdo-repeat']")?.forEach(el =>
+        el.addEventListener("click", (e) => toggleSprintDateControls(e))
+    );
 }
 
 
@@ -93,4 +97,23 @@ async function save(e) {
 
     return response.data; // bool
 
+}
+
+function toggleSprintDateControls(e) {
+    debugger;
+    let container = document.getElementById('sprint-dates-container');
+    if (e.target.id == "rdo-repeat-daily") {
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+
+    let endDate = document.getElementById('dv-end-date');
+    if (e.target.id == "rdo-repeat-custom") {
+        endDate.classList.remove('hidden');
+    }
+    else {
+        endDate.classList.add('hidden');
+    }
 }

@@ -496,13 +496,17 @@ namespace Voyage.Data
                 if (settings == null) //create new
                 {
                     settings = new Settings();
+                    settings.CreatedBy = dto.CreatedBy;
+                    settings.CreatedDate = DateTime.UtcNow;
                     isUpdate = false;
                 }
                 else //empty previous sections to be replaced
                 {
+                    settings.ModifiedBy = dto.CreatedBy;
+                    settings.ModifiedDate = DateTime.UtcNow;
                     settings.Sections.Clear();
                 }
-
+                
                 settings.RepeatSprintOption = dto.RepeatSprintOption;
                 settings.SprintEndDate = dto.SprintEnd!.Value;
                 settings.SprintStartDate = dto.SprintStart!.Value;
@@ -514,7 +518,9 @@ namespace Voyage.Data
                 {
                     Settings = settings,
                     Title = s.Title,
-                    SectionOrder = s.SectionOrder
+                    SectionOrder = s.SectionOrder,
+                    IsActive = true,
+                    IsLatest = true
                 })
                 .ToList();
 

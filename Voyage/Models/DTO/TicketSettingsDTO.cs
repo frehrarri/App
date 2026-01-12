@@ -3,7 +3,7 @@ using static Voyage.Utilities.Constants;
 
 namespace Voyage.Models.DTO
 {
-    public class TicketSettingsDTO
+    public class TicketSettingsDTO : BaseClass
     {
         public TicketSettingsDTO()
         {

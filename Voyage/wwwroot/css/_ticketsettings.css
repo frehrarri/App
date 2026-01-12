@@ -40,6 +40,7 @@
 
 #sprint-dates-container{
     display: flex;
+    margin-bottom: 15px;
 }
 
 #start-date, #end-date, label[for='end-date'] {

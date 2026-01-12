@@ -70,6 +70,17 @@ namespace Voyage.Utilities
             return utcDate.Value.ToString("dd MMM");
         }
 
+        public static string FormatUtcDatePicker(DateTime? dateTime)
+        {
+            if (!dateTime.HasValue)
+                return string.Empty;
+
+            // Ensure it's UTC
+            DateTime? utcDate = dateTime.Value.Kind == DateTimeKind.Utc ? dateTime : dateTime.Value.ToUniversalTime();
+
+            return utcDate.Value.ToString("yyyy-MM-dd");
+
+        }
 
 
 

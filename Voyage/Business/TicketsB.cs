@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -217,7 +218,40 @@ namespace Voyage.Business
 
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)
         {
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+
+            if (user == null)
+                throw new InvalidOperationException("Authenticated user not found.");
+            else
+                dto.CreatedBy = user.UserName ?? string.Empty;
+
+            HandleSprintDates(dto);
             return await _ticketsD.SaveSettings(dto);
+        }
+
+        public void HandleSprintDates(TicketSettingsDTO dto)
+        {
+            //dto handles daily by default in constructor
+            dto.SprintStart = DateTime.SpecifyKind(dto.SprintStart!.Value.Date, DateTimeKind.Utc);
+
+            if (dto.RepeatSprintOption == Constants.RepeatSprint.Weekly)
+            {
+                dto.SprintEnd = dto.SprintStart!.Value.AddDays(7);
+            }
+
+            if (dto.RepeatSprintOption == Constants.RepeatSprint.BiWeekly)
+            {
+                dto.SprintEnd = dto.SprintStart!.Value.AddDays(14);
+            }
+
+            if (dto.RepeatSprintOption == Constants.RepeatSprint.Monthly)
+            {
+                dto.SprintEnd = dto.SprintStart!.Value.AddMonths(1);
+            }
+
+            dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
+
+            //custom would have sprint end already set
         }
 
         public List<SectionDTO> SetSectionsDevelopment()

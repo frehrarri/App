@@ -87,28 +87,6 @@ function addSearchEventListener({
 
 }
 
-//function addUserSearchEventListener(inputId, resultsContainerId) {
-//    addSearchEventListener({
-//        inputId: inputId,
-//        resultsContainerId: resultsContainerId,
-//        url: '/User/Search',
-
-//        renderItem: (user) => {
-//            const li = document.createElement('li');
-//            li.textContent = `${user.displayName} (${user.email})`;
-//            li.dataset.userId = user.id;
-//            return li;
-//        },
-
-//        onSelect: (user) => {
-//            const input = document.getElementById(inputId);
-//            input.value = user.displayName;
-//            input.dataset.userId = user.id;
-//        }
-
-//    });
-//}
-
 function addUserSearchEventListener(inputId, resultsContainerId) {
     addSearchEventListener({
         inputId,

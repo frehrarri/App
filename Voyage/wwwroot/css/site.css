@@ -183,3 +183,7 @@ body {
     .autocomplete-list.show {
         display: block; /* ?? ADD THIS */
     }
+
+.hidden {
+    display: none !important;
+}

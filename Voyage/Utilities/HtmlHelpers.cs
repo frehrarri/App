@@ -35,6 +35,26 @@ namespace Voyage.Utilities
                    type == typeof(int) || type == typeof(uint) ||
                    type == typeof(long) || type == typeof(ulong);
         }
+
+        public static IHtmlContent HiddenIf<T1, T2>(this IHtmlHelper html, T1 currentValue, T2 valueToCheck)
+        {
+            // Both numeric types (int, long, enum, byte, etc.)
+            if (IsNumericType(typeof(T1)) && IsNumericType(typeof(T2)))
+            {
+                var cv = Convert.ToInt64(currentValue);
+                var vc = Convert.ToInt64(valueToCheck);
+                if (cv == vc)
+                    return new HtmlString("hidden");
+            }
+            else
+            {
+                // Fallback to standard equality for non-numeric types
+                if (object.Equals(currentValue, valueToCheck))
+                    return new HtmlString("hidden");
+            }
+
+            return HtmlString.Empty;
+        }
     }
 }
 
