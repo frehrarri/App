@@ -97,7 +97,9 @@
         @Html.AntiForgeryToken()
         <div id="ticket-notes-container"></div>
     </form>
+</div>
 
+<div id="version-history-container">
     <table class="app-table">
         <thead>
             <tr>
@@ -106,17 +108,16 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var v in Model.VersionHistory.OrderByDescending(v => v.TicketVersion))
+            @foreach (var v in Model.VersionHistory.OrderByDescending(v => v.TicketVersion))
             {
-                <tr>
+                <tr class="app-table-row">
                     <td class="app-table-data"><a class="versionHistoryLink">@v.TicketVersion</a></td>
                     <td class="app-table-data">@Html.Raw(v.TicketChangeAction)</td>
                 </tr>
             }
-            
+
         </tbody>
     </table>
-
 </div>
 
 <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
