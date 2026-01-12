@@ -13,10 +13,25 @@ function addSection() {
     newSection.innerHTML = `${input} <span class='delete'>x</span>`;
 
     document.getElementById('section-settings').prepend(newSection);
+
+    document.querySelectorAll('.delete-section').forEach(el => {
+        el.removeEventListener("click", removeSection);
+        el.addEventListener("click", removeSection);
+    });
+
+    document.querySelectorAll('.delete').forEach(el => {
+        el.removeEventListener("click", removeSection);
+        el.addEventListener("click", removeSection);
+    });
 }
 
-function removeSection() {
-
+function removeSection(e) {
+    if (e.target.classList.contains('delete')) {
+        e.target.parentElement.remove();
+    }
+    else {
+        e.target.remove();
+    }
 }
 
 //async function save() {

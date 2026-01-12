@@ -11,6 +11,8 @@ namespace Voyage.Models.DTO
             SprintStart = DateTime.Today;
             SprintEnd = DateTime.Today.AddDays(1);
             RepeatSprintOption = RepeatSprint.Daily;
+
+            Sections = new List<SectionDTO>();
         }
 
         public Constants.RepeatSprint RepeatSprintOption { get; set; }
