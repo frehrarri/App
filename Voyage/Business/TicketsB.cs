@@ -250,6 +250,10 @@ namespace Voyage.Business
             int i = 1;
             foreach (string section in requiredSections)
             {
+                //skip sections that already exist
+                if (dto.Sections.Any(s => s.Title == section))
+                    continue;
+
                 dto.Sections.Add(new SectionDTO { Title = section, SectionOrder = dto.Sections.Count() + i });
                 i++;
             }
@@ -291,7 +295,7 @@ namespace Voyage.Business
 
             List<string> sectionTitles = new List<string>()
             {
-                "Dev",
+                "Development",
                 "Review",
                 "QA",
                 "Staging",

@@ -17,6 +17,15 @@ export async function init() {
     document.querySelectorAll("[name='rdo-section']")?.forEach(el =>
         el.addEventListener("click", (e) => toggleSectionControls(e))
     );
+
+    document.querySelectorAll(".delete-section")?.forEach(el =>
+        el.addEventListener("click", (e) => removeSection(e))
+    );
+
+    document.querySelectorAll(".delete")?.forEach(el =>
+        el.addEventListener("click", (e) => removeSection(e))
+    );
+    
 }
 
 function addSection(section) {
@@ -78,8 +87,6 @@ async function save(e) {
             SectionOrder: i
         };
     });
-
-    debugger;
 
     const dto = {
         RepeatSprintOption: parseInt(repeatOption),
