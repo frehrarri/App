@@ -84,6 +84,12 @@ namespace Voyage.Controllers
                 vm = await GetTicket(ticketId.Value);
             }
 
+            TicketSettingsDTO? dto = await GetSettings();
+            if (dto != null)
+            {
+                vm.TicketSettings = MapToVM(dto);
+            }
+
             return PartialView("~/Views/Tickets/_ManageTicket.cshtml", vm);
         }
 
@@ -259,7 +265,7 @@ namespace Voyage.Controllers
             TicketSettingsVM vm = new TicketSettingsVM();
             vm.SettingsId = dto.SettingsId;
             vm.SprintStart = dto.SprintStart!.Value.Date;
-            vm.SprintEnd = dto.SprintEnd!.Value.Date;
+            vm.SprintEnd = dto.SprintEnd;
             vm.RepeatSprintOption = (int?)dto.RepeatSprintOption;
             vm.Sections = dto.Sections;
             vm.SectionSetting = dto.SectionSetting;

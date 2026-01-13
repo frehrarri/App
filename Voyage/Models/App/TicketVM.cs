@@ -11,6 +11,7 @@ namespace Voyage.Models.App
             TicketDetails = new List<TicketDetailsDTO>();
             VersionHistory = new List<TicketVersionDTO>();
             TicketChangeAction = string.Empty;
+            TicketSettings = new TicketSettingsVM();
         }
 
         public int TicketId { get; set; }
@@ -29,6 +30,7 @@ namespace Voyage.Models.App
         public DateTime SprintEndDate { get; set; }
         public List<TicketVersionDTO> VersionHistory { get; set; }
         public List<TicketDetailsDTO> TicketDetails { get; set; }
+        public TicketSettingsVM TicketSettings { get; set; }
 
     }
 }

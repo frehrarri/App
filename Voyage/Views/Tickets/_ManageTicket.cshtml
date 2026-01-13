@@ -14,18 +14,6 @@
         verb = "Add";
         <h1>@verb Ticket</h1>
     }
-
-    //need to make section titles load dynamically from db
-    List<string> sectionTitles = new List<string>()
-    {
-        "Dev",
-        "Review",
-        "QA",
-        //"UAT",
-        //"Completed",
-        "Discontinued",
-        "Backlog"
-    };
 }
 
 <div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
@@ -53,14 +41,17 @@
             <div>
                 <label for="ticketSectionTitle">Section</label>
                 <select id="ticketSectionTitle" class="form-field" name="SectionTitle">
-                    @foreach (var title in sectionTitles)
+                    @if (Model?.TicketSettings?.Sections != null)
                     {
-                        if (title == "Discontinued")
-                            continue;
+                        foreach (var s in Model.TicketSettings.Sections)
+                        {
+                            if (s.Title == "Discontinued")
+                                continue;
 
-                        <option value="@title" selected="@(Model?.SectionTitle == title)">
-                            @title
-                        </option>
+                            <option value="@s.Title" selected="@(Model?.SectionTitle == s.Title)">
+                                @s.Title
+                            </option>
+                        }
                     }
                 </select>
             </div>
@@ -112,10 +103,7 @@
                     <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
                     <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
                     <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
-                    @if (Model?.SectionTitle == "QA")
-                    {
-                        <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
-                    }
+                    <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
                 
                 </select>
             </div>

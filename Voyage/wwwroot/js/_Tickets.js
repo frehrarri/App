@@ -154,7 +154,10 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 }
 
 function updatePaginatedUI(e, sectionTitle) {
-    const sprintId = document.getElementById('hdnSprint').dataset.sprintid;
+    let sprintId = document.getElementById('hdnSprint').dataset.sprintid;
+    if (sprintId) {
+        sprintId = null
+    }
 
     const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
     const numResults = parseInt(selectList.value);
@@ -165,7 +168,6 @@ function updatePaginatedUI(e, sectionTitle) {
     
     const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
     let numPages = Math.ceil(totalTicketCount / numResults);
-    debugger;
 
     const selectedBtn = e.target.closest(".paginate");
 

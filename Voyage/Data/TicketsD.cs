@@ -62,15 +62,19 @@ namespace Voyage.Data
             }   
         }
 
-        public async Task<List<TicketDTO>> GetTickets(int sprintId)
+        public async Task<List<TicketDTO>> GetTickets(int? sprintId)
         {
             try
             {
+                if (sprintId == 0) 
+                    sprintId = null;
+
                 return await _db.Tickets
                     .Where(t =>
                         t.IsActive == true
                         && t.IsLatest == true
-                        && t.SprintId == sprintId)
+                        && (t.SprintId == sprintId ||
+                        sprintId == null))
                     .Select(t => new TicketDTO
                     {
                         TicketId = t.TicketId,
@@ -191,7 +195,17 @@ namespace Voyage.Data
                 }
                 else // Create new ticket
                 {
-                    int newTicketId = (await _db.Tickets.MaxAsync(t => (int?)t.TicketId) ?? 0) + 1;
+                    var maxValues = await _db.Tickets
+                        .GroupBy(t => 1) // dummy grouping to aggregate across all rows
+                        .Select(g => new
+                        {
+                            MaxTicketId = g.Max(t => (int?)t.TicketId),
+                            MaxSprintId = g.Max(t => (int?)t.SprintId)
+                        })
+                        .FirstOrDefaultAsync();
+
+                    int newTicketId = (maxValues?.MaxTicketId ?? 0) + 1;
+                    int newSprintId = (maxValues?.MaxSprintId ?? 0) + 1;
 
                     Ticket newTicket = new Ticket
                     {
@@ -207,7 +221,7 @@ namespace Voyage.Data
                         DueDate = ticketDTO.DueDate,
                         PriorityLevel = ticketDTO.PriorityLevel,
                         Status = ticketDTO.Status,
-                        SprintId = ticketDTO.SprintId,
+                        SprintId = ticketDTO.SprintId == 0 ? newSprintId : ticketDTO.SprintId,
                         SprintStartDate = ticketDTO.SprintStartDate,
                         SprintEndDate = ticketDTO.SprintEndDate,
                         CreatedBy = ticketDTO.CreatedBy,
