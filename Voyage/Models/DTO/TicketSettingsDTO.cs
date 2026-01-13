@@ -7,18 +7,19 @@ namespace Voyage.Models.DTO
     {
         public TicketSettingsDTO()
         {
-            //default to daily
             SprintStart = DateTime.Today.ToUniversalTime();
-            SprintEnd = DateTime.Today.AddDays(1).ToUniversalTime();
-            RepeatSprintOption = RepeatSprint.Daily;
+            SprintEnd = null;
+            RepeatSprintOption = RepeatSprint.Never;
 
             Sections = new List<SectionDTO>();
         }
 
         public int SettingsId { get; set; }
         public Constants.RepeatSprint RepeatSprintOption { get; set; }
+        public int SprintId { get; set; }
         public DateTime? SprintStart { get; set; }
         public DateTime? SprintEnd { get; set; }
         public List<SectionDTO> Sections { get; set; }
+        public SectionSettings SectionSetting { get; set; }
     }
 }

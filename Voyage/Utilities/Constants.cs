@@ -148,7 +148,7 @@
         }
 
         public enum RepeatSprint { 
-            Daily,
+            Never,
             Weekly,
             BiWeekly,
             Monthly,
@@ -158,6 +158,19 @@
         public enum Feature
         {
             Tickets
+        }
+
+        public enum SectionSettings
+        {
+            Custom,
+            Development
+        }
+
+        public enum RequiredTicketSections
+        {
+            Completed,
+            Discontinued,
+            BackLog
         }
 
 

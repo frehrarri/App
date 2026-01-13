@@ -13,13 +13,19 @@ export async function init() {
     document.querySelectorAll("[name='rdo-repeat']")?.forEach(el =>
         el.addEventListener("click", (e) => toggleSprintDateControls(e))
     );
+
+    document.querySelectorAll("[name='rdo-section']")?.forEach(el =>
+        el.addEventListener("click", (e) => toggleSectionControls(e))
+    );
 }
 
+function addSection(section) {
 
-        
+    let input = document.getElementById('section-title-input').value.trim();
+    if (section != null) {
+        input = section;
+    }
 
-function addSection() {
-    const input = document.getElementById('section-title-input').value.trim();
     if (!input) return;
 
     //create tag and add to new container
@@ -41,6 +47,7 @@ function addSection() {
         el.removeEventListener("click", removeSection);
         el.addEventListener("click", removeSection);
     });
+
 }
 
 function removeSection(e) {
@@ -61,6 +68,8 @@ async function save(e) {
     const sprintStart = document.getElementById('start-date')?.value;
     const sprintEnd = document.getElementById('end-date')?.value;
 
+    const sectionSetting = document.querySelector("[name='rdo-section']:checked")?.value;
+
     const sections = Array.from(document.querySelectorAll('.delete-section')).map((s, i) => {
         const clone = s.cloneNode(true);
         clone.querySelector('.delete')?.remove();
@@ -70,11 +79,14 @@ async function save(e) {
         };
     });
 
+    debugger;
+
     const dto = {
         RepeatSprintOption: parseInt(repeatOption),
         SprintStart: sprintStart,
-        SprintEnd: sprintEnd,
-        Sections: sections
+        SprintEnd: sprintEnd || null,
+        SectionSetting: parseInt(sectionSetting),
+        Sections: sections ?? []
     }
 
     let response;
@@ -100,9 +112,8 @@ async function save(e) {
 }
 
 function toggleSprintDateControls(e) {
-    debugger;
     let container = document.getElementById('sprint-dates-container');
-    if (e.target.id == "rdo-repeat-daily") {
+    if (e.target.id == "rdo-repeat-never") {
         container.classList.add('hidden');
         return;
     }
@@ -116,4 +127,34 @@ function toggleSprintDateControls(e) {
     else {
         endDate.classList.add('hidden');
     }
+}
+
+function toggleSectionControls(e) {
+    let container = document.getElementById('sections-container');
+
+    //clear any sections that are already created
+    document.getElementById('section-settings').innerHTML = "";
+
+    //change display and add sections
+    //don't add sections that are required as they are added to everything via Business layer
+    if (e.target.id == "rdo-section-custom") {
+        container.classList.remove('hidden');
+    }
+    else {
+        container.classList.add('hidden');
+
+        let sections = [];
+
+        if (e.target.id == "rdo-section-development") {
+            sections.push("Development");
+            sections.push("Review");
+            sections.push("QA");
+            sections.push("Staging");
+            sections.push("UAT");
+        }
+
+        for (let section of sections)
+            addSection(section);
+    }
+
 }

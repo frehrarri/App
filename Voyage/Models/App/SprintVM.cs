@@ -1,6 +1,6 @@
 ﻿namespace Voyage.Models.App
 {
-    public class Sprint
+    public class SprintVM
     {
         public int SprintId { get; set; }
         public DateTime? StartDate { get; set; }

@@ -33,10 +33,26 @@ namespace Voyage.Controllers
 
             if (mainVM.TicketsVM != null)
             {
-                mainVM.TicketsVM.Sections = _ticketsB.SetSectionsDevelopment();
-                //mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow); // switch to this once we have settings to 
-                mainVM.TicketsVM.Tickets = await GetTickets(1);
-                mainVM.TicketsVM.Sprint = SetSprint();
+                TicketSettingsDTO? settings = await _ticketsB.GetSettings();
+
+                mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
+
+                if (settings != null)
+                {
+                    mainVM.TicketsVM.Settings = settings;
+                    mainVM.TicketsVM.Sections = settings.Sections;
+                    mainVM.TicketsVM.Sprint.StartDate = settings.SprintStart;
+                    mainVM.TicketsVM.Sprint.EndDate = settings.SprintEnd;
+                    mainVM.TicketsVM.Sprint.SprintId = settings.SprintId;
+                }
+                else
+                {
+                    mainVM.TicketsVM.Sections = _ticketsB.SetSectionsDevelopment();
+                    mainVM.TicketsVM.Tickets = await GetTickets(1);
+                    mainVM.TicketsVM.Sprint = SetSprint();
+                }
+
+
             }
 
             return PartialView("~/Views/Tickets/_Tickets.cshtml", mainVM?.TicketsVM);
@@ -88,12 +104,18 @@ namespace Voyage.Controllers
         #endregion
 
 
-        //[HttpGet]
-        //public async Task<List<TicketVM>> GetTickets(DateTime date)
-        //{
-        //    var tickets = await _ticketsB.GetTickets(date);
-        //    return MapToVM(tickets);
-        //}
+        [HttpGet]
+        public async Task<List<TicketVM>> GetTickets(DateTime date)
+        {
+            List<TicketVM> list = new List<TicketVM>();
+
+            var tickets = await _ticketsB.GetTickets(date);
+
+            if (tickets != null)
+                list = MapToVM(tickets);
+
+            return list;
+        }
 
         public async Task<List<TicketVM>> GetTickets(int sprintId)
         {
@@ -117,7 +139,7 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task<bool> SaveTicket([FromBody] TicketDTO ticketDTO)
         {
-            Sprint sprint = SetSprint();
+            SprintVM sprint = SetSprint();
             ticketDTO.SprintId = sprint.SprintId;
             ticketDTO.SprintEndDate = sprint.EndDate;
             ticketDTO.SprintStartDate = sprint.StartDate;
@@ -131,9 +153,9 @@ namespace Voyage.Controllers
             return await _ticketsB.DeleteTicket(ticketId);
         }
 
-        private Sprint SetSprint()
+        private SprintVM SetSprint()
         {
-            Sprint sprint = new Sprint();
+            SprintVM sprint = new SprintVM();
             sprint.SprintId = 1;
             sprint.StartDate = DateTime.UtcNow.AddDays(-15);
             sprint.EndDate = DateTime.UtcNow.AddDays(15);
@@ -238,8 +260,9 @@ namespace Voyage.Controllers
             vm.SettingsId = dto.SettingsId;
             vm.SprintStart = dto.SprintStart!.Value.Date;
             vm.SprintEnd = dto.SprintEnd!.Value.Date;
-            vm.RepeatSprintOption = (int)dto.RepeatSprintOption;
+            vm.RepeatSprintOption = (int?)dto.RepeatSprintOption;
             vm.Sections = dto.Sections;
+            vm.SectionSetting = dto.SectionSetting;
             return vm;
         }
 

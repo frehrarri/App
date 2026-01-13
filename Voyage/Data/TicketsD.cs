@@ -482,6 +482,7 @@ namespace Voyage.Data
             {
                 Settings? settings;
                 bool isUpdate = true;
+                var date = DateTime.UtcNow;
 
                 settings = await _db.Settings
                     .Include(s => s.Sections)
@@ -497,18 +498,21 @@ namespace Voyage.Data
                 {
                     settings = new Settings();
                     settings.CreatedBy = dto.CreatedBy;
-                    settings.CreatedDate = DateTime.UtcNow;
+                    settings.CreatedDate = date;
+                    settings.SprintId = 1;
                     isUpdate = false;
                 }
                 else //empty previous sections to be replaced
                 {
                     settings.ModifiedBy = dto.CreatedBy;
-                    settings.ModifiedDate = DateTime.UtcNow;
+                    settings.ModifiedDate = date;
                     settings.Sections.Clear();
+                    settings.SprintId = settings.SprintId + 1;
                 }
-                
+
+                settings.SectionSetting = dto.SectionSetting;
                 settings.RepeatSprintOption = dto.RepeatSprintOption;
-                settings.SprintEndDate = dto.SprintEnd!.Value;
+                settings.SprintEndDate = dto.SprintEnd;
                 settings.SprintStartDate = dto.SprintStart!.Value;
                 settings.Feature = Constants.Feature.Tickets;
                 settings!.IsLatest = true;
@@ -520,7 +524,9 @@ namespace Voyage.Data
                     Title = s.Title,
                     SectionOrder = s.SectionOrder,
                     IsActive = true,
-                    IsLatest = true
+                    IsLatest = true,
+                    CreatedDate = date,
+                    CreatedBy = dto.CreatedBy
                 })
                 .ToList();
 

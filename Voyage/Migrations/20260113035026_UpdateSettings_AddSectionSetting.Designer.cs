@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260113035026_UpdateSettings_AddSectionSetting")]
+    partial class UpdateSettings_AddSectionSetting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -386,7 +389,7 @@ namespace Voyage.Migrations
                     b.Property<int>("SectionSetting")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("SprintEndDate")
+                    b.Property<DateTime>("SprintEndDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("SprintId")

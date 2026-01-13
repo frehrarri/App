@@ -69,6 +69,7 @@ namespace Voyage.Business
 
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
         {
+            //user
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
             if (user == null)
@@ -76,6 +77,16 @@ namespace Voyage.Business
             else
                 ticketDTO.CreatedBy = user.UserName ?? string.Empty;
 
+            //sprint settings
+            TicketSettingsDTO? settings = await GetSettings();
+            if (settings != null)
+            {
+                ticketDTO.SprintStartDate = settings.SprintStart;
+                ticketDTO.SprintEndDate = settings.SprintEnd;
+                ticketDTO.SprintId = settings.SprintId;
+            }
+
+            //content
             ticketDTO.Description = SanitizeHtmlForXSS(ticketDTO.Description);
 
             //Set section and statuses for specific statuses/sections
@@ -94,6 +105,7 @@ namespace Voyage.Business
             if (String.IsNullOrEmpty(ticketDTO.AssignedTo))
                 ticketDTO.AssignedTo = nameof(Constants.Roles.Unassigned);
 
+            //version history
             ticketDTO.TicketChangeAction = await HandleTicketChangeAction(ticketDTO);
 
             return await _ticketsD.SaveTicket(ticketDTO);
@@ -225,14 +237,30 @@ namespace Voyage.Business
             else
                 dto.CreatedBy = user.UserName ?? string.Empty;
 
+            AddRequiredSections(dto);
             HandleSprintDates(dto);
+
             return await _ticketsD.SaveSettings(dto);
+        }
+
+        private void AddRequiredSections(TicketSettingsDTO dto)
+        {
+            var requiredSections = Enum.GetNames(typeof(Constants.RequiredTicketSections));
+
+            int i = 1;
+            foreach (string section in requiredSections)
+            {
+                dto.Sections.Add(new SectionDTO { Title = section, SectionOrder = dto.Sections.Count() + i });
+                i++;
+            }
         }
 
         public void HandleSprintDates(TicketSettingsDTO dto)
         {
-            //dto handles daily by default in constructor
+            
             dto.SprintStart = DateTime.SpecifyKind(dto.SprintStart!.Value.Date, DateTimeKind.Utc);
+
+            //dto defaults to None (Start = today, end = null)
 
             if (dto.RepeatSprintOption == Constants.RepeatSprint.Weekly)
             {
@@ -249,9 +277,12 @@ namespace Voyage.Business
                 dto.SprintEnd = dto.SprintStart!.Value.AddMonths(1);
             }
 
-            dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
-
-            //custom would have sprint end already set
+            //no end date for never repeat
+            if (dto.RepeatSprintOption != Constants.RepeatSprint.Never)
+            {
+                dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
+            }
+            
         }
 
         public List<SectionDTO> SetSectionsDevelopment()
@@ -263,7 +294,8 @@ namespace Voyage.Business
                 "Dev",
                 "Review",
                 "QA",
-                //"UAT",
+                "Staging",
+                "UAT",
                 "Completed",
                 "Discontinued",
                 "Backlog"
