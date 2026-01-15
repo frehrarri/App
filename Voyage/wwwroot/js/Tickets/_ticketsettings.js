@@ -1,9 +1,9 @@
-﻿import { loadModule } from './__moduleLoader.js';
+﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    document.getElementById('add-section-btn').addEventListener("click", (e) => addSection());
+    document.getElementById('add-section-btn').addEventListener("click", addSection);
 
-    document.getElementById('save-settings-btn')?.addEventListener("click", (e) => save(e));
+    document.getElementById('save-settings-btn')?.addEventListener("click", save);
 
     document.querySelector("#back-btn")?.addEventListener("click", async (e) => {
         const module = await loadModule("tickets");
@@ -11,29 +11,29 @@ export async function init() {
     });
 
     document.querySelectorAll("[name='rdo-repeat']")?.forEach(el =>
-        el.addEventListener("click", (e) => toggleSprintDateControls(e))
+        el.addEventListener("click", toggleSprintDateControls)
     );
 
     document.querySelectorAll("[name='rdo-section']")?.forEach(el =>
-        el.addEventListener("click", (e) => toggleSectionControls(e))
+        el.addEventListener("click", toggleSectionControls)
     );
 
     document.querySelectorAll(".delete-section")?.forEach(el =>
-        el.addEventListener("click", (e) => removeSection(e))
+        el.addEventListener("click", removeSection)
     );
 
     document.querySelectorAll(".delete")?.forEach(el =>
-        el.addEventListener("click", (e) => removeSection(e))
+        el.addEventListener("click", removeSection)
     );
-    
+
+    document.getElementById("undo-section-btn")?.addEventListener("click", undoSection);
 }
 
 function addSection(section) {
 
     let input = document.getElementById('section-title-input').value.trim();
-    if (section != null) {
+    if (section != null)
         input = section;
-    }
 
     if (!input) return;
 
@@ -47,25 +47,52 @@ function addSection(section) {
     //clear after adding to container
     document.getElementById('section-title-input').value = "";
 
-    document.querySelectorAll('.delete-section').forEach(el => {
-        el.removeEventListener("click", removeSection);
-        el.addEventListener("click", removeSection);
-    });
+    newSection.querySelector('.delete-section').addEventListener("click", removeSection);
+    newSection.querySelector('.delete').addEventListener("click", removeSection);
 
-    document.querySelectorAll('.delete').forEach(el => {
-        el.removeEventListener("click", removeSection);
-        el.addEventListener("click", removeSection);
+    sectionHistory.push({
+        type: "add",
+        element: newSection
     });
 
 }
 
+const sectionHistory = [];
+
+function undoSection() {
+    if (!sectionHistory.length) return;
+
+    const lastAction = sectionHistory.pop();
+
+    if (lastAction.type === "add") {
+        // Undo add → remove the element
+        lastAction.element.remove();
+    } else if (lastAction.type === "remove") {
+        // Undo remove → re-insert the element at the original position
+        if (lastAction.nextSibling) {
+            lastAction.parent.insertBefore(lastAction.element, lastAction.nextSibling);
+        } else {
+            lastAction.parent.appendChild(lastAction.element);
+        }
+    }
+}
+
 function removeSection(e) {
+    let target;
     if (e.target.classList.contains('delete')) {
-        e.target.parentElement.remove();
-    }
-    else {
-        e.target.remove();
-    }
+        target = e.target.parentElement;
+    } else {
+        target = e.target;
+    }        e.target.parentElement.remove();
+
+    sectionHistory.push({
+        type: "remove",
+        element: target,
+        parent: target.parentElement,
+        nextSibling: target.nextSibling // for restoring position
+    });
+
+    target.remove();
 }
 
 async function save(e) {

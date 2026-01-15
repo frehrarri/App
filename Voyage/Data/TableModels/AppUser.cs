@@ -30,8 +30,7 @@ namespace Voyage.Data.TableModels
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AppUser>()
-                 .ToTable("Users");
+   
 
         }
     }

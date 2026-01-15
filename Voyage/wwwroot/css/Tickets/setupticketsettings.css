@@ -1,0 +1,9 @@
+﻿#ticket-setup-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#info {
+    margin-top: 15px;
+    padding: 10px;
+}

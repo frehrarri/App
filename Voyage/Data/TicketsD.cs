@@ -153,10 +153,11 @@ namespace Voyage.Data
                 if (isUpdate)
                 {
                     Ticket? existingTicket = await _db.Tickets
-                        .Where(t => t.TicketId == ticketDTO.TicketId
+                        .Where(t => t.CompanyId == ticketDTO.CompanyId
+                            && t.TicketId == ticketDTO.TicketId
                             && t.IsActive == true
                             && t.IsLatest == true)
-                        .FirstOrDefaultAsync();
+                        .SingleOrDefaultAsync();
 
                     if (existingTicket == null)
                         throw new Exception("Ticket not found");
@@ -169,7 +170,7 @@ namespace Voyage.Data
                     // Create new version
                     Ticket newVersion = new Ticket
                     {
-                        
+                        CompanyId = ticketDTO.CompanyId,
                         TicketId = existingTicket.TicketId,
                         TicketVersion = existingTicket.TicketVersion + 1,
                         IsActive = true,
@@ -210,6 +211,7 @@ namespace Voyage.Data
 
                     Ticket newTicket = new Ticket
                     {
+                        CompanyId = ticketDTO.CompanyId,
                         TicketId = newTicketId,
                         TicketVersion = 1.0M,
                         IsActive = true,

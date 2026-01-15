@@ -1,4 +1,4 @@
-﻿import { loadModule } from './__moduleLoader.js';
+﻿import { loadModule } from "/js/__moduleLoader.js";
 
 
 export function init(params) {

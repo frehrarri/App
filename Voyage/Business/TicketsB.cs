@@ -75,7 +75,10 @@ namespace Voyage.Business
             if (user == null)
                 throw new InvalidOperationException("Authenticated user not found.");
             else
+            {
                 ticketDTO.CreatedBy = user.UserName ?? string.Empty;
+                ticketDTO.CompanyId = user.CompanyId;
+            }
 
             //sprint settings
             TicketSettingsDTO? settings = await GetSettings();

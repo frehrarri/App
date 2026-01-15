@@ -32,6 +32,7 @@
     border: 1px solid black;
     border-radius:5px;
     background-color: ghostwhite;
+    margin-bottom: 5px;
 }
 
 #btn-container{
@@ -55,3 +56,8 @@
 #rdo-repeat-container {
     margin-left: 5px;
 }
+
+#undo-section-btn{
+    display: inline;
+}
+

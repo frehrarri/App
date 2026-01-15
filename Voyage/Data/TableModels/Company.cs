@@ -21,8 +21,10 @@ namespace Voyage.Data.TableModels
 
         #region Foreign Keys
 
+        public ICollection<Department> Departments { get; set; } = new List<Department>();
         public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
 
         #endregion
 
@@ -43,6 +45,8 @@ namespace Voyage.Data.TableModels
                 .WithMany(c => c.Users)
                 .HasForeignKey(u => u.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
         }
+
     }
 }

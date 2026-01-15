@@ -29,33 +29,23 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<IActionResult> TicketsPartial()
         {
-            MainVM mainVM = new MainVM();
+            TicketsVM vm = new TicketsVM();
 
-            if (mainVM.TicketsVM != null)
+            TicketSettingsDTO? settings = await _ticketsB.GetSettings();
+            //mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
+
+            if (settings != null)
             {
-                TicketSettingsDTO? settings = await _ticketsB.GetSettings();
+                vm.Settings = settings;
+                vm.Sections = settings.Sections;
+                vm.Sprint.StartDate = settings.SprintStart;
+                vm.Sprint.EndDate = settings.SprintEnd;
+                vm.Sprint.SprintId = settings.SprintId;
 
-                mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
-
-                if (settings != null)
-                {
-                    mainVM.TicketsVM.Settings = settings;
-                    mainVM.TicketsVM.Sections = settings.Sections;
-                    mainVM.TicketsVM.Sprint.StartDate = settings.SprintStart;
-                    mainVM.TicketsVM.Sprint.EndDate = settings.SprintEnd;
-                    mainVM.TicketsVM.Sprint.SprintId = settings.SprintId;
-                }
-                else
-                {
-                    mainVM.TicketsVM.Sections = _ticketsB.SetSectionsDevelopment();
-                    mainVM.TicketsVM.Tickets = await GetTickets(1);
-                    mainVM.TicketsVM.Sprint = SetSprint();
-                }
-
-
+                return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
             }
 
-            return PartialView("~/Views/Tickets/_Tickets.cshtml", mainVM?.TicketsVM);
+            return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
         }
 
         [HttpGet]
@@ -65,7 +55,7 @@ namespace Voyage.Controllers
             TicketVM? vm = await GetTicket(ticketId, ticketVersion);
             try
             {
-                return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
+                return PartialView("~/Views/App/Tickets/_Ticket.cshtml", vm);
             }
             catch (Exception ex)
             {
@@ -90,7 +80,7 @@ namespace Voyage.Controllers
                 vm.TicketSettings = MapToVM(dto);
             }
 
-            return PartialView("~/Views/Tickets/_ManageTicket.cshtml", vm);
+            return PartialView("~/Views/App/Tickets/_ManageTicket.cshtml", vm);
         }
 
         [HttpGet]
@@ -103,7 +93,7 @@ namespace Voyage.Controllers
             if (dto != null)
                 vm = MapToVM(dto);
 
-            return PartialView("~/Views/Tickets/_TicketSettings.cshtml", vm);
+            return PartialView("~/Views/App/Tickets/_TicketSettings.cshtml", vm);
         }
 
 

@@ -1,18 +1,6 @@
-﻿import { loadModule } from "./__moduleLoader.js";
+﻿import { loadModule } from "/js/__moduleLoader.js";
 
-async function getTicketsPartial() {
-    try {
-        const response = await axios.get(`/Tickets/TicketsPartial`);
-        document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("tickets");
-        return true;
-    } catch (error) {
-        console.error("error", error);
-        return false;
-    }
-}
-
-export function init() {
+async function getSideNavItem() {
     const navItems = document.querySelectorAll(".nav-item");
     const views = document.querySelectorAll(".main-content .view");
 
@@ -39,12 +27,17 @@ export function init() {
 
             // Load partials based on the target
             if (targetId === "ticket-view") {
-                await getTicketsPartial();
+                const module = await loadModule("tickets");
+                await module.getTicketsPartial();
             }
-            // Add other cases as you build them
-            // else if (targetId === "chat-view") {
-            //     await getChatPartial();
-            // }
+            else if (targetId === "hr-view") {
+                const module = await loadModule("managePersonnel");
+                await module.getManagePersonnelPartial();
+            }
         });
     });
+}
+
+export async function init() {
+    getSideNavItem();
 }

@@ -1,7 +1,7 @@
 ﻿@model TicketSettingsVM
 
 
-<link href="~/css/_ticketsettings.css" rel="stylesheet" asp-append-version="true"/>
+<link href="~/css/Tickets/_ticketsettings.css" rel="stylesheet" asp-append-version="true"/>
 
 @{
 }
@@ -14,7 +14,7 @@
     <form id="ticket-settings-form">
     
         @Html.AntiForgeryToken()
-        <h4>Section</h4>
+        <h4>Section Setup</h4>
 
         <span id="rdo-section-container">
             <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
@@ -36,8 +36,13 @@
         </div>
         <div id="sections-container" class="@(Model.SectionSetting != Constants.SectionSettings.Custom ? "hidden" : "")">
             <br />
-            <button id="add-section-btn" class="primary-btn" type="button">Add</button>
             <input id="section-title-input" type="text" placeholder="section name" />
+            <br />
+
+            <button id="add-section-btn" class="primary-btn" type="button">Add</button>
+            <button id="undo-section-btn" class="secondary-btn" type="button">Undo</button>
+
+            
         </div>
 
         
@@ -46,7 +51,7 @@
         <br />
         <br />
 
-        <h4>Sprint</h4>
+        <h4>Sprint Setup</h4>
         <br />
 
         <div id="sprint-dates-container" class="@(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never 
@@ -89,7 +94,7 @@
         <br />
         <div id="btn-container">
             <button id="save-settings-btn" class="primary-btn" type="button">Save</button>
-            <button type="button" id="back-btn" class="secondary-btn">Back</button>
+            <span><button type="button" id="back-btn" class="secondary-btn">Back</button></span>
         </div>
 
         

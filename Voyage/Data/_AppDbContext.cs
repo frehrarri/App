@@ -11,6 +11,8 @@ namespace Voyage.Data
 
         public DbSet<_MasterEF> _Master { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<DepartmentRole> DepartmentRoles { get; set; }
         public DbSet<Settings> Settings { get; set; }
         public DbSet<Section> Sections { get; set; }
         public DbSet<Ticket> Tickets { get; set; }

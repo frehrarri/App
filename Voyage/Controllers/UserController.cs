@@ -132,7 +132,7 @@ namespace Voyage.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> RegisterUser([FromBody] RegistrationDetailsDTO details)
+        public async Task<IActionResult> RegisterCompany([FromBody] RegistrationDetailsDTO details)
         {
             Response response = new Response();
             await using var transaction = await _db.Database.BeginTransactionAsync();

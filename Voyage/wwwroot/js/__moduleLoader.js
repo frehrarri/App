@@ -9,23 +9,32 @@ const moduleRegistry = {
         css: `/css/_sidenav.css?v=${scriptVersion}`
     },
 
+    //hr
+    managePersonnel: {
+        js: () => import(`./HR/_managePersonnel.js?v=${scriptVersion}`),
+        css: `/css/HR/_managePersonnel.css?v=${scriptVersion}`
+    },
+
+
     //tickets
     manageTicket: {
-        js: () => import(`./_manageTicket.js?v=${scriptVersion}`),
-        css: `/css/_manageTicket.css?v=${scriptVersion}`
+        js: () => import(`./Tickets/_manageTicket.js?v=${scriptVersion}`),
+        css: `/css/Tickets/_manageTicket.css?v=${scriptVersion}`
     },
     tickets: {
-        js: () => import(`./_tickets.js?v=${scriptVersion}`),
-        css: `/css/_tickets.css?v=${scriptVersion}`
+        js: () => import(`./Tickets/_tickets.js?v=${scriptVersion}`),
+        css: `/css/Tickets/_tickets.css?v=${scriptVersion}`
     },
     ticket: {
-        js: () => import(`./_ticket.js?v=${scriptVersion}`),
-        css: `/css/_ticket.css?v=${scriptVersion}`
+        js: () => import(`./Tickets/_ticket.js?v=${scriptVersion}`),
+        css: `/css/Tickets/_ticket.css?v=${scriptVersion}`
     },
     ticketSettings: {
-        js: () => import(`./_ticketsettings.js?v=${scriptVersion}`)//,
-        //css: `/css/_ticket.css?v=${scriptVersion}`
+        js: () => import(`./Tickets/_ticketsettings.js?v=${scriptVersion}`)//,
+        //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
     }
+
+    
 };
 
 // Dynamically load CSS if not already loaded
