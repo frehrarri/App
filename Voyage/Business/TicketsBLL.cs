@@ -16,15 +16,15 @@ using static Voyage.Utilities.HelperMethods;
 
 namespace Voyage.Business
 {
-    public class TicketsB
+    public class TicketsBLL
     {
-        private readonly ILogger<TicketsB> _logger;
+        private readonly ILogger<TicketsBLL> _logger;
         private readonly UserManager<AppUser> _userManager;
-        private TicketsD _ticketsD;
+        private TicketsDAL _ticketsD;
         private IHttpContextAccessor _httpContextAccessor;
 
 
-        public TicketsB(UserManager<AppUser> userManager, TicketsD ticketsD, IHttpContextAccessor httpContextAccessor, ILogger<TicketsB> logger)
+        public TicketsBLL(UserManager<AppUser> userManager, TicketsDAL ticketsD, IHttpContextAccessor httpContextAccessor, ILogger<TicketsBLL> logger)
         {
             _userManager = userManager;
             _ticketsD = ticketsD;
@@ -106,7 +106,7 @@ namespace Voyage.Business
             }
 
             if (String.IsNullOrEmpty(ticketDTO.AssignedTo))
-                ticketDTO.AssignedTo = nameof(Constants.Roles.Unassigned);
+                ticketDTO.AssignedTo = nameof(Constants.DefaultRoles.Unassigned);
 
             //version history
             ticketDTO.TicketChangeAction = await HandleTicketChangeAction(ticketDTO);

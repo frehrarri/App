@@ -195,7 +195,7 @@ namespace Voyage.Controllers
                 if (result.Succeeded)
                 {
                     //assign role
-                    await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
+                    await _userManager.AddToRoleAsync(user, nameof(Constants.DefaultRoles.Unassigned));
 
                     //sign in the user immediately
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -295,7 +295,7 @@ namespace Voyage.Controllers
                 var roles = await _userManager.GetRolesAsync(user);
                 if (roles.ToList().Any() == false)
                 {
-                    await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
+                    await _userManager.AddToRoleAsync(user, nameof(Constants.DefaultRoles.Unassigned));
                 }
                 await _signInManager.RefreshSignInAsync(user);
 

@@ -12,9 +12,9 @@ namespace Voyage.Controllers
 {
     public class WebsiteController : Controller
     {
-        TicketsB _ticketsB;
+        TicketsBLL _ticketsB;
 
-        public WebsiteController(TicketsB ticketsB)
+        public WebsiteController(TicketsBLL ticketsB)
         {
             _ticketsB = ticketsB;
         }

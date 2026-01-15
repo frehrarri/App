@@ -6,9 +6,9 @@ namespace Voyage.Controllers
 {
     public class AppController : Controller
     {
-        TicketsB _ticketsB;
+        TicketsBLL _ticketsB;
 
-        public AppController(TicketsB ticketsB)
+        public AppController(TicketsBLL ticketsB)
         {
             _ticketsB = ticketsB;
         }

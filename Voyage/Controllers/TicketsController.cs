@@ -14,11 +14,11 @@ namespace Voyage.Controllers
 {
     public class TicketsController : Controller
     {
-        private TicketsB _ticketsB;
+        private TicketsBLL _ticketsB;
         private UserManager<AppUser> _userManager;
         
 
-        public TicketsController(TicketsB ticketsB, UserManager<AppUser> userManager)
+        public TicketsController(TicketsBLL ticketsB, UserManager<AppUser> userManager)
         {
             _ticketsB = ticketsB;
             _userManager = userManager;

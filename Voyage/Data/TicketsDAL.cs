@@ -12,12 +12,12 @@ using static Voyage.Utilities.Constants;
 
 namespace Voyage.Data
 {
-    public class TicketsD
+    public class TicketsDAL
     {
         private _AppDbContext _db;
-        private ILogger<TicketsD> _logger;
+        private ILogger<TicketsDAL> _logger;
 
-        public TicketsD(_AppDbContext db, ILogger<TicketsD> logger)
+        public TicketsDAL(_AppDbContext db, ILogger<TicketsDAL> logger)
         {
             _db = db;
             _logger = logger;

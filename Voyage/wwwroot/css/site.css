@@ -187,3 +187,17 @@ body {
 .hidden {
     display: none !important;
 }
+
+.heading-setting-container{
+    display: flex;
+}
+
+.delete-ul {
+    list-style-position: inside;
+}
+
+    .delete-ul li::marker {
+        content: "x ";
+        color: red;
+        font-weight: bold;
+    }

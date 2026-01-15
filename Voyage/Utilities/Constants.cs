@@ -104,19 +104,10 @@
             System
         }
 
-        public enum Roles
+        public enum DefaultRoles
         {
             Unassigned,
-            Principal,
-            MarketingAdmin,
-            MarketingManager,
-            MarketingUser,
-            SalesAdmin,
-            SalesManager,
-            SalesUser,
-            FinanceAdmin,
-            FinanceManager,
-            FinanceUser
+            Principal
         }
 
         public enum PriorityLevel

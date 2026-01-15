@@ -75,10 +75,12 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 builder.Services.AddScoped<EmailService>();
 
 //business layer
-builder.Services.AddScoped<TicketsB>();
+builder.Services.AddScoped<TicketsBLL>();
+builder.Services.AddScoped<HrBLL>();
 
 //data layer
-builder.Services.AddScoped<TicketsD>();
+builder.Services.AddScoped<TicketsDAL>();
+builder.Services.AddScoped<HrDAL>();
 
 //Config Constants
 Constants.Initialize(builder.Configuration);
@@ -88,15 +90,15 @@ Constants.Initialize(builder.Configuration);
 var app = builder.Build();
 
 
-//Update roles
+////Update roles
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await RoleSeeder.SeedRolesAsync(services);
 }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.

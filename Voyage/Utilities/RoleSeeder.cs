@@ -8,7 +8,7 @@ namespace Voyage.Utilities
         {
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            foreach (var role in Enum.GetValues<Constants.Roles>())
+            foreach (var role in Enum.GetValues<Constants.DefaultRoles>())
             {
                 if (!await roleManager.RoleExistsAsync(role.ToString()))
                 {
