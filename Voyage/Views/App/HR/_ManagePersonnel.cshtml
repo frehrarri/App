@@ -2,17 +2,11 @@
 
 <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" />
 
-<div class="heading-setting-container">
-    <h1>Manage Personnel</h1>
-    <button class="settings-btn">
-        <i class="fa-solid fa-gear"></i>
-    </button>
-</div>
-
 <div id="manage-personnel-container">
     <form id="manage-personnel">
         @Html.AntiForgeryToken()
         <div id="dv-personnel-grid">
+
             <h4>Manage Personnel</h4>
             <table>
             </table>
@@ -31,41 +25,11 @@
                 </div>
             </div>
         </div>
-    
-        <div id="dv-manage-departments">
-            <h4>Manage Departments</h4>
-            <ul id="ul-depts" class="delete-ul"></ul>
-            <input id="add-dept" type="text" />
-            <button id="add-dept-btn" type="button">Add</button>
-            <button id="dept-save-btn">Save</button>
-        </div>
 
-        <div id="dv-manage-teams">
-            <h4>Manage Teams</h4>
-            <ul id="ul-teams" class="delete-ul"></ul>
-            <input id="add-team" type="text" />
-            <button id="add-team-btn" type="button">Add</button>
-            <button id="team-save-btn">Save</button>
-        </div>
-
-    
-        <div id="dv-manage-roles">
-            <h4>Manage Roles</h4>
-            <ul id="ul-roles" class="delete-ul"></ul>
-            <input id="add-role" type="text" />
-            <button id="add-role-btn" type="button">Add</button>
-            <button id="role-save-btn">Save</button>
-        </div>
-
-        <div id="dv-manage-privileges">
-            <h4>Manage Privileges</h4>
-            <ul id="ul-privileges" class="delete-ul"></ul>
-            <input id="add-priv" type="text" />
-            <button id="add-priv-btn" type="button">Add</button>
-            <button id="priv-save-btn">Save</button>
-        </div>
 
     </form>
+
+
 
 </div>
 

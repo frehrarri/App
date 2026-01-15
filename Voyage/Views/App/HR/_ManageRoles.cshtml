@@ -1,0 +1,20 @@
+﻿@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
+
+<div id="manage-roles-container">
+    <form id="manage-roles">
+        @Html.AntiForgeryToken()
+
+        <div id="dv-manage-roles">
+            <h4>Manage Roles</h4>
+            <ul id="ul-roles" class="delete-ul"></ul>
+            <input id="add-role" type="text" />
+            <button id="add-role-btn" type="button">Add</button>
+            <button id="role-save-btn">Save</button>
+        </div>
+
+    </form>
+</div>
+
+@* <script src="~/js/hr/_managepersonnel.js"></script> *@
+
+

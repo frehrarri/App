@@ -312,7 +312,7 @@ function styleTable(container = document) {
     });
 }
 
-async function getTicketSettings() {
+export async function getTicketSettings() {
     const response = await getPartial("Tickets", "SettingsPartial");
 
     if (response.data) {

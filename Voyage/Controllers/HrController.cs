@@ -16,10 +16,41 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public IActionResult HrControlPartial()
+        {
+            return PartialView("~/Views/App/HR/HrControl.cshtml");
+        }
+
+        [HttpGet]
         public IActionResult ManagePersonnelPartial()
         {
             return PartialView("~/Views/App/HR/_ManagePersonnel.cshtml");
         }
+
+        [HttpGet]
+        public IActionResult ManageDepartmentPartial()
+        {
+            return PartialView("~/Views/App/HR/_ManageDepartments.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult ManageTeamsPartial()
+        {
+            return PartialView("~/Views/App/HR/_ManageTeams.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult ManageRolesPartial()
+        {
+            return PartialView("~/Views/App/HR/_ManageRoles.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult ManagePermissionsPartial()
+        {
+            return PartialView("~/Views/App/HR/_ManagePermissions.cshtml");
+        }
+
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]

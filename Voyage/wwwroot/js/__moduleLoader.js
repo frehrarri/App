@@ -14,6 +14,22 @@ const moduleRegistry = {
         js: () => import(`./HR/_managePersonnel.js?v=${scriptVersion}`),
         css: `/css/HR/_managePersonnel.css?v=${scriptVersion}`
     },
+    manageDepartments: {
+        js: () => import(`./HR/_manageDepartments.js?v=${scriptVersion}`),
+        css: `/css/HR/_manageDepartments.css?v=${scriptVersion}`
+    },
+    manageTeams: {
+        js: () => import(`./HR/_manageTeams.js?v=${scriptVersion}`),
+        css: `/css/HR/_manageTeams.css?v=${scriptVersion}`
+    },
+    manageRoles: {
+        js: () => import(`./HR/_manageRoles.js?v=${scriptVersion}`),
+        css: `/css/HR/_manageRoles.css?v=${scriptVersion}`
+    },
+    managePermissions: {
+        js: () => import(`./HR/_managePermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_managePermissions.css?v=${scriptVersion}`
+    },
 
 
     //tickets

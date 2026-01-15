@@ -1,0 +1,18 @@
+﻿@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
+
+<div id="manage-teams-container">
+    <form id="manage-teams">
+        @Html.AntiForgeryToken()
+
+        <div id="dv-manage-teams">
+            <h4>Manage Teams</h4>
+            <ul id="ul-teams" class="delete-ul"></ul>
+            <input id="add-team" type="text" />
+            <button id="add-team-btn" type="button">Add</button>
+            <button id="team-save-btn">Save</button>
+        </div>
+
+    </form>
+</div>
+
+@* <script src="~/js/hr/_managepersonnel.js"></script> *@
