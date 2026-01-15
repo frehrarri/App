@@ -25,14 +25,13 @@
 
 @foreach (var s in Model.Sections)
 {
-    
-    var sectionTickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).ToList();
+
+    var sectionTickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).OrderByDescending(t => t.PriorityLevel);
 
     int ticketCount = sectionTickets.Count();
     int numOfPages = (int)Math.Ceiling(ticketCount / 5.0);
 
-    var tickets = sectionTickets.OrderByDescending(t => t.PriorityLevel)
-                                .Take(5)
+    var tickets = sectionTickets.Take(5)
                                 .ToList();
 
 

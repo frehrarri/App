@@ -17,14 +17,21 @@ namespace Voyage.Data.TableModels
         public string State { get; set; } = string.Empty;
         public int PostalCode { get; set; }
 
-        // Foreign key
-        public int? CompanyId { get; set; }
+
+
+        #region FK
+
+        public int CompanyId { get; set; }
         public Company? Company { get; set; } = null!;
+
+        #endregion
+
+
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AppUser>()
-                 .ToTable("User");
+                 .ToTable("Users");
 
         }
     }

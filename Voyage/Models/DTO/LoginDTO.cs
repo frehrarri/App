@@ -1,6 +1,6 @@
-﻿namespace Voyage.Models.User
+﻿namespace Voyage.Models.DTO
 {
-    public class Login
+    public class LoginDTO
     {
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

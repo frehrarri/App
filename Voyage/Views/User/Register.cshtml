@@ -146,6 +146,49 @@
                 <input type="number" id="zipCode" class="form-control" required>
             </div>
 
+            <hr />
+
+            <h4>Company Info</h4>
+
+            <div class="formfield-container mb-3">
+                <label for="company-name" class="form-label">Name</label>
+                <input id="company-name" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-street-address" class="form-label">Street Address</label>
+                <input id="company-street-address" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-city" class="form-label">City</label>
+                <input id="company-city" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-state" class="form-label">State</label>
+                <input id="company-state" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-postal-code" class="form-label">Postal Code</label>
+                <input id="company-postal-code" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-region" class="form-label">Region</label>
+                <input id="company-region" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-country" class="form-label">Country</label>
+                <input id="company-country" type="text" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-phone" class="form-label">Phone</label>
+                <input id="company-phone" type="number" />
+            </div>
+            <div class="formfield-container mb-3">
+                <label for="company-email" class="form-label">Email</label>
+                <input id="company-email" type="text" />
+            </div>
+
+
+
             <button type="button" class="btn btn-primary" onclick="registerUser()">Register</button>
         </form>
     </div>
@@ -163,22 +206,36 @@
 
         const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+
+        const companyData = {
+             name: document.getElementById("company-name").value,
+             streetAddress : document.getElementById("company-street-address").value,
+             city : document.getElementById("company-city").value,
+             region: document.getElementById("company-region").value,
+             country: document.getElementById("company-country").value,
+             state: document.getElementById("company-state").value,
+             phone: document.getElementById("company-phone").value,
+             email: document.getElementById("company-email").value,
+             postalcode: document.getElementById("company-postal-code").value
+        }
+
         const registrationData = {
-            userName: document.getElementById("userName").value,
-            firstname: document.getElementById("firstName").value,
-            middlename: document.getElementById("middleName").value,
-            lastname: document.getElementById("lastName").value,
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
-            phoneCountryCode: parseInt(document.getElementById("phoneCountryCode").value),
-            phoneAreaCode: parseInt(document.getElementById("phoneAreaCode").value),
-            phone: parseInt(document.getElementById("phone").value),
-            streetAddress: document.getElementById("streetAddress").value,
-            unitNumber: parseInt(document.getElementById("unitNumber").value) || 0,
-            city: document.getElementById("city").value,
-            state: document.getElementById("state").value,
-            country: document.getElementById("country").value,
-            zipCode: parseInt(document.getElementById("zipCode").value)
+             userName: document.getElementById("userName").value,
+             firstname: document.getElementById("firstName").value,
+             middlename: document.getElementById("middleName").value,
+             lastname: document.getElementById("lastName").value,
+             email: document.getElementById("email").value,
+             password: document.getElementById("password").value,
+             phoneCountryCode: parseInt(document.getElementById("phoneCountryCode").value),
+             phoneAreaCode: parseInt(document.getElementById("phoneAreaCode").value),
+             phone: parseInt(document.getElementById("phone").value),
+             streetAddress: document.getElementById("streetAddress").value,
+             unitNumber: parseInt(document.getElementById("unitNumber").value) || 0,
+             city: document.getElementById("city").value,
+             state: document.getElementById("state").value,
+             country: document.getElementById("country").value,
+             zipCode: parseInt(document.getElementById("zipCode").value),
+             company: companyData
         };
 
         const isValid = await validate(registrationData);

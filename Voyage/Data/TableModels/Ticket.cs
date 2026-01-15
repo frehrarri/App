@@ -36,7 +36,18 @@ namespace Voyage.Data.TableModels
         public DateTime? SprintStartDate { get; set; }
         public DateTime? SprintEndDate { get; set; }
 
-        public ICollection<TicketDetails> TicketDetails { get; set; } 
+
+
+        #region Foreign Key stuff
+
+        public ICollection<TicketDetails> TicketDetails { get; set; }
+
+        public int CompanyId { get; set; }
+        public Company Company { get; set; } = null!;
+
+        #endregion
+
+
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
@@ -46,9 +57,15 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<Ticket>()
                 .HasKey(t => new { t.TicketId, t.TicketVersion });
 
+            modelBuilder.Entity<Ticket>()
+                .HasOne(t => t.Company)
+                .WithMany(c => c.Tickets)
+                .HasForeignKey(t => t.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Index for finding latest active tickets
             modelBuilder.Entity<Ticket>()
-                .HasIndex(t => new { t.TicketId, t.IsLatest, t.IsActive });
+                .HasIndex(t => new { t.CompanyId, t.TicketId, t.IsLatest, t.IsActive });
         }
     }
 }

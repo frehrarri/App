@@ -166,7 +166,7 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -279,19 +279,45 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsLatest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("Phone")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PostalCode")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -301,7 +327,7 @@ namespace Voyage.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Company", (string)null);
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Section", b =>
@@ -412,6 +438,9 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text");
@@ -472,7 +501,7 @@ namespace Voyage.Migrations
 
                     b.HasKey("TicketId", "TicketVersion");
 
-                    b.HasIndex("TicketId", "IsLatest", "IsActive");
+                    b.HasIndex("CompanyId", "TicketId", "IsLatest", "IsActive");
 
                     b.ToTable("Tickets", (string)null);
                 });
@@ -597,7 +626,9 @@ namespace Voyage.Migrations
                 {
                     b.HasOne("Voyage.Data.TableModels.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });
@@ -613,6 +644,17 @@ namespace Voyage.Migrations
                     b.Navigation("Settings");
                 });
 
+            modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
+                {
+                    b.HasOne("Voyage.Data.TableModels.Company", "Company")
+                        .WithMany("Tickets")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("Voyage.Data.TableModels.TicketDetails", b =>
                 {
                     b.HasOne("Voyage.Data.TableModels.Ticket", "Ticket")
@@ -626,6 +668,8 @@ namespace Voyage.Migrations
 
             modelBuilder.Entity("Voyage.Data.TableModels.Company", b =>
                 {
+                    b.Navigation("Tickets");
+
                     b.Navigation("Users");
                 });
 

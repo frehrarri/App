@@ -169,6 +169,7 @@ namespace Voyage.Data
                     // Create new version
                     Ticket newVersion = new Ticket
                     {
+                        
                         TicketId = existingTicket.TicketId,
                         TicketVersion = existingTicket.TicketVersion + 1,
                         IsActive = true,

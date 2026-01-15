@@ -1,6 +1,6 @@
-﻿namespace Voyage.Models.User
+﻿namespace Voyage.Models.DTO
 {
-    public class RegistrationDetails
+    public class RegistrationDetailsDTO
     {
         public string Username { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
@@ -19,5 +19,7 @@
         public string State { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public int ZipCode { get; set; }
+
+        public CompanyDTO Company { get; set; } = new CompanyDTO();
     }
 }

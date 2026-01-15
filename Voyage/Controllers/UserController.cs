@@ -10,9 +10,10 @@ using System.Text.Json;
 using Voyage.Data;
 using Voyage.Data.TableModels;
 using Voyage.Models;
-using Voyage.Models.User;
+using Voyage.Models.DTO;
 using Voyage.Services;
 using Voyage.Utilities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static Voyage.Utilities.CustomAttributes;
 
 
@@ -20,15 +21,20 @@ namespace Voyage.Controllers
 {
     public class UserController : Controller
     {
+        private ILogger<AppUser> _logger;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         private EmailService _emailService;
+        private _AppDbContext _db;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, EmailService emailService)
+
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, EmailService emailService, _AppDbContext db, ILogger<AppUser> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _db = db;
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -95,14 +101,14 @@ namespace Voyage.Controllers
         [AllowAnonymous]
         public IActionResult ResetPassword(string token, string email)
         {
-            PasswordReset vm = new PasswordReset { Token = token, Email = email };
+            PasswordResetDTO vm = new PasswordResetDTO { Token = token, Email = email };
             return View("~/Views/User/ResetPassword.cshtml", vm);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(PasswordReset model)
+        public async Task<IActionResult> ResetPassword(PasswordResetDTO model)
         {
             if (String.IsNullOrEmpty(model.Email) || String.IsNullOrEmpty(model.Token))
                 return View(model);
@@ -126,62 +132,94 @@ namespace Voyage.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> RegisterUser([FromBody] RegistrationDetails details)
+        public async Task<IActionResult> RegisterUser([FromBody] RegistrationDetailsDTO details)
         {
             Response response = new Response();
+            await using var transaction = await _db.Database.BeginTransactionAsync();
 
-            if (details == null)
+            try
             {
-                response.Message = Constants.BadRequest;
-                response.StatusCode = HttpStatusCode.BadRequest;
+                if (details == null)
+                {
+                    response.Message = Constants.BadRequest;
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return Json(response);
+                }
+
+                response = await Validate(details);
+
+                if (response.ErrorMessages.Any())
+                {
+                    response.Message = Constants.BadRequest;
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                }
+
+                //this will be the Company Owner's registration because we add a new company to the company table.
+                //need to create a separate registration where we register an employee to an company instead of adding a new one
+
+                var company = new Company()
+                {
+                    Name = details.Company.Name,
+                    Email = details.Company.Email,
+                    Phone = details.Company.Phone,
+                    StreetAddress = details.Company.StreetAddress,
+                    City = details.Company.City,
+                    State = details.Company.State,
+                    PostalCode = details.Company.PostalCode,
+                    Region = details.Company.Region,
+                    Country = details.Company.Country
+                };
+
+                await _db.AddAsync(company);
+                await _db.SaveChangesAsync();
+
+                //passes validation so we create a new user
+                var user = new AppUser
+                {
+                    UserName = details.Username.Trim(),
+                    Email = details.Email.Trim(),
+                    FirstName = details.FirstName.Trim(),
+                    MiddleName = details.MiddleName.Trim(),
+                    LastName = details.LastName.Trim(),
+                    PhoneNumber = details.Phone.ToString(),
+                    StreetAddress = details.StreetAddress.Trim(),
+                    UnitNumber = details.UnitNumber,
+                    City = details.City.Trim(),
+                    State = details.State.Trim(),
+                    Country = details.Country.Trim(),
+                    PostalCode = details.ZipCode,
+                    CompanyId = company.CompanyId
+                };
+
+                IdentityResult result = await _userManager.CreateAsync(user, details.Password);
+                if (result.Succeeded)
+                {
+                    //assign role
+                    await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
+
+                    //sign in the user immediately
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = Constants.RegistrationSuccessful;
+                    response.RedirectURL = Url.Action("Home", "Website");
+                }
+                else
+                {
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    response.Message = Constants.BadRequest;
+                }
+
+
+                await transaction.CommitAsync();
                 return Json(response);
             }
-
-            response = await Validate(details);
-       
-            if (response.ErrorMessages.Any())
+            catch (Exception e)
             {
-                response.Message = Constants.BadRequest;
-                response.StatusCode = HttpStatusCode.BadRequest;
+                transaction.Rollback();
+                _logger.LogError(e, "error: register user");
+                throw;
             }
-
-            //passes validation so we create a new user
-            var user = new AppUser
-            {
-                UserName = details.Username.Trim(),
-                Email = details.Email.Trim(),
-                FirstName = details.FirstName.Trim(),
-                MiddleName = details.MiddleName.Trim(),
-                LastName = details.LastName.Trim(),
-                PhoneNumber = details.Phone.ToString(),
-                StreetAddress = details.StreetAddress.Trim(),
-                UnitNumber = details.UnitNumber,
-                City = details.City.Trim(),
-                State = details.State.Trim(),
-                Country = details.Country.Trim(),
-                PostalCode = details.ZipCode
-            };
-
-            IdentityResult result = await _userManager.CreateAsync(user, details.Password);
-            if (result.Succeeded)
-            {
-                //assign role
-                await _userManager.AddToRoleAsync(user, nameof(Constants.Roles.Unassigned));
-
-                //sign in the user immediately
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                response.StatusCode = HttpStatusCode.OK;
-                response.Message = Constants.RegistrationSuccessful;
-                response.RedirectURL = Url.Action("Home", "Website");
-            }
-            else
-            {
-                response.StatusCode = HttpStatusCode.BadRequest;
-                response.Message = Constants.BadRequest;
-            }
-
-             return Json(response);
         }
 
         [HttpGet]
@@ -227,7 +265,7 @@ namespace Voyage.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> LoginUser([FromBody] Login login)
+        public async Task<IActionResult> LoginUser([FromBody] LoginDTO login)
         {
             Response response = new Response();
 
@@ -279,7 +317,7 @@ namespace Voyage.Controllers
             return Json(response);
         }
 
-        public async Task<Response> Validate(RegistrationDetails details)
+        public async Task<Response> Validate(RegistrationDetailsDTO details)
         {
             Response response = new Response();
 
@@ -293,7 +331,7 @@ namespace Voyage.Controllers
             return response;
         }
 
-        private async Task ValidateUsername(RegistrationDetails details, Response response)
+        private async Task ValidateUsername(RegistrationDetailsDTO details, Response response)
         {
             if (string.IsNullOrEmpty(details.Username))
             {
@@ -316,7 +354,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private void ValidateName(RegistrationDetails details, Response response)
+        private void ValidateName(RegistrationDetailsDTO details, Response response)
         {
             if (string.IsNullOrEmpty(details.FirstName))
             {
@@ -329,7 +367,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private void ValidatePassword(RegistrationDetails details, Response response)
+        private void ValidatePassword(RegistrationDetailsDTO details, Response response)
         {
             if (string.IsNullOrEmpty(details.Password) || details.Password.Length < 8)
             {
@@ -342,7 +380,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private void ValidatePhone(RegistrationDetails details, Response response)
+        private void ValidatePhone(RegistrationDetailsDTO details, Response response)
         {
 
             if (details.PhoneAreaCode == 0)
@@ -372,7 +410,7 @@ namespace Voyage.Controllers
 
         }
 
-        private void ValidateEmail(RegistrationDetails details, Response response)
+        private void ValidateEmail(RegistrationDetailsDTO details, Response response)
         {
             var emailRegex = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
 
@@ -382,7 +420,7 @@ namespace Voyage.Controllers
             }
         }
 
-        private void ValidateAddress(RegistrationDetails details, Response response)
+        private void ValidateAddress(RegistrationDetailsDTO details, Response response)
         {
             if (string.IsNullOrEmpty(details.StreetAddress))
             {

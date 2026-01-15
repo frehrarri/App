@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20260105065919_Update_IsLatest_IsActive_IsNullable")]
-    partial class Update_IsLatest_IsActive_IsNullable
+    [Migration("20260114234843_Update_CompanyTable")]
+    partial class Update_CompanyTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,7 +169,7 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -282,19 +282,45 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsLatest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("Phone")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PostalCode")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -304,7 +330,103 @@ namespace Voyage.Migrations
 
                     b.HasKey("CompanyId");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Company", (string)null);
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Section", b =>
+                {
+                    b.Property<int>("SectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SectionId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsLatest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SectionOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SettingsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("SectionId");
+
+                    b.HasIndex("SettingsId");
+
+                    b.ToTable("Sections", (string)null);
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Settings", b =>
+                {
+                    b.Property<int>("SettingsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SettingsId"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Feature")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsLatest")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RepeatSprintOption")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SectionSetting")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SprintEndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SprintStartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("SettingsId");
+
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
@@ -318,6 +440,9 @@ namespace Voyage.Migrations
                     b.Property<string>("AssignedTo")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -369,13 +494,17 @@ namespace Voyage.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("TicketChangeAction")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TicketId", "TicketVersion");
 
-                    b.HasIndex("TicketId", "IsLatest", "IsActive");
+                    b.HasIndex("CompanyId", "TicketId", "IsLatest", "IsActive");
 
                     b.ToTable("Tickets", (string)null);
                 });
@@ -423,8 +552,6 @@ namespace Voyage.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("TicketDetailsId");
-
-                    b.HasIndex("TicketId");
 
                     b.HasIndex("TicketId", "TicketVersion");
 
@@ -502,7 +629,31 @@ namespace Voyage.Migrations
                 {
                     b.HasOne("Voyage.Data.TableModels.Company", "Company")
                         .WithMany("Users")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Section", b =>
+                {
+                    b.HasOne("Voyage.Data.TableModels.Settings", "Settings")
+                        .WithMany("Sections")
+                        .HasForeignKey("SettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Settings");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
+                {
+                    b.HasOne("Voyage.Data.TableModels.Company", "Company")
+                        .WithMany("Tickets")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });
@@ -520,7 +671,14 @@ namespace Voyage.Migrations
 
             modelBuilder.Entity("Voyage.Data.TableModels.Company", b =>
                 {
+                    b.Navigation("Tickets");
+
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Voyage.Data.TableModels.Settings", b =>
+                {
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Ticket", b =>
