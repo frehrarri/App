@@ -10,6 +10,10 @@ const moduleRegistry = {
     },
 
     //hr
+    hrControl: {
+        js: () => import(`./HR/_hrcontrol.js?v=${scriptVersion}`),
+        css: `/css/HR/_hrcontrol.css?v=${scriptVersion}`
+    },
     managePersonnel: {
         js: () => import(`./HR/_managePersonnel.js?v=${scriptVersion}`),
         css: `/css/HR/_managePersonnel.css?v=${scriptVersion}`

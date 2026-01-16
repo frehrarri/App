@@ -5,15 +5,15 @@
 @{
     Layout = "~/Views/Shared/AppLayout.cshtml";
 }
-<div class="setting-container">
-    <button class="settings-btn">
-        <i class="fa-solid fa-gear"></i>
-    </button>
-</div>
+
 <div class="app-main">
     
     <div class="main-content container">
-        <div id="hr-view" class="view active container"></div>
+        <div id="hr-view" class="view active container">
+            @{
+                await Html.RenderPartialAsync("~/Views/App/HR/_HrControl.cshtml");
+            }
+        </div>
         <div id="ticket-view" class="view hidden container"></div>
         <div id="chat-view" class="view hidden container"></div>
         <div id="sales-view" class="view hidden container"></div>

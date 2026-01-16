@@ -1,0 +1,13 @@
+﻿
+#hr-control-container {
+    margin-top:25px;
+}
+
+#hr-partial-container {
+    margin-top:25px;
+}
+
+#hr-control-header {
+    display: flex;
+    justify-content: space-between;
+}
