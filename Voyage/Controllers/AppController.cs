@@ -15,7 +15,8 @@ namespace Voyage.Controllers
 
         public IActionResult Index()
         {
-            return View("~/Views/App/Main.cshtml");
+            MainVM vm = new MainVM();
+            return View("~/Views/App/Main.cshtml", vm);
         }
     }
 }

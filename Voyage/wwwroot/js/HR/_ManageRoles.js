@@ -1,4 +1,18 @@
-﻿function addRole() {
+﻿export async function getManageRolesPartial() {
+    try {
+        const response = await axios.get('/Hr/ManagePersonnelPartial');
+
+        document.getElementById("hr-view").innerHTML = response.data;
+        await loadModule("managePersonnel");
+
+        return true;
+    } catch (error) {
+        console.error("error: getManageTicketPartial", error);
+        return false;
+    }
+} 
+
+function addRole() {
     const ul = document.getElementById("ul-roles");
     const li = document.createElement("li");
     let newRole = document.getElementById("add-role");
@@ -48,7 +62,7 @@ async function handleEvents(e) {
         addRole();
 
     //remove
-    li = e.target.closest("#ul-roles li");
+    let li = e.target.closest("#ul-roles li");
     if (li) {
         li.remove();
     }
@@ -58,4 +72,9 @@ async function handleEvents(e) {
         await saveRoles();
 
 
+}
+
+export function init() {
+    const container = document.getElementById('ul-roles');
+    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
 }

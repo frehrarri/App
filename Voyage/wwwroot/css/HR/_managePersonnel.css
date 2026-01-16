@@ -1,1 +1,8 @@
-﻿
+﻿#dv-register-personnel{
+    display:flex;
+    justify-content:flex-start;
+}
+
+#dv-self-register{
+    margin-left:100px;
+}

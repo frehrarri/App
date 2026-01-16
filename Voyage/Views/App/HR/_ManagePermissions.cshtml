@@ -1,22 +1,27 @@
-﻿
+﻿@model ManagePermissionsVM
 
-
-@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
-
-<div id="manage-permissions-container">
-    <form id="manage-permissions">
+<div id="manage-permissions-container" class="container">
+    <form id="manage-permissions" class="container">
         @Html.AntiForgeryToken()
 
-        <div id="dv-manage-permissions">
+        <div id="dv-manage-permissions" class="container">
             <h4>Manage Permissions</h4>
-            <ul id="ul-permissions" class="delete-ul"></ul>
-            <input id="add-permission" type="text" />
-            <button id="add-permission-btn" type="button">Add</button>
-            <button id="permission-save-btn">Save</button>
+            <ul id="ul-permissions" class="delete-ul">
+                @foreach (var p in Model.Permissions)
+                {
+                    <li>@p.Name</li>
+                }
+            </ul>
+
+            <div id="dv-permission-btns" class="container">
+                <button id="permission-save-btn" class="primary-btn">Save</button>
+                <button id="add-permission-btn" class="secondary-btn" type="button">Add</button>
+                <input id="add-permission" type="text" />
+            </div>
+
         </div>
 
     </form>
 
 </div>
 
-@* <script src="~/js/hr/_managepersonnel.js"></script> *@

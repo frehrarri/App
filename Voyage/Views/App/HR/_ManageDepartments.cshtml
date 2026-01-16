@@ -1,21 +1,24 @@
-﻿
+﻿@model ManageDepartmentsVM
 
-
-@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
-
-<div id="manage-departments-container">
-    <form id="manage-departments">
+<div id="manage-departments-container" class="container">
+    <form id="manage-departments" class="container">
         @Html.AntiForgeryToken()
 
-        <div id="dv-manage-departments">
+        <div id="dv-manage-departments" class="container">
             <h4>Manage Departments</h4>
-            <ul id="ul-depts" class="delete-ul"></ul>
-            <input id="add-dept" type="text" />
-            <button id="add-dept-btn" type="button">Add</button>
-            <button id="dept-save-btn">Save</button>
+            <ul id="ul-depts" class="delete-ul">
+                @foreach (var dept in Model.Departments)
+                {
+                    <li>@dept.Name</li>
+                }
+            </ul>
+
+            <div id="dv-dept-btns" class="container">
+                <button id="dept-save-btn" class="primary-btn">Save</button>
+                <button id="add-dept-btn" class="secondary-btn" type="button">Add</button>
+                <input id="add-dept" type="text" />
+            </div>
         </div>
 
     </form>
 </div>
-
-@* <script src="~/js/hr/_managepersonnel.js"></script> *@

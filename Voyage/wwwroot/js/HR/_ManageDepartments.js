@@ -1,3 +1,17 @@
+export async function getManageDepartmentsPartial() {
+    try {
+        const response = await axios.get('/Hr/ManageDepartmentPartial');
+
+        document.getElementById("hr-view").innerHTML = response.data;
+        await loadModule("manageDepartments");
+
+        return true;
+    } catch (error) {
+        console.error("error: getManageTicketPartial", error);
+        return false;
+    }
+} 
+
 function addDepartment() {
     const ul = document.getElementById("ul-depts");
     const li = document.createElement("li");
@@ -57,4 +71,11 @@ async function handleEvents(e) {
     //add
     if (e.target.id == "add-dept-btn")
         addDepartment();
+}
+
+
+
+export function init() {
+    const container = document.getElementById('ul-depts');
+    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
 }

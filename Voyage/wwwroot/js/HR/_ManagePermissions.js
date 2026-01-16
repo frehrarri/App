@@ -40,13 +40,6 @@ function addPermission() {
     newPriv.value = "";
 }
 
-async function handleEvents(e) {
-    e.preventDefault();
-
-    if (e.target.tagName == "INPUT")
-        return;
-
-}
 
 async function handleEvents(e) {
     e.preventDefault();
@@ -70,3 +63,9 @@ async function handleEvents(e) {
 }
 
 
+export function init() {
+    const container = document.getElementById('ul-permissions');
+    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
+
+
+}

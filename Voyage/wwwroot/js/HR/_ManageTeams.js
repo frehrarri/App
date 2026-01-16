@@ -1,4 +1,18 @@
-﻿const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+﻿export async function getManageTeamsPartial() {
+    try {
+        const response = await getPartial("Hr", "ManageTeamsPartial");
+        document.getElementById("hr-partial-container").innerHTML = response.data;
+        await loadModule("manageTeams");
+
+        return true;
+    } catch (error) {
+        console.error("error: getManageTicketPartial", error);
+        return false;
+    }
+}
+
+
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 async function saveTeams() {
     let response;
@@ -61,3 +75,7 @@ async function handleEvents(e) {
 
 }
 
+export function init() {
+    const container = document.getElementById('ul-teams');
+    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
+}

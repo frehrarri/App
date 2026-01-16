@@ -31,8 +31,8 @@ async function getSideNavItem() {
                 await module.getTicketsPartial();
             }
             else if (targetId === "hr-view") {
-                debugger;
-                await loadModule("hrControl");
+                const module = await loadModule("hrControl");
+                await module.getHrControlPartial();
             }
         });
     });

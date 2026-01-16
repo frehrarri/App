@@ -1,18 +1,27 @@
-﻿@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
+﻿@model ManageTeamsVM
 
-<div id="manage-teams-container">
-    <form id="manage-teams">
+<div id="manage-teams-container" class="container">
+    <form id="manage-teams" class="container">
         @Html.AntiForgeryToken()
 
-        <div id="dv-manage-teams">
+        <div id="dv-manage-teams" class="container">
             <h4>Manage Teams</h4>
-            <ul id="ul-teams" class="delete-ul"></ul>
-            <input id="add-team" type="text" />
-            <button id="add-team-btn" type="button">Add</button>
-            <button id="team-save-btn">Save</button>
+            <ul id="ul-teams" class="delete-ul">
+                @foreach (var team in Model.Teams)
+                {
+                    <li>@team.Name</li>
+                }
+            </ul>
+
+            <div id="dv-team-btns" class="container">
+                <button id="team-save-btn" class="primary-btn">Save</button>
+                <button id="add-team-btn" class="secondary-btn" type="button">Add</button>
+                <input id="add-team" type="text" />
+            </div>
+
+            
+            
         </div>
 
     </form>
 </div>
-
-@* <script src="~/js/hr/_managepersonnel.js"></script> *@

@@ -1,20 +1,28 @@
-﻿@* <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" /> *@
+﻿@model ManageRolesVM
 
-<div id="manage-roles-container">
-    <form id="manage-roles">
+<div id="manage-roles-container" class="container">
+    <form id="manage-roles" class="container">
         @Html.AntiForgeryToken()
 
-        <div id="dv-manage-roles">
+        <div id="dv-manage-roles" class="container">
             <h4>Manage Roles</h4>
-            <ul id="ul-roles" class="delete-ul"></ul>
-            <input id="add-role" type="text" />
-            <button id="add-role-btn" type="button">Add</button>
-            <button id="role-save-btn">Save</button>
+            <ul id="ul-roles" class="delete-ul">
+                @foreach (var role in Model.Roles)
+                {
+                    <li>@role.Name</li>
+                }
+            </ul>
+            <div id="dv-role-btns" class="container">
+                <button id="role-save-btn" class="primary-btn">Save</button>
+                <button id="add-role-btn" class="secondary-btn" type="button">Add</button>
+                <input id="add-role" type="text" />
+            </div>
+
+            
         </div>
 
     </form>
 </div>
 
-@* <script src="~/js/hr/_managepersonnel.js"></script> *@
 
 

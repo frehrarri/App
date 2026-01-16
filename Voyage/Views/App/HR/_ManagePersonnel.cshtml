@@ -1,4 +1,4 @@
-﻿
+﻿@model ManagePersonnelVM
 
 <link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" />
 
@@ -8,28 +8,79 @@
         <div id="dv-personnel-grid">
 
             <h4>Manage Personnel</h4>
-            <table>
+            <br />
+
+            <table class="app-table">
+                <thead>
+                    <tr class="app-table-row">
+                        <th></th>
+                        <th class="app-table-header">Employee Id</th>
+                        <th class="app-table-header">First Name</th>
+                        <th class="app-table-header">Last Name</th>
+                        <th class="app-table-header">Username</th>
+                        <th class="app-table-header">Email</th>
+                        <th class="app-table-header">Phone</th>
+                        <th class="app-table-header">Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var user in Model.Personnel)
+                    {
+                        <tr class="app-table-row">
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                            <td class="app-table-data">
+                                @* @Model.EmployeeId *@
+                            </td>
+                            <td class="app-table-data">
+                                @user.FirstName
+                            </td>
+                            <td class="app-table-data">
+                                @user.LastName
+                            </td>
+                            <td class="app-table-data">
+                                @user.Username
+                            </td>
+                            <td class="app-table-data">
+                                @user.Email
+                            </td>
+                            <td class="app-table-data">
+                                @* phone *@
+                            </td>
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
             </table>
 
+            <br />
+            <hr />
+            <br />
+
+            <h4>Register Personnel</h4>
             <div id="dv-register-personnel">
-                <h4>Register Personnel</h4>
-                <div>
-                    <label for="register-email-button">Send Registration Email</label>
-                    <button id="register-email-button" type="button">Send</button>
-                    <input type="email" />
 
+                <div id="dv-send-registration-email">
+                    <label for="register-email-button">Send Employee Registration Email</label>
                     <br />
+                    <button id="register-email-button" class="primary-btn" type="button">Send</button>
+                    <input type="email" />
+                </div>
 
-                    <label for="self-register-button">Self Register</label>
-                    <button id="self-register-button" type="button">Register</button>
+                <div id="dv-self-register">
+                    <label for="self-register-button">Register Employee</label>
+                    <br />
+                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
                 </div>
             </div>
+
         </div>
 
-
     </form>
-
-
 
 </div>
 
