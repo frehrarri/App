@@ -10,6 +10,7 @@ using System.Text.Json;
 using Voyage.Data;
 using Voyage.Data.TableModels;
 using Voyage.Models;
+using Voyage.Models.App;
 using Voyage.Models.DTO;
 using Voyage.Services;
 using Voyage.Utilities;
@@ -54,12 +55,19 @@ namespace Voyage.Controllers
 
 
         [AllowAnonymous]
-        public IActionResult Register()
+        public IActionResult RegisterCompany()
         {
-            return View();
+            var vm = new RegisterVM() { IsCompanyRegistration = true };
+            return View("~/Views/User/Register.cshtml", vm);
         }
 
-     
+        [AllowAnonymous]
+        public IActionResult RegisterUser()
+        {
+            var vm = new RegisterVM() { IsCompanyRegistration = false };
+            return View("~/Views/User/Register.cshtml", vm);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
@@ -132,7 +140,7 @@ namespace Voyage.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> RegisterCompany([FromBody] RegistrationDetailsDTO details)
+        public async Task<IActionResult> Register([FromBody] RegistrationDetailsDTO details)
         {
             Response response = new Response();
             await using var transaction = await _db.Database.BeginTransactionAsync();
@@ -156,22 +164,24 @@ namespace Voyage.Controllers
 
                 //this will be the Company Owner's registration because we add a new company to the company table.
                 //need to create a separate registration where we register an employee to an company instead of adding a new one
-
-                var company = new Company()
+                Company company = new Company();
+                company.CompanyId = details.Company.CompanyId;
+                if (details.IsCompanyRegistration)
                 {
-                    Name = details.Company.Name,
-                    Email = details.Company.Email,
-                    Phone = details.Company.Phone,
-                    StreetAddress = details.Company.StreetAddress,
-                    City = details.Company.City,
-                    State = details.Company.State,
-                    PostalCode = details.Company.PostalCode,
-                    Region = details.Company.Region,
-                    Country = details.Company.Country
-                };
+                    company.Name = details.Company.Name;
+                    company.Email = details.Company.Email;
+                    company.Phone = details.Company.Phone;
+                    company.StreetAddress = details.Company.StreetAddress;
+                    company.City = details.Company.City;
+                    company.State = details.Company.State;
+                    company.PostalCode = details.Company.PostalCode;
+                    company.Region = details.Company.Region;
+                    company.Country = details.Company.Country;
 
-                await _db.AddAsync(company);
-                await _db.SaveChangesAsync();
+                    await _db.AddAsync(company);
+                    company.CompanyId = await _db.SaveChangesAsync();
+                }
+                    
 
                 //passes validation so we create a new user
                 var user = new AppUser
@@ -188,7 +198,8 @@ namespace Voyage.Controllers
                     State = details.State.Trim(),
                     Country = details.Country.Trim(),
                     PostalCode = details.ZipCode,
-                    CompanyId = company.CompanyId
+                    CompanyId = company.CompanyId,
+                    /*EmployeeId = details.IsCompanyRegistration ? 1 : 0 *///how do i want to handle this for regular user registration?
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user, details.Password);
@@ -209,7 +220,6 @@ namespace Voyage.Controllers
                     response.StatusCode = HttpStatusCode.BadRequest;
                     response.Message = Constants.BadRequest;
                 }
-
 
                 await transaction.CommitAsync();
                 return Json(response);

@@ -3,7 +3,6 @@
 });
 
 const registerCompany = async () => {
-
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 
@@ -20,6 +19,7 @@ const registerCompany = async () => {
     }
 
     const registrationData = {
+        isCompanyRegistration: document.getElementById('hdnIsCompanyRegistration').value,
         userName: document.getElementById("userName").value,
         firstname: document.getElementById("firstName").value,
         middlename: document.getElementById("middleName").value,
@@ -42,7 +42,7 @@ const registerCompany = async () => {
 
     if (isValid) {
         try {
-            const response = await axios.post('@Url.Action("RegisterCompany", "User")', registrationData, {
+            const response = await axios.post('@Url.Action("Register", "User")', registrationData, {
                 headers: {
                     'X-CSRF-TOKEN': token
                 }

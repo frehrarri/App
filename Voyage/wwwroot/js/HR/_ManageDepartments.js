@@ -78,4 +78,7 @@ async function handleEvents(e) {
 export function init() {
     const container = document.getElementById('ul-depts');
     container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
+
+    document.getElementById('add-dept-btn')?.addEventListener("click", handleEvents);
+    document.getElementById('dept-save-btn')?.addEventListener("click", handleEvents);
 }

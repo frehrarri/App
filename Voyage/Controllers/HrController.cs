@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Voyage.Business;
+using Voyage.Data;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
 using static Voyage.Utilities.Constants;
@@ -54,9 +55,9 @@ namespace Voyage.Controllers
         {
             ManageTeamsVM vm = new ManageTeamsVM();
 
-            var dto = await GetTeams();
+            var dto = await _hrBLL.GetAssignedTeams();
             if (dto != null)
-                vm.Teams = dto;
+                vm.ManageTeamsDTO = dto;
 
             return PartialView("~/Views/App/HR/_ManageTeams.cshtml", vm);
         }
@@ -104,7 +105,7 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ManageTeamsDTO>> GetTeams()
+        public async Task<List<TeamDTO>> GetTeams()
         {
             return await _hrBLL.GetTeams();
         }
@@ -114,6 +115,12 @@ namespace Voyage.Controllers
         {
             return await _hrBLL.GetPermissions();
         }
+
+        //[HttpGet]
+        //public async Task<List<TeamMemberDTO>> GetTeamMembers()
+        //{
+        //    return await _hrBLL.GetTeamMembers();
+        //}
 
 
         [HttpPost]
@@ -139,9 +146,16 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveTeams([FromBody] List<string> teams)
+        public async Task<List<TeamDTO>> SaveTeams([FromBody] List<string> teams)
         {
-            await _hrBLL.SaveTeams(teams);
+            return await _hrBLL.SaveTeams(teams);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SaveTeamMembers([FromBody] List<TeamDTO> teamMembers)
+        {
+            await _hrBLL.SaveTeamMembers(teamMembers);
         }
 
     }

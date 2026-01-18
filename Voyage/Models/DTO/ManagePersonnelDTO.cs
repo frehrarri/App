@@ -4,6 +4,7 @@
     {
         public ManagePersonnelDTO()
         {
+            Id = string.Empty;
             FirstName = string.Empty;
             LastName = string.Empty;
             Username = string.Empty;
@@ -11,6 +12,7 @@
             PhoneNumber = string.Empty;
         }
 
+        public string Id { get; set; }
         public int EmployeeId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

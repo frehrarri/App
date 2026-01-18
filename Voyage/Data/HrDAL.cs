@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Voyage.Business;
 using Voyage.Data.TableModels;
+using Voyage.Models;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
 using static Voyage.Utilities.Constants;
@@ -29,6 +30,8 @@ namespace Voyage.Data
                     .Select(u => new ManagePersonnelDTO
                     {
                         //phone
+                        EmployeeId = u.EmployeeId,
+                        Id = u.Id,
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         Username = u.UserName!,
@@ -76,13 +79,14 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManageTeamsDTO>> GetTeams()
+        public async Task<List<TeamDTO>> GetTeams()
         {
             try
             {
                 return await _db.Teams
-                    .Select(u => new ManageTeamsDTO
+                    .Select(u => new TeamDTO
                     {
+                        TeamId = u.TeamId,
                         Name = u.Name
                     }).ToListAsync();
             }
@@ -106,6 +110,31 @@ namespace Voyage.Data
             catch (Exception e)
             {
                 _logger.LogError(e, "Error: HrDAL : GetPermissions");
+                return null!;
+            }
+        }
+
+        public async Task<List<TeamMemberDTO>> GetTeamMembers()
+        {
+            try
+            {
+                return await _db.TeamMembers
+                    .Select(tm => new TeamMemberDTO
+                    {
+                        TeamId = tm.TeamId,
+                        TeamName = tm.Team.Name,
+                        EmployeeId = tm.EmployeeId, 
+                        Username = tm.User.UserName,
+                        FirstName = tm.User.FirstName,
+                        LastName = tm.User.LastName,
+                        Email = tm.User.Email,
+                        PhoneNumber = tm.User.PhoneNumber
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : GetTeamMembers");
                 return null!;
             }
         }
@@ -169,7 +198,13 @@ namespace Voyage.Data
         {
             try
             {
-                List<Team> teamsToSave = teams.Select(t => new Team() { Name = t }).ToList();
+                //delete all teams
+                _db.Teams.RemoveRange(_db.Teams);
+
+                List<Team> teamsToSave = teams
+                    .Distinct()
+                    .Select(t => new Team { Name = t })
+                    .ToList();
 
                 if (teamsToSave.Any())
                 {
@@ -183,5 +218,30 @@ namespace Voyage.Data
                 _logger.LogError(e, "Error: HrDAL : SaveTeams");
             }
         }
+
+        public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
+        {
+            try
+            {
+                List<TeamMember> members = new List<TeamMember>();
+
+                foreach (var m in teamMembers)
+                {
+                    members.Add(new TeamMember()
+                    {
+                        //TeamId = m.TeamId,
+                        //CompanyId = m.UserId
+                    });
+                }
+
+                await _db.TeamMembers.AddRangeAsync(members);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : SaveTeamMembers");
+            }
+        }
+
     }
 }

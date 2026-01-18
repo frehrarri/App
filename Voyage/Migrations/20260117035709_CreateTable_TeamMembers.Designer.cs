@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260117035709_CreateTable_TeamMembers")]
+    partial class CreateTable_TeamMembers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,9 +187,6 @@ namespace Voyage.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -253,6 +253,8 @@ namespace Voyage.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -597,11 +599,8 @@ namespace Voyage.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -623,9 +622,9 @@ namespace Voyage.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("TeamId", "CompanyId", "EmployeeId");
+                    b.HasKey("TeamId", "UserId");
 
-                    b.HasIndex("CompanyId", "EmployeeId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TeamMembers", (string)null);
                 });
@@ -904,8 +903,7 @@ namespace Voyage.Migrations
 
                     b.HasOne("Voyage.Data.TableModels.AppUser", "User")
                         .WithMany("TeamMembers")
-                        .HasForeignKey("CompanyId", "EmployeeId")
-                        .HasPrincipalKey("CompanyId", "EmployeeId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

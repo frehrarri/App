@@ -7,8 +7,11 @@ namespace Voyage.Models.App
         public ManageTeamsVM()
         {
             Teams = new List<ManageTeamsDTO>();
+            ManageTeamsDTO = new ManageTeamsDTO();
         }
 
+
         public List<ManageTeamsDTO> Teams { get; set; }
+        public ManageTeamsDTO ManageTeamsDTO { get; set; }
     }
 }

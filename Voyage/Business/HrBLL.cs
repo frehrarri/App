@@ -31,7 +31,7 @@ namespace Voyage.Business
             return await _hrDAL.GetDepartments();
         }
 
-        public async Task<List<ManageTeamsDTO>> GetTeams()
+        public async Task<List<TeamDTO>> GetTeams()
         {
             return await _hrDAL.GetTeams();
         }
@@ -39,6 +39,41 @@ namespace Voyage.Business
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
             return await _hrDAL.GetPermissions();
+        }
+
+        public async Task<List<TeamMemberDTO>> GetTeamMembers()
+        {
+            return await _hrDAL.GetTeamMembers();
+        }
+
+        public async Task<ManageTeamsDTO> GetAssignedTeams()
+        {
+            ManageTeamsDTO dto = new ManageTeamsDTO();
+            List<TeamMemberDTO> list = new List<TeamMemberDTO>();
+
+            var personnel = await GetPersonnel();
+            var teamMembers = await GetTeamMembers();
+
+            //check each person in person for a reference to teams in the teamMember
+            //if there is not a result then add the person to the default team member list
+            foreach (var person in personnel)
+            {
+                if (!teamMembers.Any(e => e.EmployeeId == person.EmployeeId))
+                {
+                    TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
+                    teamMemberDTO.FirstName = person.FirstName;
+                    teamMemberDTO.LastName = person.LastName;
+                    teamMemberDTO.Username = person.Username;
+                    teamMemberDTO.Email = person.Email;
+                    teamMemberDTO.PhoneNumber = person.PhoneNumber;
+                    list.Add(teamMemberDTO);
+                }
+            }
+
+            dto.TeamMembers = list; 
+            dto.Teams = await GetTeams();
+            return dto;
+
         }
 
         public async Task SaveRoles(List<string> roles)
@@ -58,9 +93,17 @@ namespace Voyage.Business
             await _hrDAL.SavePermissions(permissions);
         }
 
-        public async Task SaveTeams(List<string> teams)
+        public async Task<List<TeamDTO>> SaveTeams(List<string> teams)
         {
-            await _hrDAL.SaveTeams(teams);
+            var teamsToSave = AddDefaultTeams(teams);
+
+            await _hrDAL.SaveTeams(teamsToSave);
+            return await GetTeams();
+        }
+
+        public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
+        {
+            await _hrDAL.SaveTeamMembers(teamMembers);
         }
 
         private void IgnoreAddDefaultRoles(ref List<string> roles)
@@ -73,6 +116,26 @@ namespace Voyage.Business
                 if (rolesToCompare.Equals(role.ToUpper()))
                     roles.Remove(role);
             }
+        }
+
+        private List<string> AddDefaultTeams(List<string> teams)
+        {
+            List<string> teamsToSave = new List<string>();
+
+            //ensure Unassigned is the first entry.
+            if (!teams.Contains("Unassigned"))
+            {
+                teamsToSave.Add("Unassigned");
+            }
+            else
+            {
+                teams.Remove("Unassigned");
+                teamsToSave.Add("Unassigned");
+            }
+
+            teamsToSave.AddRange(teams);
+
+            return teamsToSave;
         }
     }
 }

@@ -67,5 +67,6 @@ export function init() {
     const container = document.getElementById('ul-permissions');
     container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
 
-
+    document.getElementById('add-permission-btn')?.addEventListener("click", handleEvents);
+    document.getElementById('permission-save-btn')?.addEventListener("click", handleEvents);
 }

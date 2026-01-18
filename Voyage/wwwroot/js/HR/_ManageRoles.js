@@ -77,4 +77,7 @@ async function handleEvents(e) {
 export function init() {
     const container = document.getElementById('ul-roles');
     container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
+
+    document.getElementById('add-role-btn')?.addEventListener("click", handleEvents);
+    document.getElementById('role-save-btn')?.addEventListener("click", handleEvents);
 }

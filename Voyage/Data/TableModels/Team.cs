@@ -18,6 +18,8 @@ namespace Voyage.Data.TableModels
         public int? CompanyId { get; set; }
         public Company? Company { get; set; } = null!;
 
+        public ICollection<TeamMember> TeamMembers { get; set; } = new List<TeamMember>();
+
         #endregion
 
 
@@ -33,14 +35,12 @@ namespace Voyage.Data.TableModels
                 .Property(t => t.TeamId)
                 .ValueGeneratedOnAdd();
 
-            // optional Department
             modelBuilder.Entity<Team>()
               .HasOne(t => t.Department)
               .WithMany(d => d.Teams)
               .HasForeignKey(t => t.DepartmentId)
               .OnDelete(DeleteBehavior.SetNull);
 
-            // optional Company
             modelBuilder.Entity<Team>()
             .HasOne(t => t.Company)
             .WithMany(c => c.Teams)

@@ -4,10 +4,65 @@
     <form id="manage-teams" class="container">
         @Html.AntiForgeryToken()
 
+        <div id="dv-allocate-personnel">
+            <h4>Allocate Personnel</h4>
+            <table class="app-table">
+                <thead>
+                    <tr class="app-table-row">
+                        <th class="app-table-header"></th>
+                        <th class="app-table-header">Team</th>
+                        <th class="app-table-header">First Name</th>
+                        <th class="app-table-header">Last Name</th>
+                        <th class="app-table-header">Username</th>
+                        <th class="app-table-header">Email</th>
+                        <th class="app-table-header">Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var teamMember in Model.ManageTeamsDTO.TeamMembers)
+                    {
+                        <tr class="app-table-row">
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                            <td class="app-table-data">
+                                <select class="sel-assign-team-member" data-userid="@teamMember.EmployeeId">
+                                    @foreach (var team in Model.ManageTeamsDTO.Teams)
+                                    {
+                                        <option value="@team.TeamId" checked="@(team.TeamId == teamMember.TeamId)">@team.Name</option>
+                                    }
+                                </select>
+                            </td>
+                            <td class="app-table-data">
+                                @teamMember.FirstName
+                            </td>
+                            <td class="app-table-data">
+                                @teamMember.LastName
+                            </td>
+                            <td class="app-table-data">
+                                @teamMember.Username
+                            </td>
+                            <td class="app-table-data">
+                                @teamMember.Email
+                            </td>
+                            <td class="app-table-data">
+                                @teamMember.PhoneNumber
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            <br />
+            <button id="team-member-save-btn" class="primary-btn">Save</button>
+        </div>
+
+        <br />
+
         <div id="dv-manage-teams" class="container">
             <h4>Manage Teams</h4>
             <ul id="ul-teams" class="delete-ul">
-                @foreach (var team in Model.Teams)
+                @foreach (var team in Model.ManageTeamsDTO.Teams)
                 {
                     <li>@team.Name</li>
                 }
@@ -19,7 +74,7 @@
                 <input id="add-team" type="text" />
             </div>
 
-            
+
             
         </div>
 
