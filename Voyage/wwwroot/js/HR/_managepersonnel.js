@@ -1,18 +1,29 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
+
+
 export async function getManagePersonnelPartial() {
     try {
-        const response = await axios.get('/Hr/ManagePersonnelPartial');
+        debugger;
+        const companyId = parseInt(document.getElementById('hdnCompanyId').value);
+
+        const response = await axios.get('/Hr/ManagePersonnelPartial', {
+            params: { companyId: companyId }
+        });
 
         document.getElementById("hr-view").innerHTML = response.data;
         await loadModule("managePersonnel");
 
-        return true;
+        return response.data;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
 } 
+
+async function getRegisterUserPartial() {
+
+}
 
 
 async function handleEvents(e) {
@@ -20,6 +31,10 @@ async function handleEvents(e) {
 
     if (e.target.tagName == "INPUT")
         return;
+
+    if (e.target.id == "self-register-button") {
+        getRegisterUserPartial();
+    }
 
 }
 

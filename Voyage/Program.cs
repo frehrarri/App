@@ -120,10 +120,11 @@ app.UseCookiePolicy(new CookiePolicyOptions
 
 app.UseCors("AllowElectron");
 
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSession();
+app.UseMiddleware<CompanySessionMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

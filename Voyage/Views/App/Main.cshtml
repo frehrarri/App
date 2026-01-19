@@ -3,6 +3,7 @@
 <link href="~/css/main.css" rel="stylesheet" asp-append-version="true"/>
 
 @{
+    int? companyId = Context.Session.GetInt32("CompanyId");
     Layout = "~/Views/Shared/AppLayout.cshtml";
 }
 
@@ -26,6 +27,7 @@
         <div id="settings-view" class="view hidden container"></div>
     </div>
 </div>
+<input type="hidden" id="hdnCompanyId" value="@companyId" />
 
 <script type="module" src="~/js/main.js" asp-append-version="true"></script>
 

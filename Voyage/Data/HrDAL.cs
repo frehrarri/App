@@ -22,11 +22,12 @@ namespace Voyage.Data
             _logger = logger;
         }
 
-        public async Task<List<ManagePersonnelDTO>> GetPersonnel()
+        public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
         {
             try
             {
                 return await _db.Users
+                    .Where(u => u.CompanyId == companyId)
                     .Select(u => new ManagePersonnelDTO
                     {
                         //phone
@@ -62,11 +63,12 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
+        public async Task<List<ManageDepartmentsDTO>> GetDepartments(int companyId)
         {
             try
             {
                 return await _db.Departments
+                    .Where(u => u.CompanyId == companyId)
                     .Select(u => new ManageDepartmentsDTO
                     {
                         Name = u.Name
@@ -114,11 +116,12 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<TeamMemberDTO>> GetTeamMembers()
+        public async Task<List<TeamMemberDTO>> GetTeamMembers(int companyId)
         {
             try
             {
                 return await _db.TeamMembers
+                    .Where(tm => tm.CompanyId == companyId)
                     .Select(tm => new TeamMemberDTO
                     {
                         TeamId = tm.TeamId,
@@ -156,11 +159,16 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveDepartments(List<string> departments)
+        public async Task SaveDepartments(List<DepartmentDTO> departments)
         {
             try
             {
-                List<Department> departmentsToSave = departments.Select(d => new Department() { Name = d }).ToList();
+                List<Department> departmentsToSave = departments
+                    .Select(d => new Department() 
+                    { 
+                        Name = d.Name, 
+                        CompanyId = d.CompanyId 
+                    }).ToList();
 
                 if (departmentsToSave.Any())
                 {

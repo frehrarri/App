@@ -58,15 +58,27 @@ namespace Voyage.Controllers
         public IActionResult RegisterCompany()
         {
             ViewData["Title"] = "Register Company";
-            var vm = new RegisterVM() { IsCompanyRegistration = true };
+
+            var vm = new RegisterVM()
+            { 
+                IsCompanyRegistration = true, 
+                CompanyId = 0 
+            };
+
             return View("~/Views/User/Register.cshtml", vm);
         }
 
         [AllowAnonymous]
-        public IActionResult RegisterUser()
+        public IActionResult RegisterUser(int companyId)
         {
             ViewData["Title"] = "Register";
-            var vm = new RegisterVM() { IsCompanyRegistration = false };
+
+            var vm = new RegisterVM() 
+            { 
+                IsCompanyRegistration = false, 
+                CompanyId = companyId 
+            };
+
             return View("~/Views/User/Register.cshtml", vm);
         }
 
@@ -165,7 +177,7 @@ namespace Voyage.Controllers
                 }
 
                 bool isNewCompany = details.IsCompanyRegistration;
-                int companyId = 0;
+                int companyId = details.Company.CompanyId;
 
                 //this will be the Company Owner's registration because we add a new company to the company table.
                 //need to create a separate registration where we register an employee to an company instead of adding a new one
@@ -196,24 +208,24 @@ namespace Voyage.Controllers
                 }
 
 
-                    //passes validation so we create a new user
-                    var user = new AppUser
-                    {
-                        UserName = details.Username.Trim(),
-                        Email = details.Email.Trim(),
-                        FirstName = details.FirstName.Trim(),
-                        MiddleName = details.MiddleName.Trim(),
-                        LastName = details.LastName.Trim(),
-                        PhoneNumber = details.Phone.ToString(),
-                        StreetAddress = details.StreetAddress.Trim(),
-                        UnitNumber = details.UnitNumber,
-                        City = details.City.Trim(),
-                        State = details.State.Trim(),
-                        Country = details.Country.Trim(),
-                        PostalCode = details.ZipCode,
-                        CompanyId = companyId
-                        /*EmployeeId = details.IsCompanyRegistration ? 1 : 0 *///how do i want to handle this for regular user registration?
-                    };
+                //passes validation so we create a new user
+                var user = new AppUser
+                {
+                    UserName = details.Username.Trim(),
+                    Email = details.Email.Trim(),
+                    FirstName = details.FirstName.Trim(),
+                    MiddleName = details.MiddleName.Trim(),
+                    LastName = details.LastName.Trim(),
+                    PhoneNumber = details.Phone.ToString(),
+                    StreetAddress = details.StreetAddress.Trim(),
+                    UnitNumber = details.UnitNumber,
+                    City = details.City.Trim(),
+                    State = details.State.Trim(),
+                    Country = details.Country.Trim(),
+                    PostalCode = details.ZipCode,
+                    CompanyId = companyId,
+                    EmployeeId = details.IsCompanyRegistration ? 1 : await GetNextEmployeeId(companyId) ///how do i want to handle this for regular user registration?
+                };
 
                 IdentityResult result = await _userManager.CreateAsync(user, details.Password);
                 if (result.Succeeded)
@@ -243,6 +255,16 @@ namespace Voyage.Controllers
                 _logger.LogError(e, "error: register user");
                 throw;
             }
+        }
+
+        private async Task<int> GetNextEmployeeId(int companyId)
+        {
+            var maxEmployeeId = await _db.Users
+                .Where(u => u.CompanyId == companyId)
+                .Select(u => (int?)u.EmployeeId)
+                .MaxAsync();
+
+            return (maxEmployeeId ?? 0) + 1;
         }
 
         [HttpGet]

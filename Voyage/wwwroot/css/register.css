@@ -37,7 +37,20 @@ input{
     margin-left:10px;
     width:100%;
 }
+input, select {
+    background-color: ghostwhite;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 6px 8px;
+}
 
+#phoneCountryCode {
+    margin-left: 10px;
+}
+
+#phoneAreaCode{
+    margin-left: 20px;
+}
 
 /*.register-link {
     margin-top: 1rem;

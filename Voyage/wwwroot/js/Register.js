@@ -71,18 +71,26 @@ function getNextContainer(e) {
 const registerCompany = async (e) => {
     e.preventDefault();
 
+    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+    debugger;
+    let companyData = {
+        companyId: parseInt(document.getElementById("hdnCompanyId").value)
+    };
 
-    const companyData = {
-        name: document.getElementById("company-name").value,
-        streetAddress: document.getElementById("company-street-address").value,
-        city: document.getElementById("company-city").value,
-        region: document.getElementById("company-region").value,
-        country: document.getElementById("company-country").value,
-        state: document.getElementById("company-state").value,
-        phone: document.getElementById("company-phone").value,
-        email: document.getElementById("company-email").value,
-        postalcode: document.getElementById("company-postal-code").value
+    if (isCompanyRegistration) {
+        companyData = {
+            name: document.getElementById("company-name").value,
+            streetAddress: document.getElementById("company-street-address").value,
+            city: document.getElementById("company-city").value,
+            /* region: document.getElementById("company-region").value,*/
+            country: document.getElementById("company-country").value,
+            state: document.getElementById("company-state").value,
+            phone: document.getElementById("company-phone").value,
+            email: document.getElementById("company-email").value,
+            postalcode: document.getElementById("company-postal-code").value,
+            companyId: companyId
+        }
     }
 
     const registrationData = {
@@ -106,7 +114,6 @@ const registerCompany = async (e) => {
     };
 
     const isValid = await validate(registrationData);
-    debugger;
     if (isValid) {
         try {
             const response = await axios.post('/User/Register', registrationData, {
@@ -115,7 +122,7 @@ const registerCompany = async (e) => {
                     'X-CSRF-TOKEN': token
                 }
             });
-            debugger;
+            
             if (response.data.redirectURL) {
                 window.location.href = response.data.redirectURL;
             }

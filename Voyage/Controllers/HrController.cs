@@ -27,11 +27,11 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManagePersonnelPartial()
+        public async Task<IActionResult> ManagePersonnelPartial(int companyId)
         {
             ManagePersonnelVM vm = new ManagePersonnelVM();
 
-            var dto = await GetPersonnel();
+            var dto = await GetPersonnel(companyId);
             if (dto != null)
                 vm.Personnel = dto;
 
@@ -39,11 +39,11 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageDepartmentPartial()
+        public async Task<IActionResult> ManageDepartmentPartial(int companyId)
         {
             ManageDepartmentsVM vm = new ManageDepartmentsVM();
 
-            var dto = await GetDepartments();
+            var dto = await GetDepartments(companyId);
             if (dto != null)
                 vm.Departments = dto;
 
@@ -51,11 +51,11 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageTeamsPartial()
+        public async Task<IActionResult> ManageTeamsPartial(int companyId)
         {
             ManageTeamsVM vm = new ManageTeamsVM();
 
-            var dto = await _hrBLL.GetAssignedTeams();
+            var dto = await _hrBLL.GetAssignedTeams(companyId);
             if (dto != null)
                 vm.ManageTeamsDTO = dto;
 
@@ -87,9 +87,9 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ManagePersonnelDTO>> GetPersonnel()
+        public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
         {
-            return await _hrBLL.GetPersonnel();
+            return await _hrBLL.GetPersonnel(companyId);
         }
 
         [HttpGet]
@@ -99,9 +99,9 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
+        public async Task<List<ManageDepartmentsDTO>> GetDepartments(int companyId)
         {
-            return await _hrBLL.GetDepartments();
+            return await _hrBLL.GetDepartments(companyId);
         }
 
         [HttpGet]
@@ -134,7 +134,14 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task SaveDepartments([FromBody] List<string> departments)
         {
-            await _hrBLL.SaveDepartments(departments);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var dto = departments.Select(d => new DepartmentDTO
+            {
+                Name = d,
+                CompanyId = companyId!.Value
+            }).ToList();
+
+            await _hrBLL.SaveDepartments(dto);
         }
 
         [HttpPost]

@@ -153,11 +153,11 @@
             <div class="row">
                 <div class="col-2">
                     <select id="phoneCountryCode" class="form-data" required>
-                        <option value="" disabled selected>Country Code</option>
-                        <option value="+1">🇺🇸 United States (+1)</option>
-                        <option value="+44">🇬🇧 United Kingdom (+44)</option>
-                        <option value="+61">🇦🇺 Australia (+61)</option>
-                        <option value="+64">🇳🇿 New Zealand (+64)</option>
+                        <option value="" style="color:gray" disabled selected>Country Code</option>
+                        <option value="1">United States (+1)</option>
+                        <option value="44">United Kingdom (+44)</option>
+                        <option value="61">Australia (+61)</option>
+                        <option value="64">New Zealand (+64)</option>
                                         @*                     <option value="+1">🇨🇦 Canada (+1)</option>
                                     <option value="+91">🇮🇳 India (+91)</option>
                                     <option value="+81">🇯🇵 Japan (+81)</option>
@@ -194,7 +194,7 @@
             <div class="row">
                 <div class="col">
                     <div id="error-streetaddress-req" class="text-error">@Voyage.Utilities.Constants.ErrStreetAddrReq</div>
-                    <input type="text" id="Address" placeholder="Address" class="form-data" required>
+                    <input type="text" id="streetAddress" placeholder="Address" class="form-data" required>
                 </div>
             </div>
 
@@ -243,6 +243,7 @@
             </div>
          </div>
 
+        <input id="hdnCompanyId" type="hidden" value="@Model.CompanyId" />
         <input id="hdnIsCompanyRegistration" type="hidden" value="@Model.IsCompanyRegistration.ToString().ToLower()" />
     </form>
 </div>

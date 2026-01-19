@@ -16,9 +16,9 @@ namespace Voyage.Business
             _hrDAL = hrDAL;
         }
 
-        public async Task<List<ManagePersonnelDTO>> GetPersonnel()
+        public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
         {
-            return await _hrDAL.GetPersonnel();
+            return await _hrDAL.GetPersonnel(companyId);
         }
 
         public async Task<List<ManageRolesDTO>> GetRoles()
@@ -26,9 +26,9 @@ namespace Voyage.Business
             return await _hrDAL.GetRoles();
         }
 
-        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
+        public async Task<List<ManageDepartmentsDTO>> GetDepartments(int companyId)
         {
-            return await _hrDAL.GetDepartments();
+            return await _hrDAL.GetDepartments(companyId);
         }
 
         public async Task<List<TeamDTO>> GetTeams()
@@ -41,18 +41,18 @@ namespace Voyage.Business
             return await _hrDAL.GetPermissions();
         }
 
-        public async Task<List<TeamMemberDTO>> GetTeamMembers()
+        public async Task<List<TeamMemberDTO>> GetTeamMembers(int companyId)
         {
-            return await _hrDAL.GetTeamMembers();
+            return await _hrDAL.GetTeamMembers(companyId);
         }
 
-        public async Task<ManageTeamsDTO> GetAssignedTeams()
+        public async Task<ManageTeamsDTO> GetAssignedTeams(int companyId)
         {
             ManageTeamsDTO dto = new ManageTeamsDTO();
             List<TeamMemberDTO> list = new List<TeamMemberDTO>();
 
-            var personnel = await GetPersonnel();
-            var teamMembers = await GetTeamMembers();
+            var personnel = await GetPersonnel(companyId);
+            var teamMembers = await GetTeamMembers(companyId);
 
             //check each person in person for a reference to teams in the teamMember
             //if there is not a result then add the person to the default team member list
@@ -83,7 +83,7 @@ namespace Voyage.Business
             await _hrDAL.SaveRoles(rolesToSave);
         }
 
-        public async Task SaveDepartments(List<string> departments)
+        public async Task SaveDepartments(List<DepartmentDTO> departments)
         {
             await _hrDAL.SaveDepartments(departments);
         }

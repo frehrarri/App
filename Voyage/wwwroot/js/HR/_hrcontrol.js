@@ -4,7 +4,17 @@ export async function init() {
     const header = document.getElementById('hr-control-header');
     header.querySelectorAll('.hr-control-tab')?.forEach(el => el.addEventListener("click", handleEvents));
 
-    let response = await getPartial("Hr", "ManagePersonnelPartial");
+    await getManagePersonnelPartial();
+}
+
+async function getManagePersonnelPartial() {
+    debugger;
+    const companyId = parseInt(document.getElementById('hdnCompanyId').value);
+
+    const response = await axios.get('/Hr/ManagePersonnelPartial', {
+        params: { companyId: companyId }
+    });
+
     if (response) {
         document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("managePersonnel");
@@ -26,6 +36,7 @@ async function handleEvents(e) {
 
     let response;
 
+    const companyId = parseInt(document.getElementById('hdnCompanyId').value);
     const header = document.getElementById('hr-control-header');
     let activeTab = header.querySelector('.hr-control-tab.nav-link.active');
 
@@ -33,15 +44,16 @@ async function handleEvents(e) {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
 
-        response = await getPartial("Hr", "ManagePersonnelPartial");
-        document.getElementById("hr-partial-container").innerHTML = response.data;
-        await loadModule("managePersonnel");
+        await getManagePersonnelPartial(companyId);
     }
     else if (e.target.dataset.tab === "Teams") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
 
-        response = await getPartial("Hr", "ManageTeamsPartial");
+        response = await axios.get('/Hr/ManageTeamsPartial', {
+            params: { companyId: companyId }
+        });
+
         document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("manageTeams");
     }
@@ -49,7 +61,10 @@ async function handleEvents(e) {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
 
-        response = await getPartial("Hr", "ManageDepartmentPartial");
+        response = await axios.get('/Hr/ManageDepartmentPartial', {
+            params: { companyId: companyId }
+        });
+
         document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("manageDepartments");
     }

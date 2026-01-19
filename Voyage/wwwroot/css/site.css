@@ -211,3 +211,7 @@ body {
     border: none;
     background-color: inherit;
 }
+
+select:has(option[value=""]:checked){
+    color:gray;
+}
