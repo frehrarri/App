@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
             <!-- Brand / Logo -->
-            <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">
+            <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Website")">
                 <i class="bi bi-lightning-charge me-1"></i> My MVC App
             </a>
 
@@ -22,9 +22,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Home", "Website")">About</a>
                     </li>
-                    <li class="nav-item">
+  @*                   <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Contact", "Home")">Contact</a>
-                    </li>
+                    </li> *@
                 </ul>
 
                 <!-- Right side (Login & Register buttons) -->
@@ -48,7 +48,7 @@
                         <a href="@Url.Action("Login", "User")" class="btn btn-outline-light me-2">
                             <i class="bi bi-box-arrow-in-right me-1"></i> Login
                         </a>
-                        <a href="@Url.Action("RegisterUser", "User")" class="btn btn-light text-primary fw-semibold">
+                        <a href="@Url.Action("RegisterCompany", "User")" class="btn btn-light text-primary fw-semibold">
                             <i class="bi bi-person-plus me-1"></i> Register
                         </a>
                     }

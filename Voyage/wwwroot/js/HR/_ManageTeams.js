@@ -32,7 +32,7 @@ async function saveTeams() {
 
         if (response && response.data) {
             showSuccess(true);
-            debugger;
+ 
             //update dropdown with save
             document.querySelectorAll('.sel-assign-team-member')?.forEach(dropdown => {
                 dropdown.replaceChildren();

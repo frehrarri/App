@@ -1,10 +1,77 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     hideErrors();
+
+    document.querySelectorAll('.primary-btn')?.forEach(el => {
+        if (el.id == "register-btn")
+            el.addEventListener("click", registerCompany);
+        else if (el.classList.contains("next-btn"))
+            el.addEventListener("click", getNextContainer);
+    });
+
+    document.querySelectorAll('.secondary-btn')?.forEach(el => {
+        el.addEventListener("click", getPreviousContainer);
+    });
+            
+    
+    
 });
 
-const registerCompany = async () => {
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+const containers = document.querySelectorAll(".form-container");
+
+function getPreviousContainer(e) {
+    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
+    if (isCompanyRegistration) {
+        if (e.target.id == "btn-back-company-location") {
+            containers[0].classList.remove("hidden");
+            containers[1].classList.add("hidden");
+        }
+        else if (e.target.id == "btn-back-account-details") {
+            containers[1].classList.remove("hidden");
+            containers[2].classList.add("hidden");
+        }
+        else if (e.target.id == "btn-back-user") {
+            containers[2].classList.remove("hidden");
+            containers[3].classList.add("hidden");
+        }
+    } else {
+        if (e.target.id == "btn-back-user") {
+            containers[1].classList.add("hidden");
+            containers[0].classList.remove("hidden");
+        }
+    }
+
+}
+
+function getNextContainer(e) {
+    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
+    if (isCompanyRegistration) {
+
+        if (e.target.id == "btn-next-company-details") {
+            containers[0].classList.add("hidden");
+            containers[1].classList.remove("hidden");
+        }
+        else if (e.target.id == "btn-next-company-location") {
+            containers[1].classList.add("hidden");
+            containers[2].classList.remove("hidden");
+        }
+        else if (e.target.id == "btn-next-account-details") {
+            containers[2].classList.add("hidden");
+            containers[3].classList.remove("hidden");
+        }
+    } else {
+        if (e.target.id == "btn-next-account-details") {
+            containers[0].classList.add("hidden");
+            containers[1].classList.remove("hidden");
+        }
+    }
+    
+}
+
+const registerCompany = async (e) => {
+    e.preventDefault();
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     const companyData = {
         name: document.getElementById("company-name").value,
@@ -19,7 +86,7 @@ const registerCompany = async () => {
     }
 
     const registrationData = {
-        isCompanyRegistration: document.getElementById('hdnIsCompanyRegistration').value,
+        isCompanyRegistration: document.getElementById('hdnIsCompanyRegistration').value === "true",
         userName: document.getElementById("userName").value,
         firstname: document.getElementById("firstName").value,
         middlename: document.getElementById("middleName").value,
@@ -39,15 +106,16 @@ const registerCompany = async () => {
     };
 
     const isValid = await validate(registrationData);
-
+    debugger;
     if (isValid) {
         try {
-            const response = await axios.post('@Url.Action("Register", "User")', registrationData, {
+            const response = await axios.post('/User/Register', registrationData, {
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': token
                 }
             });
-
+            debugger;
             if (response.data.redirectURL) {
                 window.location.href = response.data.redirectURL;
             }
@@ -119,9 +187,9 @@ async function CheckUsernameExists(data) {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     let response;
-
+    debugger;
     try {
-        response = await axios.get('@Url.Action("CheckUsernameExists", "User")', {
+        response = await axios.get('/User/CheckUsernameExists', {
             params: { username: data.userName },
             headers: { 'X-CSRF-TOKEN': token }
         });
@@ -129,7 +197,7 @@ async function CheckUsernameExists(data) {
         console.error("error", error)
         return false;
     }
-
+    
     return response.data;
 }
 
@@ -202,7 +270,7 @@ async function validatePhone(input, data) {
 
 async function validateEmail(data) {
 
-    if (!data.email || !/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(data.email)) {
+    if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
         document.getElementById('error-email-req').style.display = 'block';
         document.getElementById('email').classList.add('border-error');
     }

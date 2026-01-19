@@ -1,202 +1,252 @@
 ﻿@model RegisterVM
 
-@{
-    ViewData["Title"] = "Register";
-}
+<link href="~/css/register.css" rel="stylesheet" />
 
-<h1 class="mb-4">Register</h1>
+<div id="registration-container" class="container">
+    <h1>@(Model.IsCompanyRegistration ? "Register Company" : "Register")</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form id="registrationForm">
-            @Html.AntiForgeryToken()
-            <!-- UserName -->
-            <div id="error-username-exists" class="text-error">@Voyage.Utilities.Constants.ErrUsernameExists</div>
-            <div id="error-username-req" class="text-error">@Voyage.Utilities.Constants.ErrUsernameIsReq</div>
-            <div id="error-username-min" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMinLen</div>
-            <div id="error-username-max" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMaxLen</div>
-            <div class="formfield-container mb-3">
-                <label for="userName" class="form-label">Username</label>
-                <input type="text" id="userName" class="form-control" required>
+    <br />
+
+    <form id="registrationForm">
+        @Html.AntiForgeryToken()
+
+        @if (Model.IsCompanyRegistration)
+        {
+            <div id="dv-register-company" class="container">
+                
+
+                <div class="container form-container" >
+                    <h4>Company Details</h4>
+
+                    <div class="row">
+                        <div class="col">
+                            <input id="company-name" placeholder="Business Name" type="text" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input id="company-phone" placeholder="Phone" type="number" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input id="company-email" placeholder="Email" type="text" />
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="dv-btn-container">
+                        <button id="btn-next-company-details" type="button" class="next-btn primary-btn">Next</button>
+                    </div>
+                    
+                </div>
+
+
+
+
+                <div class="container form-container hidden">
+                    <h4>Company Address</h4>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <input id="company-street-address" type="text" placeholder="Street Address" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input id="company-country" type="text" placeholder="Country"  />
+                        </div>
+                        <div class="col">
+                            <input id="company-state" placeholder="State" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <input id="company-city" placeholder="City" type="text" />
+                        </div>
+                        <div class="col">
+                            <input id="company-postal-code" placeholder="Postal Code" type="text" />
+                        </div>
+                    </div>
+                    
+@*                     <label for="company-region" >Region</label>
+                    <input id="company-region" type="text" /> *@
+
+                    <div class="dv-btn-container">
+                        <button id="btn-next-company-location" type="button" class="next-btn primary-btn">Next</button>
+                        <button id="btn-back-company-location" type="button" class="back-btn secondary-btn">Back</button>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        
+
+        <div id="dv-account-details" class="container form-container @(Model.IsCompanyRegistration ? "hidden" : "")">
+            <h4>Account Details</h4>
+
+            <div class="row">
+                <div class="col">
+                    <div id="error-username-exists" class="text-error">@Voyage.Utilities.Constants.ErrUsernameExists</div>
+                    <div id="error-username-req" class="text-error">@Voyage.Utilities.Constants.ErrUsernameIsReq</div>
+                    <div id="error-username-min" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMinLen</div>
+                    <div id="error-username-max" class="text-error">@Voyage.Utilities.Constants.ErrUsernameMaxLen</div>
+                    <input type="text" id="userName" placeholder="Username" class="form-data" required>
+                </div>
             </div>
 
-            <!-- Name -->
-            <div id="error-firstname-req" class="text-error">@Voyage.Utilities.Constants.ErrFirstNameReq</div>
-            <div class="formfield-container mb-3">
-                <label for="firstName" class="form-label">First Name</label>
-                <input type="text" id="firstName" class="form-control" required>
+            <div class="row">
+                <div class="col">
+                    <div id="error-email-req" class="text-error">@Voyage.Utilities.Constants.ErrInvalidEmail</div>
+                    <input type="email" id="email" placeholder="Email" class="form-data" required>
+                </div>
             </div>
 
-            <div class="formfield-container mb-3">
-                <label for="middleName" class="form-label">Middle Name</label>
-                <input type="text" id="middleName" class="form-control">
+            <div class="row">
+                <div class="col">
+                    <div id="error-password-min" class="text-error">@Voyage.Utilities.Constants.ErrPassMinLen</div>
+                    <div id="error-password-max" class="text-error">@Voyage.Utilities.Constants.ErrPassMaxLen</div>
+                    <input type="password" id="password" placeholder="Password" class="form-data" required>
+                </div>
             </div>
 
-            <div id="error-lastname-req" class="text-error">@Voyage.Utilities.Constants.ErrLastNameReq</div>
-            <div class="formfield-container mb-3">
-                <label for="lastName" class="form-label">Last Name</label>
-                <input type="text" id="lastName" class="form-control" required>
+            <div class="row">
+                <div class="col">
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                </div>
             </div>
 
-            <!-- Email -->
-            <div id="error-email-req" class="text-error">@Voyage.Utilities.Constants.ErrInvalidEmail</div>
-            <div class="formfield-container mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" required>
+            <div class="dv-btn-container">
+                <button id="btn-next-account-details" type="button" class="next-btn primary-btn">Next</button>
+                @if (Model.IsCompanyRegistration)
+                {
+                    <button id="btn-back-account-details" type="button" class="back-btn secondary-btn">Back</button>
+                }
+                
             </div>
 
-            <!-- Password -->
-            <div id="error-password-min" class="text-error">@Voyage.Utilities.Constants.ErrPassMinLen</div>
-            <div id="error-password-max" class="text-error">@Voyage.Utilities.Constants.ErrPassMaxLen</div>
-            <div class="formfield-container mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" required>
+        </div>
+
+
+
+
+        <div id="dv-register-user" class="container form-container hidden">
+            <h4>User Details</h4>
+
+            <div class="row">
+                <div class="col">
+                    <div id="error-firstname-req" class="text-error">@Voyage.Utilities.Constants.ErrFirstNameReq</div>
+                    <input type="text" id="firstName" placeholder="First Name" class="form-data">
+                </div>
+                <div class="col">
+                    <input type="text" id="middleName" placeholder="Middle Name" class="form-data">
+                </div>
+                <div class="col">
+                    <div id="error-lastname-req" class="text-error">@Voyage.Utilities.Constants.ErrLastNameReq</div>
+                    <input type="text" id="lastName" placeholder="Last Name" class="form-data" required>
+                </div>
             </div>
 
-            <!-- Phone -->
-            <div class="formfield-container mb-3">
-                <label for="phoneCountryCode" class="form-label">Phone Country Code</label>
-                <select id="phoneCountryCode" class="form-control" required>
-                    <option value="" disabled selected>Select country code</option>
-                    <option value="+1">🇺🇸 United States (+1)</option>
-                    <option value="+44">🇬🇧 United Kingdom (+44)</option>
-                    <option value="+61">🇦🇺 Australia (+61)</option>
-                    <option value="+64">🇳🇿 New Zealand (+64)</option>
-                    <option value="+1">🇨🇦 Canada (+1)</option>
-                    <option value="+91">🇮🇳 India (+91)</option>
-                    <option value="+81">🇯🇵 Japan (+81)</option>
-                    <option value="+82">🇰🇷 South Korea (+82)</option>
-                    <option value="+49">🇩🇪 Germany (+49)</option>
-                    <option value="+33">🇫🇷 France (+33)</option>
-                    <option value="+39">🇮🇹 Italy (+39)</option>
-                    <option value="+34">🇪🇸 Spain (+34)</option>
-                    <option value="+31">🇳🇱 Netherlands (+31)</option>
-                    <option value="+46">🇸🇪 Sweden (+46)</option>
-                    <option value="+47">🇳🇴 Norway (+47)</option>
-                    <option value="+41">🇨🇭 Switzerland (+41)</option>
-                    <option value="+65">🇸🇬 Singapore (+65)</option>
-                    <option value="+852">🇭🇰 Hong Kong (+852)</option>
-                    <option value="+971">🇦🇪 UAE (+971)</option>
-                    <option value="+86">🇨🇳 China (+86)</option>
-                    <option value="+55">🇧🇷 Brazil (+55)</option>
-                    <option value="+27">🇿🇦 South Africa (+27)</option>
-                </select>
+            <div class="row">
+                <div class="col-2">
+                    <select id="phoneCountryCode" class="form-data" required>
+                        <option value="" disabled selected>Country Code</option>
+                        <option value="+1">🇺🇸 United States (+1)</option>
+                        <option value="+44">🇬🇧 United Kingdom (+44)</option>
+                        <option value="+61">🇦🇺 Australia (+61)</option>
+                        <option value="+64">🇳🇿 New Zealand (+64)</option>
+                                        @*                     <option value="+1">🇨🇦 Canada (+1)</option>
+                                    <option value="+91">🇮🇳 India (+91)</option>
+                                    <option value="+81">🇯🇵 Japan (+81)</option>
+                                    <option value="+82">🇰🇷 South Korea (+82)</option>
+                                    <option value="+49">🇩🇪 Germany (+49)</option>
+                                    <option value="+33">🇫🇷 France (+33)</option>
+                                    <option value="+39">🇮🇹 Italy (+39)</option>
+                                    <option value="+34">🇪🇸 Spain (+34)</option>
+                                    <option value="+31">🇳🇱 Netherlands (+31)</option>
+                                    <option value="+46">🇸🇪 Sweden (+46)</option>
+                                    <option value="+47">🇳🇴 Norway (+47)</option>
+                                    <option value="+41">🇨🇭 Switzerland (+41)</option>
+                                    <option value="+65">🇸🇬 Singapore (+65)</option>
+                                    <option value="+852">🇭🇰 Hong Kong (+852)</option>
+                                    <option value="+971">🇦🇪 UAE (+971)</option>
+                                    <option value="+86">🇨🇳 China (+86)</option>
+                                    <option value="+55">🇧🇷 Brazil (+55)</option>
+                                    <option value="+27">🇿🇦 South Africa (+27)</option> *@
+                    </select>
+                </div>
+                <div class="col-2">
+                    <div id="error-phoneareacode-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeIsReq</div>
+                    <div id="error-phoneareacode-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeMaxLen</div>
+                    <input type="number" id="phoneAreaCode" placeholder="Area Code" class="form-data" required>
+                </div>
+                <div class="col">
+                    <div id="error-phone-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumReq</div>
+                    <div id="error-phone-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMaxLen</div>
+                    <div id="error-phone-min" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMinLen</div>
+                    <input type="number" id="phone" placeholder="Phone Number" class="form-data" required>
+                </div>
             </div>
 
-            <div id="error-phoneareacode-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeIsReq</div>
-            <div id="error-phoneareacode-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneAreaCodeMaxLen</div>
-            <div class="formfield-container mb-3">
-                <label for="phoneAreaCode" class="form-label">Phone Area Code</label>
-                <input type="number" id="phoneAreaCode" class="form-control" required>
+            <div class="row">
+                <div class="col">
+                    <div id="error-streetaddress-req" class="text-error">@Voyage.Utilities.Constants.ErrStreetAddrReq</div>
+                    <input type="text" id="Address" placeholder="Address" class="form-data" required>
+                </div>
             </div>
 
-            <div id="error-phone-req" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumReq</div>
-            <div id="error-phone-max" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMaxLen</div>
-            <div id="error-phone-min" class="text-error">@Voyage.Utilities.Constants.ErrPhoneNumMinLen</div>
-            <div class="formfield-container mb-3">
-                <label for="phone" class="form-label">Phone Number</label>
-                <input type="number" id="phone" class="form-control" required>
+            <div class="row">
+                <div class="col-2">
+                    <input type="number" id="unitNumber" placeholder="Unit Number" class="form-data">
+                </div>
+                <div class="col">
+                    <div id="error-city-req" class="text-error">@Voyage.Utilities.Constants.ErrCityReq</div>
+                    <input type="text" id="city" placeholder="City" class="form-data" required>
+                </div>
+                <div class="col">
+                    <div id="error-state-req" class="text-error">@Voyage.Utilities.Constants.ErrStateReq</div>
+                    <input type="text" id="state" placeholder="State" class="form-data" required>
+                </div>
             </div>
 
-            <!-- Address -->
-            <div id="error-streetaddress-req" class="text-error">@Voyage.Utilities.Constants.ErrStreetAddrReq</div>
-            <div class="formfield-container mb-3">
-                <label for="streetAddress" class="form-label">Street Address</label>
-                <input type="text" id="streetAddress" class="form-control" required>
-            </div>
-
-            <div class="formfield-container mb-3">
-                <label for="unitNumber" class="form-label">Unit Number</label>
-                <input type="number" id="unitNumber" class="form-control">
-            </div>
-
-            <div id="error-city-req" class="text-error">@Voyage.Utilities.Constants.ErrCityReq</div>
-            <div class="formfield-container mb-3">
-                <label for="city" class="form-label">City</label>
-                <input type="text" id="city" class="form-control" required>
-            </div>
-
-            <div id="error-state-req" class="text-error">@Voyage.Utilities.Constants.ErrStateReq</div>
-            <div class="formfield-container mb-3">
-                <label for="state" class="form-label">State</label>
-                <input type="text" id="state" class="form-control" required>
-            </div>
-
-            <div id="error-country-req" class="text-error">@Voyage.Utilities.Constants.ErrCountryReq</div>
-            <div class="formfield-container mb-3">
-                <label for="country" class="form-label">Country</label>
-                <select id="country" name="country" class="form-control" required>
-                    <option value="" disabled selected>Select your country</option>
-                    <option value="AU">Australia</option>
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="NZ">New Zealand</option>
-                    <option value="IN">India</option>
+            <div class="row">
+                <div class="col">
+                    <div id="error-postal-req" class="text-error">@Voyage.Utilities.Constants.ErrPostalCode</div>
+                    <div id="error-postal-min" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMinLen</div>
+                    <div id="error-postal-max" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMaxLen</div>
+                    <input type="number" id="zipCode" placeholder="Postal Code" class="form-data" required>
+                </div>
+                <div class="col">
+                    <div id="error-country-req" class="text-error">@Voyage.Utilities.Constants.ErrCountryReq</div>
+                    <select id="country" name="country" class="form-data" required>
+                        <option value="" disabled selected>Country</option>
+                        <option value="AU">Australia</option>
+                        <option value="US">United States</option>
+                        @*                     <option value="CA">Canada</option> *@
+                        <option value="GB">United Kingdom</option>
+                        <option value="NZ">New Zealand</option>
+                        @*                     <option value="IN">India</option>
                     <option value="DE">Germany</option>
                     <option value="FR">France</option>
                     <option value="JP">Japan</option>
-                    <option value="CN">China</option>
-                </select>
+                    <option value="CN">China</option> *@
+                    </select>
+                </div>
             </div>
 
-            <div id="error-postal-req" class="text-error">@Voyage.Utilities.Constants.ErrPostalCode</div>
-            <div id="error-postal-min" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMinLen</div>
-            <div id="error-postal-max" class="text-error">@Voyage.Utilities.Constants.ErrPostCodeMaxLen</div>
-            <div class="formfield-container mb-3">
-                <label for="zipCode" class="form-label">Postal Code</label>
-                <input type="number" id="zipCode" class="form-control" required>
+            <div class="dv-btn-container">
+                <button id="register-btn" type="button" class="primary-btn">Register</button>
+                <button id="btn-back-user" type="button" class="back-btn secondary-btn">Back</button>
             </div>
-            
-            @if (Model.IsCompanyRegistration)
-            {
-                <hr />
+         </div>
 
-                <h4>Company Info</h4>
-
-                <div class="formfield-container mb-3">
-                    <label for="company-name" class="form-label">Name</label>
-                    <input id="company-name" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-street-address" class="form-label">Street Address</label>
-                    <input id="company-street-address" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-city" class="form-label">City</label>
-                    <input id="company-city" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-state" class="form-label">State</label>
-                    <input id="company-state" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-postal-code" class="form-label">Postal Code</label>
-                    <input id="company-postal-code" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-region" class="form-label">Region</label>
-                    <input id="company-region" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-country" class="form-label">Country</label>
-                    <input id="company-country" type="text" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-phone" class="form-label">Phone</label>
-                    <input id="company-phone" type="number" />
-                </div>
-                <div class="formfield-container mb-3">
-                    <label for="company-email" class="form-label">Email</label>
-                    <input id="company-email" type="text" />
-                </div>
-
-                <input id="hdnIsCompanyRegistration" type="hidden" value="@Model.IsCompanyRegistration" />
-            }
-            
-            <button type="button" class="btn btn-primary">Register</button>
-        </form>
-    </div>
+        <input id="hdnIsCompanyRegistration" type="hidden" value="@Model.IsCompanyRegistration.ToString().ToLower()" />
+    </form>
 </div>
+
+
 
 <script src="~/js/register.js" asp-append-version="true"></script>

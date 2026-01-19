@@ -57,6 +57,7 @@ namespace Voyage.Controllers
         [AllowAnonymous]
         public IActionResult RegisterCompany()
         {
+            ViewData["Title"] = "Register Company";
             var vm = new RegisterVM() { IsCompanyRegistration = true };
             return View("~/Views/User/Register.cshtml", vm);
         }
@@ -64,6 +65,7 @@ namespace Voyage.Controllers
         [AllowAnonymous]
         public IActionResult RegisterUser()
         {
+            ViewData["Title"] = "Register";
             var vm = new RegisterVM() { IsCompanyRegistration = false };
             return View("~/Views/User/Register.cshtml", vm);
         }
@@ -162,12 +164,15 @@ namespace Voyage.Controllers
                     response.StatusCode = HttpStatusCode.BadRequest;
                 }
 
+                bool isNewCompany = details.IsCompanyRegistration;
+                int companyId = 0;
+
                 //this will be the Company Owner's registration because we add a new company to the company table.
                 //need to create a separate registration where we register an employee to an company instead of adding a new one
-                Company company = new Company();
-                company.CompanyId = details.Company.CompanyId;
-                if (details.IsCompanyRegistration)
+                
+                if (isNewCompany)
                 {
+                    Company company = new Company();
                     company.Name = details.Company.Name;
                     company.Email = details.Company.Email;
                     company.Phone = details.Company.Phone;
@@ -179,28 +184,36 @@ namespace Voyage.Controllers
                     company.Country = details.Company.Country;
 
                     await _db.AddAsync(company);
-                    company.CompanyId = await _db.SaveChangesAsync();
-                }
-                    
+                    await _db.SaveChangesAsync();
 
-                //passes validation so we create a new user
-                var user = new AppUser
+                    companyId = company.CompanyId;
+                }
+                else
                 {
-                    UserName = details.Username.Trim(),
-                    Email = details.Email.Trim(),
-                    FirstName = details.FirstName.Trim(),
-                    MiddleName = details.MiddleName.Trim(),
-                    LastName = details.LastName.Trim(),
-                    PhoneNumber = details.Phone.ToString(),
-                    StreetAddress = details.StreetAddress.Trim(),
-                    UnitNumber = details.UnitNumber,
-                    City = details.City.Trim(),
-                    State = details.State.Trim(),
-                    Country = details.Country.Trim(),
-                    PostalCode = details.ZipCode,
-                    CompanyId = company.CompanyId,
-                    /*EmployeeId = details.IsCompanyRegistration ? 1 : 0 *///how do i want to handle this for regular user registration?
-                };
+                    bool exists = await _db.Companies.AnyAsync(c => c.CompanyId == details.Company.CompanyId);
+                    if (exists)
+                        companyId = details.Company.CompanyId;
+                }
+
+
+                    //passes validation so we create a new user
+                    var user = new AppUser
+                    {
+                        UserName = details.Username.Trim(),
+                        Email = details.Email.Trim(),
+                        FirstName = details.FirstName.Trim(),
+                        MiddleName = details.MiddleName.Trim(),
+                        LastName = details.LastName.Trim(),
+                        PhoneNumber = details.Phone.ToString(),
+                        StreetAddress = details.StreetAddress.Trim(),
+                        UnitNumber = details.UnitNumber,
+                        City = details.City.Trim(),
+                        State = details.State.Trim(),
+                        Country = details.Country.Trim(),
+                        PostalCode = details.ZipCode,
+                        CompanyId = companyId
+                        /*EmployeeId = details.IsCompanyRegistration ? 1 : 0 *///how do i want to handle this for regular user registration?
+                    };
 
                 IdentityResult result = await _userManager.CreateAsync(user, details.Password);
                 if (result.Succeeded)
@@ -266,6 +279,7 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> CheckUsernameExists(string username)
         {
             return Json(await UsernameExists(username));
