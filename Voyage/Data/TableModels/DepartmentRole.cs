@@ -12,7 +12,7 @@ namespace Voyage.Data.TableModels
         public Department Department { get; set; } = null!;
 
         public string RoleId { get; set; } = null!;
-        public IdentityRole Role { get; set; } = null!;
+        public AppRole Role { get; set; } = null!;
 
         #endregion
 

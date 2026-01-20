@@ -80,7 +80,10 @@ async function handleEvents(e) {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
 
-        response = await getPartial("Hr", "ManageRolesPartial");
+        response = await axios.get('/Hr/ManageRolesPartial', {
+            params: { companyId: companyId }
+        });
+
         document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("manageRoles");
     }

@@ -64,7 +64,7 @@ builder.Services.AddDbContext<_AppDbContext>(options =>
                                     warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
 //identity
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<_AppDbContext>()
                 .AddDefaultTokenProviders();  // This is required for password reset tokens
 
@@ -91,11 +91,11 @@ var app = builder.Build();
 
 
 ////Update roles
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await RoleSeeder.SeedRolesAsync(services);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    await RoleSeeder.SeedRolesAsync(services);
+//}
 
     // Configure the HTTP request pipeline.
     if (!app.Environment.IsDevelopment())

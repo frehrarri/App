@@ -21,9 +21,9 @@ namespace Voyage.Business
             return await _hrDAL.GetPersonnel(companyId);
         }
 
-        public async Task<List<ManageRolesDTO>> GetRoles()
+        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
         {
-            return await _hrDAL.GetRoles();
+            return await _hrDAL.GetRoles(companyId);
         }
 
         public async Task<List<ManageDepartmentsDTO>> GetDepartments(int companyId)
@@ -76,11 +76,10 @@ namespace Voyage.Business
 
         }
 
-        public async Task SaveRoles(List<string> roles)
+        public async Task SaveRoles(List<RoleDTO> roles)
         {
-            IgnoreAddDefaultRoles(ref roles);
-            List<IdentityRole> rolesToSave = roles.Select(r => new IdentityRole(r)).ToList();
-            await _hrDAL.SaveRoles(rolesToSave);
+            //IgnoreAddDefaultRoles(ref roles);
+            await _hrDAL.SaveRoles(roles);
         }
 
         public async Task SaveDepartments(List<DepartmentDTO> departments)
@@ -106,15 +105,15 @@ namespace Voyage.Business
             await _hrDAL.SaveTeamMembers(teamMembers);
         }
 
-        private void IgnoreAddDefaultRoles(ref List<string> roles)
+        private void IgnoreAddDefaultRoles(ref List<RoleDTO> roles)
         {
-            List<string> rolesToCompare = roles.Select(r => r.ToUpper()).ToList();
+            List<string> rolesToCompare = roles.Select(r => r.Name.ToUpper()).ToList();
             List<string> defaultRoles = Enum.GetNames<Constants.DefaultRoles>().ToList();
 
             foreach (var role in defaultRoles)
             {
-                if (rolesToCompare.Equals(role.ToUpper()))
-                    roles.Remove(role);
+                if (rolesToCompare.Contains(role.ToUpper()))
+                    roles.RemoveAll(r => r.Name == role);
             }
         }
 

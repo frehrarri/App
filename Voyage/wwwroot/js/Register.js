@@ -89,7 +89,7 @@ const registerCompany = async (e) => {
             phone: document.getElementById("company-phone").value,
             email: document.getElementById("company-email").value,
             postalcode: document.getElementById("company-postal-code").value,
-            companyId: companyId
+            companyId: parseInt(document.getElementById("hdnCompanyId").value)
         }
     }
 

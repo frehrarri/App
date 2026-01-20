@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Voyage.Business;
 using Voyage.Data;
+using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
 using static Voyage.Utilities.Constants;
@@ -63,11 +64,11 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageRolesPartial()
+        public async Task<IActionResult> ManageRolesPartial(int companyId)
         {
             ManageRolesVM vm = new ManageRolesVM();
 
-            var dto = await GetRoles();
+            var dto = await GetRoles(companyId);
             if (dto != null)
                 vm.Roles = dto;
 
@@ -93,9 +94,9 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ManageRolesDTO>> GetRoles()
+        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
         {
-            return await _hrBLL.GetRoles();
+            return await _hrBLL.GetRoles(companyId);
         }
 
         [HttpGet]
@@ -127,7 +128,14 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task SaveRoles([FromBody] List<string> roles)
         {
-            await _hrBLL.SaveRoles(roles);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var dto = roles.Select(d => new RoleDTO
+            {
+                Name = d,
+                CompanyId = companyId!.Value
+            }).ToList();
+
+            await _hrBLL.SaveRoles(dto);
         }
 
         [HttpPost]

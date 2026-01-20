@@ -46,11 +46,12 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManageRolesDTO>> GetRoles()
+        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
         {
             try
             {
                 return await _db.Roles
+                    //.Where(u => u.)
                   .Select(u => new ManageRolesDTO
                   {
                       Name = u.Name!
@@ -142,15 +143,23 @@ namespace Voyage.Data
             }
         }
 
-        public async Task SaveRoles(List<IdentityRole> roles)
+        public async Task SaveRoles(List<RoleDTO> roles)
         {
             try
             {
-                if (roles.Any())
-                {
-                    await _db.Roles.AddRangeAsync(roles);
+                //await _roleManager.CreateAsync();
+
+                //roles.Select(r => new IdentityRole()
+                //{
+                //    Name = r.Name, 
+                //    CompanyId = r.CompanyId
+                //});
+
+                //if (roles.Any())
+                //{
+                //    await _db.Roles.AddRangeAsync(roles);
                     await _db.SaveChangesAsync();
-                }
+                //}
             }
             catch (Exception e)
             {
@@ -161,25 +170,37 @@ namespace Voyage.Data
 
         public async Task SaveDepartments(List<DepartmentDTO> departments)
         {
+            if (departments == null || !departments.Any())
+                return;
+
+            int companyId = departments.First().CompanyId;
+
+            await using var transaction = await _db.Database.BeginTransactionAsync();
+
             try
             {
-                List<Department> departmentsToSave = departments
-                    .Select(d => new Department() 
-                    { 
-                        Name = d.Name, 
-                        CompanyId = d.CompanyId 
-                    }).ToList();
+                //Delete existing departments for company
+                await _db.Departments
+                    .Where(d => d.CompanyId == companyId)
+                    .ExecuteDeleteAsync();
 
-                if (departmentsToSave.Any())
+                //Insert new departments
+                var departmentsToSave = departments.Select(d => new Department
                 {
-                    await _db.Departments.AddRangeAsync(departmentsToSave);
-                }
-                
+                    Name = d.Name.Trim(),
+                    CompanyId = companyId
+                });
+
+                await _db.Departments.AddRangeAsync(departmentsToSave);
+
                 await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception e)
             {
+                await transaction.RollbackAsync();
                 _logger.LogError(e, "Error: HrDAL : SaveDepartments");
+                throw;
             }
         }
 

@@ -106,8 +106,8 @@
 
         public enum DefaultRoles
         {
-            Unassigned,
-            Principal
+            Principal,
+            Unassigned
         }
 
         public enum PriorityLevel

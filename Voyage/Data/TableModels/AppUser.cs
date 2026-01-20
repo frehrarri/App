@@ -42,6 +42,10 @@ namespace Voyage.Data.TableModels
                 .HasIndex(u => new { u.CompanyId, u.EmployeeId })
                 .IsUnique();
 
+            modelBuilder.Entity<AppRole>()
+                .Property(r => r.CompanyId)
+                .IsRequired();
+
         }
     }
 }
