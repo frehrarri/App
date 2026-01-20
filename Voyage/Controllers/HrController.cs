@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Threading.Tasks;
 using Voyage.Business;
 using Voyage.Data;
@@ -108,7 +109,8 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<List<TeamDTO>> GetTeams()
         {
-            return await _hrBLL.GetTeams();
+            var companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            return await _hrBLL.GetTeams(companyId);
         }
 
         [HttpGet]
@@ -163,7 +165,14 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task<List<TeamDTO>> SaveTeams([FromBody] List<string> teams)
         {
-            return await _hrBLL.SaveTeams(teams);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var dto = teams.Select(d => new TeamDTO
+            {
+                Name = d,
+                CompanyId = companyId!.Value
+            }).ToList();
+
+            return await _hrBLL.SaveTeams(dto);
         }
 
         [HttpPost]

@@ -12,5 +12,7 @@
         public string UserEntityId { get; set; }
         public int TeamId { get; set; }
         public string Name { get; set; }
+        public int CompanyId { get; set; }
+        public int DepartmentId { get; set; }
     }
 }

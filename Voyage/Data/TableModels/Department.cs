@@ -19,7 +19,7 @@ namespace Voyage.Data.TableModels
 
         public int? CompanyId { get; set; }
         public Company? Company { get; set; } = null!;
-        public ICollection<Team> Teams { get; set; } = new List<Team>();
+        //public ICollection<Team> Teams { get; set; } = new List<Team>();
         public ICollection<DepartmentRole> DepartmentRoles { get; set; } = new List<DepartmentRole>();
 
         #endregion

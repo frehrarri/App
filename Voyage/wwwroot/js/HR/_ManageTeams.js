@@ -37,8 +37,13 @@ async function saveTeams() {
             document.querySelectorAll('.sel-assign-team-member')?.forEach(dropdown => {
                 dropdown.replaceChildren();
 
+                let option = document.createElement('option');
+                option.value = "";
+                option.innerText = "Unassigned";
+                dropdown.appendChild(option);
+
                 response.data.forEach(team => {
-                    let option = document.createElement('option');
+                    option = document.createElement('option');
                     option.value = team.teamId;
                     option.innerText = team.name;
                     dropdown.appendChild(option);

@@ -31,9 +31,9 @@ namespace Voyage.Business
             return await _hrDAL.GetDepartments(companyId);
         }
 
-        public async Task<List<TeamDTO>> GetTeams()
+        public async Task<List<TeamDTO>> GetTeams(int companyId)
         {
-            return await _hrDAL.GetTeams();
+            return await _hrDAL.GetTeams(companyId);
         }
 
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
@@ -71,7 +71,7 @@ namespace Voyage.Business
             }
 
             dto.TeamMembers = list; 
-            dto.Teams = await GetTeams();
+            dto.Teams = await GetTeams(companyId);
             return dto;
 
         }
@@ -92,12 +92,10 @@ namespace Voyage.Business
             await _hrDAL.SavePermissions(permissions);
         }
 
-        public async Task<List<TeamDTO>> SaveTeams(List<string> teams)
+        public async Task<List<TeamDTO>> SaveTeams(List<TeamDTO> teams)
         {
-            var teamsToSave = AddDefaultTeams(teams);
-
-            await _hrDAL.SaveTeams(teamsToSave);
-            return await GetTeams();
+            await _hrDAL.SaveTeams(teams);
+            return await GetTeams(teams[0].CompanyId);
         }
 
         public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
@@ -117,24 +115,24 @@ namespace Voyage.Business
             }
         }
 
-        private List<string> AddDefaultTeams(List<string> teams)
-        {
-            List<string> teamsToSave = new List<string>();
+        //private List<string> AddDefaultTeams(List<string> teams)
+        //{
+        //    List<string> teamsToSave = new List<string>();
 
-            //ensure Unassigned is the first entry.
-            if (!teams.Contains("Unassigned"))
-            {
-                teamsToSave.Add("Unassigned");
-            }
-            else
-            {
-                teams.Remove("Unassigned");
-                teamsToSave.Add("Unassigned");
-            }
+        //    //ensure Unassigned is the first entry.
+        //    if (!teams.Contains("Unassigned"))
+        //    {
+        //        teamsToSave.Add("Unassigned");
+        //    }
+        //    else
+        //    {
+        //        teams.Remove("Unassigned");
+        //        teamsToSave.Add("Unassigned");
+        //    }
 
-            teamsToSave.AddRange(teams);
+        //    teamsToSave.AddRange(teams);
 
-            return teamsToSave;
-        }
+        //    return teamsToSave;
+        //}
     }
 }

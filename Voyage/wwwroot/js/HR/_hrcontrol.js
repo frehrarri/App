@@ -8,7 +8,6 @@ export async function init() {
 }
 
 async function getManagePersonnelPartial() {
-    debugger;
     const companyId = parseInt(document.getElementById('hdnCompanyId').value);
 
     const response = await axios.get('/Hr/ManagePersonnelPartial', {

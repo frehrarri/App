@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260120035037_AddVersioningToTeams")]
+    partial class AddVersioningToTeams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -557,7 +560,9 @@ namespace Voyage.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("TeamId"));
 
                     b.Property<decimal>("TeamVersion")
-                        .HasColumnType("numeric");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(1m);
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
@@ -568,6 +573,9 @@ namespace Voyage.Migrations
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("integer");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
@@ -589,6 +597,8 @@ namespace Voyage.Migrations
                     b.HasKey("TeamId", "TeamVersion");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("TeamId", "IsLatest")
                         .HasDatabaseName("IX_Team_Latest");
@@ -894,7 +904,14 @@ namespace Voyage.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Voyage.Data.TableModels.Department", "Department")
+                        .WithMany("Teams")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Company");
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.TeamMember", b =>
@@ -958,6 +975,8 @@ namespace Voyage.Migrations
             modelBuilder.Entity("Voyage.Data.TableModels.Department", b =>
                 {
                     b.Navigation("DepartmentRoles");
+
+                    b.Navigation("Teams");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Settings", b =>

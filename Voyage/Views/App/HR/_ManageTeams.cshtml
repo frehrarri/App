@@ -27,6 +27,7 @@
                             </td>
                             <td class="app-table-data">
                                 <select class="sel-assign-team-member" data-userid="@teamMember.EmployeeId">
+                                    <option value="" >Unassigned</option>
                                     @foreach (var team in Model.ManageTeamsDTO.Teams)
                                     {
                                         <option value="@team.TeamId" checked="@(team.TeamId == teamMember.TeamId)">@team.Name</option>
@@ -61,6 +62,29 @@
 
         <div id="dv-manage-teams" class="container">
             <h4>Manage Teams</h4>
+
+            <table class="app-table">
+                <thead>
+                    <tr class="app-table-row">
+                        <th class="app-table-header"></th>
+                        <th class="app-table-header">Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in Model.ManageTeamsDTO.Teams)
+                    {
+                        <tr class="app-table-row">
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                            <td>
+                                @team.Name
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
             <ul id="ul-teams" class="delete-ul">
                 @foreach (var team in Model.ManageTeamsDTO.Teams)
                 {

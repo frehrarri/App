@@ -9,6 +9,7 @@ namespace Voyage.Data.TableModels
 
         //team
         public int TeamId { get; set; }
+        public decimal TeamVersion { get; set; }
         public Team Team { get; set; } = null!;
 
         //identity user
@@ -23,17 +24,18 @@ namespace Voyage.Data.TableModels
                 .ToTable("TeamMembers");
 
             modelBuilder.Entity<TeamMember>()
-                .HasKey(tm => new 
-                { 
-                    tm.TeamId, 
+                .HasKey(tm => new
+                {
+                    tm.TeamId,
+                    tm.TeamVersion,
                     tm.CompanyId,
-                    tm.EmployeeId 
+                    tm.EmployeeId
                 });
 
             modelBuilder.Entity<TeamMember>()
                 .HasOne(tm => tm.Team)
                 .WithMany(t => t.TeamMembers)
-                .HasForeignKey(tm => tm.TeamId)
+                .HasForeignKey(tm => new { tm.TeamId, tm.TeamVersion })
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TeamMember>()
@@ -43,7 +45,9 @@ namespace Voyage.Data.TableModels
                 .HasPrincipalKey(u => new { u.CompanyId, u.EmployeeId })
                 .OnDelete(DeleteBehavior.Cascade);
 
-
+            modelBuilder.Entity<TeamMember>()
+                .HasIndex(tm => new { tm.TeamId, tm.TeamVersion })
+                .HasDatabaseName("IX_TeamMember_TeamVersion");
         }
 
 
