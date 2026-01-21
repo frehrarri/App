@@ -15,12 +15,9 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 
 
 async function saveTeams() {
+
     let response;
-
-    let ul = document.getElementById('ul-teams');
-    let li = ul.querySelectorAll('li');
-
-    let payload = Array.from(li).map(item => item.innerText);
+    let payload = getTeams();
 
     try {
         response = await axios.post('/Hr/SaveTeams', payload, {
@@ -60,18 +57,91 @@ async function saveTeams() {
     }
 }
 
-function addTeam() {
-    const ul = document.getElementById("ul-teams");
-    const li = document.createElement("li");
-    let newTeam = document.getElementById("add-team");
 
-    li.textContent = `${newTeam.value}`;
-    li.addEventListener("click", handleEvents);
+function addNewTeamRow() {
+    const tbody = document.querySelector("#manage-teams > tbody");
 
-    ul.appendChild(li);
-    newTeam.value = "";
+    const tr = document.createElement("tr");
+    tr.classList.add("app-table-row");
+
+    //checkbox
+    const td1 = document.createElement("td");
+    td1.classList.add("app-table-data");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    td1.appendChild(checkbox);
+    tr.appendChild(td1);
+
+    //add
+    const td2 = document.createElement("td");
+    td2.classList.add("app-table-data");
+    const addSpan = document.createElement("span")
+    addSpan.classList.add("add-team-span");
+    addSpan.textContent = "Click to add team";
+    td2.appendChild(addSpan);
+    tr.appendChild(td2);
+
+    tbody.appendChild(tr);
+}
+
+
+function addTeamInput(e) {
+    const target = e.target;
+
+    // Only act on spans
+    if (target.classList.contains("add-team-span") && e.type === "click") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Team Name";
+        input.className = "add-team-input";
+        input.value = target.textContent;
+
+        target.replaceWith(input);
+        input.focus();
+        input.value = "";
+
+        // Save on blur
+        input.addEventListener("blur", () => {
+            const span = document.createElement("span");
+            span.className = "add-team-span";
+            span.textContent = input.value || "Click to add team";
+            input.replaceWith(span);
+        });
+
+        // Save on Enter
+        input.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+                input.blur(); // triggers blur listener
+            }
+        });
+    }
 
 }
+
+function removeTeam(e) {
+    const checkedBoxes = document.querySelectorAll("#manage-teams tbody input[type='checkbox']:checked");
+
+    //remove row of checked boxes
+    checkedBoxes.forEach(cb => {
+        const row = cb.closest("tr"); 
+        if (row)
+            row.remove();
+    });
+}
+
+function getTeams() {
+    let results = [];
+    const teams = document.querySelectorAll(".add-team-span");
+
+    teams.forEach(t => {
+
+        if (t.textContent.trim() != "Click to add team")
+            results.push(t.textContent.trim());
+    });
+
+    return results;
+}
+
 
 const teamMembers = [];
 
@@ -98,24 +168,25 @@ async function saveTeamMembers() {
 
 
 async function handleEvents(e) {
-    e.preventDefault();
-
-    if (e.target.tagName == "INPUT")
-        return;
 
     //save teams
-    if (e.target.id == "team-save-btn")
+    if (e.target.id == "team-save-btn") {
+        e.preventDefault();
         await saveTeams();
-
-    //remove team
-    const li = e.target.closest("#ul-teams li");
-    if (li) {
-        li.remove();
     }
 
-    //add new team
+    //remove team
+    if (e.target.id == "remove-team-btn")
+        removeTeam(e);
+
+    //add new team row
     if (e.target.id == "add-team-btn")
-        addTeam();
+        addNewTeamRow();
+
+    //input control for adding team
+    if (e.target.classList.contains("add-team-span")) {
+        addTeamInput(e);
+    }
 
     //catch changes to assign team members
     if (e.target.classList.contains('sel-assign-team-member')) {
@@ -136,14 +207,9 @@ async function handleEvents(e) {
         
 }
 
+
 export function init() {
-    let container = document.getElementById('ul-teams');
-    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
-
-    document.getElementById('add-team-btn')?.addEventListener("click", handleEvents);
-    document.getElementById('team-save-btn')?.addEventListener("click", handleEvents);
-    document.getElementById('team-member-save-btn')?.addEventListener("click", handleEvents);
-
-    container = document.getElementById('dv-allocate-personnel');
-    container.querySelectorAll('.sel-assign-team-member')?.forEach(el => el.addEventListener("change", handleEvents));
+    let container = document.getElementById('manage-teams-container');
+    container.addEventListener("click", handleEvents);
+    container.addEventListener("keydown", handleEvents);
 }

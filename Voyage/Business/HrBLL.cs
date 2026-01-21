@@ -92,10 +92,10 @@ namespace Voyage.Business
             await _hrDAL.SavePermissions(permissions);
         }
 
-        public async Task<List<TeamDTO>> SaveTeams(List<TeamDTO> teams)
+        public async Task<List<TeamDTO>> SaveTeams(List<TeamDTO> teams, int companyId)
         {
-            await _hrDAL.SaveTeams(teams);
-            return await GetTeams(teams[0].CompanyId);
+            await _hrDAL.SaveTeams(teams, companyId);
+            return await GetTeams(companyId);
         }
 
         public async Task SaveTeamMembers(List<TeamDTO> teamMembers)

@@ -61,27 +61,34 @@ body {
     padding: 20px;
 }
 
-
 .app-table {
     width: 100%;
-    /*box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);*/
-    border-collapse: separate;
-    border-spacing: 0;
+    table-layout: fixed; 
+    border-collapse: collapse; 
     border: 1px solid gray;
-    /*border: 1px hidden gray;*/
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 10px; 
 }
 
-
-.app-table-header, .app-table-data {
+.app-table-header,
+.app-table-data {
     border: 1px solid lightgray;
+    padding: 8px;
+    text-align: left;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
 }
 
-    .app-table-header, .app-table-data {
-        padding: 8px;
-        text-align: left;
-    }
+.app-table td input,
+.app-table td select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.app-table > thead > tr > th:first-child {
+    width:50px;
+}
 
 .message-popup {
     position: fixed;
@@ -114,16 +121,11 @@ body {
     background: #4B91F7;
     background-origin: border-box;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    /*user-select: none;*/
     -webkit-user-select: none;
     touch-action: manipulation;
-    max-width: 60px;
-    min-width: 60px;
 }
 
 .secondary-btn {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
@@ -135,13 +137,9 @@ body {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    max-width: 60px;
-    min-width: 60px;
 }
 
 .warning-btn {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
@@ -153,16 +151,12 @@ body {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    max-width: 60px;
-    min-width: 60px;
 }
 
 .app-table-row:nth-child(odd) {
-    background-color: ghostwhite;
 }
 
 .app-table-row:nth-child(even) {
-    /*background-color: #e8f0fe;*/
 }
 
 .autocomplete-list {
@@ -179,13 +173,13 @@ body {
     z-index: 1000;
     max-height: 220px;
     overflow-y: auto;
-    display: none; /* ?? ADD THIS */
+    display: none;
     box-shadow: 0 3px 3px gray;
     border: 1px solid black;
 }
 
     .autocomplete-list.show {
-        display: block; /* ?? ADD THIS */
+        display: block; 
     }
 
 .hidden {

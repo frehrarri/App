@@ -1,3 +1,26 @@
-﻿#dv-team-btns{
-    display:flex;
+﻿#dv-allocate-personnel, #dv-manage-teams {
+    border: 1px solid gray;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    background-color: #e8f0fe;
+    padding: 30px 20px;
+}
+
+#dv-team-btns {
+    padding-top:20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+#btn-container {
+    display: flex;
+}
+
+#dv-team-member-save-btn{
+    display: flex;
+    justify-content: flex-end;
 }

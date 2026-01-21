@@ -4,18 +4,18 @@
     <form id="manage-teams" class="container">
         @Html.AntiForgeryToken()
 
-        <div id="dv-allocate-personnel">
+        <div id="dv-allocate-personnel" class="container table-responsive">
             <h4>Allocate Personnel</h4>
-            <table class="app-table">
+            <table id="tbl-allocate-personnel" class="app-table table">
                 <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header"></th>
-                        <th class="app-table-header">Team</th>
-                        <th class="app-table-header">First Name</th>
-                        <th class="app-table-header">Last Name</th>
-                        <th class="app-table-header">Username</th>
-                        <th class="app-table-header">Email</th>
-                        <th class="app-table-header">Phone</th>
+                    <tr class="app-table-row" >
+                        <th class="app-table-header" scope="col"></th>
+                        <th class="app-table-header" scope="col">Team</th>
+                        <th class="app-table-header" scope="col">First Name</th>
+                        <th class="app-table-header" scope="col">Last Name</th>
+                        <th class="app-table-header" scope="col">Username</th>
+                        <th class="app-table-header" scope="col">Email</th>
+                        <th class="app-table-header" scope="col">Phone</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,15 +55,18 @@
                 </tbody>
             </table>
             <br />
-            <button id="team-member-save-btn" class="primary-btn">Save</button>
+            <div id="dv-team-member-save-btn">
+                <button id="team-member-save-btn" class="primary-btn">Save</button>
+            </div>
+            
         </div>
 
         <br />
 
-        <div id="dv-manage-teams" class="container">
+        <div id="dv-manage-teams" class="container table-responsive">
             <h4>Manage Teams</h4>
 
-            <table class="app-table">
+            <table id="manage-teams" class="app-table table table-striped">
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header"></th>
@@ -85,17 +88,13 @@
                 </tbody>
             </table>
 
-            <ul id="ul-teams" class="delete-ul">
-                @foreach (var team in Model.ManageTeamsDTO.Teams)
-                {
-                    <li>@team.Name</li>
-                }
-            </ul>
-
             <div id="dv-team-btns" class="container">
+                <div id="btn-container">
+                    <button id="add-team-btn" class="primary-btn" type="button">Add</button>
+                    <button id="remove-team-btn" class="warning-btn" type="button">Remove</button>
+                </div>
+                
                 <button id="team-save-btn" class="primary-btn">Save</button>
-                <button id="add-team-btn" class="secondary-btn" type="button">Add</button>
-                <input id="add-team" type="text" />
             </div>
 
 
