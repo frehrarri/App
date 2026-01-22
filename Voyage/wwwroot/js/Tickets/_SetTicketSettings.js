@@ -6,7 +6,7 @@ export function init() {
 
 export async function getTicketSettings() {
     const response = await getPartial("Tickets", "SettingsPartial");
-
+    
     if (response.data) {
         document.getElementById("ticket-view").innerHTML = response.data;
     }

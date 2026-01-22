@@ -41,6 +41,13 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public IActionResult RegisterEmployeePartial(int companyId)
+        {
+            RegisterVM vm = new RegisterVM();
+            return PartialView("~/Views/App/HR/_RegisterEmployee.cshtml", vm);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ManageDepartmentPartial(int companyId)
         {
             ManageDepartmentsVM vm = new ManageDepartmentsVM();

@@ -8,13 +8,21 @@
         <div id="dv-personnel-grid">
 
             <h4>Manage Personnel</h4>
-            <br />
+            <div id="dv-register-personnel">
+                <button id="self-register-button" class="primary-btn" type="button">Register</button>
+
+                <div id="dv-send-registration-email">
+                    <button id="register-email-button" class="secondary-btn" type="button">Send</button>
+                    <input type="email" placeholder="Employee Registration Email" />
+                </div>
+
+            </div>
 
             <table class="app-table">
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header"></th>
-                        <th class="app-table-header">Employee Id</th>
+                        <th class="app-table-header">Id</th>
                         <th class="app-table-header">First Name</th>
                         <th class="app-table-header">Last Name</th>
                         <th class="app-table-header">Username</th>
@@ -57,25 +65,7 @@
                 </tbody>
             </table>
 
-        </div>
-            
-        <div id="dv-register-personnel">
-            <h4>Register Personnel</h4>
-            <br />
-            <div>
-                <div id="dv-send-registration-email">
-                    <label for="register-email-button">Send Employee Registration Email</label>
-                    <br />
-                    <button id="register-email-button" class="primary-btn" type="button">Send</button>
-                    <input type="email" />
-                </div>
-
-                <div id="dv-self-register">
-                    <label for="self-register-button">Register Employee</label>
-                    <br />
-                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
-                </div>
-            </div>
+ 
 
         </div>
 

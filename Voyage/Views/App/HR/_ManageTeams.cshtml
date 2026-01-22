@@ -64,12 +64,15 @@
         <br />
 
         <div id="dv-manage-teams" class="container table-responsive">
+           @*  table-responsive *@
             <h4>Manage Teams</h4>
 
-            <table id="manage-teams" class="app-table table table-striped">
+            <table id="manage-teams" class="app-table table">
                 <thead>
                     <tr class="app-table-row">
-                        <th class="app-table-header"></th>
+                        <th class="app-table-header">
+                            <input type="hidden" />
+                        </th>
                         <th class="app-table-header">Team</th>
                     </tr>
                 </thead>
@@ -80,7 +83,7 @@
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
-                            <td>
+                            <td class="app-table-data">
                                 @team.Name
                             </td>
                         </tr>
@@ -96,7 +99,7 @@
                 
                 <button id="team-save-btn" class="primary-btn">Save</button>
             </div>
-
+            
 
             
         </div>

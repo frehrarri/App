@@ -4,5 +4,6 @@
     {
         public bool IsCompanyRegistration { get; set; }
         public int CompanyId { get; set; }
+        public bool IsRenderedPartial { get; set; }
     }
 }

@@ -1,98 +1,49 @@
-﻿
-document.addEventListener('DOMContentLoaded', async () => {
-    hideErrors();
-
-    document.querySelectorAll('.primary-btn')?.forEach(el => {
-        if (el.id == "register-btn")
-            el.addEventListener("click", registerCompany);
-        else if (el.classList.contains("next-btn"))
-            el.addEventListener("click", getNextContainer);
-    });
-
-    document.querySelectorAll('.secondary-btn')?.forEach(el => {
-        el.addEventListener("click", getPreviousContainer);
-    });
-});
+﻿import { loadModule } from "/js/__moduleLoader.js";
 
 
 
 function getPreviousContainer(e) {
     const containers = document.querySelectorAll(".form-container");
 
-    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
-    if (isCompanyRegistration) {
-        if (e.target.id == "btn-back-company-location") {
-            containers[0].classList.remove("hidden");
-            containers[1].classList.add("hidden");
-        }
-        else if (e.target.id == "btn-back-account-details") {
-            containers[1].classList.remove("hidden");
-            containers[2].classList.add("hidden");
-        }
-        else if (e.target.id == "btn-back-user") {
-            containers[2].classList.remove("hidden");
-            containers[3].classList.add("hidden");
-        }
-    } else {
-        if (e.target.id == "btn-back-user") {
-            containers[1].classList.add("hidden");
-            containers[0].classList.remove("hidden");
-        }
+    if (e.target.id == "btn-back-user") {
+        containers[1].classList.add("hidden");
+        containers[0].classList.remove("hidden");
     }
-
 }
 
 function getNextContainer(e) {
     const containers = document.querySelectorAll(".form-container");
 
-    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
-    if (isCompanyRegistration) {
-
-        if (e.target.id == "btn-next-company-details") {
-            containers[0].classList.add("hidden");
-            containers[1].classList.remove("hidden");
-        }
-        else if (e.target.id == "btn-next-company-location") {
-            containers[1].classList.add("hidden");
-            containers[2].classList.remove("hidden");
-        }
-        else if (e.target.id == "btn-next-account-details") {
-            containers[2].classList.add("hidden");
-            containers[3].classList.remove("hidden");
-        }
-    } else {
-        if (e.target.id == "btn-next-account-details") {
-            containers[0].classList.add("hidden");
-            containers[1].classList.remove("hidden");
-        }
+    if (e.target.id == "btn-next-account-details") {
+        containers[0].classList.add("hidden");
+        containers[1].classList.remove("hidden");
     }
-    
 }
 
-const registerCompany = async (e) => {
+export async function getRegisterEmployeePartial(e) {
+    if (e.target.id === "self-register-button") {
+        e.preventDefault();
+
+        const companyId = parseInt(document.getElementById('hdnCompanyId').value);
+
+        const response = await axios.get('/Hr/RegisterEmployeePartial', {
+            params: { companyId: companyId }
+        });
+
+        document.getElementById("hr-partial-container").innerHTML = response.data;
+        await loadModule("registerEmployee");
+
+    }
+}
+
+const register = async (e) => {
     e.preventDefault();
 
-    const isCompanyRegistration = document.getElementById('hdnIsCompanyRegistration').value === "true"
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    
+
     let companyData = {
         companyId: parseInt(document.getElementById("hdnCompanyId").value)
     };
-
-    if (isCompanyRegistration) {
-        companyData = {
-            name: document.getElementById("company-name").value,
-            streetAddress: document.getElementById("company-street-address").value,
-            city: document.getElementById("company-city").value,
-            /* region: document.getElementById("company-region").value,*/
-            country: document.getElementById("company-country").value,
-            state: document.getElementById("company-state").value,
-            phone: document.getElementById("company-phone").value,
-            email: document.getElementById("company-email").value,
-            postalcode: document.getElementById("company-postal-code").value,
-            companyId: parseInt(document.getElementById("hdnCompanyId").value)
-        }
-    }
 
     const registrationData = {
         isCompanyRegistration: document.getElementById('hdnIsCompanyRegistration').value === "true",
@@ -123,7 +74,7 @@ const registerCompany = async (e) => {
                     'X-CSRF-TOKEN': token
                 }
             });
-            
+
             if (response.data.redirectURL) {
                 window.location.href = response.data.redirectURL;
             }
@@ -195,7 +146,7 @@ async function CheckUsernameExists(data) {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     let response;
-   
+
     try {
         response = await axios.get('/User/CheckUsernameExists', {
             params: { username: data.userName },
@@ -205,7 +156,7 @@ async function CheckUsernameExists(data) {
         console.error("error", error)
         return false;
     }
-    
+
     return response.data;
 }
 
@@ -330,16 +281,16 @@ function hideErrors() {
     Array.from(document.querySelectorAll('.form-control')).forEach(el => el.classList.remove('border-error'));
 }
 
+
 export function init() {
 
     let container = document.getElementById("registration-container");
-    container.style.paddingTop = "0px";
 
     hideErrors();
 
     document.querySelectorAll('.primary-btn')?.forEach(el => {
         if (el.id == "register-btn")
-            el.addEventListener("click", registerCompany);
+            el.addEventListener("click", register);
         else if (el.classList.contains("next-btn"))
             el.addEventListener("click", getNextContainer);
     });

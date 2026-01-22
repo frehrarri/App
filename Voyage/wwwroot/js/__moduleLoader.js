@@ -8,6 +8,10 @@ const moduleRegistry = {
         js: () => import(`./_sidenav.js?v=${scriptVersion}`),
         css: `/css/_sidenav.css?v=${scriptVersion}`
     },
+    register: {
+        js: () => import(`./register.js?v=${scriptVersion}`),
+        css: `/css/register.css?v=${scriptVersion}`
+    },
 
     //hr
     hrControl: {
@@ -34,6 +38,10 @@ const moduleRegistry = {
         js: () => import(`./HR/_managePermissions.js?v=${scriptVersion}`),
         css: `/css/HR/_managePermissions.css?v=${scriptVersion}`
     },
+    registerEmployee: {
+        js: () => import(`./HR/_registerEmployee.js?v=${scriptVersion}`),
+        css: `/css/HR/_registerEmployee.css?v=${scriptVersion}`
+    },
 
 
     //tickets
@@ -51,6 +59,10 @@ const moduleRegistry = {
     },
     ticketSettings: {
         js: () => import(`./Tickets/_ticketsettings.js?v=${scriptVersion}`)//,
+        //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
+    },
+    setTicketSettings: {
+        js: () => import(`./Tickets/_setTicketSettings.js?v=${scriptVersion}`)//,
         //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
     }
 

@@ -1,9 +1,4 @@
-﻿
-#dv-self-register{
-    margin-left:100px;
-}
-
-#dv-register-personnel, #dv-personnel-grid {
+﻿#dv-personnel-grid {
     border: 1px solid gray;
     box-sizing: border-box;
     border-radius: 5px;
@@ -13,14 +8,36 @@
 }
 
 #dv-register-personnel {
-    margin-top:20px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
-    #dv-register-personnel > div {
-        display: flex;
-        justify-content: flex-start;
-    }
+#self-register-button{
+    margin-top: 3px;
+}
+
+input[type='email'] {
+    min-width: 210px;
+}
+
 
 label{
     padding-bottom: 10px;
+}
+
+.app-table-header:last-child {
+    width: 70px;
+}
+
+h4 {
+    margin-bottom: 40px;
+}
+
+input {
+    background-color: ghostwhite;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 6px 8px;
 }

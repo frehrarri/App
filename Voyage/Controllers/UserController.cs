@@ -64,12 +64,14 @@ namespace Voyage.Controllers
             var vm = new RegisterVM()
             { 
                 IsCompanyRegistration = true, 
-                CompanyId = 0 
+                CompanyId = 0 ,
+                IsRenderedPartial = false
             };
 
             return View("~/Views/User/Register.cshtml", vm);
         }
 
+        
         [AllowAnonymous]
         public IActionResult RegisterUser(int companyId)
         {
@@ -78,10 +80,26 @@ namespace Voyage.Controllers
             var vm = new RegisterVM() 
             { 
                 IsCompanyRegistration = false, 
-                CompanyId = companyId 
+                CompanyId = companyId ,
+                IsRenderedPartial = false
             };
 
             return View("~/Views/User/Register.cshtml", vm);
+        }
+
+        [HttpGet]
+        public IActionResult RegisterUserPartial(int companyId)
+        {
+            ViewData["Title"] = "Register";
+
+            var vm = new RegisterVM()
+            {
+                IsCompanyRegistration = false,
+                CompanyId = companyId,
+                IsRenderedPartial = true
+            };
+
+            return PartialView("~/Views/User/Register.cshtml", vm);
         }
 
         [HttpPost]

@@ -1,10 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-
-
 export async function getManagePersonnelPartial() {
     try {
-        debugger;
         const companyId = parseInt(document.getElementById('hdnCompanyId').value);
 
         const response = await axios.get('/Hr/ManagePersonnelPartial', {
@@ -21,19 +18,16 @@ export async function getManagePersonnelPartial() {
     }
 } 
 
-async function getRegisterUserPartial() {
 
-}
 
 
 async function handleEvents(e) {
-    e.preventDefault();
-
     if (e.target.tagName == "INPUT")
         return;
 
     if (e.target.id == "self-register-button") {
-        getRegisterUserPartial();
+        const module = await loadModule("registerEmployee");
+        module.getRegisterEmployeePartial(e);
     }
 
 }

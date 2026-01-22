@@ -1,7 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    document.getElementById('add-section-btn').addEventListener("click", addSection);
+    document.getElementById('add-section-btn')?.addEventListener("click", addSection);
 
     document.getElementById('save-settings-btn')?.addEventListener("click", save);
 
@@ -42,13 +42,13 @@ function addSection(section) {
     newSection.className = "delete-section";
     newSection.innerHTML = `${input} <span class='delete'>x</span>`;
 
-    document.getElementById('section-settings').append(newSection);
+    document.getElementById('section-settings')?.append(newSection);
 
     //clear after adding to container
     document.getElementById('section-title-input').value = "";
 
-    newSection.querySelector('.delete-section').addEventListener("click", removeSection);
-    newSection.querySelector('.delete').addEventListener("click", removeSection);
+    newSection.querySelector('.delete-section')?.addEventListener("click", removeSection);
+    newSection.querySelector('.delete')?.addEventListener("click", removeSection);
 
     sectionHistory.push({
         type: "add",

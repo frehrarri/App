@@ -313,13 +313,14 @@ function styleTable(container = document) {
 }
 
 export async function getTicketSettings() {
+    debugger;
     const response = await getPartial("Tickets", "SettingsPartial");
 
     if (response.data) {
         document.getElementById("ticket-view").innerHTML = response.data;
     }
 
-    await loadModule("ticketSettings");
+    await loadModule("setTicketSettings");
 }
 
 export function init() {

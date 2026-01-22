@@ -24,3 +24,9 @@
     display: flex;
     justify-content: flex-end;
 }
+
+#manage-teams th:first-child,
+#manage-teams td:first-child {
+    width: 50px !important;
+    text-align: center !important;
+}
