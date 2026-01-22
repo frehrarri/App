@@ -36,8 +36,7 @@ namespace Voyage.Data.TableModels
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Team>()
-                .HasIndex(t => new { t.TeamId, t.TeamVersion })
-                .IsUnique();
+                .HasIndex(t => t.TeamId);
 
             modelBuilder.Entity<Team>()
                 .HasOne(t => t.Company)
