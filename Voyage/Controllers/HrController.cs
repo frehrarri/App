@@ -173,7 +173,7 @@ namespace Voyage.Controllers
                 CompanyId = companyId!.Value
             }).ToList();
 
-            await _hrBLL.SaveDepartments(dto);
+            await _hrBLL.SaveDepartments(dto, companyId!.Value);
         }
 
         [HttpPost]

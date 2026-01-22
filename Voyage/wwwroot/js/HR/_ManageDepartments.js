@@ -8,27 +8,87 @@ export async function getManageDepartmentsPartial() {
     }
 } 
 
-function addDepartment() {
-    const ul = document.getElementById("ul-depts");
-    const li = document.createElement("li");
-    let newDept = document.getElementById("add-dept");
+function addNewDeptRow() {
+    const tbody = document.querySelector("#manage-depts > tbody");
 
-    li.textContent = `${newDept.value}`;
-    li.addEventListener("click", handleEvents);
+    const tr = document.createElement("tr");
+    tr.classList.add("app-table-row");
 
-    ul.appendChild(li);
-    newDept.value = "";
+    //checkbox
+    const td1 = document.createElement("td");
+    td1.classList.add("app-table-data");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    td1.appendChild(checkbox);
+    tr.appendChild(td1);
+
+    //add
+    const td2 = document.createElement("td");
+    td2.classList.add("app-table-data");
+    const addSpan = document.createElement("span")
+    addSpan.classList.add("add-dept-span");
+    addSpan.textContent = "Click to add deptartment";
+    td2.appendChild(addSpan);
+    tr.appendChild(td2);
+
+    tbody.appendChild(tr);
 }
+
+function addDeptInput(e) {
+    const target = e.target;
+
+    // Only act on spans
+    if (target.classList.contains("add-dept-span") && e.type === "click") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Dept Name";
+        input.className = "add-dept-input";
+        input.value = target.textContent;
+
+        target.replaceWith(input);
+        input.focus();
+        input.value = "";
+
+        // Save on blur
+        input.addEventListener("blur", () => {
+            const span = document.createElement("span");
+            span.className = "add-dept-span";
+            span.textContent = input.value || "Click to add department";
+            input.replaceWith(span);
+        });
+
+        // Save on Enter
+        input.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter") {
+                input.blur(); // triggers blur listener
+            }
+        });
+    }
+
+}
+
+function getDepts() {
+    debugger;
+    let results = [];
+    const teams = document.querySelectorAll(".add-dept-span");
+
+    teams.forEach(t => {
+
+        if (t.textContent.trim() != "Click to add department")
+            results.push(t.textContent.trim());
+    });
+
+    return results;
+}
+
 
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-async function saveDepartments() {
+async function saveDepartments(e) {
+    e.preventDefault();
     let response;
-
-    let ul = document.getElementById('ul-depts');
-    let li = ul.querySelectorAll('li');
-
-    let payload = Array.from(li).map(item => item.innerText);
+    debugger;
+    let payload = getDepts();
 
     try {
         response = await axios.post('/Hr/SaveDepartments', payload, {
@@ -48,27 +108,59 @@ async function saveDepartments() {
     }
 }
 
-async function handleEvents(e) {
-    e.preventDefault();
 
-    if (e.target.tagName == "INPUT")
-        return;
 
-    //save
-    if (e.target.id == "dept-save-btn")
-        await saveDepartments();
-
-    //remove
-    const li = e.target.closest("#ul-depts li");
-    if (li) {
-        li.remove();
+async function handleToggleTabs(e) {
+    if (e.target.classList.contains("btn-get-manage-depts")) {
+        document.getElementById("dv-allocate-depts").classList.add("hidden");
+        document.getElementById("dv-manage-departments").classList.remove("hidden");
+    } else if (e.target.classList.contains("btn-get-allocate-depts")) {
+        document.getElementById("dv-allocate-depts").classList.remove("hidden");
+        document.getElementById("dv-manage-departments").classList.add("hidden");
     }
 
-    //add
-    if (e.target.id == "add-dept-btn")
-        addDepartment();
 }
 
+async function handleEvents(e) {
+
+    await handleToggleTabs(e);
+
+    //save teams
+    if (e.target.id == "dept-save-btn") {
+        await saveDepartments(e);
+    }
+
+    ////remove team
+    //if (e.target.id == "remove-team-btn")
+    //    removeTeam(e);
+
+    //add new team row
+    if (e.target.id == "add-dept-btn")
+        addNewDeptRow();
+
+    //input control for adding team
+    if (e.target.classList.contains("add-dept-span")) {
+        addDeptInput(e);
+    }
+
+    ////catch changes to assign team members
+    //if (e.target.classList.contains('sel-assign-team-member')) {
+
+    //    if (e.target.dataset.userid && e.target.value) {
+
+    //        const teamDto = {
+    //            userId: parseInt(e.target.dataset.userid),
+    //            teamId: parseInt(e.target.value)
+    //        }
+    //        teamMembers.push(teamDto);
+    //    }
+    //}
+
+    ////save members to team
+    //if (e.target.id == "team-member-save-btn")
+    //    await saveTeamMembers();
+
+}
 
 
 export async function init() {
@@ -76,10 +168,10 @@ export async function init() {
     let partial = await getManageDepartmentsPartial();
     document.getElementById("hr-partial-container").innerHTML = partial;
 
-    //set event handlers
-    const container = document.getElementById('ul-depts');
-    container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
+    //event handlers
+    let container = document.getElementById('hr-partial-container');
+    container.addEventListener("click", handleEvents);
+    container.addEventListener("keydown", handleEvents);
 
-    document.getElementById('add-dept-btn')?.addEventListener("click", handleEvents);
-    document.getElementById('dept-save-btn')?.addEventListener("click", handleEvents);
+   
 }

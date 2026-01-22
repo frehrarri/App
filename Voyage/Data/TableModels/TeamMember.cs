@@ -1,43 +1,42 @@
-﻿using AngleSharp.Dom;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Voyage.Models;
 
 namespace Voyage.Data.TableModels
 {
     public class TeamMember : BaseClass, IModelBuilderEF
     {
+        public Guid TeamMemberKey { get; set; }  // surrogate PK
 
-        //team
-        public int TeamId { get; set; }
-        public decimal TeamVersion { get; set; }
+        // Team reference
+        public Guid TeamKey { get; set; }        // FK to Team.TeamKey
         public Team Team { get; set; } = null!;
 
-        //identity user
+        // Identity user reference
         public int EmployeeId { get; set; }
         public int CompanyId { get; set; }
         public AppUser User { get; set; } = null!;
-
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<TeamMember>()
                 .ToTable("TeamMembers");
 
+            // Surrogate PK
             modelBuilder.Entity<TeamMember>()
-                .HasKey(tm => new
-                {
-                    tm.TeamId,
-                    tm.TeamVersion,
-                    tm.CompanyId,
-                    tm.EmployeeId
-                });
+                .HasKey(tm => tm.TeamMemberKey);
 
+            modelBuilder.Entity<TeamMember>()
+                .Property(tm => tm.TeamMemberKey)
+                .ValueGeneratedOnAdd();
+
+            // FK to Team using TeamKey (surrogate)
             modelBuilder.Entity<TeamMember>()
                 .HasOne(tm => tm.Team)
                 .WithMany(t => t.TeamMembers)
-                .HasForeignKey(tm => new { tm.TeamId, tm.TeamVersion })
+                .HasForeignKey(tm => tm.TeamKey)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // FK to User (composite CompanyId + EmployeeId is fine)
             modelBuilder.Entity<TeamMember>()
                 .HasOne(tm => tm.User)
                 .WithMany(u => u.TeamMembers)
@@ -45,11 +44,10 @@ namespace Voyage.Data.TableModels
                 .HasPrincipalKey(u => new { u.CompanyId, u.EmployeeId })
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Index for faster queries per Team
             modelBuilder.Entity<TeamMember>()
-                .HasIndex(tm => new { tm.TeamId, tm.TeamVersion })
-                .HasDatabaseName("IX_TeamMember_TeamVersion");
+                .HasIndex(tm => tm.TeamKey)
+                .HasDatabaseName("IX_TeamMember_TeamKey");
         }
-
-
     }
 }

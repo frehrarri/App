@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Css;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Utilities.IO;
 using System.ComponentModel.Design;
 using System.Data;
 using Voyage.Business;
@@ -129,7 +130,7 @@ namespace Voyage.Data
                     .Where(tm => tm.CompanyId == companyId)
                     .Select(tm => new TeamMemberDTO
                     {
-                        TeamId = tm.TeamId,
+                        //TeamId = tm.TeamId,
                         TeamName = tm.Team.Name,
                         EmployeeId = tm.EmployeeId, 
                         Username = tm.User.UserName,
@@ -172,31 +173,65 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveDepartments(List<DepartmentDTO> departments)
+        public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
-            if (departments == null || !departments.Any())
-                return;
-
-            int companyId = departments.First().CompanyId;
-
-            await using var transaction = await _db.Database.BeginTransactionAsync();
+            using var transaction = await _db.Database.BeginTransactionAsync();
 
             try
             {
-                //Delete existing departments for company
-                await _db.Departments
-                    .Where(d => d.CompanyId == companyId)
-                    .ExecuteDeleteAsync();
+                var currentDepartments = await _db.Departments
+                  .Where(t => t.CompanyId == companyId
+                           && t.IsLatest!.Value)
+                  .ToListAsync();
 
-                //Insert new departments
-                var departmentsToSave = departments.Select(d => new Department
+
+                //delete all existing departments
+                if (departments == null || !departments.Any())
                 {
-                    Name = d.Name.Trim(),
-                    CompanyId = companyId
-                });
+                    _db.Departments.RemoveRange(currentDepartments);
+                    await _db.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return;
+                }
 
-                await _db.Departments.AddRangeAsync(departmentsToSave);
+                //mark old teams not latest
+                foreach (var d in currentDepartments)
+                {
+                    d.IsLatest = false;
+                }
 
+                await _db.SaveChangesAsync();
+
+                //Create new team entities with versioning
+                var distinctDepts = departments.GroupBy(t => t.Name)
+                                         .Select(g => g.First())
+                                         .ToList();
+
+                //add new teams
+                if (departments.Any())
+                {
+                    var deptsToSave = new List<Department>();
+
+                    foreach (var t in distinctDepts)
+                    {
+                        var existing = currentDepartments.FirstOrDefault(ct => ct.Name == t.Name);
+
+                        deptsToSave.Add(new Department
+                        {
+                            DepartmentId = 0,
+                            Name = t.Name,
+                            CompanyId = companyId,
+                            DepartmentVersion = existing != null ? existing.DepartmentVersion + 1.0M : 1.0M,
+                            IsLatest = true,
+                            IsActive = true
+                        });
+                    }
+
+                    if (deptsToSave.Any())
+                    {
+                        await _db.Departments.AddRangeAsync(deptsToSave);
+                    }
+                }
                 await _db.SaveChangesAsync();
                 await transaction.CommitAsync();
             }

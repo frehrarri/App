@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AngleSharp.Dom;
+using Microsoft.EntityFrameworkCore;
 using Voyage.Models;
 
 namespace Voyage.Data.TableModels
 {
     public class Team : BaseClass, IModelBuilderEF
     {
+        public Guid TeamKey { get; set; }
         public int TeamId { get; set; }
         public decimal TeamVersion { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -17,7 +19,7 @@ namespace Voyage.Data.TableModels
         //public Department? Department { get; set; } = null!;
 
         public int? CompanyId { get; set; }
-        public Company? Company { get; set; } = null!;
+        public Company? Company { get; set; }
 
         public ICollection<TeamMember> TeamMembers { get; set; } = new List<TeamMember>();
 
@@ -30,22 +32,19 @@ namespace Voyage.Data.TableModels
                  .ToTable("Team");
 
             modelBuilder.Entity<Team>()
-                .HasKey(t => new { t.TeamId, t.TeamVersion });
+                .HasKey(t => t.TeamKey );
 
             modelBuilder.Entity<Team>()
-                .Property(t => t.TeamId)
+                .Property(t => t.TeamKey)
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Team>()
                 .Property(t => t.TeamVersion)
-                .HasColumnType("numeric");
-                //.HasDefaultValue(1.0);
+                .HasPrecision(5, 2);
 
-            //modelBuilder.Entity<Team>()
-            //  .HasOne(t => t.Department)
-            //  .WithMany(d => d.Teams)
-            //  .HasForeignKey(t => t.DepartmentId)
-            //  .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Team>()
+                .HasIndex(d => new { d.TeamId, d.TeamVersion })
+                .IsUnique();
 
             modelBuilder.Entity<Team>()
             .HasOne(t => t.Company)
@@ -53,10 +52,10 @@ namespace Voyage.Data.TableModels
             .HasForeignKey(t => t.CompanyId)
             .OnDelete(DeleteBehavior.SetNull);
 
-            //index for faster querying latest version
-            modelBuilder.Entity<Team>()
-                .HasIndex(t => new { t.TeamId, t.IsLatest })
-                .HasDatabaseName("IX_Team_Latest");
+            ////index for faster querying latest version
+            //modelBuilder.Entity<Team>()
+            //    .HasIndex(t => new { t.TeamId, t.IsLatest })
+            //    .HasDatabaseName("IX_Team_Latest");
         }
     }
 }

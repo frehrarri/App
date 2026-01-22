@@ -63,12 +63,6 @@ async function handleTabs(e) {
     else if (e.target.dataset.tab === "Departments") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
-
-        response = await axios.get('/Hr/ManageDepartmentPartial', {
-            params: { companyId: companyId }
-        });
-
-        document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("manageDepartments");
     }
 
