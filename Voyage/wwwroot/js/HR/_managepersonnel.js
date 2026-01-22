@@ -21,8 +21,8 @@ async function handleEvents(e) {
         return;
 
     if (e.target.id == "self-register-button") {
-        const module = await loadModule("registerEmployee");
-        module.getRegisterEmployeePartial(e);
+        e.preventDefault();
+        await loadModule("registerEmployee");
     }
 
 }
@@ -34,7 +34,7 @@ export async function init() {
     document.getElementById("hr-partial-container").innerHTML = partial;
 
     //event handlers
-    const container = document.getElementById('manage-personnel-container');
+    const container = document.getElementById('hr-partial-container');
     if (container)
         container.addEventListener("click", handleEvents);
 }

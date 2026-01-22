@@ -36,11 +36,6 @@ async function handleSettings(e) {
     const companyId = parseInt(document.getElementById('hdnCompanyId').value);
 
     if (e.target.closest(".settings-btn")) {
-        response = await axios.get('/Hr/HrSettingsPartial', {
-            params: { companyId: companyId }
-        });
-
-        document.getElementById("hr-partial-container").innerHTML = response.data;
         await loadModule("hrSettings");
     }
 }

@@ -4,8 +4,17 @@
     <form id="manage-teams" class="container">
         @Html.AntiForgeryToken()
 
+      
+
         <div id="dv-allocate-personnel" class="container table-responsive">
-            <h4>Allocate Personnel</h4>
+            <div class="allocate-header">
+                <h4>Allocate Personnel</h4>
+                <div class="dv-teams-nav">
+                    <button type="button" class="btn-get-allocate-teams">Allocate</button>
+                    <button type="button" class="btn-get-manage-teams">Manage</button>
+                </div>
+            </div>
+
             <table id="tbl-allocate-personnel" class="app-table table">
                 <thead>
                     <tr class="app-table-row" >
@@ -61,11 +70,15 @@
             
         </div>
 
-        <br />
-
-        <div id="dv-manage-teams" class="container table-responsive">
+        <div id="dv-manage-teams" class="container table-responsive hidden">
            @*  table-responsive *@
-            <h4>Manage Teams</h4>
+            <div class="manage-teams-header">
+                <h4>Manage Teams</h4>
+                <div class="dv-teams-nav">
+                    <button type="button" class="btn-get-allocate-teams">Allocate</button>
+                    <button type="button" class="btn-get-manage-teams">Manage</button>
+                </div>
+            </div>
 
             <table id="manage-teams" class="app-table table">
                 <thead>

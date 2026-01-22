@@ -30,3 +30,40 @@
     width: 50px !important;
     text-align: center !important;
 }
+
+.dv-teams-nav {
+    box-sizing: border-box;
+    border-radius: 3px;
+    box-shadow: .5px .5px 1.5px .5px rgba(0, 0, 0, 0.5);
+    background-color: #e8f0fe;
+    padding: 5px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    margin-bottom:30px;
+}
+
+    .dv-teams-nav > button {
+        border: none;
+        text-decoration: underline;
+        background-color: #e8f0fe;
+    }
+
+.btn-get-allocate-teams{
+    border-right:1px solid black;
+}
+
+.allocate-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.manage-teams-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+

@@ -29,11 +29,10 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManagePersonnelPartial(int companyId)
+        public async Task<IActionResult> ManagePersonnelPartial()
         {
             ManagePersonnelVM vm = new ManagePersonnelVM();
-
-            var dto = await GetPersonnel(companyId);
+            var dto = await GetPersonnel();
             if (dto != null)
                 vm.Personnel = dto;
 
@@ -41,18 +40,20 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public IActionResult RegisterEmployeePartial(int companyId)
+        public IActionResult RegisterEmployeePartial()
         {
             RegisterVM vm = new RegisterVM();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
             return PartialView("~/Views/App/HR/_RegisterEmployee.cshtml", vm);
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageDepartmentPartial(int companyId)
+        public async Task<IActionResult> ManageDepartmentPartial()
         {
             ManageDepartmentsVM vm = new ManageDepartmentsVM();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await GetDepartments(companyId);
+            var dto = await GetDepartments();
             if (dto != null)
                 vm.Departments = dto;
 
@@ -60,11 +61,12 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageTeamsPartial(int companyId)
+        public async Task<IActionResult> ManageTeamsPartial()
         {
             ManageTeamsVM vm = new ManageTeamsVM();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await _hrBLL.GetAssignedTeams(companyId);
+            var dto = await _hrBLL.GetAssignedTeams(companyId!.Value);
             if (dto != null)
                 vm.ManageTeamsDTO = dto;
 
@@ -72,11 +74,12 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageRolesPartial(int companyId)
+        public async Task<IActionResult> ManageRolesPartial()
         {
             ManageRolesVM vm = new ManageRolesVM();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await GetRoles(companyId);
+            var dto = await GetRoles();
             if (dto != null)
                 vm.Roles = dto;
 
@@ -96,36 +99,40 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> HrSettingsPartial(int companyId)
+        public async Task<IActionResult> HrSettingsPartial()
         {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
             return PartialView("~/Views/App/HR/_HrSettings.cshtml");
         }
 
 
 
         [HttpGet]
-        public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
+        public async Task<List<ManagePersonnelDTO>> GetPersonnel()
         {
-            return await _hrBLL.GetPersonnel(companyId);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetPersonnel(companyId!.Value);
         }
 
         [HttpGet]
-        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
+        public async Task<List<ManageRolesDTO>> GetRoles()
         {
-            return await _hrBLL.GetRoles(companyId);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetRoles(companyId!.Value);
         }
 
         [HttpGet]
-        public async Task<List<ManageDepartmentsDTO>> GetDepartments(int companyId)
+        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
         {
-            return await _hrBLL.GetDepartments(companyId);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetDepartments(companyId!.Value);
         }
 
         [HttpGet]
         public async Task<List<TeamDTO>> GetTeams()
         {
-            var companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            return await _hrBLL.GetTeams(companyId);
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetTeams(companyId!.Value);
         }
 
         [HttpGet]

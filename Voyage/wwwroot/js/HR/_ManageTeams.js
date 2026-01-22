@@ -165,8 +165,21 @@ async function saveTeamMembers() {
     }
 }
 
+async function handleToggleTabs(e) {
+    
+    if (e.target.classList.contains("btn-get-manage-teams")) {
+        document.getElementById("dv-allocate-personnel").classList.add("hidden");
+        document.getElementById("dv-manage-teams").classList.remove("hidden");
+    } else if (e.target.classList.contains("btn-get-allocate-teams")) {
+        document.getElementById("dv-allocate-personnel").classList.remove("hidden");
+        document.getElementById("dv-manage-teams").classList.add("hidden");
+    }
+        
+}
 
 async function handleEvents(e) {
+
+    await handleToggleTabs(e);
 
     //save teams
     if (e.target.id == "team-save-btn") {
@@ -210,10 +223,10 @@ async function handleEvents(e) {
 export async function init() {
     //load partial
     let partial = await getManageTeamsPartial();
-    document.getElementById("tickets-partial-container").innerHTML = partial;
+    document.getElementById("hr-partial-container").innerHTML = partial;
 
     //event handlers
-    let container = document.getElementById('manage-teams-container');
+    let container = document.getElementById('hr-partial-container');
     container.addEventListener("click", handleEvents);
     container.addEventListener("keydown", handleEvents);
 }

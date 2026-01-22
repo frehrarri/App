@@ -20,20 +20,14 @@ function getNextContainer(e) {
     }
 }
 
-export async function getRegisterEmployeePartial(e) {
-    if (e.target.id === "self-register-button") {
-        e.preventDefault();
-
+export async function getRegisterEmployeePartial() {
         const companyId = parseInt(document.getElementById('hdnCompanyId').value);
 
         const response = await axios.get('/Hr/RegisterEmployeePartial', {
             params: { companyId: companyId }
         });
 
-        document.getElementById("hr-partial-container").innerHTML = response.data;
-        await loadModule("registerEmployee");
-
-    }
+    return response.data;
 }
 
 const register = async (e) => {
@@ -277,16 +271,19 @@ async function validateAddress(input, data) {
 
 
 function hideErrors() {
-    Array.from(document.getElementsByClassName('text-error')).forEach(el => el.style.display = 'none');
+    Array.from(document.getElementsByClassName('text-error')).forEach(el => el.style.display = 'none'); //replace with classlist hidden
     Array.from(document.querySelectorAll('.form-control')).forEach(el => el.classList.remove('border-error'));
 }
 
 
-export function init() {
-
-    let container = document.getElementById("registration-container");
+export async function init() {
+    //load initial partial
+    debugger;
+    let partial = await getRegisterEmployeePartial();
+    document.getElementById("hr-partial-container").innerHTML = partial;
 
     hideErrors();
+
 
     document.querySelectorAll('.primary-btn')?.forEach(el => {
         if (el.id == "register-btn")
