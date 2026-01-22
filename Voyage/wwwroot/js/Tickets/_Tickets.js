@@ -5,7 +5,6 @@ export async function getManageTicketPartial(ticketId, sectionTitle) {
         const response = await axios.get('/Tickets/ManageTicketPartial', {
             params: { ticketId: ticketId }
         });
-
         document.getElementById("ticket-view").innerHTML = response.data;
         await loadModule("manageTicket");
 
@@ -22,9 +21,9 @@ export async function getTicketPartial(ticketId, ticketVersion) {
             params: { ticketId: ticketId, ticketVersion: ticketVersion }
         });
 
-        document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("ticket")
-        return true;
+        //document.getElementById("ticket-view").innerHTML = response.data;
+        //await loadModule("ticket")
+        return response.data;
     } catch (error) {
         console.error("error: getTicketPartial", error);
         return false;
@@ -34,10 +33,7 @@ export async function getTicketPartial(ticketId, ticketVersion) {
 export async function getTicketsPartial() {
     try {
         const response = await axios.get('/Tickets/TicketsPartial');
-
-        document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("tickets");
-        return true;
+        return response.data;
     } catch (error) {
         console.error("error: getTicketsPartial", error);
         return false;
@@ -313,7 +309,6 @@ function styleTable(container = document) {
 }
 
 export async function getTicketSettings() {
-    debugger;
     const response = await getPartial("Tickets", "SettingsPartial");
 
     if (response.data) {
@@ -323,7 +318,13 @@ export async function getTicketSettings() {
     await loadModule("setTicketSettings");
 }
 
-export function init() {
+export async function init() {
+
+    //load initial partial
+    let partial = await getTicketsPartial();
+    document.getElementById("tickets-partial-container").innerHTML = partial;
+
+    //event handlers
     document.querySelectorAll(".btnAddTicket").forEach(btn =>
         btn.addEventListener("click", () => getManageTicketPartial(null, btn.dataset.section))
     );

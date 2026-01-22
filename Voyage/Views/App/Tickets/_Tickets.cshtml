@@ -2,14 +2,14 @@
 
 <link href="~/css/Tickets/_tickets.css" rel="stylesheet" asp-append-version="true" />
 
-<div id="heading-setting-container">
+@* <div id="heading-setting-container">
     <h1>Tickets</h1>
     <button class="settings-btn">
         <i class="fa-solid fa-gear"></i>
     </button>
     
 </div>
-
+ *@
 @if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Never)
 {
     <hr />
@@ -21,6 +21,22 @@
 
     <hr />
     <br />
+}
+
+@if (!Model.Sections.Any())
+{
+    <div id="ticket-setup-container">
+        <h1>Tickets</h1>
+
+        <span id="settings-notification">
+            Ticket Settings can be changed at any time by accessing the gear icon at the right
+        </span>
+
+        <button class="settings-btn">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+    </div>
 }
 
 @foreach (var s in Model.Sections)

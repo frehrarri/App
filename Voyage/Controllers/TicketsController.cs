@@ -27,6 +27,12 @@ namespace Voyage.Controllers
         #region Partials
 
         [HttpGet]
+        public IActionResult TicketsControlPartial()
+        {
+            return PartialView("~/Views/App/Tickets/_TicketsControl.cshtml");
+        }
+
+        [HttpGet]
         public async Task<IActionResult> TicketsPartial()
         {
             TicketsVM vm = new TicketsVM();
@@ -44,8 +50,8 @@ namespace Voyage.Controllers
 
                 return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
             }
-
-            return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
+            return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
+            //return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
         }
 
         [HttpGet]
@@ -84,7 +90,7 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SettingsPartial()
+        public async Task<IActionResult> SettingsPartial(int companyId)
         {
             TicketSettingsVM vm = new TicketSettingsVM();
 

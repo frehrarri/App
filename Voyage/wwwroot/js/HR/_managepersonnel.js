@@ -8,17 +8,12 @@ export async function getManagePersonnelPartial() {
             params: { companyId: companyId }
         });
 
-        document.getElementById("hr-view").innerHTML = response.data;
-        await loadModule("managePersonnel");
-
         return response.data;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
 } 
-
-
 
 
 async function handleEvents(e) {
@@ -33,7 +28,12 @@ async function handleEvents(e) {
 }
 
 
-export function init(){
+export async function init() {
+    //load initial partial
+    let partial = await getManagePersonnelPartial();
+    document.getElementById("hr-partial-container").innerHTML = partial;
+
+    //event handlers
     const container = document.getElementById('manage-personnel-container');
     if (container)
         container.addEventListener("click", handleEvents);

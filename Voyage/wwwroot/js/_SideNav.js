@@ -27,12 +27,10 @@ async function getSideNavItem() {
 
             // Load partials based on the target
             if (targetId === "ticket-view") {
-                const module = await loadModule("tickets");
-                await module.getTicketsPartial();
+                await loadModule("ticketsControl");
             }
             else if (targetId === "hr-view") {
-                const module = await loadModule("hrControl");
-                await module.getHrControlPartial();
+                await loadModule("hrControl");
             }
         });
     });

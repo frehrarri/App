@@ -1,11 +1,7 @@
 export async function getManageDepartmentsPartial() {
     try {
         const response = await axios.get('/Hr/ManageDepartmentPartial');
-
-        document.getElementById("hr-view").innerHTML = response.data;
-        await loadModule("manageDepartments");
-
-        return true;
+        return response.data;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
         return false;
@@ -75,7 +71,12 @@ async function handleEvents(e) {
 
 
 
-export function init() {
+export async function init() {
+    //load initial partial
+    let partial = await getManageDepartmentsPartial();
+    document.getElementById("hr-partial-container").innerHTML = partial;
+
+    //set event handlers
     const container = document.getElementById('ul-depts');
     container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
 

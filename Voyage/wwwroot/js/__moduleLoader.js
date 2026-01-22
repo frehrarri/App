@@ -42,9 +42,17 @@ const moduleRegistry = {
         js: () => import(`./HR/_registerEmployee.js?v=${scriptVersion}`),
         css: `/css/HR/_registerEmployee.css?v=${scriptVersion}`
     },
+    hrSettings: {
+        js: () => import(`./HR/_hrSettings.js?v=${scriptVersion}`),
+        css: `/css/HR/_hrSettings.css?v=${scriptVersion}`
+    },
 
 
     //tickets
+    ticketsControl: {
+        js: () => import(`./Tickets/_ticketsControl.js?v=${scriptVersion}`),
+        css: `/css/Tickets/_ticketsControl.css?v=${scriptVersion}`
+    },
     manageTicket: {
         js: () => import(`./Tickets/_manageTicket.js?v=${scriptVersion}`),
         css: `/css/Tickets/_manageTicket.css?v=${scriptVersion}`

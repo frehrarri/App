@@ -1,13 +1,9 @@
 ﻿export async function getManageRolesPartial() {
     try {
-        const response = await axios.get('/Hr/ManagePersonnelPartial');
-
-        document.getElementById("hr-view").innerHTML = response.data;
-        await loadModule("managePersonnel");
-
-        return true;
+        const response = await axios.get('/Hr/ManageRolesPartial');
+        return response.data;
     } catch (error) {
-        console.error("error: getManageTicketPartial", error);
+        console.error("error: ManageRolesPartial", error);
         return false;
     }
 } 
@@ -74,7 +70,11 @@ async function handleEvents(e) {
 
 }
 
-export function init() {
+export async function init() {
+    //load initial partial
+    let partial = await getManageRolesPartial();
+    document.getElementById("hr-partial-container").innerHTML = partial;
+
     const container = document.getElementById('ul-roles');
     container.querySelectorAll('li')?.forEach(el => el.addEventListener("click", handleEvents));
 

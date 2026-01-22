@@ -2,9 +2,8 @@
     try {
         const response = await getPartial("Hr", "ManageTeamsPartial");
         document.getElementById("hr-partial-container").innerHTML = response.data;
-        await loadModule("manageTeams");
 
-        return true;
+        return response.data;
     } catch (error) {
         console.error("error: getManageTicketPartial", error);
         return false;
@@ -208,7 +207,12 @@ async function handleEvents(e) {
 }
 
 
-export function init() {
+export async function init() {
+    //load partial
+    let partial = await getManageTeamsPartial();
+    document.getElementById("tickets-partial-container").innerHTML = partial;
+
+    //event handlers
     let container = document.getElementById('manage-teams-container');
     container.addEventListener("click", handleEvents);
     container.addEventListener("keydown", handleEvents);

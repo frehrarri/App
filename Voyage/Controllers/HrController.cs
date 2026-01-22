@@ -96,6 +96,14 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> HrSettingsPartial(int companyId)
+        {
+            return PartialView("~/Views/App/HR/_HrSettings.cshtml");
+        }
+
+
+
+        [HttpGet]
         public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
         {
             return await _hrBLL.GetPersonnel(companyId);
