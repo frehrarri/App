@@ -9,7 +9,7 @@
         <div id="dv-allocate-depts">
 
             <div class="allocate-dept-header">
-                <h4>Assign Teams & Admins</h4>
+                <h4>Assign Personnel & Teams</h4>
                 <div class="dv-depts-nav">
                     <button type="button" class="btn-get-allocate-depts">Assign</button>
                     <button type="button" class="btn-get-manage-depts">Manage</button>
@@ -20,6 +20,7 @@
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header" scope="col"></th>
+                        <th class="app-table-header" scope="col">Department</th>
                  @*        <th class="app-table-header" scope="col">Team</th>
                         <th class="app-table-header" scope="col">First Name</th>
                         <th class="app-table-header" scope="col">Last Name</th>
@@ -34,6 +35,9 @@
                         <tr class="app-table-row">
                             <td class="app-table-data">
                                 <input type="checkbox" />
+                            </td>
+                            <td class="app-table-data">
+
                             </td>
                           @*   <td class="app-table-data">
                                 <select class="sel-assign-team-member" data-userid="@teamMember.EmployeeId">
@@ -94,14 +98,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var team in Model.Departments)
+                    @foreach (var dept in Model.Departments)
                     {
                         <tr class="app-table-row">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-                               @*  @team.Name *@
+                                @dept.Name
                             </td>
                         </tr>
                     }

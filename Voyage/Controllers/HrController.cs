@@ -126,6 +126,7 @@ namespace Voyage.Controllers
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             return await _hrBLL.GetDepartments(companyId!.Value);
+            
         }
 
         [HttpGet]

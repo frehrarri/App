@@ -173,67 +173,92 @@ namespace Voyage.Data
             }
         }
 
-
         public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
             using var transaction = await _db.Database.BeginTransactionAsync();
-
             try
             {
-                var currentDepartments = await _db.Departments
-                  .Where(t => t.CompanyId == companyId
-                           && t.IsLatest!.Value)
-                  .ToListAsync();
+                // Get current latest departments
+                var latestDepartments = await _db.Departments
+                    .Where(d => d.CompanyId == companyId && d.IsLatest!.Value)
+                    .ToListAsync();
 
-
-                //delete all existing departments
-                if (departments == null || !departments.Any())
+                // Mark all current departments as not latest
+                foreach (var dept in latestDepartments)
                 {
-                    _db.Departments.RemoveRange(currentDepartments);
-                    await _db.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return;
+                    dept.IsLatest = false;
                 }
-
-                //mark old teams not latest
-                foreach (var d in currentDepartments)
-                {
-                    d.IsLatest = false;
-                }
-
                 await _db.SaveChangesAsync();
 
-                //Create new team entities with versioning
-                var distinctDepts = departments.GroupBy(t => t.Name)
-                                         .Select(g => g.First())
-                                         .ToList();
+                var deptsToSave = new List<Department>();
 
-                //add new teams
-                if (departments.Any())
+                // Process incoming departments (add/update)
+                if (departments != null && departments.Any())
                 {
-                    var deptsToSave = new List<Department>();
-
-                    foreach (var t in distinctDepts)
+                    foreach (var deptDto in departments)
                     {
-                        var existing = currentDepartments.FirstOrDefault(ct => ct.Name == t.Name);
+                        var existing = latestDepartments.FirstOrDefault(cd => cd.Name == deptDto.Name);
 
-                        deptsToSave.Add(new Department
+                        if (existing != null)
                         {
-                            DepartmentId = 0,
-                            Name = t.Name,
-                            CompanyId = companyId,
-                            DepartmentVersion = existing != null ? existing.DepartmentVersion + 1.0M : 1.0M,
-                            IsLatest = true,
-                            IsActive = true
-                        });
-                    }
-
-                    if (deptsToSave.Any())
-                    {
-                        await _db.Departments.AddRangeAsync(deptsToSave);
+                            // Update: Create new version
+                            deptsToSave.Add(new Department
+                            {
+                                DepartmentId = existing.DepartmentId,
+                                Name = deptDto.Name,
+                                CompanyId = companyId,
+                                DepartmentVersion = existing.DepartmentVersion + 1.0M,
+                                IsLatest = true,
+                                IsActive = true,
+                                CreatedDate = existing.CreatedDate,
+                                ModifiedDate = DateTime.UtcNow
+                            });
+                        }
+                        else
+                        {
+                            // Add: Create new department
+                            deptsToSave.Add(new Department
+                            {
+                                DepartmentId = await GetNextDepartmentId(companyId),
+                                Name = deptDto.Name,
+                                CompanyId = companyId,
+                                DepartmentVersion = 1.0M,
+                                IsLatest = true,
+                                IsActive = true,
+                                CreatedDate = DateTime.UtcNow,
+                                ModifiedDate = DateTime.UtcNow
+                            });
+                        }
                     }
                 }
-                await _db.SaveChangesAsync();
+
+                // Handle deletions: departments that existed but are not in the new list
+                var deptNamesToKeep = departments?.Select(d => d.Name).ToList() ?? new List<string>();
+                var deptsToDelete = latestDepartments.Where(cd => !deptNamesToKeep.Contains(cd.Name));
+
+                foreach (var deptToDelete in deptsToDelete)
+                {
+                    // Create new "deleted" version
+                    deptsToSave.Add(new Department
+                    {
+                        DepartmentId = deptToDelete.DepartmentId,
+                        Name = deptToDelete.Name,
+                        CompanyId = companyId,
+                        DepartmentVersion = deptToDelete.DepartmentVersion + 1.0M,
+                        IsLatest = true,
+                        IsActive = false,
+                        CreatedDate = deptToDelete.CreatedDate,
+                        ModifiedDate = DateTime.UtcNow
+                    });
+                }
+
+                // Save all new department versions
+                if (deptsToSave.Any())
+                {
+                    await _db.Departments.AddRangeAsync(deptsToSave);
+                    await _db.SaveChangesAsync();
+                }
+
                 await transaction.CommitAsync();
             }
             catch (Exception e)
@@ -243,6 +268,85 @@ namespace Voyage.Data
                 throw;
             }
         }
+
+        private async Task<int> GetNextDepartmentId(int companyId)
+        {
+            var maxDeptId = await _db.Departments
+                .Where(d => d.CompanyId == companyId)
+                .MaxAsync(d => (int?)d.DepartmentId) ?? 0;
+
+            return maxDeptId + 1;
+        }
+
+        //public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
+        //{
+        //    using var transaction = await _db.Database.BeginTransactionAsync();
+
+        //    try
+        //    {
+        //        var currentDepartments = await _db.Departments
+        //          .Where(t => t.CompanyId == companyId
+        //                   && t.IsLatest!.Value)
+        //          .ToListAsync();
+
+
+        //        //delete all existing departments
+        //        if (departments == null || !departments.Any())
+        //        {
+        //            _db.Departments.RemoveRange(currentDepartments);
+        //            await _db.SaveChangesAsync();
+        //            await transaction.CommitAsync();
+        //            return;
+        //        }
+
+        //        //mark old teams not latest
+        //        foreach (var d in currentDepartments)
+        //        {
+        //            d.IsLatest = false;
+        //        }
+
+        //        await _db.SaveChangesAsync();
+
+        //        //Create new team entities with versioning
+        //        var distinctDepts = departments.GroupBy(t => t.Name)
+        //                                 .Select(g => g.First())
+        //                                 .ToList();
+
+        //        //add new teams
+        //        if (departments.Any())
+        //        {
+        //            var deptsToSave = new List<Department>();
+
+        //            foreach (var t in distinctDepts)
+        //            {
+        //                var existing = currentDepartments.FirstOrDefault(ct => ct.Name == t.Name);
+
+        //                deptsToSave.Add(new Department
+        //                {
+        //                    DepartmentId = 0,
+        //                    Name = t.Name,
+        //                    CompanyId = companyId,
+        //                    DepartmentVersion = existing != null ? existing.DepartmentVersion + 1.0M : 1.0M,
+        //                    IsLatest = true,
+        //                    IsActive = true
+        //                });
+        //            }
+
+        //            if (deptsToSave.Any())
+        //            {
+        //                await _db.Departments.AddRangeAsync(deptsToSave);
+        //            }
+        //        }
+        //        await _db.SaveChangesAsync();
+        //        await transaction.CommitAsync();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await transaction.RollbackAsync();
+        //        _logger.LogError(e, "Error: HrDAL : SaveDepartments");
+        //        throw;
+        //    }
+        //}
 
         public async Task SavePermissions(List<string> permissions)
         {
@@ -263,75 +367,17 @@ namespace Voyage.Data
             }
         }
 
-        //public async Task SaveTeams(List<TeamDTO> teams, int companyId)
-        //{
-        //    using var transaction = await _db.Database.BeginTransactionAsync();
+        public async Task AssignTeam()
+        {
+            try
+            {
 
-        //    try
-        //    {
-        //        var currentTeams = await _db.Teams
-        //          .Where(t => t.CompanyId == companyId
-        //                   && t.IsLatest!.Value)
-        //          .ToListAsync();
-
-
-        //        //delete all existing teams
-        //        if (teams == null || !teams.Any())
-        //        {
-        //            _db.Teams.RemoveRange(currentTeams);
-        //            await _db.SaveChangesAsync();
-        //            await transaction.CommitAsync();
-        //            return;
-        //        }
-
-        //        //mark old teams not latest
-        //        foreach (var team in currentTeams)
-        //        {
-        //            team.IsLatest = false;
-        //        }
-
-        //        await _db.SaveChangesAsync();
-
-        //        //Create new team entities with versioning
-        //        var distinctTeams = teams.GroupBy(t => t.Name)
-        //                                 .Select(g => g.First())
-        //                                 .ToList();
-
-        //        //add new teams
-        //        if (teams.Any())
-        //        {
-        //            var teamsToSave = new List<Team>();
-
-        //            foreach (var t in distinctTeams)
-        //            {
-        //                var existing = currentTeams.FirstOrDefault(ct => ct.Name == t.Name);
-
-        //                teamsToSave.Add(new Team
-        //                {
-        //                    TeamId = existing != null ? existing.TeamId++ : 1,
-        //                    Name = t.Name,
-        //                    CompanyId = companyId,
-        //                    //DepartmentId = t.DepartmentId,
-        //                    TeamVersion = existing != null ? existing.TeamVersion + 1.0M : 1.0M,
-        //                    IsLatest = true,
-        //                    IsActive = true
-        //                });
-        //            }
-
-        //            if (teamsToSave.Any())
-        //            {
-        //                await _db.Teams.AddRangeAsync(teamsToSave);
-        //            }
-        //        }
-        //        await _db.SaveChangesAsync();
-        //        await transaction.CommitAsync();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e, "Error: HrDAL : SaveTeams");
-        //    }
-        //}
-
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : AssignTeam");
+            }
+        }
 
         public async Task SaveTeams(List<TeamDTO> teams, int companyId)
         {
@@ -441,10 +487,14 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
+        public async Task SaveTeamMembers(List<TeamDTO> teamMembers, int companyId)
         {
             try
             {
+                TeamUserRole teamUserRole = new TeamUserRole();
+                teamUserRole.CompanyId = companyId;
+                //teamUserRole.
+                //_db.TeamUserRoles.Add();
                 //List<TeamMember> members = new List<TeamMember>();
 
                 //foreach (var m in teamMembers)

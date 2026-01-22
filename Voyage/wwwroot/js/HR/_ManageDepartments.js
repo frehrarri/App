@@ -68,7 +68,6 @@ function addDeptInput(e) {
 }
 
 function getDepts() {
-    debugger;
     let results = [];
     const teams = document.querySelectorAll(".add-dept-span");
 
@@ -87,7 +86,6 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 async function saveDepartments(e) {
     e.preventDefault();
     let response;
-    debugger;
     let payload = getDepts();
 
     try {
@@ -106,6 +104,17 @@ async function saveDepartments(e) {
         console.error("error", error);
         return false;
     }
+}
+
+function removeDept(e) {
+    const checkedBoxes = document.querySelectorAll("#manage-depts tbody input[type='checkbox']:checked");
+
+    //remove row of checked boxes
+    checkedBoxes.forEach(cb => {
+        const row = cb.closest("tr");
+        if (row)
+            row.remove();
+    });
 }
 
 
@@ -130,9 +139,9 @@ async function handleEvents(e) {
         await saveDepartments(e);
     }
 
-    ////remove team
-    //if (e.target.id == "remove-team-btn")
-    //    removeTeam(e);
+    //remove team
+    if (e.target.id == "remove-dept-btn")
+        removeDept(e);
 
     //add new team row
     if (e.target.id == "add-dept-btn")
@@ -142,19 +151,6 @@ async function handleEvents(e) {
     if (e.target.classList.contains("add-dept-span")) {
         addDeptInput(e);
     }
-
-    ////catch changes to assign team members
-    //if (e.target.classList.contains('sel-assign-team-member')) {
-
-    //    if (e.target.dataset.userid && e.target.value) {
-
-    //        const teamDto = {
-    //            userId: parseInt(e.target.dataset.userid),
-    //            teamId: parseInt(e.target.value)
-    //        }
-    //        teamMembers.push(teamDto);
-    //    }
-    //}
 
     ////save members to team
     //if (e.target.id == "team-member-save-btn")

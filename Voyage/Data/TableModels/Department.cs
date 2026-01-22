@@ -30,12 +30,11 @@ namespace Voyage.Data.TableModels
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Department>()
+                .HasIndex(t => t.DepartmentId);
+    
+            modelBuilder.Entity<Department>()
                 .Property(d => d.DepartmentVersion)
                 .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Department>()
-                .HasIndex(d => new { d.DepartmentId, d.DepartmentVersion })
-                .IsUnique();
 
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Company)

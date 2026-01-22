@@ -100,7 +100,8 @@ namespace Voyage.Business
 
         public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
         {
-            await _hrDAL.SaveTeamMembers(teamMembers);
+            //await _hrDAL.SaveTeamMembers(teamMembers);
+
         }
 
         private void IgnoreAddDefaultRoles(ref List<RoleDTO> roles)
