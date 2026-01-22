@@ -14,39 +14,35 @@ namespace Voyage.Data.TableModels
         public string Country { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public long Phone { get; set; }
-        public string Email {  get; set; } = string.Empty;
-
-
-
+        public string Email { get; set; } = string.Empty;
 
         #region Foreign Keys
-
         public ICollection<Department> Departments { get; set; } = new List<Department>();
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
         public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
-        public ICollection<Team> Teams { get; set; } = new List<Team>();
-
+        public ICollection<Role> Roles { get; set; } = new List<Role>();
+        public ICollection<CompanyUserRole> CompanyUserRoles { get; set; } = new List<CompanyUserRole>();
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Company>()
-                 .ToTable("Company");
+                .ToTable("Company");
 
             modelBuilder.Entity<Company>()
-                .HasKey(t => t.CompanyId);
+                .HasKey(c => c.CompanyId);
 
             modelBuilder.Entity<Company>()
-                .Property(t => t.CompanyId)
+                .Property(c => c.CompanyId)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<AppUser>()
-                .HasOne(u => u.Company)
-                .WithMany(c => c.Users)
+            modelBuilder.Entity<Company>()
+                .HasMany(c => c.Users)
+                .WithOne(u => u.Company)
                 .HasForeignKey(u => u.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
-
         }
-
+    
     }
 }

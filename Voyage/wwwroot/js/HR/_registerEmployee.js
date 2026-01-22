@@ -40,7 +40,7 @@ const register = async (e) => {
     };
 
     const registrationData = {
-        isCompanyRegistration: document.getElementById('hdnIsCompanyRegistration').value === "true",
+        isCompanyRegistration: (document.getElementById('hdnIsCompanyRegistration')?.value == "true" ?? false),
         userName: document.getElementById("userName").value,
         firstname: document.getElementById("firstName").value,
         middlename: document.getElementById("middleName").value,

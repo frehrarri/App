@@ -5,40 +5,32 @@ namespace Voyage.Data.TableModels
 {
     public class Department : BaseClass, IModelBuilderEF
     {
-        public Department() 
-        { 
-            Name = string.Empty;
-        }
-
         public Guid DepartmentKey { get; set; }
         public int DepartmentId { get; set; }
         public decimal DepartmentVersion { get; set; }
-        public string Name { get; set; }
-
+        public string Name { get; set; } = string.Empty;
 
         #region FK
-
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
-        //public ICollection<Team> Teams { get; set; } = new List<Team>();
-        public ICollection<DepartmentRole> DepartmentRoles { get; set; } = new List<DepartmentRole>();
-
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
+        public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Department>()
-                 .ToTable("Department");
+                .ToTable("Department");
 
             modelBuilder.Entity<Department>()
-                .HasKey(t => t.DepartmentKey);
+                .HasKey(d => d.DepartmentKey);
 
             modelBuilder.Entity<Department>()
-                .Property(t => t.DepartmentKey)
+                .Property(d => d.DepartmentKey)
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Department>()
-                .Property(t => t.DepartmentVersion)
+                .Property(d => d.DepartmentVersion)
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Department>()

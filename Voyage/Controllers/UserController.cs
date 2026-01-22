@@ -26,15 +26,15 @@ namespace Voyage.Controllers
         private ILogger<AppUser> _logger;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<AppRole> _roleManager;
+        //private readonly RoleManager<AppRole> _roleManager;
         private EmailService _emailService;
         private _AppDbContext _db;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, EmailService emailService, _AppDbContext db, ILogger<AppUser> logger, RoleManager<AppRole> roleManager)
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, EmailService emailService, _AppDbContext db, ILogger<AppUser> logger /*, RoleManager<AppRole> roleManager*/)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
+            //_roleManager = roleManager;
             _emailService = emailService;
             _db = db;
             _logger = logger;
@@ -171,69 +171,7 @@ namespace Voyage.Controllers
             return View(model);
         }
 
-        private async Task CreateDefaultRoles(int companyId)
-        {
-            try
-            {
-                List<string> defaultRoles = new List<string>()
-                {
-                    nameof(Constants.DefaultRoles.Principal),
-                    nameof(Constants.DefaultRoles.Unassigned)
-                };
-
-                foreach (var role in defaultRoles)
-                {
-                    bool exists = _db.Roles.Any(r => r.CompanyId == companyId && r.NormalizedName == role.ToUpper());
-                    if (!exists)
-                    {
-                        var roleToAdd = new AppRole
-                        {
-                            Name = role,
-                            NormalizedName = role.ToUpper(),
-                            ConcurrencyStamp = Guid.NewGuid().ToString(),
-                            CompanyId = companyId
-                        };
-
-                        await _db.Roles.AddAsync(roleToAdd);
-                    }
-                }
-
-                await _db.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "error: UserController: CreateDefaultRoles");
-            }
-        }
-
-        private async Task AssignRoleToUser(AppUser user, string roleName, int companyId)
-        {
-            // Look up the role for this company
-            var role = await _db.Roles
-                .Where(r => r.CompanyId == companyId && r.NormalizedName == roleName.ToUpper())
-                .SingleOrDefaultAsync();
-
-            if (role == null)
-                throw new InvalidOperationException($"Role '{roleName}' for company {companyId} does not exist.");
-
-            // Manually add a record to the AspNetUserRoles table
-            var userRole = new IdentityUserRole<string>
-            {
-                UserId = user.Id,
-                RoleId = role.Id
-            };
-
-            // Check to avoid duplicates
-            bool alreadyAssigned = await _db.UserRoles
-                .AnyAsync(ur => ur.UserId == user.Id && ur.RoleId == role.Id);
-
-            if (!alreadyAssigned)
-            {
-                await _db.UserRoles.AddAsync(userRole);
-                await _db.SaveChangesAsync();
-            }
-        }
-
+ 
 
         [HttpPost]
         [AllowAnonymous]
@@ -265,7 +203,6 @@ namespace Voyage.Controllers
 
                 //this will be the Company Owner's registration because we add a new company to the company table.
                 //need to create a separate registration where we register an employee to an company instead of adding a new one
-                
                 if (isNewCompany)
                 {
                     Company company = new Company();
@@ -287,13 +224,12 @@ namespace Voyage.Controllers
                     //add unassigned/principal roles for company
                     await CreateDefaultRoles(companyId);
                 }
-                else
+                else //register employee to an existing company
                 {
                     bool exists = await _db.Companies.AnyAsync(c => c.CompanyId == details.Company.CompanyId);
                     if (exists)
                         companyId = details.Company.CompanyId;
                 }
-
 
                 //passes validation so we create a new user
                 var user = new AppUser
@@ -346,6 +282,72 @@ namespace Voyage.Controllers
                 return null!;
             }
         }
+
+        private async Task CreateDefaultRoles(int companyId)
+        {
+            try
+            {
+                List<string> defaultRoles = new List<string>()
+                {
+                    nameof(Constants.DefaultRoles.Principal),
+                    nameof(Constants.DefaultRoles.Unassigned)
+                };
+
+                foreach (var role in defaultRoles)
+                {
+                    bool exists = _db.CompanyRoles.Any(r => r.CompanyId == companyId && r.RoleName == role);
+                    if (!exists)
+                    {
+                        var roleToAdd = new Role
+                        {
+                            RoleName = role,
+                            CompanyId = companyId
+                        };
+
+                        await _db.CompanyRoles.AddAsync(roleToAdd);
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "error: UserController: CreateDefaultRoles");
+            }
+        }
+
+        private async Task AssignRoleToUser(AppUser user, string roleName, int companyId)
+        {
+            // Look up the role for this company
+            var role = await _db.CompanyRoles  // Changed from CompanyRoles to Roles
+                .Where(r => r.CompanyId == companyId && r.RoleName == roleName)
+                .SingleOrDefaultAsync();
+
+            if (role == null)
+            {
+                throw new InvalidOperationException($"Role '{roleName}' not found for company {companyId}");
+            }
+
+            // Check to avoid duplicates
+            bool alreadyAssigned = await _db.CompanyUserRoles
+                .AnyAsync(cur => cur.CompanyId == companyId
+                              && cur.EmployeeId == user.EmployeeId
+                              && cur.RoleId == role.RoleId);
+
+            if (!alreadyAssigned)
+            {
+                var companyUserRole = new CompanyUserRole
+                {
+                    CompanyId = companyId,
+                    EmployeeId = user.EmployeeId,
+                    RoleId = role.RoleId
+                };
+
+                await _db.CompanyUserRoles.AddAsync(companyUserRole);
+                await _db.SaveChangesAsync();
+            }
+        }
+
 
         private async Task<int> GetNextEmployeeId(int companyId)
         {
@@ -427,14 +429,6 @@ namespace Voyage.Controllers
 
             if (result.Succeeded)
             {
-                //assign role "unassigned" if existing user didn't have one assigned
-                var roles = await _userManager.GetRolesAsync(user);
-                if (roles.ToList().Any() == false)
-                {
-                    await _userManager.AddToRoleAsync(user, nameof(Constants.DefaultRoles.Unassigned));
-                }
-                await _signInManager.RefreshSignInAsync(user);
-
                 response.RedirectURL = Url.Action("Home", "Website");
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = Constants.LoginSuccessful;

@@ -64,7 +64,7 @@ builder.Services.AddDbContext<_AppDbContext>(options =>
                                     warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
 //identity
-builder.Services.AddIdentity<AppUser, AppRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<_AppDbContext>()
                 .AddDefaultTokenProviders();  // This is required for password reset tokens
 

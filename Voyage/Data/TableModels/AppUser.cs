@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Voyage.Data.TableModels
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser, IModelBuilderEF
     {
         public int EmployeeId { get; set; }
         public string FirstName { get; set; } = string.Empty;
@@ -19,33 +19,20 @@ namespace Voyage.Data.TableModels
         public string State { get; set; } = string.Empty;
         public int PostalCode { get; set; }
 
-
-
         #region FK
-
         public int CompanyId { get; set; }
-        public Company? Company { get; set; } = null!;
+        public Company Company { get; set; } = null!;
 
-        public ICollection<TeamMember> TeamMembers { get; set; } = new List<TeamMember>();
-
+        // Role assignments at different levels
+        public ICollection<CompanyUserRole> CompanyUserRoles { get; set; } = new List<CompanyUserRole>();
+        public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
+        public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
         #endregion
-
-
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
-            // Alternate (business) key
             modelBuilder.Entity<AppUser>()
                 .HasAlternateKey(u => new { u.CompanyId, u.EmployeeId });
-
-            modelBuilder.Entity<AppUser>()
-                .HasIndex(u => new { u.CompanyId, u.EmployeeId })
-                .IsUnique();
-
-            modelBuilder.Entity<AppRole>()
-                .Property(r => r.CompanyId)
-                .IsRequired();
-
         }
     }
 }

@@ -11,28 +11,21 @@ namespace Voyage.Data.TableModels
         public decimal TeamVersion { get; set; }
         public string Name { get; set; } = string.Empty;
 
-
-
         #region FK
-
-        //public int? DepartmentId { get; set; }
-        //public Department? Department { get; set; } = null!;
-
+        public Guid? DepartmentKey { get; set; }
+        public Department? Department { get; set; }
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
-
-        public ICollection<TeamMember> TeamMembers { get; set; } = new List<TeamMember>();
-
+        public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
         #endregion
-
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Team>()
-                 .ToTable("Team");
+                .ToTable("Team");
 
             modelBuilder.Entity<Team>()
-                .HasKey(t => t.TeamKey );
+                .HasKey(t => t.TeamKey);
 
             modelBuilder.Entity<Team>()
                 .Property(t => t.TeamKey)
@@ -43,19 +36,20 @@ namespace Voyage.Data.TableModels
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Team>()
-                .HasIndex(d => new { d.TeamId, d.TeamVersion })
+                .HasIndex(t => new { t.TeamId, t.TeamVersion })
                 .IsUnique();
 
             modelBuilder.Entity<Team>()
-            .HasOne(t => t.Company)
-            .WithMany(c => c.Teams)
-            .HasForeignKey(t => t.CompanyId)
-            .OnDelete(DeleteBehavior.SetNull);
+                .HasOne(t => t.Company)
+                .WithMany(c => c.Teams)
+                .HasForeignKey(t => t.CompanyId)
+                .OnDelete(DeleteBehavior.SetNull);
 
-            ////index for faster querying latest version
-            //modelBuilder.Entity<Team>()
-            //    .HasIndex(t => new { t.TeamId, t.IsLatest })
-            //    .HasDatabaseName("IX_Team_Latest");
+            modelBuilder.Entity<Team>()
+                .HasOne(t => t.Department)
+                .WithMany(d => d.Teams)
+                .HasForeignKey(t => t.DepartmentKey)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

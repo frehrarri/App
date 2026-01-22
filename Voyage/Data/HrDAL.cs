@@ -126,20 +126,21 @@ namespace Voyage.Data
         {
             try
             {
-                return await _db.TeamMembers
-                    .Where(tm => tm.CompanyId == companyId)
-                    .Select(tm => new TeamMemberDTO
-                    {
-                        //TeamId = tm.TeamId,
-                        TeamName = tm.Team.Name,
-                        EmployeeId = tm.EmployeeId, 
-                        Username = tm.User.UserName,
-                        FirstName = tm.User.FirstName,
-                        LastName = tm.User.LastName,
-                        Email = tm.User.Email,
-                        PhoneNumber = tm.User.PhoneNumber
-                    })
-                    .ToListAsync();
+                return new List<TeamMemberDTO>();
+                //return await _db.TeamMembers
+                //    .Where(tm => tm.CompanyId == companyId)
+                //    .Select(tm => new TeamMemberDTO
+                //    {
+                //        //TeamId = tm.TeamId,
+                //        TeamName = tm.Team.Name,
+                //        EmployeeId = tm.EmployeeId, 
+                //        Username = tm.User.UserName,
+                //        FirstName = tm.User.FirstName,
+                //        LastName = tm.User.LastName,
+                //        Email = tm.User.Email,
+                //        PhoneNumber = tm.User.PhoneNumber
+                //    })
+                //    .ToListAsync();
             }
             catch (Exception e)
             {
@@ -307,7 +308,7 @@ namespace Voyage.Data
 
                         teamsToSave.Add(new Team
                         {
-                            TeamId = 0,
+                            TeamId = 1,
                             Name = t.Name,
                             CompanyId = companyId,
                             //DepartmentId = t.DepartmentId,
@@ -338,18 +339,18 @@ namespace Voyage.Data
         {
             try
             {
-                List<TeamMember> members = new List<TeamMember>();
+                //List<TeamMember> members = new List<TeamMember>();
 
-                foreach (var m in teamMembers)
-                {
-                    members.Add(new TeamMember()
-                    {
-                        //TeamId = m.TeamId,
-                        //CompanyId = m.UserId
-                    });
-                }
+                //foreach (var m in teamMembers)
+                //{
+                //    members.Add(new TeamMember()
+                //    {
+                //        //TeamId = m.TeamId,
+                //        //CompanyId = m.UserId
+                //    });
+                //}
 
-                await _db.TeamMembers.AddRangeAsync(members);
+                //await _db.TeamMembers.AddRangeAsync(members);
                 await _db.SaveChangesAsync();
             }
             catch (Exception e)
