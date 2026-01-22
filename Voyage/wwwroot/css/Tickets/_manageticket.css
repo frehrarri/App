@@ -54,6 +54,7 @@ label {
     display: flex;
     gap: 6px;
     margin-top: 30px;
+    justify-content: flex-end;
 }
 
 #ticketDesc {

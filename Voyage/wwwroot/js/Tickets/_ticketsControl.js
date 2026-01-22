@@ -28,15 +28,17 @@ async function handleEvents(e) {
 }
 
 async function handleSettings(e) {
-    let response;
-    const companyId = parseInt(document.getElementById('hdnCompanyId').value);
+    removeSettingsBtn(e);    
+}
 
-    if (e.target.closest(".settings-btn")) {
-        response = await axios.get('/Tickets/SettingsPartial', {
-            params: { companyId: companyId }
-        });
+function removeSettingsBtn(e) {
+    const btn = e.target.closest(".settings-btn");
+    if (btn) {
+        const container = btn.parentNode;
 
-        document.getElementById("tickets-partial-container").innerHTML = response.data;
-        await loadModule("ticketSettings");
+        if (container) {
+            container.classList.add("hidden");
+            loadModule("ticketSettings");
+        }
     }
 }

@@ -66,15 +66,13 @@ const moduleRegistry = {
         css: `/css/Tickets/_ticket.css?v=${scriptVersion}`
     },
     ticketSettings: {
-        js: () => import(`./Tickets/_ticketsettings.js?v=${scriptVersion}`)//,
-        //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
-    },
-    setTicketSettings: {
-        js: () => import(`./Tickets/_setTicketSettings.js?v=${scriptVersion}`)//,
-        //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
+        js: () => import(`./Tickets/_ticketsettings.js?v=${scriptVersion}`),
+        css: `/css/Tickets/_ticketsettings.css?v=${scriptVersion}`
     }
-
-    
+    //setTicketSettings: {
+    //    js: () => import(`./Tickets/_setTicketSettings.js?v=${scriptVersion}`)//,
+    //    //css: `/Tickets/css/_ticket.css?v=${scriptVersion}`
+    //}
 };
 
 // Dynamically load CSS if not already loaded

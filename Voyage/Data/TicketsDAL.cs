@@ -457,7 +457,7 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<TicketSettingsDTO?> GetSettings()
+        public async Task<TicketSettingsDTO?> GetSettings(int companyId)
         {
             try
             {
@@ -467,6 +467,7 @@ namespace Voyage.Data
                     .Where(s => s.Feature == Constants.Feature.Tickets
                         && s.IsActive == true
                         && s.IsLatest == true)
+                    //&& s.CompanyId == companyId)
                     .Select(s => new TicketSettingsDTO()
                     {
                         SettingsId = s.SettingsId,
@@ -488,7 +489,7 @@ namespace Voyage.Data
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving ticket settings.");
-                return null;
+                throw;
             }
             
         }

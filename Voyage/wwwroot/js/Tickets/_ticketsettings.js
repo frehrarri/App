@@ -1,32 +1,43 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    document.getElementById('add-section-btn')?.addEventListener("click", addSection);
+    //load partial
+    const partial = await getTicketSettingsPartial();
+    document.getElementById("tickets-partial-container").innerHTML = partial;
 
-    document.getElementById('save-settings-btn')?.addEventListener("click", save);
+    //attach event handlers
+    document.getElementById("tickets-control-container").addEventListener("click", handleEvents);
+}
 
-    document.querySelector("#back-btn")?.addEventListener("click", async (e) => {
+async function getTicketSettingsPartial() {
+    const response = await axios.get('/Tickets/SettingsPartial');
+    return response.data;
+}
+
+async function handleEvents(e) {
+    if (e.target.id == "add-section-btn")
+        addSection();
+
+    if (e.target.id == 'save-settings-btn')
+        await save(e);
+
+    if (e.target.classList.contains("delete-section")
+        || e.target.classList.contains("delete"))
+            removeSection(e);
+
+    if (e.target.matches("[name='rdo-repeat']"))
+        toggleSprintDateControls(e);
+
+    if (e.target.matches("[name='rdo-section']"))
+        toggleSectionControls(e);
+
+    if (e.target.id == "undo-section-btn")
+        undoSection();
+
+    if (e.target.id == "back-btn") {
         const module = await loadModule("tickets");
         await module.getTicketsPartial();
-    });
-
-    document.querySelectorAll("[name='rdo-repeat']")?.forEach(el =>
-        el.addEventListener("click", toggleSprintDateControls)
-    );
-
-    document.querySelectorAll("[name='rdo-section']")?.forEach(el =>
-        el.addEventListener("click", toggleSectionControls)
-    );
-
-    document.querySelectorAll(".delete-section")?.forEach(el =>
-        el.addEventListener("click", removeSection)
-    );
-
-    document.querySelectorAll(".delete")?.forEach(el =>
-        el.addEventListener("click", removeSection)
-    );
-
-    document.getElementById("undo-section-btn")?.addEventListener("click", undoSection);
+    }
 }
 
 function addSection(section) {

@@ -1,34 +1,6 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-export async function getManageTicketPartial(ticketId, sectionTitle) {
-    try {
-        const response = await axios.get('/Tickets/ManageTicketPartial', {
-            params: { ticketId: ticketId }
-        });
-        document.getElementById("ticket-view").innerHTML = response.data;
-        await loadModule("manageTicket");
 
-        return true;
-    } catch (error) {
-        console.error("error: getManageTicketPartial", error);
-        return false;
-    }
-}
-
-export async function getTicketPartial(ticketId, ticketVersion) {
-    try {
-        const response = await axios.get('/Tickets/TicketPartial', {
-            params: { ticketId: ticketId, ticketVersion: ticketVersion }
-        });
-
-        //document.getElementById("ticket-view").innerHTML = response.data;
-        //await loadModule("ticket")
-        return response.data;
-    } catch (error) {
-        console.error("error: getTicketPartial", error);
-        return false;
-    }
-}
 
 export async function getTicketsPartial() {
     try {
@@ -41,8 +13,8 @@ export async function getTicketsPartial() {
 }
 
 async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults) {
+
     try {
-        
         const response = await axios.get('/Tickets/GetPaginatedTickets', {
             params: {
                 sprintId: sprintId,
@@ -124,189 +96,179 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
             //append the row to the table body
             tableBody.appendChild(row);
-
-            //event listeners
-            document.querySelectorAll(".goto-ticket").forEach(btn =>
-                btn.addEventListener("click", (e) => getTicketPartial(btn.dataset.id))
-            );
-
-            document.querySelectorAll(".btnAddTicket").forEach(btn =>
-                btn.addEventListener("click", () => getManageTicketPartial(null, btn.dataset.section))
-            );
-
-            document.querySelectorAll("#btnEditTicket").forEach(btn =>
-                btn.addEventListener("click", () => getManageTicketPartial(btn.dataset.id, null))
-            );
-
         });
 
         toggleEditBtns();
 
         return true;
-    } catch (error) {
+    }
+    catch (error) {
         console.error("error: getPaginatedTickets", error);
         return false;
     }
-}
-
-function updatePaginatedUI(e, sectionTitle) {
-    let sprintId = document.getElementById('hdnSprint').dataset.sprintid;
-    if (sprintId) {
-        sprintId = null
-    }
-
-    const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
-    const numResults = parseInt(selectList.value);
-
-    const pageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`)
-    const currentPage = parseInt(pageBtn.innerText);
-    let targetPage = currentPage;
-    
-    const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
-    let numPages = Math.ceil(totalTicketCount / numResults);
-
-    const selectedBtn = e.target.closest(".paginate");
-
-    //left arrow button
-    if (selectedBtn.id == `btn-left-section${sectionTitle}`) {
         
-        targetPage = currentPage - 1;
-        pageBtn.classList.remove("selected");
-        pageBtn.disabled = false;
+     
+}
 
-        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
-        selectedPageButton.classList.add("selected");
-        selectedPageButton.disabled = true;
-    }
-    //right arrow button
-    if (selectedBtn.id == `btn-right-section${sectionTitle}`) {
-        targetPage = currentPage + 1;
-        pageBtn.classList.remove("selected");
-        pageBtn.disabled = false;
 
-        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
-        selectedPageButton.classList.add("selected");
-        selectedPageButton.disabled = true;
-    }
+async function updatePaginatedUI(e, sectionTitle) {
+        let sprintId = document.getElementById('hdnSprint').dataset.sprintid;
+        if (sprintId) {
+            sprintId = null
+        }
 
-    //specific page button
-    if (selectedBtn.classList.contains('page')) {
-        targetPage = parseInt(e.target.dataset.page);
+        const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
+        const numResults = parseInt(selectList.value);
 
-        //remove selected/disabled from previous page button
-        pageBtn.classList.remove("selected");
-        pageBtn.disabled = false;
+        const pageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`)
+        const currentPage = parseInt(pageBtn.innerText);
+        let targetPage = currentPage;
 
-        //update selected/disabled to the target page button
-        e.target.classList.add("selected");
-        e.target.disabled = true;
-    }
+        const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
+        let numPages = Math.ceil(totalTicketCount / numResults);
 
-    //update num of pages when using result count drop down
-    if (e.target.id.includes(`sel-take-section`)) {
+        const selectedBtn = e.target.closest(".paginate");
 
-        //start at first page on update
-        targetPage = 1;
+        //left arrow button
+        if (selectedBtn.id == `btn-left-section${sectionTitle}`) {
 
-        //update number of pages
-        numPages = Math.ceil(totalTicketCount / numResults);
+            targetPage = currentPage - 1;
+            pageBtn.classList.remove("selected");
+            pageBtn.disabled = false;
 
-        //empty container of old button layout
-        const container = document.getElementById(`page-btn-container-${sectionTitle}`);
-        container.innerHTML = ""; 
+            const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+            selectedPageButton.classList.add("selected");
+            selectedPageButton.disabled = true;
+        }
+        //right arrow button
+        if (selectedBtn.id == `btn-right-section${sectionTitle}`) {
+            targetPage = currentPage + 1;
+            pageBtn.classList.remove("selected");
+            pageBtn.disabled = false;
 
-        //create new buttons
-        for (let i = 1; i <= numPages; i++) {
-            const btn = document.createElement("button");
-            btn.classList.add("paginate", "page");
-            btn.dataset.section = sectionTitle;
-            btn.dataset.page = i;
-            btn.innerText = i;
+            const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+            selectedPageButton.classList.add("selected");
+            selectedPageButton.disabled = true;
+        }
 
-            if (i === targetPage) {
-                btn.classList.add("selected");
-                btn.disabled = true;
+        //specific page button
+        if (selectedBtn.classList.contains('page')) {
+            targetPage = parseInt(e.target.dataset.page);
+
+            //remove selected/disabled from previous page button
+            pageBtn.classList.remove("selected");
+            pageBtn.disabled = false;
+
+            //update selected/disabled to the target page button
+            e.target.classList.add("selected");
+            e.target.disabled = true;
+        }
+
+        //update num of pages when using result count drop down
+        if (e.target.id.includes(`sel-take-section`)) {
+
+            //start at first page on update
+            targetPage = 1;
+
+            //update number of pages
+            numPages = Math.ceil(totalTicketCount / numResults);
+
+            //empty container of old button layout
+            const container = document.getElementById(`page-btn-container-${sectionTitle}`);
+            container.innerHTML = "";
+
+            //create new buttons
+            for (let i = 1; i <= numPages; i++) {
+                const btn = document.createElement("button");
+                btn.classList.add("paginate", "page");
+                btn.dataset.section = sectionTitle;
+                btn.dataset.page = i;
+                btn.innerText = i;
+
+                if (i === targetPage) {
+                    btn.classList.add("selected");
+                    btn.disabled = true;
+                }
+
+                /*btn.addEventListener("click", (e) => await updatePaginatedUI(e, sectionTitle));*/
+
+                container.appendChild(btn);
             }
+        }
 
-            btn.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle));
+        await getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
 
-            container.appendChild(btn);
+        //disable/enable left/right arrows 
+        const leftBtn = document.getElementById(`btn-left-section${sectionTitle}`);
+        const rightBtn = document.getElementById(`btn-right-section${sectionTitle}`);
+
+        leftBtn.disabled = targetPage === 1;
+        rightBtn.disabled = targetPage === numPages;
+
+        toggleEditBtns();
+
+        styleTable();
+
+        document.getElementById(`${sectionTitle}-container`).focus();
+    }
+
+    function handlePriorityLevel(priorityLevel) {
+        switch (priorityLevel) {
+            case 0: return "Low";
+            case 1: return "Medium";
+            case 2: return "High";
+            default: return;
         }
     }
 
-    getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
+    function toggleEditBtns() {
+        let editBtns = document.querySelectorAll('.edit-btn');
+        const user = document.getElementById('hdnUser').value;
 
-    //disable/enable left/right arrows 
-    const leftBtn = document.getElementById(`btn-left-section${sectionTitle}`);
-    const rightBtn = document.getElementById(`btn-right-section${sectionTitle}`);
-
-    leftBtn.disabled = targetPage === 1;
-    rightBtn.disabled = targetPage === numPages;
-
-    toggleEditBtns();
-
-    styleTable();
-    
-    document.getElementById(`${sectionTitle}-container`).focus();
-}
-
-function handlePriorityLevel(priorityLevel) {
-    switch (priorityLevel) {
-        case 0: return "Low";
-        case 1: return "Medium";
-        case 2: return "High";
-        default: return;
-    }
-}
-
-function toggleEditBtns() {
-    let editBtns = document.querySelectorAll('.edit-btn');
-    const user = document.getElementById('hdnUser').value;
-
-    for (const btn of editBtns) {
-        if (btn.dataset.author !== user) {
-            btn.style.display = 'none';
+        for (const btn of editBtns) {
+            if (btn.dataset.author !== user) {
+                btn.style.display = 'none';
+            }
         }
     }
-}
 
-function styleTable(container = document) {
-    // Style primary buttons
-    container.querySelectorAll(".primary-btn").forEach(btn => {
-        btn.style.padding = "4px 12px";
-        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-        btn.style.borderRadius = "6px";
-        btn.style.border = "none";
-        btn.style.color = "#fff";
-        btn.style.background = "#4B91F7";
-        btn.style.backgroundOrigin = "border-box";
-        btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
-        btn.style.webkitUserSelect = "none";
-        btn.style.touchAction = "manipulation";
-    });
+    function styleTable(container = document) {
+        // Style primary buttons
+        container.querySelectorAll(".primary-btn").forEach(btn => {
+            btn.style.padding = "4px 12px";
+            btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+            btn.style.borderRadius = "6px";
+            btn.style.border = "none";
+            btn.style.color = "#fff";
+            btn.style.background = "#4B91F7";
+            btn.style.backgroundOrigin = "border-box";
+            btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
+            btn.style.webkitUserSelect = "none";
+            btn.style.touchAction = "manipulation";
+        });
 
-    // Style secondary buttons
-    container.querySelectorAll(".secondary-btn").forEach(btn => {
-        btn.style.display = "flex";
-        btn.style.flexDirection = "column";
-        btn.style.alignItems = "center";
-        btn.style.padding = "4px 12px";
-        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-        btn.style.borderRadius = "6px";
-        btn.style.color = "#3D3D3D";
-        btn.style.background = "#fff";
-        btn.style.border = "none";
-        btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
-        btn.style.userSelect = "none";
-        btn.style.webkitUserSelect = "none";
-        btn.style.touchAction = "manipulation";
-    });
+        // Style secondary buttons
+        container.querySelectorAll(".secondary-btn").forEach(btn => {
+            btn.style.display = "flex";
+            btn.style.flexDirection = "column";
+            btn.style.alignItems = "center";
+            btn.style.padding = "4px 12px";
+            btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+            btn.style.borderRadius = "6px";
+            btn.style.color = "#3D3D3D";
+            btn.style.background = "#fff";
+            btn.style.border = "none";
+            btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
+            btn.style.userSelect = "none";
+            btn.style.webkitUserSelect = "none";
+            btn.style.touchAction = "manipulation";
+        });
 
-    // Style table rows (zebra stripes)
-    container.querySelectorAll(".app-table-row").forEach((row, i) => {
-        row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
-    });
-}
+        // Style table rows (zebra stripes)
+        container.querySelectorAll(".app-table-row").forEach((row, i) => {
+            row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
+        });
+    }
 
 export async function getTicketSettings() {
     const response = await getPartial("Tickets", "SettingsPartial");
@@ -318,38 +280,70 @@ export async function getTicketSettings() {
     await loadModule("setTicketSettings");
 }
 
+async function handleEvents(e) {
+    let module, partial;
+
+    if (e.target.matches('.btnAddTicket')) {
+        module = await loadModule("manageTicket");
+        partial = await module.getManageTicketPartial(null, e.target.dataset.section);
+        document.getElementById('tickets-partial-container').innerHTML = partial;
+    }
+
+    if (e.target.matches('.edit-btn')) {
+        module = await loadModule("manageTicket");
+        partial = await module.getManageTicketPartial(e.target.dataset.id, null);
+        document.getElementById('tickets-partial-container').innerHTML = partial;
+    }
+
+    if (e.target.matches('.goto-ticket')) {
+        module = await loadModule("ticket");
+        partial = await module.getTicketpartial(e.target.dataset.id);
+        document.getElementById('tickets-partial-container').innerHTML = partial;
+    }
+
+    if (e.target.matches('.paginate')) {
+        const sectionTitle = e.dataset.section;
+
+        if (e.target.id.includes('sel-take-section') && e.type == "change"){
+            await updatePaginatedUI(e, sectionTitle);
+        }
+        else if (e.type == "click") {
+            await updatePaginatedUI(e, sectionTitle);
+        }
+    }
+
+}
+
+
 export async function init() {
 
     //load initial partial
     let partial = await getTicketsPartial();
-    document.getElementById("tickets-partial-container").innerHTML = partial;
 
-    //event handlers
-    document.querySelectorAll(".btnAddTicket").forEach(btn =>
-        btn.addEventListener("click", () => getManageTicketPartial(null, btn.dataset.section))
-    );
+    let container = document.getElementById("tickets-partial-container")
+    if (container && partial) {
+        container.innerHTML = partial;
+    }
 
-    document.querySelectorAll("#btnEditTicket").forEach(btn =>
-        btn.addEventListener("click", () => getManageTicketPartial(btn.dataset.id, null))
-    );
+    container = document.getElementById('tickets-container');
+    container.addEventListener("click", handleEvents);
+    container.addEventListener("change", handleEvents);
+ 
 
-    document.querySelectorAll(".goto-ticket").forEach(btn =>
-        btn.addEventListener("click", (e) => getTicketPartial(btn.dataset.id))
-    );
 
-    document.querySelectorAll(".paginate").forEach(el => {
-        const sectionTitle = el.dataset.section;
+    //document.querySelectorAll(".paginate").forEach(el => {
+    //    const sectionTitle = el.dataset.section;
 
-        //add change event for select list
-        if (el.id.includes(`sel-take-section`)) {
-            el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
-        }
-        //click events for buttons
-        else {
-            el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
-        }
-    });
+    //    //add change event for select list
+    //    if (el.id.includes(`sel-take-section`)) {
+    //        el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
+    //    }
+    //    //click events for buttons
+    //    else {
+    //        el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
+    //    }
+    //});
 
-    document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
+    //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
 
 }

@@ -5,15 +5,6 @@
 
 @{
     string verb = "Edit";
-    if (Model.TicketId != 0)
-    {
-        <h1>@verb Ticket</h1>
-    }
-    else
-    {
-        verb = "Add";
-        <h1>@verb Ticket</h1>
-    }
 }
 
 <div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
@@ -24,6 +15,17 @@
 <br />
 
 <div id="manage-ticket-container">
+
+    @if (Model.TicketId != 0)
+    {
+        <h4>@verb Ticket</h4>
+    }
+    else
+    {
+        verb = "Add";
+        <h4>@verb Ticket</h4>
+    }
+
     <form id="ticket-form">
         @Html.AntiForgeryToken()
 

@@ -37,7 +37,8 @@ namespace Voyage.Controllers
         {
             TicketsVM vm = new TicketsVM();
 
-            TicketSettingsDTO? settings = await _ticketsB.GetSettings();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            TicketSettingsDTO? settings = await _ticketsB.GetSettings(companyId!.Value);
             //mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
 
             if (settings != null)
@@ -50,8 +51,8 @@ namespace Voyage.Controllers
 
                 return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
             }
-            return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
-            //return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
+
+            return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
         }
 
         [HttpGet]
@@ -189,7 +190,8 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<TicketSettingsDTO?> GetSettings()
         {
-            return await _ticketsB.GetSettings();
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _ticketsB.GetSettings(companyId!.Value);
         }
 
         [HttpPost]

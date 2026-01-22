@@ -81,7 +81,7 @@ namespace Voyage.Business
             }
 
             //sprint settings
-            TicketSettingsDTO? settings = await GetSettings();
+            TicketSettingsDTO? settings = await GetSettings(ticketDTO.CompanyId);
             if (settings != null)
             {
                 ticketDTO.SprintStartDate = settings.SprintStart;
@@ -226,9 +226,9 @@ namespace Voyage.Business
             return sb.ToString();
         }
 
-        public async Task<TicketSettingsDTO?> GetSettings()
+        public async Task<TicketSettingsDTO?> GetSettings(int companyId)
         {
-            return await _ticketsD.GetSettings();
+            return await _ticketsD.GetSettings(companyId);
         }
 
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)

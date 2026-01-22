@@ -1,34 +1,58 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 
-export function init(params) {
+export function init() {
+
     //set section dropdown based on which table the user clicks the add button for
-    if (params?.sectionTitle) {
-        const sectionDropdown = document.getElementById('ticketSectionTitle');
-        if (sectionDropdown) {
-            sectionDropdown.value = params.sectionTitle;
-        }
-    }
-
-    document.getElementById("submitTicket")?.addEventListener("click", saveTicket);
-    document.getElementById("deleteTicket")?.addEventListener("click", deleteTicket);
-    document.getElementById("undo-button")?.addEventListener("click", undo);
-    document.getElementById("btn-back")?.addEventListener("click", back);
-
-    //content editable div
-    const description = document.getElementById('ticketDesc');
-    if (description) {
-        description.addEventListener('keydown', handleEnter);
-    }
-
-    const assignedTo = document.getElementById('ticketAssignedTo');
-    assignedTo?.addEventListener("click", (e) => assignedTo.value = "");
-
-    //undo
-    addUndoEventListeners();
+    //if (params?.sectionTitle) {
+    //    const sectionDropdown = document.getElementById('ticketSectionTitle');
+    //    if (sectionDropdown) {
+    //        sectionDropdown.value = params.sectionTitle;
+    //    }
+    //}
+    debugger;
+    const container = document.getElementById('ticket-view');
+    container.addEventListener("click", handleEvents);
 
     //debounced search
     addUserSearchEventListener("ticketAssignedTo", "userResults");
+}
+
+async function handleEvents(e) {
+    debugger;
+    if (e.target.id == "submitTicket")
+        await saveTicket();
+
+    if (e.target.id == "deleteTicket")
+        await deleteTicket();
+
+    debugger;
+
+    if (e.target.id == "undo-button")
+        undo();
+
+    if (e.target.id == "btn-back")
+        await back();
+
+    if (e.target.id == "ticketAssignedTo")
+        assignedTo.value = "";
+
+    if (e.target.id == "ticketDesc")
+        handleEnter(e);
+
+    handleUndoMap(e);
+}
+
+export async function getManageTicketPartial(ticketId, sectionTitle) {
+    try {
+        const response = await axios.get('/Tickets/ManageTicketPartial', {
+            params: { ticketId: ticketId }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("error: getManageTicketPartial", error);
+        return false;
+    }
 }
 
 async function saveTicket() {
@@ -131,36 +155,36 @@ function undo() {
     }
 }
 
-function addUndoEventListeners() {
-    const form = document.getElementById('ticket-form');
-    if (form) {
 
-        for (const input of form.querySelectorAll("input, textarea, select, div[contenteditable='true']")) {
+function handleUndoMap(e) {
 
-            if (input.type === "checkbox" || input.type === "radio") {
-                preChangeValues.set(input, input.checked);
-            } else if (input.isContentEditable) {
-                preChangeValues.set(input, input.innerText);
-            } else {
-                preChangeValues.set(input, input.value);
-            }
+    if (e.target.tagName == "INPUT" || e.target.tagName == "TEXTAREA"
+        || e.target.tagName == "SELECT" || e.target.matches("div[contenteditable='true']"))
+    {
+        if (e.target.type === "checkbox" || input.target.type === "radio") {
+            preChangeValues.set(e.target, e.target.checked);
+        } else if (e.target.matches("div[contenteditable='true']")) {
+            preChangeValues.set(e.target, e.target.innerText);
+        } else {
+            preChangeValues.set(e.target, e.target.value);
         }
     }
+
+    //for (const input of form.querySelectorAll("input, textarea, select, div[contenteditable='true']")) {
+
+    //    if (input.type === "checkbox" || input.type === "radio") {
+    //        preChangeValues.set(input, input.checked);
+    //    } else if (input.isContentEditable) {
+    //        preChangeValues.set(input, input.innerText);
+    //    } else {
+    //        preChangeValues.set(input, input.value);
+    //    }
+    //}
 }
 
+
 async function back() {
-    const module = await loadModule("tickets");
-
-    let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
-
-    if (isEdit) {
-        let ticketId = parseInt(document.getElementById('ticketId').value);
-
-        await module.getTicketPartial(ticketId);
-    }
-    else {
-        await module.getTicketsPartial();
-    }
+    await loadModule("ticketsControl")
 }
 
 

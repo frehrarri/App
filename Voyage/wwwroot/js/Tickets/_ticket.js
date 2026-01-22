@@ -270,3 +270,16 @@ function hideEditBtns() {
      
     }
 }
+
+export async function getTicketPartial(ticketId, ticketVersion) {
+    try {
+        const response = await axios.get('/Tickets/TicketPartial', {
+            params: { ticketId: ticketId, ticketVersion: ticketVersion }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("error: getTicketPartial", error);
+        return false;
+    }
+}
