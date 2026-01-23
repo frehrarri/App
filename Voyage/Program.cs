@@ -77,10 +77,12 @@ builder.Services.AddScoped<EmailService>();
 //business layer
 builder.Services.AddScoped<TicketsBLL>();
 builder.Services.AddScoped<HrBLL>();
+builder.Services.AddScoped<AccountBLL>();
 
 //data layer
 builder.Services.AddScoped<TicketsDAL>();
 builder.Services.AddScoped<HrDAL>();
+builder.Services.AddScoped<AccountDAL>();
 
 //Config Constants
 Constants.Initialize(builder.Configuration);

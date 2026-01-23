@@ -117,7 +117,7 @@ const registerCompany = async (e) => {
     const isValid = await validate(registrationData);
     if (isValid) {
         try {
-            const response = await axios.post('/User/Register', registrationData, {
+            const response = await axios.post('/Company/RegisterCompany', registrationData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': token
