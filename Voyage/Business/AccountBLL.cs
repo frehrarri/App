@@ -24,7 +24,7 @@ namespace Voyage.Business
 
         public async Task<bool> CheckUsernameExists(string username)
         {
-            return await CheckUsernameExists(username);
+            return await _accountDAL.CheckUsernameExists(username);
         }
     }
 }

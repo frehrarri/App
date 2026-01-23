@@ -51,7 +51,6 @@ namespace Voyage.Data
                 int companyId = details.Company.CompanyId;
 
                 //this will be the Company Owner's registration because we add a new company to the company table.
-                //need to create a separate registration where we register an employee to an company instead of adding a new one
                 if (isNewCompany)
                 {
                     Company company = new Company();
@@ -70,10 +69,10 @@ namespace Voyage.Data
 
                     companyId = company.CompanyId;
 
-                    //add unassigned/principal roles for company
-                    await CreateDefaultRoles(companyId);
+                    await CreateDefaultRoles(companyId); //add unassigned/principal roles for company
                 }
-                else //register employee to an existing company
+                //register employee to an existing company
+                else
                 {
                     bool exists = await _db.Companies.AnyAsync(c => c.CompanyId == details.Company.CompanyId);
                     if (exists)
