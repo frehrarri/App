@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Initialcommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -200,6 +200,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.RoleKey);
+                    table.UniqueConstraint("AK_Roles_CompanyId_RoleId_RoleVersion", x => new { x.CompanyId, x.RoleId, x.RoleVersion });
                     table.UniqueConstraint("AK_Roles_RoleId_RoleVersion", x => new { x.RoleId, x.RoleVersion });
                     table.ForeignKey(
                         name: "FK_Roles_Company_CompanyId",
@@ -417,6 +418,7 @@ namespace Voyage.Migrations
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
+                    RoleKey = table.Column<Guid>(type: "uuid", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -441,10 +443,10 @@ namespace Voyage.Migrations
                         principalColumn: "CompanyId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_IndividualUserRoles_Roles_RoleId_IndivUserRoleVersion",
-                        columns: x => new { x.RoleId, x.IndivUserRoleVersion },
+                        name: "FK_IndividualUserRoles_Roles_RoleKey",
+                        column: x => x.RoleKey,
                         principalTable: "Roles",
-                        principalColumns: new[] { "RoleId", "RoleVersion" },
+                        principalColumn: "RoleKey",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -653,14 +655,9 @@ namespace Voyage.Migrations
                 columns: new[] { "RoleId", "DeptUserRoleVersion" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_IndividualUserRoles_RoleId_IndivUserRoleVersion",
+                name: "IX_IndividualUserRoles_RoleKey",
                 table: "IndividualUserRoles",
-                columns: new[] { "RoleId", "IndivUserRoleVersion" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Roles_CompanyId",
-                table: "Roles",
-                column: "CompanyId");
+                column: "RoleKey");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sections_SettingsId",

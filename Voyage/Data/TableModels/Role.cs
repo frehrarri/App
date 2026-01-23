@@ -36,7 +36,7 @@ namespace Voyage.Data.TableModels
 
             //versioning
             modelBuilder.Entity<Role>()
-                .HasAlternateKey(r => new { r.RoleId, r.RoleVersion });
+                .HasAlternateKey(r => new { r.CompanyId, r.RoleId, r.RoleVersion });
 
             // FK to Company
             modelBuilder.Entity<Role>()

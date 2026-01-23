@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AngleSharp.Css;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -133,35 +134,37 @@ namespace Voyage.Data
 
         private async Task AssignRoleToUser(AppUser user, string roleName, int companyId)
         {
-            // Look up the role for this company
-            var role = await _db.CompanyRoles  // Changed from CompanyRoles to Roles
+            // Always fetch the tracked Role instance
+            var role = await _db.CompanyRoles
                 .Where(r => r.CompanyId == companyId && r.RoleName == roleName)
-                .SingleOrDefaultAsync();
+                .OrderByDescending(r => r.RoleVersion)
+                .FirstOrDefaultAsync();
 
             if (role == null)
-            {
                 throw new InvalidOperationException($"Role '{roleName}' not found for company {companyId}");
-            }
 
-            // Check to avoid duplicates
-            bool alreadyAssigned = await _db.IndividualUserRoles
-                .AnyAsync(cur => cur.CompanyId == companyId
-                              && cur.EmployeeId == user.EmployeeId
-                              && cur.RoleId == role.RoleId);
+            // Check for duplicate assignment
+            bool alreadyAssigned = await _db.IndividualUserRoles.AnyAsync(iur =>
+                iur.CompanyId == companyId &&
+                iur.EmployeeId == user.EmployeeId &&
+                iur.RoleKey == role.RoleKey);
 
-            if (!alreadyAssigned)
+            if (alreadyAssigned)
+                return;
+
+            var userRole = new IndividualUserRole
             {
-                var companyUserRole = new IndividualUserRole
-                {
-                    CompanyId = companyId,
-                    EmployeeId = user.EmployeeId,
-                    RoleId = role.RoleId
-                };
+                IndivUserRoleKey = Guid.NewGuid(),
+                IndivUserRoleVersion = 1m,
+                CompanyId = companyId,
+                EmployeeId = user.EmployeeId,
+                RoleKey = role.RoleKey   // ✅ Use the tracked Role
+            };
 
-                await _db.IndividualUserRoles.AddAsync(companyUserRole);
-                await _db.SaveChangesAsync();
-            }
+            await _db.IndividualUserRoles.AddAsync(userRole);
+            await _db.SaveChangesAsync();
         }
+
 
         private async Task<int> GetNextEmployeeId(int companyId)
         {
@@ -177,33 +180,50 @@ namespace Voyage.Data
         {
             try
             {
-                List<string> defaultRoles = new List<string>()
-                {
-                    nameof(Constants.DefaultRoles.Principal),
-                    nameof(Constants.DefaultRoles.Unassigned)
-                };
+                string[] defaultRoles = { "Principal", "Unassigned" };
 
-                foreach (var role in defaultRoles)
+                foreach (var roleName in defaultRoles)
                 {
-                    bool exists = _db.CompanyRoles.Any(r => r.CompanyId == companyId && r.RoleName == role);
-                    if (!exists)
+                    // Try to find an existing role for this company
+                    var existingRole = await _db.CompanyRoles
+                        .Where(r => r.CompanyId == companyId && r.RoleName == roleName)
+                        .OrderByDescending(r => r.RoleVersion)
+                        .FirstOrDefaultAsync();
+
+                    if (existingRole == null)
                     {
-                        var roleToAdd = new Role
+                        // Only create a new Role if none exists
+                        var newRole = new Role
                         {
-                            RoleName = role,
-                            CompanyId = companyId
+                            RoleKey = Guid.NewGuid(),
+                            RoleId = await GetNextRoleId(companyId),
+                            RoleVersion = 1m,
+                            CompanyId = companyId,
+                            RoleName = roleName,
+                            RoleDescription = $"{roleName} role for company {companyId}"
                         };
 
-                        await _db.CompanyRoles.AddAsync(roleToAdd);
+                        await _db.CompanyRoles.AddAsync(newRole);
+                        await _db.SaveChangesAsync();
                     }
                 }
-
-                await _db.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "error: UserController: CreateDefaultRoles");
             }
+        }
+
+
+        private async Task<int> GetNextRoleId(int companyId)
+        {
+            // Find the current max RoleId for this company
+            int? maxRoleId = await _db.CompanyRoles
+                .Where(r => r.CompanyId == companyId)
+                .MaxAsync(r => (int?)r.RoleId);
+
+            // If no roles exist, start at 1
+            return (maxRoleId ?? 0) + 1;
         }
 
         public async Task<Response> Validate(RegistrationDetailsDTO details)

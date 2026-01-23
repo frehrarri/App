@@ -15,6 +15,8 @@ namespace Voyage.Data.TableModels
         // Navigation properties
         public Company Company { get; set; } = null!;
         public AppUser User { get; set; } = null!;
+
+        public Guid RoleKey { get; set; }
         public Role Role { get; set; } = null!;
 
         public void CreateEntities(ModelBuilder modelBuilder)
@@ -56,8 +58,7 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<IndividualUserRole>()
                 .HasOne(cur => cur.Role)
                 .WithMany(r => r.IndividualUserRoles)
-               .HasForeignKey(dur => new { dur.RoleId, dur.IndivUserRoleVersion })
-               .HasPrincipalKey(r => new { r.RoleId, r.RoleVersion }) // matches the alternate key
+                .HasForeignKey(dur => dur.RoleKey)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

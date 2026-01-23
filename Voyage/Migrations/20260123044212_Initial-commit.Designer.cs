@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20260123012901_init")]
-    partial class init
+    [Migration("20260123044212_Initial-commit")]
+    partial class Initialcommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -482,11 +482,14 @@ namespace Voyage.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("RoleKey")
+                        .HasColumnType("uuid");
+
                     b.HasKey("IndivUserRoleKey");
 
                     b.HasAlternateKey("CompanyId", "EmployeeId", "RoleId", "IndivUserRoleVersion");
 
-                    b.HasIndex("RoleId", "IndivUserRoleVersion");
+                    b.HasIndex("RoleKey");
 
                     b.ToTable("IndividualUserRoles", (string)null);
                 });
@@ -573,7 +576,7 @@ namespace Voyage.Migrations
 
                     b.HasKey("RoleKey");
 
-                    b.HasIndex("CompanyId");
+                    b.HasAlternateKey("CompanyId", "RoleId", "RoleVersion");
 
                     b.ToTable("Roles", (string)null);
                 });
@@ -1068,18 +1071,17 @@ namespace Voyage.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Voyage.Data.TableModels.Role", "Role")
+                        .WithMany("IndividualUserRoles")
+                        .HasForeignKey("RoleKey")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Voyage.Data.TableModels.AppUser", "User")
                         .WithMany("IndividualUserRoles")
                         .HasForeignKey("CompanyId", "EmployeeId")
                         .HasPrincipalKey("CompanyId", "EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Voyage.Data.TableModels.Role", "Role")
-                        .WithMany("IndividualUserRoles")
-                        .HasForeignKey("RoleId", "IndivUserRoleVersion")
-                        .HasPrincipalKey("RoleId", "RoleVersion")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Company");
