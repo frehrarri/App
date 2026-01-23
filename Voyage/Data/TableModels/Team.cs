@@ -12,11 +12,22 @@ namespace Voyage.Data.TableModels
         public string Name { get; set; } = string.Empty;
 
         #region FK
-        public Guid? DepartmentKey { get; set; }
-        public Department? Department { get; set; }
+
+        //every company can have multiple teams
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
+
+
+        //every department can have multiple teams
+        public Guid? DepartmentKey { get; set; }
+        public Department? Department { get; set; }
+     
+        //every team can have multiple TeamUserRoles
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
+
+        //every team can have a single setting
+        public Settings? Settings { get; set; }
+
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)
@@ -36,19 +47,28 @@ namespace Voyage.Data.TableModels
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Team>()
-                .HasIndex(t => t.TeamId);
+                .HasAlternateKey(t => new { t.TeamId, t.TeamVersion });
 
+            //FK to Company
             modelBuilder.Entity<Team>()
                 .HasOne(t => t.Company)
                 .WithMany(c => c.Teams)
                 .HasForeignKey(t => t.CompanyId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            //FK to Department
             modelBuilder.Entity<Team>()
                 .HasOne(t => t.Department)
                 .WithMany(d => d.Teams)
                 .HasForeignKey(t => t.DepartmentKey)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            //FK to setting
+            modelBuilder.Entity<Team>()
+                .HasOne(t => t.Settings)
+                .WithOne(s => s.Team)
+                .HasForeignKey<Settings>(s => s.TeamKey)
+                .IsRequired(false);
         }
     }
 }

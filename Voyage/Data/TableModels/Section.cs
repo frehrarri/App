@@ -27,10 +27,11 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<Section>()
                 .HasKey(t => t.SectionId);
 
-            modelBuilder.Entity<Settings>()
-                .HasMany(s => s.Sections)
-                .WithOne(sec => sec.Settings)
-                .HasForeignKey(sec => sec.SettingsId)
+            modelBuilder.Entity<Section>()
+                .HasOne(s => s.Settings)
+                .WithMany(s => s.Sections)
+                .HasForeignKey(s => s.SettingsId) // int FK
+                .HasPrincipalKey(s => s.SettingsId) // points to alternate key
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

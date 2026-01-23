@@ -84,6 +84,7 @@ namespace Voyage.Business
             TicketSettingsDTO? settings = await GetSettings(ticketDTO.CompanyId);
             if (settings != null)
             {
+                HandleSprintDates(settings);
                 ticketDTO.SprintStartDate = settings.SprintStart;
                 ticketDTO.SprintEndDate = settings.SprintEnd;
                 ticketDTO.SprintId = settings.SprintId;

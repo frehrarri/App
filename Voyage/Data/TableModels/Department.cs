@@ -11,10 +11,18 @@ namespace Voyage.Data.TableModels
         public string Name { get; set; } = string.Empty;
 
         #region FK
+        //every company is comprised of many departments
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
+
+        //every department can have on setting
+        public Settings? Settings { get; set; }
+
+        //every department can have many teams and many department user roles
         public ICollection<Team> Teams { get; set; } = new List<Team>();
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
+
+      
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)
@@ -36,11 +44,23 @@ namespace Voyage.Data.TableModels
                 .Property(d => d.DepartmentVersion)
                 .HasPrecision(5, 2);
 
+            //versioning
+            modelBuilder.Entity<Department>()
+                .HasAlternateKey(t => new { t.DepartmentId, t.DepartmentVersion });
+
+            //FK from Company
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Company)
                 .WithMany(c => c.Departments)
                 .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            //FK to settings
+            modelBuilder.Entity<Department>()
+                .HasOne(t => t.Settings)
+                .WithOne(s => s.Department)
+                .HasForeignKey<Settings>(s => s.DepartmentKey)
+                .IsRequired(false);
         }
     }
 }

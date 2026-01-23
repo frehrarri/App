@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using System.Threading.Tasks;
 using Voyage.Business;
 using Voyage.Data;
@@ -142,10 +143,10 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task<bool> SaveTicket([FromBody] TicketDTO ticketDTO)
         {
-            SprintVM sprint = SetSprint();
-            ticketDTO.SprintId = sprint.SprintId;
-            ticketDTO.SprintEndDate = sprint.EndDate;
-            ticketDTO.SprintStartDate = sprint.StartDate;
+            //SprintVM sprint = SetSprint();
+            //ticketDTO.SprintId = sprint.SprintId;
+            //ticketDTO.SprintEndDate = sprint.EndDate;
+            //ticketDTO.SprintStartDate = sprint.StartDate;
             return await _ticketsB.SaveTicket(ticketDTO);
         }
 
@@ -156,15 +157,29 @@ namespace Voyage.Controllers
             return await _ticketsB.DeleteTicket(ticketId);
         }
 
-        private SprintVM SetSprint()
-        {
-            SprintVM sprint = new SprintVM();
-            sprint.SprintId = 1;
-            sprint.StartDate = DateTime.UtcNow.AddDays(-15);
-            sprint.EndDate = DateTime.UtcNow.AddDays(15);
+        //public async Task<SprintVM> SetSprint()
+        //{
+        //    var settings = await GetSettings();
+        //    Constants.RepeatSprint.Never:
+        //    switch (settings.RepeatSprintOption)
+        //    {
+        //        case Constants.RepeatSprint.Never:
 
-            return sprint;
-        }
+        //    //                Never,
+        //    //Weekly,
+        //    //BiWeekly,
+        //    //Monthly,
+        //    //Custom
+        //    }
+
+
+        //    SprintVM sprint = new SprintVM();
+        //    sprint.SprintId = 1;
+        //    sprint.StartDate = DateTime.UtcNow.AddDays(-15);
+        //    sprint.EndDate = DateTime.UtcNow.AddDays(15);
+
+        //    return sprint;
+        //}
 
         [HttpGet]
         public async Task<TicketVM> GetTicket(int ticketId, decimal? ticketVersion = null)

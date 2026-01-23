@@ -20,19 +20,32 @@ namespace Voyage.Data.TableModels
         public int PostalCode { get; set; }
 
         #region FK
+        //all users are associated with a company on registration
         public int CompanyId { get; set; }
         public Company Company { get; set; } = null!;
 
-        // Role assignments at different levels
-        public ICollection<CompanyUserRole> CompanyUserRoles { get; set; } = new List<CompanyUserRole>();
+        // all users can be assigned different roles at the individual, department, or team levels
+        public ICollection<IndividualUserRole> IndividualUserRoles { get; set; } = new List<IndividualUserRole>();
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
+
+        public Guid? SettingsKey { get; set; }
+        public Settings? Settings { get ; set; }
+
         #endregion
+
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AppUser>()
                 .HasAlternateKey(u => new { u.CompanyId, u.EmployeeId });
+
+            //Settings FK
+            modelBuilder.Entity<AppUser>()
+                .HasOne(t => t.Settings)
+                .WithOne(s => s.User)
+                .HasForeignKey<Settings>(s => s.SettingsKey)
+                .IsRequired(false);
         }
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -86,30 +86,6 @@ namespace Voyage.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Settings",
-                columns: table => new
-                {
-                    SettingsId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Feature = table.Column<int>(type: "integer", nullable: false),
-                    RepeatSprintOption = table.Column<int>(type: "integer", nullable: false),
-                    SprintStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    SprintEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    SprintId = table.Column<int>(type: "integer", nullable: false),
-                    SectionSetting = table.Column<int>(type: "integer", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedBy = table.Column<string>(type: "text", nullable: false),
-                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Settings", x => x.SettingsId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -148,6 +124,7 @@ namespace Voyage.Migrations
                     State = table.Column<string>(type: "text", nullable: false),
                     PostalCode = table.Column<int>(type: "integer", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    SettingsKey = table.Column<Guid>(type: "uuid", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -194,6 +171,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Department", x => x.DepartmentKey);
+                    table.UniqueConstraint("AK_Department_DepartmentId_DepartmentVersion", x => new { x.DepartmentId, x.DepartmentVersion });
                     table.ForeignKey(
                         name: "FK_Department_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -206,8 +184,9 @@ namespace Voyage.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleKey = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    RoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     RoleName = table.Column<string>(type: "text", nullable: false),
                     RoleDescription = table.Column<string>(type: "text", nullable: false),
@@ -220,7 +199,8 @@ namespace Voyage.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.RoleId);
+                    table.PrimaryKey("PK_Roles", x => x.RoleKey);
+                    table.UniqueConstraint("AK_Roles_RoleId_RoleVersion", x => new { x.RoleId, x.RoleVersion });
                     table.ForeignKey(
                         name: "FK_Roles_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -264,33 +244,6 @@ namespace Voyage.Migrations
                         principalTable: "Company",
                         principalColumn: "CompanyId",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sections",
-                columns: table => new
-                {
-                    SectionId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    SectionOrder = table.Column<int>(type: "integer", nullable: false),
-                    SettingsId = table.Column<int>(type: "integer", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedBy = table.Column<string>(type: "text", nullable: false),
-                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sections", x => x.SectionId);
-                    table.ForeignKey(
-                        name: "FK_Sections_Settings_SettingsId",
-                        column: x => x.SettingsId,
-                        principalTable: "Settings",
-                        principalColumn: "SettingsId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -386,8 +339,8 @@ namespace Voyage.Migrations
                     TeamId = table.Column<int>(type: "integer", nullable: false),
                     TeamVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    DepartmentKey = table.Column<Guid>(type: "uuid", nullable: true),
                     CompanyId = table.Column<int>(type: "integer", nullable: true),
+                    DepartmentKey = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -398,6 +351,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Team", x => x.TeamKey);
+                    table.UniqueConstraint("AK_Team_TeamId_TeamVersion", x => new { x.TeamId, x.TeamVersion });
                     table.ForeignKey(
                         name: "FK_Team_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -413,50 +367,16 @@ namespace Voyage.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyUserRoles",
-                columns: table => new
-                {
-                    CompanyId = table.Column<int>(type: "integer", nullable: false),
-                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedBy = table.Column<string>(type: "text", nullable: false),
-                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompanyUserRoles", x => new { x.CompanyId, x.EmployeeId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_CompanyUserRoles_AspNetUsers_CompanyId_EmployeeId",
-                        columns: x => new { x.CompanyId, x.EmployeeId },
-                        principalTable: "AspNetUsers",
-                        principalColumns: new[] { "CompanyId", "EmployeeId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompanyUserRoles_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompanyUserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "RoleId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DepartmentUserRoles",
                 columns: table => new
                 {
+                    DepartmentUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeptUserRoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
                     DepartmentKey = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
+                    RoleKey = table.Column<Guid>(type: "uuid", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedBy = table.Column<string>(type: "text", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -466,7 +386,8 @@ namespace Voyage.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DepartmentUserRoles", x => new { x.DepartmentKey, x.CompanyId, x.EmployeeId, x.RoleId });
+                    table.PrimaryKey("PK_DepartmentUserRoles", x => x.DepartmentUserRoleKey);
+                    table.UniqueConstraint("AK_DepartmentUserRoles_DepartmentKey_CompanyId_EmployeeId_Role~", x => new { x.DepartmentKey, x.CompanyId, x.EmployeeId, x.RoleId, x.DeptUserRoleVersion });
                     table.ForeignKey(
                         name: "FK_DepartmentUserRoles_AspNetUsers_CompanyId_EmployeeId",
                         columns: x => new { x.CompanyId, x.EmployeeId },
@@ -480,10 +401,50 @@ namespace Voyage.Migrations
                         principalColumn: "DepartmentKey",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DepartmentUserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
+                        name: "FK_DepartmentUserRoles_Roles_RoleId_DeptUserRoleVersion",
+                        columns: x => new { x.RoleId, x.DeptUserRoleVersion },
                         principalTable: "Roles",
-                        principalColumn: "RoleId",
+                        principalColumns: new[] { "RoleId", "RoleVersion" },
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IndividualUserRoles",
+                columns: table => new
+                {
+                    IndivUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
+                    IndivUserRoleVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IndividualUserRoles", x => x.IndivUserRoleKey);
+                    table.UniqueConstraint("AK_IndividualUserRoles_CompanyId_EmployeeId_RoleId_IndivUserRo~", x => new { x.CompanyId, x.EmployeeId, x.RoleId, x.IndivUserRoleVersion });
+                    table.ForeignKey(
+                        name: "FK_IndividualUserRoles_AspNetUsers_CompanyId_EmployeeId",
+                        columns: x => new { x.CompanyId, x.EmployeeId },
+                        principalTable: "AspNetUsers",
+                        principalColumns: new[] { "CompanyId", "EmployeeId" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IndividualUserRoles_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "CompanyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IndividualUserRoles_Roles_RoleId_IndivUserRoleVersion",
+                        columns: x => new { x.RoleId, x.IndivUserRoleVersion },
+                        principalTable: "Roles",
+                        principalColumns: new[] { "RoleId", "RoleVersion" },
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -516,9 +477,62 @@ namespace Voyage.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Settings",
+                columns: table => new
+                {
+                    SettingsKey = table.Column<Guid>(type: "uuid", nullable: false),
+                    SettingsId = table.Column<int>(type: "integer", nullable: false),
+                    SettingsVersion = table.Column<decimal>(type: "numeric", nullable: false),
+                    Feature = table.Column<int>(type: "integer", nullable: false),
+                    RepeatSprintOption = table.Column<int>(type: "integer", nullable: false),
+                    SprintStartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SprintEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SprintId = table.Column<int>(type: "integer", nullable: false),
+                    SectionSetting = table.Column<int>(type: "integer", nullable: false),
+                    TeamKey = table.Column<Guid>(type: "uuid", nullable: true),
+                    DepartmentKey = table.Column<Guid>(type: "uuid", nullable: true),
+                    CompanyId = table.Column<int>(type: "integer", nullable: true),
+                    EmployeeId = table.Column<int>(type: "integer", nullable: true),
+                    RoleId = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Settings", x => x.SettingsKey);
+                    table.UniqueConstraint("AK_Settings_SettingsId", x => x.SettingsId);
+                    table.UniqueConstraint("AK_Settings_SettingsId_SettingsVersion", x => new { x.SettingsId, x.SettingsVersion });
+                    table.ForeignKey(
+                        name: "FK_Settings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Settings_Department_DepartmentKey",
+                        column: x => x.DepartmentKey,
+                        principalTable: "Department",
+                        principalColumn: "DepartmentKey",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Settings_Team_TeamKey",
+                        column: x => x.TeamKey,
+                        principalTable: "Team",
+                        principalColumn: "TeamKey",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeamUserRoles",
                 columns: table => new
                 {
+                    TeamUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
+                    TeamUserRoleVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     TeamKey = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
@@ -532,7 +546,8 @@ namespace Voyage.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamUserRoles", x => new { x.TeamKey, x.CompanyId, x.EmployeeId, x.RoleId });
+                    table.PrimaryKey("PK_TeamUserRoles", x => x.TeamUserRoleKey);
+                    table.UniqueConstraint("AK_TeamUserRoles_TeamKey_CompanyId_EmployeeId_RoleId_TeamUserR~", x => new { x.TeamKey, x.CompanyId, x.EmployeeId, x.RoleId, x.TeamUserRoleVersion });
                     table.ForeignKey(
                         name: "FK_TeamUserRoles_AspNetUsers_CompanyId_EmployeeId",
                         columns: x => new { x.CompanyId, x.EmployeeId },
@@ -540,16 +555,43 @@ namespace Voyage.Migrations
                         principalColumns: new[] { "CompanyId", "EmployeeId" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TeamUserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
+                        name: "FK_TeamUserRoles_Roles_RoleId_TeamUserRoleVersion",
+                        columns: x => new { x.RoleId, x.TeamUserRoleVersion },
                         principalTable: "Roles",
-                        principalColumn: "RoleId",
+                        principalColumns: new[] { "RoleId", "RoleVersion" },
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TeamUserRoles_Team_TeamKey",
                         column: x => x.TeamKey,
                         principalTable: "Team",
                         principalColumn: "TeamKey",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sections",
+                columns: table => new
+                {
+                    SectionId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    SectionOrder = table.Column<int>(type: "integer", nullable: false),
+                    SettingsId = table.Column<int>(type: "integer", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    IsLatest = table.Column<bool>(type: "boolean", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sections", x => x.SectionId);
+                    table.ForeignKey(
+                        name: "FK_Sections_Settings_SettingsId",
+                        column: x => x.SettingsId,
+                        principalTable: "Settings",
+                        principalColumn: "SettingsId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -591,20 +633,14 @@ namespace Voyage.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyUserRoles_RoleId",
-                table: "CompanyUserRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Department_CompanyId",
                 table: "Department",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Department_DepartmentId_DepartmentVersion",
+                name: "IX_Department_DepartmentId",
                 table: "Department",
-                columns: new[] { "DepartmentId", "DepartmentVersion" },
-                unique: true);
+                column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DepartmentUserRoles_CompanyId_EmployeeId",
@@ -612,20 +648,42 @@ namespace Voyage.Migrations
                 columns: new[] { "CompanyId", "EmployeeId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepartmentUserRoles_RoleId",
+                name: "IX_DepartmentUserRoles_RoleId_DeptUserRoleVersion",
                 table: "DepartmentUserRoles",
-                column: "RoleId");
+                columns: new[] { "RoleId", "DeptUserRoleVersion" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Roles_CompanyId_RoleName",
+                name: "IX_IndividualUserRoles_RoleId_IndivUserRoleVersion",
+                table: "IndividualUserRoles",
+                columns: new[] { "RoleId", "IndivUserRoleVersion" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Roles_CompanyId",
                 table: "Roles",
-                columns: new[] { "CompanyId", "RoleName" },
-                unique: true);
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sections_SettingsId",
                 table: "Sections",
                 column: "SettingsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Settings_DepartmentKey",
+                table: "Settings",
+                column: "DepartmentKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Settings_TeamKey",
+                table: "Settings",
+                column: "TeamKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Settings_UserId",
+                table: "Settings",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Team_CompanyId",
@@ -638,20 +696,14 @@ namespace Voyage.Migrations
                 column: "DepartmentKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Team_TeamId_TeamVersion",
-                table: "Team",
-                columns: new[] { "TeamId", "TeamVersion" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TeamUserRoles_CompanyId_EmployeeId",
                 table: "TeamUserRoles",
                 columns: new[] { "CompanyId", "EmployeeId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamUserRoles_RoleId",
+                name: "IX_TeamUserRoles_RoleId_TeamUserRoleVersion",
                 table: "TeamUserRoles",
-                column: "RoleId");
+                columns: new[] { "RoleId", "TeamUserRoleVersion" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_TicketDetails_TicketId_TicketVersion",
@@ -686,10 +738,10 @@ namespace Voyage.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CompanyUserRoles");
+                name: "DepartmentUserRoles");
 
             migrationBuilder.DropTable(
-                name: "DepartmentUserRoles");
+                name: "IndividualUserRoles");
 
             migrationBuilder.DropTable(
                 name: "Permissions");
@@ -710,16 +762,16 @@ namespace Voyage.Migrations
                 name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Team");
+                name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "Tickets");
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Team");
 
             migrationBuilder.DropTable(
                 name: "Department");

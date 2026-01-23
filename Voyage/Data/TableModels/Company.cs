@@ -17,12 +17,19 @@ namespace Voyage.Data.TableModels
         public string Email { get; set; } = string.Empty;
 
         #region Foreign Keys
+
+        //every company can be comprised of multiple departments, teams, and company user roles for heirarchial assignment
         public ICollection<Department> Departments { get; set; } = new List<Department>();
         public ICollection<Team> Teams { get; set; } = new List<Team>();
+        public ICollection<IndividualUserRole> IndividualUserRoles { get; set; } = new List<IndividualUserRole>();
+
+        //every company must be comprised of many users and roles (unassigned/principal) which are set on registration
         public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
         public ICollection<Role> Roles { get; set; } = new List<Role>();
-        public ICollection<CompanyUserRole> CompanyUserRoles { get; set; } = new List<CompanyUserRole>();
+       
+        //every company can have many tickets
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)
@@ -37,12 +44,42 @@ namespace Voyage.Data.TableModels
                 .Property(c => c.CompanyId)
                 .ValueGeneratedOnAdd();
 
+            //FK Users Collection
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.Users)
                 .WithOne(u => u.Company)
                 .HasForeignKey(u => u.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //FK IndividualUserRoles Collection
+            modelBuilder.Entity<Company>()
+                 .HasMany(c => c.IndividualUserRoles)
+                 .WithOne(u => u.Company)
+                 .HasForeignKey(u => u.CompanyId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            //FK Departments Collection
+            modelBuilder.Entity<Company>()
+                .HasMany(c => c.Departments)
+                .WithOne(d => d.Company)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //FK Teams Collection
+            modelBuilder.Entity<Company>()
+                .HasMany(c => c.Teams)
+                .WithOne(t => t.Company)
+                .HasForeignKey(t => t.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //FK Tickets Collection
+            modelBuilder.Entity<Company>()
+                .HasMany(c => c.Tickets)
+                .WithOne(t => t.Company)
+                .HasForeignKey(t => t.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
-    
+
     }
 }

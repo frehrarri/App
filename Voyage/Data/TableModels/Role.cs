@@ -5,32 +5,40 @@ namespace Voyage.Data.TableModels
 {
     public class Role : BaseClass, IModelBuilderEF
     {
+        public Guid RoleKey { get; set; }             
+        public int RoleId { get; set; }                
+        public decimal RoleVersion { get; set; }      
+
         public int CompanyId { get; set; }
         public string RoleName { get; set; } = string.Empty;
         public string RoleDescription { get; set; } = string.Empty;
-        public int RoleId { get; set; }
 
-        // Navigation properties
+        //every company can have many roles
         public Company Company { get; set; } = null!;
-        public ICollection<CompanyUserRole> CompanyUserRoles { get; set; } = new List<CompanyUserRole>();
+
+        //there can be many different roles within each UserRole table
+        public ICollection<IndividualUserRole> IndividualUserRoles { get; set; } = new List<IndividualUserRole>();
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>()
-                            .ToTable("Roles")
-                            .HasKey(r => r.RoleId);
+                .ToTable("Roles");
+
+            // Surrogate PK
+            modelBuilder.Entity<Role>()
+                .HasKey(r => r.RoleKey);
 
             modelBuilder.Entity<Role>()
-                .Property(r => r.RoleId)
+                .Property(r => r.RoleKey)
                 .ValueGeneratedOnAdd();
 
-            // Role names must be unique within a company
+            //versioning
             modelBuilder.Entity<Role>()
-                .HasIndex(r => new { r.CompanyId, r.RoleName })
-                .IsUnique();
+                .HasAlternateKey(r => new { r.RoleId, r.RoleVersion });
 
+            // FK to Company
             modelBuilder.Entity<Role>()
                 .HasOne(r => r.Company)
                 .WithMany(c => c.Roles)
@@ -38,5 +46,4 @@ namespace Voyage.Data.TableModels
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
-    
 }

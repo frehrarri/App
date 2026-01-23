@@ -329,21 +329,21 @@ namespace Voyage.Controllers
             }
 
             // Check to avoid duplicates
-            bool alreadyAssigned = await _db.CompanyUserRoles
+            bool alreadyAssigned = await _db.IndividualUserRoles
                 .AnyAsync(cur => cur.CompanyId == companyId
                               && cur.EmployeeId == user.EmployeeId
                               && cur.RoleId == role.RoleId);
 
             if (!alreadyAssigned)
             {
-                var companyUserRole = new CompanyUserRole
+                var companyUserRole = new IndividualUserRole
                 {
                     CompanyId = companyId,
                     EmployeeId = user.EmployeeId,
                     RoleId = role.RoleId
                 };
 
-                await _db.CompanyUserRoles.AddAsync(companyUserRole);
+                await _db.IndividualUserRoles.AddAsync(companyUserRole);
                 await _db.SaveChangesAsync();
             }
         }

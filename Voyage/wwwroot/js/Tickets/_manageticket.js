@@ -11,7 +11,7 @@ export function init() {
     //    }
     //}
     debugger;
-    const container = document.getElementById('ticket-view');
+    const container = document.getElementById('tickets-partial-container');
     container.addEventListener("click", handleEvents);
 
     //debounced search
@@ -161,7 +161,7 @@ function handleUndoMap(e) {
     if (e.target.tagName == "INPUT" || e.target.tagName == "TEXTAREA"
         || e.target.tagName == "SELECT" || e.target.matches("div[contenteditable='true']"))
     {
-        if (e.target.type === "checkbox" || input.target.type === "radio") {
+        if (e.target.type === "checkbox" /*|| input.target.type === "radio"*/) {
             preChangeValues.set(e.target, e.target.checked);
         } else if (e.target.matches("div[contenteditable='true']")) {
             preChangeValues.set(e.target, e.target.innerText);
