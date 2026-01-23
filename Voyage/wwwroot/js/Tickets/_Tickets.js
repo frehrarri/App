@@ -326,8 +326,11 @@ export async function init() {
     }
 
     container = document.getElementById('tickets-container');
-    container.addEventListener("click", handleEvents);
-    container.addEventListener("change", handleEvents);
+    if (container) {
+        container.addEventListener("click", handleEvents);
+        container.addEventListener("change", handleEvents);
+    }
+
  
 
 

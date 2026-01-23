@@ -113,7 +113,7 @@ namespace Voyage.Data
 
                     response.StatusCode = HttpStatusCode.OK;
                     response.Message = Constants.RegistrationSuccessful;
-                    response.RedirectURL = "/Home/Website";
+                    response.RedirectURL = "/Website/Home";
                 }
                 else
                 {

@@ -62,7 +62,7 @@ const register = async (e) => {
     const isValid = await validate(registrationData);
     if (isValid) {
         try {
-            const response = await axios.post('/User/Register', registrationData, {
+            const response = await axios.post('/User/RegisterUser', registrationData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': token
@@ -275,24 +275,28 @@ function hideErrors() {
     Array.from(document.querySelectorAll('.form-control')).forEach(el => el.classList.remove('border-error'));
 }
 
+async function handleEvents(e) {
+    debugger;
+    if (e.target.id == "register-btn") 
+        await register(e);
+
+    if (e.target.classList.contains("next-btn"))
+        getNextContainer(e);
+
+    if (e.target.classList.contains("back-btn"))
+        getPreviousContainer(e);
+
+}
 
 export async function init() {
     //load initial partial
-    debugger;
+ 
     let partial = await getRegisterEmployeePartial();
     document.getElementById("hr-partial-container").innerHTML = partial;
 
     hideErrors();
 
-
-    document.querySelectorAll('.primary-btn')?.forEach(el => {
-        if (el.id == "register-btn")
-            el.addEventListener("click", register);
-        else if (el.classList.contains("next-btn"))
-            el.addEventListener("click", getNextContainer);
-    });
-
-    document.querySelectorAll('.secondary-btn')?.forEach(el => {
-        el.addEventListener("click", getPreviousContainer);
-    });
+    const container = document.getElementById("hr-partial-container");
+    if (container)
+        container.addEventListener("click", handleEvents);
 }
