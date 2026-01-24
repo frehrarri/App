@@ -14,7 +14,11 @@ namespace Voyage.Models.DTO
             Sections = new List<SectionDTO>();
         }
 
+        public int CompanyId { get; set; }
+        public Guid? DepartmentKey { get; set; }
+        public Guid? TeamKey { get; set; }
         public int SettingsId { get; set; }
+        public decimal SettingsVersion { get; set; }
         public Constants.RepeatSprint RepeatSprintOption { get; set; }
         public int SprintId { get; set; }
         public DateTime? SprintStart { get; set; }

@@ -30,14 +30,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var teamMember in Model.Departments)
+                    @foreach (var department in Model.Departments)
                     {
                         <tr class="app-table-row">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-
+                                @department.Name
                             </td>
                           @*   <td class="app-table-data">
                                 <select class="sel-assign-team-member" data-userid="@teamMember.EmployeeId">

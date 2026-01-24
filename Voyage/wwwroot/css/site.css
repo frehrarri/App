@@ -111,10 +111,6 @@ body {
         opacity: 1;
     }
 
-.hidden {
-    display: none !important;
-}
-
 .primary-btn {
     padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;

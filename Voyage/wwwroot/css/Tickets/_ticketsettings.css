@@ -1,13 +1,4 @@
-﻿/*#ticket-settings-container {
-    width: 1000px;
-    margin-top: 30px;
-    background-color: #e8f0fe;
-    padding: 20px;
-    border: 1px solid gray;
-    border-radius: 10px;
-}*/
-
-.delete-section {
+﻿.delete-section {
     display: inline-block;
     border: 1px solid black;
     border-radius: 5px;
@@ -15,7 +6,7 @@
     margin: 2px;
     position: relative;
     cursor: pointer;
-    /*background-color: ghostwhite;*/
+    background-color: ghostwhite;
 }
 
     .delete-section .delete {
@@ -75,8 +66,4 @@
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     background-color: #e8f0fe;
     padding: 30px 20px;
-}
-
-.hidden{
-    display:none;
 }

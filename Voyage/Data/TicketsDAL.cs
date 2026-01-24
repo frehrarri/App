@@ -498,6 +498,7 @@ namespace Voyage.Data
         {
             try
             {
+                List<Settings> settingsList = new List<Settings>();
                 Settings? settings;
                 bool isUpdate = true;
                 var date = DateTime.UtcNow;
@@ -506,6 +507,9 @@ namespace Voyage.Data
                     .Include(s => s.Sections)
                    .Where(s =>
                        s.SettingsId == dto.SettingsId
+                       && s.CompanyId == dto.CompanyId
+                       && (s.DepartmentKey == dto.DepartmentKey || dto.DepartmentKey == null)
+                       && (s.TeamKey == dto.TeamKey || dto.TeamKey == null)
                        && s.Feature == Constants.Feature.Tickets
                        && s.IsActive == true
                        && s.IsLatest == true)
@@ -514,44 +518,74 @@ namespace Voyage.Data
 
                 if (settings == null) //create new
                 {
+                    int settingsId = 1;
+                    decimal settingsVersion = 1.0M;
+                    //if there are no sprints we create a sprint for today up to the start date
+                    //then create a second sprint starting from start date to end date
+                    if (dto.SprintStart!.Value > DateTime.Today)
+                    {
+
+                        Settings preSprintStart = new Settings();
+                        preSprintStart.CreatedBy = dto.CreatedBy;
+                        preSprintStart.CreatedDate = date;
+                        preSprintStart.SprintId = 1;
+                        preSprintStart.SettingsId = settingsId;
+                        preSprintStart.SettingsVersion = settingsVersion;
+                        settingsId++;
+                        settingsVersion++;
+                        settingsList.Add(preSprintStart);
+                    }
+
                     settings = new Settings();
                     settings.CreatedBy = dto.CreatedBy;
                     settings.CreatedDate = date;
                     settings.SprintId = 1;
+                    settings.SettingsId = settingsId;
+                    settings.SettingsVersion = settingsVersion;
                     isUpdate = false;
+                    settingsList.Add(settings);
                 }
                 else //empty previous sections to be replaced
                 {
+                    settings.SettingsVersion = settings.SettingsVersion + 1.0M;
                     settings.ModifiedBy = dto.CreatedBy;
                     settings.ModifiedDate = date;
                     settings.Sections.Clear();
-                    settings.SprintId = settings.SprintId + 1;
+                    //settings.SprintId = settings.SprintId + 1;
                 }
 
-                settings.SectionSetting = dto.SectionSetting;
-                settings.RepeatSprintOption = dto.RepeatSprintOption;
-                settings.SprintEndDate = dto.SprintEnd;
-                settings.SprintStartDate = dto.SprintStart!.Value;
-                settings.Feature = Constants.Feature.Tickets;
-                settings!.IsLatest = true;
-                settings.IsActive = true;
-
-                settings.Sections = dto.Sections.Select(s => new Section()
+                //add shared details to each setting
+                foreach (Settings setting in settingsList)
                 {
-                    Settings = settings,
-                    Title = s.Title,
-                    SectionOrder = s.SectionOrder,
-                    IsActive = true,
-                    IsLatest = true,
-                    CreatedDate = date,
-                    CreatedBy = dto.CreatedBy
-                })
-                .ToList();
+                    setting.CompanyId = dto.CompanyId;
+                    setting.DepartmentKey = dto.DepartmentKey;
+                    setting.TeamKey = dto.TeamKey;
+                    setting.SectionSetting = dto.SectionSetting;
+                    setting.RepeatSprintOption = dto.RepeatSprintOption;
+                    setting.SprintEndDate = dto.SprintEnd;
+                    setting.SprintStartDate = dto.SprintStart!.Value;
+
+                    settings.Feature = Constants.Feature.Tickets;
+                    settings!.IsLatest = true;
+                    settings.IsActive = true;
+
+                    settings.Sections = dto.Sections.Select(s => new Section()
+                    {
+                        Settings = settings,
+                        Title = s.Title,
+                        SectionOrder = s.SectionOrder,
+                        IsActive = true,
+                        IsLatest = true,
+                        CreatedDate = date,
+                        CreatedBy = dto.CreatedBy
+                    })
+                    .ToList();
+                }
 
                 //tracked entities are updated automatically so dont need update
                 if (!isUpdate) 
                 {
-                    await _db.Settings.AddAsync(settings);
+                    await _db.Settings.AddRangeAsync(settingsList);
                 }
 
                 await _db.SaveChangesAsync();

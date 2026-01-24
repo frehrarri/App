@@ -14,7 +14,23 @@ async function getTicketSettingsPartial() {
     return response.data;
 }
 
+
 async function handleEvents(e) {
+    // input[type='date'] workaround - don't know why it wasn't working.
+    if (e.target.tagName == "INPUT" && e.target.type === 'date') {
+        try {
+            if (e.target.showPicker) {
+                e.target.showPicker();
+            } else {
+                // Fallback for older browsers
+                e.target.focus();
+            }
+        } catch (err) {
+            console.error('showPicker failed:', err);
+        }
+        return;
+    }
+
     if (e.target.id == "add-section-btn")
         addSection();
 
@@ -76,10 +92,8 @@ function undoSection() {
     const lastAction = sectionHistory.pop();
 
     if (lastAction.type === "add") {
-        // Undo add → remove the element
         lastAction.element.remove();
     } else if (lastAction.type === "remove") {
-        // Undo remove → re-insert the element at the original position
         if (lastAction.nextSibling) {
             lastAction.parent.insertBefore(lastAction.element, lastAction.nextSibling);
         } else {
