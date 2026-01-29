@@ -21,7 +21,7 @@ namespace Voyage.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketDetails> TicketDetails { get; set; }
 
-        public DbSet<Role> CompanyRoles { get; set; }
+        public DbSet<CompanyRole> CompanyRoles { get; set; }
         public DbSet<IndividualUserRole> IndividualUserRoles { get; set; }
         public DbSet<TeamUserRole> TeamUserRoles { get; set; }
         public DbSet<DepartmentUserRole> DepartmentUserRoles { get; set; }

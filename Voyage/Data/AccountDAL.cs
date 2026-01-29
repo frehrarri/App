@@ -193,14 +193,16 @@ namespace Voyage.Data
                     if (existingRole == null)
                     {
                         // Only create a new Role if none exists
-                        var newRole = new Role
+                        var newRole = new CompanyRole
                         {
                             RoleKey = Guid.NewGuid(),
                             RoleId = await GetNextRoleId(companyId),
-                            RoleVersion = 1m,
+                            RoleVersion = 1.0M,
                             CompanyId = companyId,
                             RoleName = roleName,
-                            RoleDescription = $"{roleName} role for company {companyId}"
+                            RoleDescription = $"{roleName} role for company {companyId}",
+                            IsActive = true,
+                            IsLatest = true
                         };
 
                         await _db.CompanyRoles.AddAsync(newRole);

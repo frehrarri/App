@@ -3,7 +3,7 @@ using Voyage.Models;
 
 namespace Voyage.Data.TableModels
 {
-    public class Role : BaseClass, IModelBuilderEF
+    public class CompanyRole : BaseClass, IModelBuilderEF
     {
         public Guid RoleKey { get; set; }             
         public int RoleId { get; set; }                
@@ -23,23 +23,19 @@ namespace Voyage.Data.TableModels
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Role>()
-                .ToTable("Roles");
+            modelBuilder.Entity<CompanyRole>()
+                .ToTable("CompanyRoles");
 
             // Surrogate PK
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<CompanyRole>()
                 .HasKey(r => r.RoleKey);
 
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<CompanyRole>()
                 .Property(r => r.RoleKey)
                 .ValueGeneratedOnAdd();
 
-            //versioning
-            modelBuilder.Entity<Role>()
-                .HasAlternateKey(r => new { r.CompanyId, r.RoleId, r.RoleVersion });
-
             // FK to Company
-            modelBuilder.Entity<Role>()
+            modelBuilder.Entity<CompanyRole>()
                 .HasOne(r => r.Company)
                 .WithMany(c => c.Roles)
                 .HasForeignKey(r => r.CompanyId)

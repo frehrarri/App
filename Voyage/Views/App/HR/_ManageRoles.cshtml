@@ -6,22 +6,47 @@
 
         <div id="dv-manage-roles" class="container">
             <h4>Manage Roles</h4>
-            <ul id="ul-roles" class="delete-ul">
-                <li style="display:none;">Principal</li>
-                <li style="display:none;">Unassigned</li>
-                @foreach (var role in Model.Roles)
-                {
-                    <li>@role.Name</li>
-                }
-            </ul>
-            <div id="dv-role-btns" class="container">
-                <button id="role-save-btn" class="primary-btn">Save</button>
-                <button id="add-role-btn" class="secondary-btn" type="button">Add</button>
-                <input id="add-role" type="text" />
-            </div>
 
-            
+            <table id="manage-roles" class="app-table table">
+                <thead>
+                    <tr class="app-table-row">
+                        <th class="app-table-header">
+                            <input type="hidden" />
+                        </th>
+                        <th class="app-table-header">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in Model.Roles)
+                    {
+                        <tr class="app-table-row">
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                            <td class="app-table-data">
+                                @team.Name
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <div id="dv-team-btns" class="container">
+                <div id="btn-container">
+                    <button id="add-role-btn" class="primary-btn" type="button">Add</button>
+                    <button id="remove-role-btn" class="warning-btn" type="button">Remove</button>
+                </div>
+
+                <button id="role-save-btn" class="primary-btn">Save</button>
+            </div>
         </div>
+
+
+
+
+
+
 
     </form>
 </div>

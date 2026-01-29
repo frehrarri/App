@@ -25,7 +25,7 @@ namespace Voyage.Data.TableModels
 
         //every company must be comprised of many users and roles (unassigned/principal) which are set on registration
         public ICollection<AppUser> Users { get; set; } = new List<AppUser>();
-        public ICollection<Role> Roles { get; set; } = new List<Role>();
+        public ICollection<CompanyRole> Roles { get; set; } = new List<CompanyRole>();
        
         //every company can have many tickets
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();

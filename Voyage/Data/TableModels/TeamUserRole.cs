@@ -15,7 +15,7 @@ namespace Voyage.Data.TableModels
 
         public Team Team { get; set; } = null!;
         public AppUser User { get; set; } = null!;
-        public Role Role { get; set; } = null!;
+        public CompanyRole Role { get; set; } = null!;
 
         public void CreateEntities(ModelBuilder modelBuilder)
         {

@@ -52,11 +52,13 @@ namespace Voyage.Data
         {
             try
             {
-                return await _db.Roles
-                    //.Where(u => u.)
-                  .Select(u => new ManageRolesDTO
+                return await _db.CompanyRoles
+                  .Where(r => r.CompanyId == companyId
+                    && r.IsLatest == true
+                    && r.IsActive == true)
+                  .Select(r => new ManageRolesDTO
                   {
-                      Name = u.Name!
+                      Name = r.RoleName
                   }).ToListAsync();
             }
             catch (Exception e)
@@ -149,26 +151,87 @@ namespace Voyage.Data
             }
         }
 
-        public async Task SaveRoles(List<RoleDTO> roles)
+        public async Task SaveRoles(List<RoleDTO> roles, int companyId)
         {
+            using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                //await _roleManager.CreateAsync();
+                //make old roles inactive because we will create new ones to keep history
+                await _db.CompanyRoles
+                    .Where(r => r.CompanyId == companyId
+                             && r.IsLatest == true
+                             && r.IsActive == true
+                             && r.RoleName != "Principal" //ignore default roles
+                             && r.RoleName != "Unassigned") //ignore default roles
+                    .ExecuteUpdateAsync(setters => 
+                        setters.SetProperty(r => r.IsLatest, false));
 
-                //roles.Select(r => new IdentityRole()
-                //{
-                //    Name = r.Name, 
-                //    CompanyId = r.CompanyId
-                //});
 
-                //if (roles.Any())
-                //{
-                //    await _db.Roles.AddRangeAsync(roles);
+                var latestRoles = await _db.CompanyRoles
+                    .AsNoTracking()
+                    .Where(r => r.CompanyId == companyId 
+                        && r.IsLatest == true 
+                        && r.IsActive == true)
+                    .ToListAsync();
+
+
+                int nextRoleId = await GetNextRoleId(companyId);
+
+                var rolesToSave = new List<CompanyRole>();
+
+                // Process incoming roles - create new versions for all
+                if (roles != null && roles.Any())
+                {
+                    foreach (var roleDto in roles)
+                    {
+                        // Check if this role existed before (excluding Principal and Unassigned)
+                        var existing = latestRoles.FirstOrDefault(ct => ct.RoleName == roleDto.Name
+                                                                      && ct.RoleName != "Principal"
+                                                                      && ct.RoleName != "Unassigned");
+                        if (existing != null)
+                        {
+                            rolesToSave.Add(new CompanyRole
+                            {
+                                RoleId = existing.RoleId,
+                                RoleName = roleDto.Name,
+                                CompanyId = companyId,
+                                RoleVersion = existing.RoleVersion + 1.0M,
+                                IsLatest = true,
+                                IsActive = true,
+                                CreatedDate = existing.CreatedDate,
+                                ModifiedDate = DateTime.UtcNow
+                            });
+                        }
+                        else
+                        {
+                            rolesToSave.Add(new CompanyRole
+                            {
+                                RoleId = nextRoleId,
+                                RoleName = roleDto.Name,
+                                CompanyId = companyId,
+                                RoleVersion = 1.0M,
+                                IsLatest = true,
+                                IsActive = true,
+                                CreatedDate = DateTime.UtcNow,
+                                ModifiedDate = DateTime.UtcNow
+                            });
+
+                            nextRoleId++;
+                        }
+                    }
+                }
+
+                if (rolesToSave.Any())
+                {
+                    await _db.CompanyRoles.AddRangeAsync(rolesToSave);
                     await _db.SaveChangesAsync();
-                //}
+                }
+
+                await transaction.CommitAsync();
             }
             catch (Exception e)
             {
+                await transaction.RollbackAsync();
                 _logger.LogError(e, "Error: HrDAL : SaveRoles");
             }
         }
@@ -278,6 +341,15 @@ namespace Voyage.Data
             return maxDeptId + 1;
         }
 
+        private async Task<int> GetNextRoleId(int companyId)
+        {
+            var maxRolesId = await _db.CompanyRoles
+                .Where(d => d.CompanyId == companyId)
+                .MaxAsync(d => (int?)d.RoleId) ?? 0;
+
+            return maxRolesId + 1;
+        }
+
         //public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
         //{
         //    using var transaction = await _db.Database.BeginTransactionAsync();
@@ -307,7 +379,7 @@ namespace Voyage.Data
 
         //        await _db.SaveChangesAsync();
 
-        //        //Create new team entities with versioning
+        //        //Create new role entities with versioning
         //        var distinctDepts = departments.GroupBy(t => t.Name)
         //                                 .Select(g => g.First())
         //                                 .ToList();
@@ -386,14 +458,14 @@ namespace Voyage.Data
             try
             {
                 // Get current latest teams
-                var latestTeams = await _db.Teams
+                var latestRoles = await _db.Teams
                     .Where(t => t.CompanyId == companyId && t.IsLatest!.Value)
                     .ToListAsync();
 
                 // Mark all current teams as not latest
-                foreach (var team in latestTeams)
+                foreach (var role in latestRoles)
                 {
-                    team.IsLatest = false;
+                    role.IsLatest = false;
                 }
                 await _db.SaveChangesAsync();
 
@@ -407,7 +479,7 @@ namespace Voyage.Data
                 {
                     foreach (var teamDto in teams)
                     {
-                        var existing = latestTeams.FirstOrDefault(ct => ct.Name == teamDto.Name);
+                        var existing = latestRoles.FirstOrDefault(ct => ct.Name == teamDto.Name);
 
                         if (existing != null)
                         {
@@ -426,7 +498,7 @@ namespace Voyage.Data
                         }
                         else
                         {
-                            // Add: Create new team
+                            // Add: Create new role
                             teamsToSave.Add(new Team
                             {
                                 TeamId = await GetNextTeamId(companyId),
@@ -443,7 +515,7 @@ namespace Voyage.Data
                 }
 
                 // Handle deletions: teams that existed but are not in the new list
-                var teamsToDelete = latestTeams.Where(ct => !teamNamesToKeep.Contains(ct.Name));
+                var teamsToDelete = latestRoles.Where(ct => !teamNamesToKeep.Contains(ct.Name));
                 foreach (var teamToDelete in teamsToDelete)
                 {
                     // Create new "deleted" version
@@ -460,7 +532,7 @@ namespace Voyage.Data
                     });
                 }
 
-                // Save all new team versions
+                // Save all new role versions
                 if (teamsToSave.Any())
                 {
                     await _db.Teams.AddRangeAsync(teamsToSave);

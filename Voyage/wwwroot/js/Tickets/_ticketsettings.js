@@ -7,6 +7,7 @@ export async function init() {
 
     //attach event handlers
     document.getElementById("tickets-control-container").addEventListener("click", handleEvents);
+    document.getElementById("tickets-control-container").addEventListener("change", handleEvents);
 }
 
 async function getTicketSettingsPartial() {
@@ -16,6 +17,18 @@ async function getTicketSettingsPartial() {
 
 
 async function handleEvents(e) {
+
+    if (e.type == "change" && e.target.matches("[name='rdo-repeat']"))
+        toggleSprintDateControls(e);
+
+    if (e.target.tagName == "INPUT" && e.target.type == 'radio') {
+        debugger;
+        let previousElement = document.querySelector("[name='rdo-repeat']:checked");
+        previousElement.checked = false;
+
+        e.target.checked = true;
+    }
+
     // input[type='date'] workaround - don't know why it wasn't working.
     if (e.target.tagName == "INPUT" && e.target.type === 'date') {
         try {
@@ -41,10 +54,7 @@ async function handleEvents(e) {
         || e.target.classList.contains("delete"))
             removeSection(e);
 
-    if (e.target.matches("[name='rdo-repeat']"))
-        toggleSprintDateControls(e);
-
-    if (e.target.matches("[name='rdo-section']"))
+    if (e.type == "change" && e.target.matches("[name='rdo-section']"))
         toggleSectionControls(e);
 
     if (e.target.id == "undo-section-btn")

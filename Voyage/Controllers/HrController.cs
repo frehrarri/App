@@ -160,7 +160,7 @@ namespace Voyage.Controllers
                 CompanyId = companyId!.Value
             }).ToList();
 
-            await _hrBLL.SaveRoles(dto);
+            await _hrBLL.SaveRoles(dto, companyId!.Value);
         }
 
         [HttpPost]
