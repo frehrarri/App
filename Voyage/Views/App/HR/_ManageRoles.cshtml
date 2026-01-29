@@ -17,8 +17,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var team in Model.Roles.Where(r => r.RoleId != (int)Constants.DefaultRoles.Unassigned 
-                                                                && r.RoleId != (int)Constants.DefaultRoles.Principal).ToList())
+                    @foreach (var team in Model.Roles.Where(r => r.Name != Constants.DefaultRoles.Unassigned.ToString() 
+                                                                && r.Name != Constants.DefaultRoles.Principal.ToString()))
                     {
                         <tr class="app-table-row">
                             <td class="app-table-data">

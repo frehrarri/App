@@ -70,7 +70,6 @@ namespace Voyage.Data
 
                     companyId = company.CompanyId;
 
-                  /*  await CreateDefaultRoles(companyId); *///add unassigned/principal roles for company
                 }
                 //register employee to an existing company
                 else
@@ -96,7 +95,7 @@ namespace Voyage.Data
                     Country = details.Country.Trim(),
                     PostalCode = details.ZipCode,
                     CompanyId = companyId,
-                    EmployeeId = details.IsCompanyRegistration ? 1 : await GetNextEmployeeId(companyId) ///how do i want to handle this for regular user registration?
+                    EmployeeId = details.IsCompanyRegistration ? 1 : await GetNextEmployeeId(companyId) 
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user, details.Password);
@@ -134,8 +133,6 @@ namespace Voyage.Data
 
         private async Task AssignRoleToUser(AppUser user, int roleId, int companyId)
         {
-            await using var transaction = await _db.Database.BeginTransactionAsync();
-
             try
             {
                 // Always fetch the tracked Role instance
@@ -167,13 +164,10 @@ namespace Voyage.Data
 
                 await _db.IndividualUserRoles.AddAsync(userRole);
                 await _db.SaveChangesAsync();
-
-                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "error: AssignRoleToUser");
-                await transaction.RollbackAsync();
             }
             
         }

@@ -246,30 +246,36 @@ namespace Voyage.Data
             using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                // Get current latest departments
+                // Make old departments inactive because we will create new versions
+                await _db.Departments
+                    .Where(d => d.CompanyId == companyId
+                             && d.IsLatest == true
+                             && d.IsActive == true)
+                    .ExecuteUpdateAsync(setters =>
+                        setters.SetProperty(d => d.IsLatest, false));
+
+                // Get the latest departments for comparison
                 var latestDepartments = await _db.Departments
-                    .Where(d => d.CompanyId == companyId && d.IsLatest!.Value)
+                    .AsNoTracking()
+                    .Where(d => d.CompanyId == companyId
+                             && d.IsLatest == true
+                             && d.IsActive == true)
                     .ToListAsync();
 
-                // Mark all current departments as not latest
-                foreach (var dept in latestDepartments)
-                {
-                    dept.IsLatest = false;
-                }
-                await _db.SaveChangesAsync();
+                int nextDepartmentId = await GetNextDepartmentId(companyId);
 
                 var deptsToSave = new List<Department>();
 
-                // Process incoming departments (add/update)
                 if (departments != null && departments.Any())
                 {
                     foreach (var deptDto in departments)
                     {
-                        var existing = latestDepartments.FirstOrDefault(cd => cd.Name == deptDto.Name);
+                        // Check if this department already existed
+                        var existing = latestDepartments.FirstOrDefault(d => d.Name == deptDto.Name);
 
                         if (existing != null)
                         {
-                            // Update: Create new version
+                            // Existing: create new version
                             deptsToSave.Add(new Department
                             {
                                 DepartmentId = existing.DepartmentId,
@@ -284,10 +290,10 @@ namespace Voyage.Data
                         }
                         else
                         {
-                            // Add: Create new department
+                            // New department
                             deptsToSave.Add(new Department
                             {
-                                DepartmentId = await GetNextDepartmentId(companyId),
+                                DepartmentId = nextDepartmentId,
                                 Name = deptDto.Name,
                                 CompanyId = companyId,
                                 DepartmentVersion = 1.0M,
@@ -296,17 +302,19 @@ namespace Voyage.Data
                                 CreatedDate = DateTime.UtcNow,
                                 ModifiedDate = DateTime.UtcNow
                             });
+
+                            nextDepartmentId++;
                         }
                     }
                 }
 
-                // Handle deletions: departments that existed but are not in the new list
+                // Handle deletions: departments that existed before but are missing now
                 var deptNamesToKeep = departments?.Select(d => d.Name).ToList() ?? new List<string>();
-                var deptsToDelete = latestDepartments.Where(cd => !deptNamesToKeep.Contains(cd.Name));
+                var deptsToDelete = latestDepartments
+                    .Where(d => !deptNamesToKeep.Contains(d.Name));
 
                 foreach (var deptToDelete in deptsToDelete)
                 {
-                    // Create new "deleted" version
                     deptsToSave.Add(new Department
                     {
                         DepartmentId = deptToDelete.DepartmentId,
@@ -314,13 +322,12 @@ namespace Voyage.Data
                         CompanyId = companyId,
                         DepartmentVersion = deptToDelete.DepartmentVersion + 1.0M,
                         IsLatest = true,
-                        IsActive = false,
+                        IsActive = false, // mark as deleted
                         CreatedDate = deptToDelete.CreatedDate,
                         ModifiedDate = DateTime.UtcNow
                     });
                 }
 
-                // Save all new department versions
                 if (deptsToSave.Any())
                 {
                     await _db.Departments.AddRangeAsync(deptsToSave);
