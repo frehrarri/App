@@ -50,19 +50,20 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
+        public async Task<List<ManageRolesDTO>> GetRoles(int? companyId)
         {
             try
             {
                 return await _db.CompanyRoles
                   .Where(r => r.CompanyId == companyId
+                    || r.CompanyId == null
                     && r.IsLatest == true
                     && r.IsActive == true)
                   .Select(r => new ManageRolesDTO
                   {
                       Name = r.RoleName,
                       RoleId = r.RoleId,
-                      CompanyId = r.CompanyId!.Value
+                      CompanyId = r.CompanyId
                   }).ToListAsync();
             }
             catch (Exception e)

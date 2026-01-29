@@ -32,6 +32,9 @@ namespace Voyage.Controllers
         public async Task<IActionResult> ManagePersonnelPartial()
         {
             ManagePersonnelVM vm = new ManagePersonnelVM();
+
+            vm.RoleId = HttpContext.Session.GetInt32("RoleId");
+
             var dto = await GetPersonnel();
             if (dto != null)
             {
@@ -41,6 +44,7 @@ namespace Voyage.Controllers
                 if (roles != null)
                     vm.Roles = roles;
             }
+
                 
             return PartialView("~/Views/App/HR/_ManagePersonnel.cshtml", vm);
         }

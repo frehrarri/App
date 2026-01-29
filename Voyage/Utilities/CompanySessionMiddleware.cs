@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Voyage.Data;
 using Voyage.Data.TableModels;
 
 namespace Voyage.Utilities
@@ -14,7 +17,8 @@ namespace Voyage.Utilities
 
         public async Task InvokeAsync(
             HttpContext context,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+             _AppDbContext _db)
         {
             // Only for authenticated users
             if (context.User.Identity?.IsAuthenticated == true)
@@ -26,6 +30,16 @@ namespace Voyage.Utilities
 
                     if (user?.CompanyId != null)
                     {
+                        var userRole = await _db.IndividualUserRoles
+                            .Include(ur => ur.Role)
+                            .Where(ur => ur.EmployeeId == user.EmployeeId
+                                         && ur.CompanyId == user.CompanyId)
+                            .OrderByDescending(ur => ur.IndivUserRoleVersion)
+                            .FirstOrDefaultAsync();
+
+                        if (userRole != null)
+                            context.Session.SetInt32("RoleId", userRole.Role.RoleId);
+
                         context.Session.SetInt32("CompanyId", user.CompanyId);
                         context.Session.SetInt32("EmployeeId", user.EmployeeId);
                     }

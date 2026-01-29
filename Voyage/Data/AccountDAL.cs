@@ -134,35 +134,48 @@ namespace Voyage.Data
 
         private async Task AssignRoleToUser(AppUser user, int roleId, int companyId)
         {
-            // Always fetch the tracked Role instance
-            var role = await _db.CompanyRoles
-                .Where(r => r.RoleId == roleId)
-                .OrderByDescending(r => r.RoleVersion)
-                .FirstOrDefaultAsync();
+            await using var transaction = await _db.Database.BeginTransactionAsync();
 
-            if (role == null)
-                throw new InvalidOperationException($"Role not found for company {companyId}");
-
-            // Check for duplicate assignment
-            bool alreadyAssigned = await _db.IndividualUserRoles.AnyAsync(iur =>
-                iur.CompanyId == companyId &&
-                iur.EmployeeId == user.EmployeeId &&
-                iur.RoleKey == role.RoleKey);
-
-            if (alreadyAssigned)
-                return;
-
-            var userRole = new IndividualUserRole
+            try
             {
-                IndivUserRoleKey = Guid.NewGuid(),
-                IndivUserRoleVersion = 1m,
-                CompanyId = companyId,
-                EmployeeId = user.EmployeeId,
-                RoleKey = role.RoleKey  
-            };
+                // Always fetch the tracked Role instance
+                var role = await _db.CompanyRoles
+                    .Where(r => r.RoleId == roleId)
+                    .OrderByDescending(r => r.RoleVersion)
+                    .FirstOrDefaultAsync();
 
-            await _db.IndividualUserRoles.AddAsync(userRole);
-            await _db.SaveChangesAsync();
+                if (role == null)
+                    throw new InvalidOperationException($"Role not found for company {companyId}");
+
+                // Check for duplicate assignment
+                bool alreadyAssigned = await _db.IndividualUserRoles.AnyAsync(iur =>
+                    iur.CompanyId == companyId &&
+                    iur.EmployeeId == user.EmployeeId &&
+                    iur.RoleKey == role.RoleKey);
+
+                if (alreadyAssigned)
+                    return;
+
+                var userRole = new IndividualUserRole
+                {
+                    IndivUserRoleKey = Guid.NewGuid(),
+                    IndivUserRoleVersion = 1m,
+                    CompanyId = companyId,
+                    EmployeeId = user.EmployeeId,
+                    RoleKey = role.RoleKey
+                };
+
+                await _db.IndividualUserRoles.AddAsync(userRole);
+                await _db.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "error: AssignRoleToUser");
+                await transaction.RollbackAsync();
+            }
+            
         }
 
 
