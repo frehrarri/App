@@ -104,36 +104,6 @@ namespace Voyage.Business
 
         }
 
-        private void IgnoreAddDefaultRoles(ref List<RoleDTO> roles)
-        {
-            List<string> rolesToCompare = roles.Select(r => r.Name.ToUpper()).ToList();
-            List<string> defaultRoles = Enum.GetNames<Constants.DefaultRoles>().ToList();
 
-            foreach (var role in defaultRoles)
-            {
-                if (rolesToCompare.Contains(role.ToUpper()))
-                    roles.RemoveAll(r => r.Name == role);
-            }
-        }
-
-        //private List<string> AddDefaultTeams(List<string> teams)
-        //{
-        //    List<string> teamsToSave = new List<string>();
-
-        //    //ensure Unassigned is the first entry.
-        //    if (!teams.Contains("Unassigned"))
-        //    {
-        //        teamsToSave.Add("Unassigned");
-        //    }
-        //    else
-        //    {
-        //        teams.Remove("Unassigned");
-        //        teamsToSave.Add("Unassigned");
-        //    }
-
-        //    teamsToSave.AddRange(teams);
-
-        //    return teamsToSave;
-        //}
     }
 }

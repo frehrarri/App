@@ -106,8 +106,8 @@
 
         public enum DefaultRoles
         {
-            Principal,
-            Unassigned
+            Principal = 1,
+            Unassigned = 2
         }
 
 

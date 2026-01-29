@@ -340,7 +340,7 @@ namespace Voyage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CreatedBy")
@@ -1026,8 +1026,7 @@ namespace Voyage.Migrations
                     b.HasOne("Voyage.Data.TableModels.Company", "Company")
                         .WithMany("Roles")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Company");
                 });

@@ -34,8 +34,14 @@ namespace Voyage.Controllers
             ManagePersonnelVM vm = new ManagePersonnelVM();
             var dto = await GetPersonnel();
             if (dto != null)
+            {
                 vm.Personnel = dto;
+                var roles = await GetRoles();
 
+                if (roles != null)
+                    vm.Roles = roles;
+            }
+                
             return PartialView("~/Views/App/HR/_ManagePersonnel.cshtml", vm);
         }
 

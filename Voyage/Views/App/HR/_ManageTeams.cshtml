@@ -39,7 +39,7 @@
                                     <option value="" >Unassigned</option>
                                     @foreach (var team in Model.ManageTeamsDTO.Teams)
                                     {
-                                        <option value="@team.TeamId" checked="@(team.TeamId == teamMember.TeamId)">@team.Name</option>
+                                        <option value="@team.TeamId" selected="@(team.TeamId == teamMember.TeamId)">@team.Name</option>
                                     }
                                 </select>
                             </td>

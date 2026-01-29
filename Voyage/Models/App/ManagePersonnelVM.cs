@@ -7,6 +7,8 @@ namespace Voyage.Models.App
         public ManagePersonnelVM()
         {
             Personnel = new List<ManagePersonnelDTO>();
+            Roles = new List<ManageRolesDTO>();
+
             //FirstName = string.Empty;
             //LastName = string.Empty;
             //Username = string.Empty;
@@ -15,6 +17,9 @@ namespace Voyage.Models.App
         }
 
         public List<ManagePersonnelDTO> Personnel {  get; set; }
+        public List<ManageRolesDTO> Roles { get; set; }
+
+
         //public int EmployeeId { get; set; }
         //public string FirstName { get; set; }
         //public string LastName { get; set; }

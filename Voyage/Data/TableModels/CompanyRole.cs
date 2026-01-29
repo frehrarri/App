@@ -9,12 +9,12 @@ namespace Voyage.Data.TableModels
         public int RoleId { get; set; }                
         public decimal RoleVersion { get; set; }      
 
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public string RoleName { get; set; } = string.Empty;
         public string RoleDescription { get; set; } = string.Empty;
 
         //every company can have many roles
-        public Company Company { get; set; } = null!;
+        public Company? Company { get; set; } = null!;
 
         //there can be many different roles within each UserRole table
         public ICollection<IndividualUserRole> IndividualUserRoles { get; set; } = new List<IndividualUserRole>();
@@ -39,7 +39,8 @@ namespace Voyage.Data.TableModels
                 .HasOne(r => r.Company)
                 .WithMany(c => c.Roles)
                 .HasForeignKey(r => r.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
         }
     }
 }

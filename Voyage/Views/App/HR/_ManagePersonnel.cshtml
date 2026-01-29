@@ -22,6 +22,7 @@
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header"></th>
+                        <th class="app-table-header">Role</th>
                         <th class="app-table-header">Id</th>
                         <th class="app-table-header">First Name</th>
                         <th class="app-table-header">Last Name</th>
@@ -32,11 +33,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var user in Model.Personnel)
+                    @foreach (var user in Model.Personnel)
                     {
                         <tr class="app-table-row">
                             <td class="app-table-data">
                                 <input type="checkbox" />
+                            </td>
+                            <td>
+                                <select class="sel-assign-role" data-userid="@user.EmployeeId">
+                                    <option value="2">Unassigned</option>
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        //do not display unassigned in the drop down as its already the default option
+                                        if (role.RoleId != (int)Constants.DefaultRoles.Unassigned)
+                                        {
+                                            <option value="@role.RoleId" selected="@(role.RoleId == user.RoleId)" disabled="@(role.RoleId == (int)Constants.DefaultRoles.Principal)">@role.Name</option>
+                                        }
+
+                                    }
+                                </select>
                             </td>
                             <td class="app-table-data">
                                 @user.EmployeeId

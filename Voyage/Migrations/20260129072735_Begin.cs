@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class commit_init : Migration
+    public partial class Begin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -159,7 +159,7 @@ namespace Voyage.Migrations
                     RoleKey = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
                     RoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: true),
                     RoleName = table.Column<string>(type: "text", nullable: false),
                     RoleDescription = table.Column<string>(type: "text", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -172,7 +172,6 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CompanyRoles", x => x.RoleKey);
-                    table.UniqueConstraint("AK_CompanyRoles_CompanyId_RoleId_RoleVersion", x => new { x.CompanyId, x.RoleId, x.RoleVersion });
                     table.UniqueConstraint("AK_CompanyRoles_RoleId_RoleVersion", x => new { x.RoleId, x.RoleVersion });
                     table.ForeignKey(
                         name: "FK_CompanyRoles_Company_CompanyId",
@@ -633,6 +632,11 @@ namespace Voyage.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyRoles_CompanyId",
+                table: "CompanyRoles",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Department_CompanyId",

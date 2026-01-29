@@ -38,7 +38,9 @@ namespace Voyage.Data
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         Username = u.UserName!,
-                        Email = u.Email!
+                        Email = u.Email!,
+                        RoleId = u.IndividualUserRoles.Where(iur => iur.EmployeeId == u.EmployeeId).Select(iur => iur.RoleId).FirstOrDefault(),
+                        Role = u.IndividualUserRoles.Where(iur => iur.EmployeeId == u.EmployeeId).Select(iur => iur.Role.RoleName).FirstOrDefault() ?? ""
                     }).ToListAsync();
             }
             catch (Exception e)
@@ -58,7 +60,9 @@ namespace Voyage.Data
                     && r.IsActive == true)
                   .Select(r => new ManageRolesDTO
                   {
-                      Name = r.RoleName
+                      Name = r.RoleName,
+                      RoleId = r.RoleId,
+                      CompanyId = r.CompanyId!.Value
                   }).ToListAsync();
             }
             catch (Exception e)
@@ -350,75 +354,7 @@ namespace Voyage.Data
             return maxRolesId + 1;
         }
 
-        //public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
-        //{
-        //    using var transaction = await _db.Database.BeginTransactionAsync();
-
-        //    try
-        //    {
-        //        var currentDepartments = await _db.Departments
-        //          .Where(t => t.CompanyId == companyId
-        //                   && t.IsLatest!.Value)
-        //          .ToListAsync();
-
-
-        //        //delete all existing departments
-        //        if (departments == null || !departments.Any())
-        //        {
-        //            _db.Departments.RemoveRange(currentDepartments);
-        //            await _db.SaveChangesAsync();
-        //            await transaction.CommitAsync();
-        //            return;
-        //        }
-
-        //        //mark old teams not latest
-        //        foreach (var d in currentDepartments)
-        //        {
-        //            d.IsLatest = false;
-        //        }
-
-        //        await _db.SaveChangesAsync();
-
-        //        //Create new role entities with versioning
-        //        var distinctDepts = departments.GroupBy(t => t.Name)
-        //                                 .Select(g => g.First())
-        //                                 .ToList();
-
-        //        //add new teams
-        //        if (departments.Any())
-        //        {
-        //            var deptsToSave = new List<Department>();
-
-        //            foreach (var t in distinctDepts)
-        //            {
-        //                var existing = currentDepartments.FirstOrDefault(ct => ct.Name == t.Name);
-
-        //                deptsToSave.Add(new Department
-        //                {
-        //                    DepartmentId = 0,
-        //                    Name = t.Name,
-        //                    CompanyId = companyId,
-        //                    DepartmentVersion = existing != null ? existing.DepartmentVersion + 1.0M : 1.0M,
-        //                    IsLatest = true,
-        //                    IsActive = true
-        //                });
-        //            }
-
-        //            if (deptsToSave.Any())
-        //            {
-        //                await _db.Departments.AddRangeAsync(deptsToSave);
-        //            }
-        //        }
-        //        await _db.SaveChangesAsync();
-        //        await transaction.CommitAsync();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await transaction.RollbackAsync();
-        //        _logger.LogError(e, "Error: HrDAL : SaveDepartments");
-        //        throw;
-        //    }
-        //}
+     
 
         public async Task SavePermissions(List<string> permissions)
         {
