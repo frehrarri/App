@@ -176,11 +176,14 @@ namespace Voyage.Controllers
                     || (u.FirstName ?? "").Contains(query) 
                     || (u.LastName ?? "").Contains(query))
                 .OrderBy(u => u.UserName)
-                .Take(5)
+                .Take(10)
                 .Select(u => new {
                     id = u.Id,
-                    displayName = u.UserName,
-                    email = u.Email
+                    username = u.UserName,
+                    email = u.Email,
+                    firstname = u.FirstName,
+                    lastname = u.LastName,
+                    phone = u.PhoneAreaCode + u.PhoneNumber
                 })
                 .ToListAsync();
 

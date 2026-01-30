@@ -40,36 +40,39 @@ function addNewRow() {
 function addUserInput(e) {
     const target = e.target;
 
-    // Only act on spans
     if (target.classList.contains("add-user-span") && e.type === "click") {
+
+        // Create wrapper FIRST
+        const wrapper = document.createElement("div");
+        wrapper.className = "autocomplete-wrapper";
+
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = "User Name";
         input.className = "add-user-input";
-        input.value = target.textContent;
-
-        target.replaceWith(input);
-        input.focus();
         input.value = "";
+        input.dataset.uid = crypto.randomUUID();
 
-        
+        // Replace span with wrapper, then add input
+        target.replaceWith(wrapper);
+        wrapper.appendChild(input);
 
-        // Save on blur
+        input.focus();
+
         input.addEventListener("blur", () => {
+            const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
+            if (ul) ul.classList.remove("show");
+
             const span = document.createElement("span");
             span.className = "add-user-span";
             span.textContent = input.value || "Click to add user";
-            input.replaceWith(span);
+            wrapper.replaceWith(span); // remove wrapper + input safely
         });
 
-        // Save on Enter
         input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") {
-                input.blur(); // triggers blur listener
-            }
+            if (ev.key === "Enter") input.blur();
         });
     }
-
 }
 
 function removeUser(e) {
@@ -83,6 +86,73 @@ function removeUser(e) {
     });
 }
 
+function attachAutoComplete(e) {
+    const input = e.target;
+    if (!input.isConnected) return null;
+
+    // reuse UL if it already exists
+    let ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
+
+    if (!ul) {
+        ul = document.createElement("ul");
+        ul.className = "autocomplete-list";
+        ul.dataset.for = input.dataset.uid;
+
+        // prevent blur when clicking results
+        ul.addEventListener("mousedown", ev => ev.preventDefault());
+
+        document.body.appendChild(ul);
+    }
+
+    // position UL under the input
+    const rect = input.getBoundingClientRect();
+    ul.style.position = "fixed";
+    ul.style.top = `${rect.bottom + 4}px`;
+    ul.style.left = `${rect.left}px`;
+    ul.style.zIndex = 99999;
+
+    ul.classList.add("show");
+    return ul;
+}
+
+function insertSearchResults(user) {
+    let tbody = document.querySelector('#tbl-allocate-personnel > tbody');
+    let tr = document.createElement('tr');
+    tr.className = 'app-table-row';
+
+    let checkbox = document.createElement('td');
+    checkbox.className = 'app-table-data'
+
+    let cbx = document.createElement('input');
+    cbx.type = 'checkbox'
+
+    checkbox.appendChild(cbx);
+    tr.appendChild(checkbox);
+
+    let firstName = document.createElement('td');
+    firstName.textContent = user.firstname;
+    firstName.className = 'app-table-data';
+    tr.appendChild(firstName);
+
+    let lastName = document.createElement('td');
+    lastName.textContent = user.lastname;
+    lastName.className = 'app-table-data';
+    tr.appendChild(lastName);
+
+    let username = document.createElement('td');
+    username.textContent = user.username;
+    username.className = 'app-table-data';
+    tr.appendChild(username);
+
+    let email = document.createElement('td');
+    email.textContent = user.email;
+    email.className = 'app-table-data';
+    tr.appendChild(email);
+
+    tbody.appendChild(tr);
+}
+
+
 
 async function handleEvents(e) {
 
@@ -92,23 +162,35 @@ async function handleEvents(e) {
     //    await saveTeams();
     //}
 
-    //remove user
-    if (e.target.id == "remove-user-btn")
-        removeUser(e);
+    if (e.type === "click") {
+        //remove user
+        if (e.target.id == "remove-user-btn")
+            removeUser(e);
 
-    //add new user row
-    if (e.target.id == "add-user-btn")
-        addNewRow();
+        //add new user row
+        if (e.target.id == "add-user-btn")
+            addNewRow();
 
-    //input control for adding team member
-    if (e.target.classList.contains("add-user-span")) {
-        addUserInput(e);
+        //input control for adding team member
+        if (e.target.classList.contains("add-user-span")) 
+            addUserInput(e);
+      
     }
-
-    if (e.type === "input" && e.target.classList.contains("add-user-input")) {
-        addUserSearchEventListener(e.target, "#userResults");
+    else if (e.type === "input") {
+        if (e.target.classList.contains("add-user-input")) {
+            const resultsContainer = attachAutoComplete(e);
+            addUserSearchEventListener("dv-allocate-personnel", e.target, resultsContainer, (user) => insertSearchResults(user));
+        }
     }
+    
 
+
+
+
+
+
+
+    
     ////catch changes to assign team members
     //if (e.target.classList.contains('sel-assign-team-member')) {
 

@@ -159,27 +159,35 @@ body {
 }
 
 .autocomplete-list {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    top: auto;
-    left: 0;
-    right: 0;
+    position: fixed;
     margin: 0;
     padding: 0;
     list-style: none;
     background: white;
     border-radius: 4px;
-    z-index: 1000;
+    z-index: 2147483647;
     max-height: 220px;
     overflow-y: auto;
     display: none;
     box-shadow: 0 3px 3px gray;
     border: 1px solid black;
+    width: max-content;
 }
 
     .autocomplete-list.show {
-        display: block; 
+        display: block;
+        position: fixed; /* overrides absolute */
+        z-index: 2147483647;
     }
+
+    .autocomplete-list li {
+        padding: 6px 10px;
+        white-space: nowrap;
+    }
+
+.autocomplete-wrapper {
+    position: relative;
+}
 
 .hidden {
     display: none !important;

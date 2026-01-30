@@ -26,15 +26,16 @@ function showSuccess(success) {
 const searchState = new WeakMap();
 
 function addSearchEventListener({
+    containerBodyId,
     input,
-    resultsContainerId,
+    resultsContainer,
     url,
     displayText,    
     valueField,     
     minLength = 2,
-    delay = 300
+    delay = 300,
+    onSelect
 }) {
-    const resultsContainer = document.querySelector(resultsContainerId);
     if (!input || !resultsContainer) return;
 
     // per-input debounce state
@@ -60,7 +61,6 @@ function addSearchEventListener({
             });
 
             resultsContainer.innerHTML = "";
-            debugger;
 
             response.data.forEach(item => {
                 const li = document.createElement("li");
@@ -70,14 +70,22 @@ function addSearchEventListener({
                 li.addEventListener("click", () => {
                     input.value = displayText(item);
                     input.dataset.value = item[valueField];
+
                     resultsContainer.innerHTML = "";
                     resultsContainer.classList.remove("show");
+
+                    //callback to handle data selection
+                    if (onSelect)
+                        onSelect(item);
                 });
+
+
 
                 resultsContainer.appendChild(li);
             });
 
             resultsContainer.classList.toggle("show", response.data.length > 0);
+            clampResultsToContainer(containerBodyId, resultsContainer, input)
         }
         catch (err) {
             console.error("Search failed:", err);
@@ -85,14 +93,27 @@ function addSearchEventListener({
     }, delay);
 }
 
+function clampResultsToContainer(containerBodyId, ul, input) {
+    const container = document.getElementById(`${containerBodyId}`);
+    if (!container) return;
 
-function addUserSearchEventListener(input, resultsContainerId) {
+    const containerRect = container.getBoundingClientRect();
+    const inputRect = input.getBoundingClientRect();
+
+    // max width = container right edge - input left
+    const maxWidth = containerRect.right - inputRect.left - 8; // small padding
+    ul.style.maxWidth = `${maxWidth}px`;
+}
+
+function addUserSearchEventListener(containerBodyId, input, resultsContainer, onSelect) {
     addSearchEventListener({
+        containerBodyId,
         input,
-        resultsContainerId,
+        resultsContainer,
         url: "/User/Search",
-        displayText: u => `${u.displayName} (${u.email})`,
-        valueField: "id"
+        displayText: u => `${u.lastname}, ${u.firstname} [${u.username}] [${u.email}]`,
+        valueField: "id",
+        onSelect
     });
 }
 
