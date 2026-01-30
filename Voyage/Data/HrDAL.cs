@@ -363,7 +363,6 @@ namespace Voyage.Data
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(e, "Error: HrDAL : SaveDepartments");
-                throw;
             }
         }
 
@@ -421,36 +420,38 @@ namespace Voyage.Data
         public async Task SaveTeams(List<TeamDTO> teams, int companyId)
         {
             using var transaction = await _db.Database.BeginTransactionAsync();
-
             try
             {
-                // Get current latest teams
-                var latestRoles = await _db.Teams
-                    .Where(t => t.CompanyId == companyId && t.IsLatest!.Value)
+                // Make old teams not latest because we will create new versions
+                await _db.Teams
+                    .Where(t => t.CompanyId == companyId
+                             && t.IsLatest == true
+                             && t.IsActive == true)
+                    .ExecuteUpdateAsync(setters =>
+                        setters.SetProperty(t => t.IsLatest, false));
+
+                // Get latest teams for comparison (no tracking to avoid conflicts)
+                var latestTeams = await _db.Teams
+                    .AsNoTracking()
+                    .Where(t => t.CompanyId == companyId
+                             && t.IsLatest == true
+                             && t.IsActive == true)
                     .ToListAsync();
 
-                // Mark all current teams as not latest
-                foreach (var role in latestRoles)
-                {
-                    role.IsLatest = false;
-                }
-                await _db.SaveChangesAsync();
+                int nextTeamId = await GetNextTeamId(companyId);
 
                 var teamsToSave = new List<Team>();
 
-                // Determine which teams to keep (empty list if teams is null)
-                var teamNamesToKeep = teams?.Select(t => t.Name).ToList() ?? new List<string>();
-
-                // Process incoming teams (add/update)
                 if (teams != null && teams.Any())
                 {
                     foreach (var teamDto in teams)
                     {
-                        var existing = latestRoles.FirstOrDefault(ct => ct.Name == teamDto.Name);
+                        // Check if this team already existed
+                        var existing = latestTeams.FirstOrDefault(t => t.Name == teamDto.Name);
 
                         if (existing != null)
                         {
-                            // Update: Create new version
+                            // Existing team: create new version
                             teamsToSave.Add(new Team
                             {
                                 TeamId = existing.TeamId,
@@ -465,10 +466,10 @@ namespace Voyage.Data
                         }
                         else
                         {
-                            // Add: Create new role
+                            // New team
                             teamsToSave.Add(new Team
                             {
-                                TeamId = await GetNextTeamId(companyId),
+                                TeamId = nextTeamId,
                                 Name = teamDto.Name,
                                 CompanyId = companyId,
                                 TeamVersion = 1.0M,
@@ -477,15 +478,19 @@ namespace Voyage.Data
                                 CreatedDate = DateTime.UtcNow,
                                 ModifiedDate = DateTime.UtcNow
                             });
+
+                            nextTeamId++;
                         }
                     }
                 }
 
-                // Handle deletions: teams that existed but are not in the new list
-                var teamsToDelete = latestRoles.Where(ct => !teamNamesToKeep.Contains(ct.Name));
+                // Handle deletions: teams that existed before but are missing now
+                var teamNamesToKeep = teams?.Select(t => t.Name).ToList() ?? new List<string>();
+                var teamsToDelete = latestTeams
+                    .Where(t => !teamNamesToKeep.Contains(t.Name));
+
                 foreach (var teamToDelete in teamsToDelete)
                 {
-                    // Create new "deleted" version
                     teamsToSave.Add(new Team
                     {
                         TeamId = teamToDelete.TeamId,
@@ -493,13 +498,13 @@ namespace Voyage.Data
                         CompanyId = companyId,
                         TeamVersion = teamToDelete.TeamVersion + 1.0M,
                         IsLatest = true,
-                        IsActive = false,
+                        IsActive = false, // mark as deleted
                         CreatedDate = teamToDelete.CreatedDate,
                         ModifiedDate = DateTime.UtcNow
                     });
                 }
 
-                // Save all new role versions
+                // Save all new team versions
                 if (teamsToSave.Any())
                 {
                     await _db.Teams.AddRangeAsync(teamsToSave);
@@ -515,6 +520,7 @@ namespace Voyage.Data
                 throw;
             }
         }
+
 
         private async Task<int> GetNextTeamId(int companyId)
         {
