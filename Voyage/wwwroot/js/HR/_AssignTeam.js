@@ -42,7 +42,7 @@ function addUserInput(e) {
 
     if (target.classList.contains("add-user-span") && e.type === "click") {
 
-        // Create wrapper FIRST
+        //need a wrapper to append children to
         const wrapper = document.createElement("div");
         wrapper.className = "autocomplete-wrapper";
 
@@ -63,10 +63,10 @@ function addUserInput(e) {
             const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
             if (ul) ul.classList.remove("show");
 
-            const span = document.createElement("span");
-            span.className = "add-user-span";
-            span.textContent = input.value || "Click to add user";
-            wrapper.replaceWith(span); // remove wrapper + input safely
+            //const span = document.createElement("span");
+            //span.className = "add-user-span";
+            //span.textContent = input.value || "Click to add user";
+            //wrapper.replaceWith(span); // remove wrapper + input safely
         });
 
         input.addEventListener("keydown", (ev) => {
@@ -116,7 +116,6 @@ function attachAutoComplete(e) {
 }
 
 function insertSearchResults(user) {
-    let tbody = document.querySelector('#tbl-allocate-personnel > tbody');
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
 
@@ -149,7 +148,8 @@ function insertSearchResults(user) {
     email.className = 'app-table-data';
     tr.appendChild(email);
 
-    tbody.appendChild(tr);
+    let row = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
+    row.replaceWith(tr);
 }
 
 
@@ -182,14 +182,6 @@ async function handleEvents(e) {
             addUserSearchEventListener("dv-allocate-personnel", e.target, resultsContainer, (user) => insertSearchResults(user));
         }
     }
-    
-
-
-
-
-
-
-
     
     ////catch changes to assign team members
     //if (e.target.classList.contains('sel-assign-team-member')) {
