@@ -171,7 +171,10 @@ namespace Voyage.Controllers
                 return Ok(Enumerable.Empty<object>());
 
             var users = await _userManager.Users
-                .Where(u => (u.UserName ?? "").Contains(query) || (u.Email ?? "").Contains(query))
+                .Where(u => (u.UserName ?? "").Contains(query) 
+                    || (u.Email ?? "").Contains(query) 
+                    || (u.FirstName ?? "").Contains(query) 
+                    || (u.LastName ?? "").Contains(query))
                 .OrderBy(u => u.UserName)
                 .Take(5)
                 .Select(u => new {

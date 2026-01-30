@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20260129072735_Begin")]
-    partial class Begin
+    [Migration("20260130023941_First_Commit")]
+    partial class First_Commit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

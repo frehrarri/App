@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class Begin : Migration
+    public partial class First_Commit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

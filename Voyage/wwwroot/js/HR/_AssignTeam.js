@@ -48,8 +48,6 @@ function addUserInput(e) {
         input.className = "add-user-input";
         input.value = target.textContent;
 
-        addUserSearchEventListener(input, "#userResults");
-
         target.replaceWith(input);
         input.focus();
         input.value = "";
@@ -107,6 +105,10 @@ async function handleEvents(e) {
         addUserInput(e);
     }
 
+    if (e.type === "input" && e.target.classList.contains("add-user-input")) {
+        addUserSearchEventListener(e.target, "#userResults");
+    }
+
     ////catch changes to assign team members
     //if (e.target.classList.contains('sel-assign-team-member')) {
 
@@ -134,8 +136,5 @@ export async function init() {
     //event handlers
     container.addEventListener("click", handleEvents);
     container.addEventListener("keydown", handleEvents);
-
-    //figure out how to add debounced search for user
-    
-    //
+    container.addEventListener("input", handleEvents);
 }

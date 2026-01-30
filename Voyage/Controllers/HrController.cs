@@ -93,8 +93,17 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<IActionResult> AssignTeamPartial()
         {
-            return PartialView("~/Views/App/HR/_AssignTeam.cshtml");
+            AssignTeamVM vm = new AssignTeamVM();
+
+            //var dto = GetAssignTeam();
+
+            return PartialView("~/Views/App/HR/_AssignTeam.cshtml", vm);
         }
+
+        //private async Task<AssignTeamDTO> GetAssignTeam()
+        //{
+        //    return _hrBLL.GetAssignTeam();
+        //}
 
         [HttpGet]
         public async Task<IActionResult> ManageRolesPartial()

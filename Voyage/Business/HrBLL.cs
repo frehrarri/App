@@ -36,6 +36,12 @@ namespace Voyage.Business
             return await _hrDAL.GetTeams(companyId);
         }
 
+        //private async Task<AssignTeamDTO> GetAssignTeam()
+        //{
+        //    var availableUsers = _hrDAL.GetAvailableUsers();
+        //    var assignedUsers = _hrDAL.GetTeamAssignedUsers();
+        //}
+
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
             return await _hrDAL.GetPermissions();

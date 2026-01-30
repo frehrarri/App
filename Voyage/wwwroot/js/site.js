@@ -23,91 +23,76 @@ function showSuccess(success) {
 }
 
 //Attaches a debounced "search-as-you-type" autocomplete behavior to an input.
-function addSearchEventListener({
-    inputId,               // ID of the input element to attach the search behavior to
-    resultsContainerId,     // ID of the container where results will be rendered
-    url,                    // Backend endpoint to call (e.g. "/Users/Search")
-    renderItem,             // Function that returns a DOM element for a single result
-    onSelect,               // Callback invoked when a result is selected
-    minLength = 2,          // Minimum characters required before searching
-    delay = 300            // Debounce delay (ms)
-}) {
-    const input = document.getElementById(inputId);
-    const resultsContainer = document.getElementById(resultsContainerId);
+const searchState = new WeakMap();
 
-    // Fail fast if required elements are missing
+function addSearchEventListener({
+    input,
+    resultsContainerId,
+    url,
+    displayText,    
+    valueField,     
+    minLength = 2,
+    delay = 300
+}) {
+    const resultsContainer = document.querySelector(resultsContainerId);
     if (!input || !resultsContainer) return;
 
-    // Debounce timer is scoped to this instance so multiple searches don't interfere
-    let debounceTimer;
+    // per-input debounce state
+    let state = searchState.get(input);
+    if (!state) {
+        state = { timer: null };
+        searchState.set(input, state);
+    }
 
-    input.addEventListener('input', (e) => {
-        const query = e.target.value.trim();
+    const query = input.value.trim();
+    clearTimeout(state.timer);
 
-        // Cancel any pending request caused by previous keystrokes
-        clearTimeout(debounceTimer);
+    if (query.length < minLength) {
+        resultsContainer.innerHTML = "";
+        resultsContainer.classList.remove("show");
+        return;
+    }
 
-        // Avoid server calls for short or empty input
-        if (query.length < minLength) {
-            resultsContainer.innerHTML = '';
-            resultsContainer.classList.remove('show');
-            return;
+    state.timer = setTimeout(async () => {
+        try {
+            const response = await axios.get(url, {
+                params: { query }
+            });
+
+            resultsContainer.innerHTML = "";
+            debugger;
+
+            response.data.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = displayText(item);
+                li.dataset.value = item[valueField];
+
+                li.addEventListener("click", () => {
+                    input.value = displayText(item);
+                    input.dataset.value = item[valueField];
+                    resultsContainer.innerHTML = "";
+                    resultsContainer.classList.remove("show");
+                });
+
+                resultsContainer.appendChild(li);
+            });
+
+            resultsContainer.classList.toggle("show", response.data.length > 0);
         }
-
-        // Delay execution until the user pauses typing
-        debounceTimer = setTimeout(async () => {
-            try {
-                const response = await axios.get(url, {
-                    params: { query }
-                });
-
-                // Replace existing results with the latest response
-                resultsContainer.innerHTML = '';
-
-                response.data.forEach(item => {
-                    // Caller controls how each result is rendered
-                    const element = renderItem(item);
-
-                    element.addEventListener('click', () => {
-                        // Caller controls what "selecting" a result means
-                        onSelect(item);
-                        resultsContainer.innerHTML = '';
-                    });
-
-                    resultsContainer.appendChild(element);
-                });
-
-                resultsContainer.classList.toggle('show', response.data.length > 0);
-
-            } catch (err) {
-                console.error('Autocomplete search failed:', err);
-            }
-        }, delay);
-    });
-
+        catch (err) {
+            console.error("Search failed:", err);
+        }
+    }, delay);
 }
 
-function addUserSearchEventListener(inputId, resultsContainerId) {
+
+function addUserSearchEventListener(input, resultsContainerId) {
     addSearchEventListener({
-        inputId,
+        input,
         resultsContainerId,
-        url: '/User/Search',
-
-        renderItem: (user) => {
-            const li = document.createElement('li');
-            li.textContent = `${user.displayName} (${user.email})`;
-            li.dataset.userId = user.id;
-            return li;
-        },
-
-        onSelect: (user) => {
-            const input = document.getElementById(inputId);
-            input.value = user.displayName;
-            input.dataset.userId = user.id;
-
-            // hide dropdown on select
-            document.getElementById(resultsContainerId).classList.remove('show');
-        }
+        url: "/User/Search",
+        displayText: u => `${u.displayName} (${u.email})`,
+        valueField: "id"
     });
 }
 

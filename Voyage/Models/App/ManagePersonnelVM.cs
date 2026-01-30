@@ -2,7 +2,7 @@
 
 namespace Voyage.Models.App
 {
-    public class ManagePersonnelVM : UserDTO
+    public class ManagePersonnelVM : BaseUserDTO
     {
         public ManagePersonnelVM() 
         {

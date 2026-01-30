@@ -16,7 +16,6 @@ namespace Voyage.Utilities
 
         public async Task CreateGlobalRoles()
         {
-            int index = 1;
             foreach (var role in Enum.GetValues<Constants.DefaultRoles>())
             {
                 var roleName = role.ToString();
@@ -30,7 +29,7 @@ namespace Voyage.Utilities
                         RoleKey = Guid.NewGuid(),
                         RoleVersion = 0.0M,
                         CompanyId = null,
-                        RoleId = index++,
+                        RoleId = Convert.ToInt32(role),
                         RoleName = roleName,
                         RoleDescription = $"Global {roleName} role",
                         IsActive = true,

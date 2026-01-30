@@ -14,7 +14,8 @@ export function init() {
     container.addEventListener("click", handleEvents);
 
     //debounced search
-    addUserSearchEventListener("ticketAssignedTo", "userResults");
+    let input = document.getElementById("ticketAssignedTo");
+    addUserSearchEventListener(input, "userResults");
 }
 
 async function handleEvents(e) {

@@ -112,6 +112,29 @@ namespace Voyage.Data
             }
         }
 
+        //public async Task<List<UserDTO>> GetAvailableUsers(int companyId)
+        //{
+        //    try
+        //    {
+        //        var users = await _db.Users
+        //            .Where(u => u.CompanyId == companyId
+        //                && (u.IndividualUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)
+        //                    || u.TeamUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)
+        //                    || u.DepartmentUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)))
+        //            .ToListAsync();
+        //            //.Select(u => new UserDTO()
+        //            //{
+
+        //            //}
+                   
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e, "Error: HrDAL : GetTeams");
+        //        return null!;
+        //    }
+        //}
+
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
             try
