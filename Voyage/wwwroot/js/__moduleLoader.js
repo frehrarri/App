@@ -46,6 +46,14 @@ const moduleRegistry = {
         js: () => import(`./HR/_hrSettings.js?v=${scriptVersion}`),
         css: `/css/HR/_hrSettings.css?v=${scriptVersion}`
     },
+    assignDepartment: {
+        js: () => import(`./HR/_AssignDepartment.js?v=${scriptVersion}`),
+        css: `/css/HR/_AssignDepartment.css?v=${scriptVersion}`
+    },
+    assignTeam: {
+        js: () => import(`./HR/_AssignTeam.js?v=${scriptVersion}`),
+        css: `/css/HR/_AssignTeam.css?v=${scriptVersion}`
+    },
 
 
     //tickets

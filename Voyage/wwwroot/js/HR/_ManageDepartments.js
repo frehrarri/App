@@ -1,3 +1,6 @@
+import { loadModule } from "/js/__moduleLoader.js";
+
+
 export async function getManageDepartmentsPartial() {
     try {
         const response = await axios.get('/Hr/ManageDepartmentPartial');
@@ -118,21 +121,7 @@ function removeDept(e) {
 }
 
 
-
-async function handleToggleTabs(e) {
-    if (e.target.classList.contains("btn-get-manage-depts")) {
-        document.getElementById("dv-allocate-depts").classList.add("hidden");
-        document.getElementById("dv-manage-departments").classList.remove("hidden");
-    } else if (e.target.classList.contains("btn-get-allocate-depts")) {
-        document.getElementById("dv-allocate-depts").classList.remove("hidden");
-        document.getElementById("dv-manage-departments").classList.add("hidden");
-    }
-
-}
-
 async function handleEvents(e) {
-
-    await handleToggleTabs(e);
 
     //save teams
     if (e.target.id == "dept-save-btn") {
@@ -150,6 +139,10 @@ async function handleEvents(e) {
     //input control for adding team
     if (e.target.classList.contains("add-dept-span")) {
         addDeptInput(e);
+    }
+
+    if (e.type == "click" && e.target.classList.contains("goto-assign-dept")) {
+        await loadModule("assignDepartment");
     }
 
     ////save members to team

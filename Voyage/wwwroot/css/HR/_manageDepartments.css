@@ -1,5 +1,4 @@
-﻿#dv-allocate-depts, #dv-manage-departments {
-/*    border: 1px solid gray;*/
+﻿#dv-manage-departments {
     box-sizing: border-box;
     border-radius: 5px;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
@@ -20,10 +19,6 @@
     display: flex;
 }
 
-#dv-dept-allocate-save-btn {
-    display: flex;
-    justify-content: flex-end;
-}
 
 #manage-depts th:first-child,
 #manage-depts td:first-child {
@@ -31,35 +26,6 @@
     text-align: center !important;
 }
 
-.dv-depts-nav {
-    box-sizing: border-box;
-    border-radius: 3px;
-    box-shadow: .5px .5px 1.5px .5px rgba(0, 0, 0, 0.5);
-    background-color: #e8f0fe;
-    padding: 5px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-    .dv-depts-nav > button {
-        border: none;
-        text-decoration: underline;
-        background-color: #e8f0fe;
-    }
-
-.btn-get-allocate-depts {
-    border-right: 1px solid black;
-}
-
-.allocate-dept-header {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
 
 .manage-dept-header {
     position: relative;

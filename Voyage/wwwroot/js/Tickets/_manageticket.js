@@ -10,7 +10,6 @@ export function init() {
     //        sectionDropdown.value = params.sectionTitle;
     //    }
     //}
-    debugger;
     const container = document.getElementById('tickets-partial-container');
     container.addEventListener("click", handleEvents);
 
@@ -19,7 +18,6 @@ export function init() {
 }
 
 async function handleEvents(e) {
-    debugger;
     if (e.target.id == "submitTicket")
         await saveTicket();
 

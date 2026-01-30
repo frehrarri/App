@@ -159,6 +159,7 @@ namespace Voyage.Data
                     IndivUserRoleVersion = 1m,
                     CompanyId = companyId,
                     EmployeeId = user.EmployeeId,
+                    RoleId = role.RoleId,
                     RoleKey = role.RoleKey
                 };
 

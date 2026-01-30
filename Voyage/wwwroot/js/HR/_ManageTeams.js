@@ -1,4 +1,6 @@
-﻿export async function getManageTeamsPartial() {
+﻿import { loadModule } from "/js/__moduleLoader.js";
+
+export async function getManageTeamsPartial() {
     try {
         const response = await getPartial("Hr", "ManageTeamsPartial");
         document.getElementById("hr-partial-container").innerHTML = response.data;
@@ -216,7 +218,10 @@ async function handleEvents(e) {
     //save members to team
     if (e.target.id == "team-member-save-btn")
         await saveTeamMembers();
-        
+
+    if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
+        await loadModule("assignTeam");
+    }
 }
 
 

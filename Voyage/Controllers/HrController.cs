@@ -71,6 +71,13 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> AssignDepartmentPartial()
+        {
+            return PartialView("~/Views/App/HR/_AssignDepartment.cshtml");
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> ManageTeamsPartial()
         {
             ManageTeamsVM vm = new ManageTeamsVM();
@@ -81,6 +88,12 @@ namespace Voyage.Controllers
                 vm.ManageTeamsDTO = dto;
 
             return PartialView("~/Views/App/HR/_ManageTeams.cshtml", vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignTeamPartial()
+        {
+            return PartialView("~/Views/App/HR/_AssignTeam.cshtml");
         }
 
         [HttpGet]

@@ -4,87 +4,10 @@
     <form id="manage-departments" class="container">
         @Html.AntiForgeryToken()
 
-
-
-        <div id="dv-allocate-depts">
-
-            <div class="allocate-dept-header">
-                <h4>Assign Personnel & Teams</h4>
-                <div class="dv-depts-nav">
-                    <button type="button" class="btn-get-allocate-depts">Assign</button>
-                    <button type="button" class="btn-get-manage-depts">Manage</button>
-                </div>
-            </div>
-
-            <table id="tbl-allocate-depts" class="app-table table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header" scope="col"></th>
-                        <th class="app-table-header" scope="col">Department</th>
-                 @*        <th class="app-table-header" scope="col">Team</th>
-                        <th class="app-table-header" scope="col">First Name</th>
-                        <th class="app-table-header" scope="col">Last Name</th>
-                        <th class="app-table-header" scope="col">Username</th>
-                        <th class="app-table-header" scope="col">Email</th>
-                        <th class="app-table-header" scope="col">Phone</th> *@
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var department in Model.Departments)
-                    {
-                        <tr class="app-table-row">
-                            <td class="app-table-data">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="app-table-data">
-                                @department.Name
-                            </td>
-                          @*   <td class="app-table-data">
-                                <select class="sel-assign-team-member" data-userid="@teamMember.EmployeeId">
-                                    <option value="">Unassigned</option>
-                                    @foreach (var team in Model.ManageTeamsDTO.Teams)
-                                    {
-                                        <option value="@team.TeamId" checked="@(team.TeamId == teamMember.TeamId)">@team.Name</option>
-                                    }
-                                </select>
-                            </td>
-                            <td class="app-table-data">
-                                @teamMember.FirstName
-                            </td>
-                            <td class="app-table-data">
-                                @teamMember.LastName
-                            </td>
-                            <td class="app-table-data">
-                                @teamMember.Username
-                            </td>
-                            <td class="app-table-data">
-                                @teamMember.Email
-                            </td>
-                            <td class="app-table-data">
-                                @teamMember.PhoneNumber
-                            </td> *@
-                        </tr>
-                    }
-
-                </tbody>
-            </table>
-            <br />
-            <div id="dv-dept-allocate-save-btn">
-                <button id="dept-allocate-save-btn" class="primary-btn">Save</button>
-            </div>
-
-        </div>
-
-
-
-        <div id="dv-manage-departments" class="container hidden">
+        <div id="dv-manage-departments" class="container">
 
             <div class="manage-dept-header">
                 <h4>Manage Departments</h4>
-                <div class="dv-depts-nav">
-                    <button type="button" class="btn-get-allocate-depts">Assign</button>
-                    <button type="button" class="btn-get-manage-depts">Manage</button>
-                </div>
             </div>
 
 
@@ -105,7 +28,7 @@
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-                                @dept.Name
+                                <a href="#" class="goto-assign-dept" data-id="@* @dept. *@">@dept.Name</a>
                             </td>
                         </tr>
                     }
