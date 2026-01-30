@@ -2,6 +2,7 @@
 {
     public class UserDTO
     {
+        public string? TeamUserRoleKey { get; set; }
         public int CompanyId { get; set; }
         public int EmployeeId { get; set; }
         public string FirstName { get; set; } = string.Empty;

@@ -81,9 +81,19 @@ function removeUser(e) {
     //remove row of checked boxes
     checkedBoxes.forEach(cb => {
         const row = cb.closest("tr");
-        if (row)
+
+        if (row) {
+            changeTracker.push({
+                id: row.dataset.userid,
+                saveaction: 2 //remove
+            });
+
             row.remove();
+        }
+            
     });
+
+   
 }
 
 function attachAutoComplete(e) {
@@ -118,6 +128,7 @@ function attachAutoComplete(e) {
 function insertSearchResults(user) {
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
+    tr.dataset.userid = user.id;
 
     let checkbox = document.createElement('td');
     checkbox.className = 'app-table-data'
@@ -150,9 +161,21 @@ function insertSearchResults(user) {
 
     let row = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
     row.replaceWith(tr);
+
+    changeTracker.push({
+        id: user.id,
+        saveaction: 1 //add
+    });
 }
 
+function saveTeamMembers() {
+    
+    let teamKey = document.getElementById('hdn-team-key');
+}
 
+const changeTracker = [{
+
+}];
 
 async function handleEvents(e) {
 
@@ -172,9 +195,9 @@ async function handleEvents(e) {
             addNewRow();
 
         //input control for adding team member
-        if (e.target.classList.contains("add-user-span")) 
+        if (e.target.classList.contains("add-user-span"))
             addUserInput(e);
-      
+
     }
     else if (e.type === "input") {
         if (e.target.classList.contains("add-user-input")) {
@@ -182,6 +205,7 @@ async function handleEvents(e) {
             addUserSearchEventListener("dv-allocate-personnel", e.target, resultsContainer, (user) => insertSearchResults(user));
         }
     }
+
     
     ////catch changes to assign team members
     //if (e.target.classList.contains('sel-assign-team-member')) {
@@ -211,4 +235,7 @@ export async function init() {
     container.addEventListener("click", handleEvents);
     container.addEventListener("keydown", handleEvents);
     container.addEventListener("input", handleEvents);
+
+    //let tbody = container.querySelector('#tbl-allocate-personnel > tbody');
+    //tbody.addEventListener("change", handleEvents);
 }

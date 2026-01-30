@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Voyage.Data;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
@@ -104,9 +105,9 @@ namespace Voyage.Business
             return await GetTeams(companyId);
         }
 
-        public async Task SaveTeamMembers(List<TeamDTO> teamMembers)
+        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId, string teamKey)
         {
-            //await _hrDAL.SaveTeamMembers(teamMembers);
+            await _hrDAL.AssignTeamMembers(dto, companyId, teamKey);
 
         }
 

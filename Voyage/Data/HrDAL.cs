@@ -517,7 +517,6 @@ namespace Voyage.Data
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(e, "Error: HrDAL : SaveTeams");
-                throw;
             }
         }
 
@@ -532,12 +531,29 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveTeamMembers(List<TeamDTO> teamMembers, int companyId)
+        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId, string teamKey)
         {
+            using var transaction = await _db.Database.BeginTransactionAsync();
             try
             {
-                TeamUserRole teamUserRole = new TeamUserRole();
-                teamUserRole.CompanyId = companyId;
+                var toRemove = dto.Where(u => u.SaveAction == (int)Constants.SaveAction.Remove);
+                var toAdd = dto.Where(u => u.SaveAction == (int)Constants.SaveAction.Add);
+
+                var users = _db.TeamUserRoles.Where(tur => tur.CompanyId == companyId && tur.TeamKey.ToString() == teamKey);
+
+                //foreach (var user in toAdd)
+                //{
+                //    var newMember = new TeamUserRole();
+                //    newMember.CompanyId = companyId;
+                //    newMember.TeamKey = teamKey;
+
+                //    await _db.TeamUserRoles.AddAsync();
+                //}
+                
+                //users.Add()
+
+                //TeamUserRole teamUserRole = new TeamUserRole();
+                //teamUserRole.CompanyId = companyId;
                 //teamUserRole.
                 //_db.TeamUserRoles.Add();
                 //List<TeamMember> members = new List<TeamMember>();
@@ -553,10 +569,12 @@ namespace Voyage.Data
 
                 //await _db.TeamMembers.AddRangeAsync(members);
                 await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error: HrDAL : SaveTeamMembers");
+                await transaction.RollbackAsync();
+                _logger.LogError(e, "Error: HrDAL : AssignTeamMembers");
             }
         }
 

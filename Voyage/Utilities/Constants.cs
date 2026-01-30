@@ -104,6 +104,12 @@
             System
         }
 
+        public enum SaveAction
+        {
+            Add = 1,
+            Remove = 2,
+        }
+
         public enum DefaultRoles
         {
             Principal = -1,

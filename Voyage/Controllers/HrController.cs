@@ -232,9 +232,10 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveTeamMembers([FromBody] List<TeamDTO> teamMembers)
+        public async Task AssignTeamMembers([FromBody] List<AssignTeamDTO> dto, string teamKey)
         {
-            await _hrBLL.SaveTeamMembers(teamMembers);
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            await _hrBLL.AssignTeamMembers(dto, companyId, teamKey);
         }
 
     }
