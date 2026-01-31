@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20260130023941_First_Commit")]
-    partial class First_Commit
+    [Migration("20260131232751_FirstCommit")]
+    partial class FirstCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -343,7 +343,7 @@ namespace Voyage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CreatedBy")
@@ -381,8 +381,6 @@ namespace Voyage.Migrations
                         .HasColumnType("numeric");
 
                     b.HasKey("RoleKey");
-
-                    b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyRoles", (string)null);
                 });
@@ -802,17 +800,13 @@ namespace Voyage.Migrations
                     b.Property<Guid>("TeamKey")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("TeamUserRoleVersion")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("numeric(5,2)");
-
                     b.HasKey("TeamUserRoleKey");
 
-                    b.HasAlternateKey("TeamKey", "CompanyId", "EmployeeId", "RoleId", "TeamUserRoleVersion");
+                    b.HasAlternateKey("TeamKey", "CompanyId", "EmployeeId");
 
                     b.HasIndex("CompanyId", "EmployeeId");
 
-                    b.HasIndex("RoleId", "TeamUserRoleVersion");
+                    b.HasIndex("CompanyId", "RoleId");
 
                     b.ToTable("TeamUserRoles", (string)null);
                 });
@@ -1171,8 +1165,8 @@ namespace Voyage.Migrations
 
                     b.HasOne("Voyage.Data.TableModels.CompanyRole", "Role")
                         .WithMany("TeamUserRoles")
-                        .HasForeignKey("RoleId", "TeamUserRoleVersion")
-                        .HasPrincipalKey("RoleId", "RoleVersion")
+                        .HasForeignKey("CompanyId", "RoleId")
+                        .HasPrincipalKey("CompanyId", "RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

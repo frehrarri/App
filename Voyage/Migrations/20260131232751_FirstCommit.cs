@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class First_Commit : Migration
+    public partial class FirstCommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -159,7 +159,7 @@ namespace Voyage.Migrations
                     RoleKey = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
                     RoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: true),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
                     RoleName = table.Column<string>(type: "text", nullable: false),
                     RoleDescription = table.Column<string>(type: "text", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -172,6 +172,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CompanyRoles", x => x.RoleKey);
+                    table.UniqueConstraint("AK_CompanyRoles_CompanyId_RoleId", x => new { x.CompanyId, x.RoleId });
                     table.UniqueConstraint("AK_CompanyRoles_RoleId_RoleVersion", x => new { x.RoleId, x.RoleVersion });
                     table.ForeignKey(
                         name: "FK_CompanyRoles_Company_CompanyId",
@@ -533,7 +534,6 @@ namespace Voyage.Migrations
                 columns: table => new
                 {
                     TeamUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
-                    TeamUserRoleVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     TeamKey = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
@@ -548,7 +548,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TeamUserRoles", x => x.TeamUserRoleKey);
-                    table.UniqueConstraint("AK_TeamUserRoles_TeamKey_CompanyId_EmployeeId_RoleId_TeamUserR~", x => new { x.TeamKey, x.CompanyId, x.EmployeeId, x.RoleId, x.TeamUserRoleVersion });
+                    table.UniqueConstraint("AK_TeamUserRoles_TeamKey_CompanyId_EmployeeId", x => new { x.TeamKey, x.CompanyId, x.EmployeeId });
                     table.ForeignKey(
                         name: "FK_TeamUserRoles_AspNetUsers_CompanyId_EmployeeId",
                         columns: x => new { x.CompanyId, x.EmployeeId },
@@ -556,10 +556,10 @@ namespace Voyage.Migrations
                         principalColumns: new[] { "CompanyId", "EmployeeId" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TeamUserRoles_CompanyRoles_RoleId_TeamUserRoleVersion",
-                        columns: x => new { x.RoleId, x.TeamUserRoleVersion },
+                        name: "FK_TeamUserRoles_CompanyRoles_CompanyId_RoleId",
+                        columns: x => new { x.CompanyId, x.RoleId },
                         principalTable: "CompanyRoles",
-                        principalColumns: new[] { "RoleId", "RoleVersion" },
+                        principalColumns: new[] { "CompanyId", "RoleId" },
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TeamUserRoles_Team_TeamKey",
@@ -634,11 +634,6 @@ namespace Voyage.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyRoles_CompanyId",
-                table: "CompanyRoles",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Department_CompanyId",
                 table: "Department",
                 column: "CompanyId");
@@ -702,9 +697,9 @@ namespace Voyage.Migrations
                 columns: new[] { "CompanyId", "EmployeeId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeamUserRoles_RoleId_TeamUserRoleVersion",
+                name: "IX_TeamUserRoles_CompanyId_RoleId",
                 table: "TeamUserRoles",
-                columns: new[] { "RoleId", "TeamUserRoleVersion" });
+                columns: new[] { "CompanyId", "RoleId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_TicketDetails_TicketId_TicketVersion",

@@ -6,8 +6,6 @@ namespace Voyage.Data.TableModels
     public class TeamUserRole : BaseClass, IModelBuilderEF
     {
         public Guid TeamUserRoleKey { get; set; } // surrogate PK
-        public decimal TeamUserRoleVersion { get; set; } // versioning
-
         public Guid TeamKey { get; set; }
         public int CompanyId { get; set; }
         public int EmployeeId { get; set; }
@@ -29,13 +27,9 @@ namespace Voyage.Data.TableModels
                 .Property(tur => tur.TeamUserRoleKey)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<TeamUserRole>()
-                .Property(tur => tur.TeamUserRoleVersion)
-                .HasPrecision(5, 2);
-
             // Alternate key for uniqueness
             modelBuilder.Entity<TeamUserRole>()
-                .HasAlternateKey(tur => new { tur.TeamKey, tur.CompanyId, tur.EmployeeId, tur.RoleId, tur.TeamUserRoleVersion });
+                .HasAlternateKey(tur => new { tur.TeamKey, tur.CompanyId, tur.EmployeeId});
 
             // FK to Team
             modelBuilder.Entity<TeamUserRole>()
@@ -56,8 +50,8 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<TeamUserRole>()
                 .HasOne(tur => tur.Role)
                 .WithMany(r => r.TeamUserRoles)
-               .HasForeignKey(dur => new { dur.RoleId, dur.TeamUserRoleVersion })
-               .HasPrincipalKey(r => new { r.RoleId, r.RoleVersion }) // matches the alternate key
+                .HasForeignKey(tur => new { tur.CompanyId, tur.RoleId })
+                .HasPrincipalKey(r => new { r.CompanyId, r.RoleId })
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
