@@ -61,13 +61,42 @@ function assignIndividualRoles(e) {
     }
 }
 
+function remove(e) {
+    const table = document.querySelectorAll("#manage-personnel tbody tr");
+
+    if (!confirm("Are you sure you want to remove this user?")) {
+        return;
+    }
+
+    table.forEach(r => {
+        
+        const row = r.closest("tr");
+        if (row) {
+
+            const cbx = row.querySelector('td > input');
+            if (cbx.checked) {
+
+                const key = row.dataset.key;
+                const employeeId = row.querySelector('#employeeid').textContent.trim();
+                row.remove();
+
+                changeTracker.set(key, {
+                    employeeId: parseInt(employeeId),
+                    DbSaveAction: 2 // Remove
+                });
+            }
+
+    
+        }
+    });
+}
+
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 async function save(e) {
     if (changeTracker.size === 0) {
         return;
     }
-    debugger;
     const payload = Array.from(changeTracker.values());
 
     try {
@@ -103,8 +132,11 @@ async function handleEvents(e) {
         if (e.target.id === "save-btn")
             await save(e);
 
-        if (e.target.tagName == "INPUT" && e.target.type === "checkbox")
+        if (e.target.className === "cbx-active")
             toggleActiveStatus(e);
+
+        if (e.target.id === "btn-delete")
+            remove(e);
     }
     else if (e.type == "change") {
         if (e.target.className === "sel-assign-role") {

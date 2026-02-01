@@ -6,10 +6,17 @@
     <form id="manage-personnel">
         @Html.AntiForgeryToken()
         <div id="dv-personnel-grid">
-
-            <h4>Manage Personnel</h4>
+            <div id="dv-header-container">
+                <h4>Manage Personnel</h4>
+                <div id="dv-register-personnel">
+                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
+                    <div id="dv-send-registration-email">
+                        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
+                        <input type="email" placeholder="Employee Registration Email" />
+                    </div>
+                </div>
+            </div>
             
-
             <table class="app-table">
                 <thead>
                     <tr class="app-table-row">
@@ -31,7 +38,7 @@
 
                         <tr class="app-table-row" data-key="@guid">
                             <td class="app-table-data">
-                                <input type="checkbox" />
+                                <input type="checkbox" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
                             </td>
                             <td>
                                 <select class="sel-assign-role" data-key="@guid" data-userid="@user.EmployeeId" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "")>
@@ -66,7 +73,7 @@
                                     }
                                 </select>
                             </td>
-                            <td class="app-table-data">
+                            <td id="employeeid" class="app-table-data">
                                 @user.EmployeeId
                             </td>
                             <td class="app-table-data">
@@ -95,13 +102,7 @@
                 </tbody>
             </table>
             <div id="btn-container">
-                <div id="dv-register-personnel">
-                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
-                    <div id="dv-send-registration-email">
-                        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
-                        <input type="email" placeholder="Employee Registration Email" />
-                    </div>
-                </div>
+                <button type="button" id="btn-delete" class="warning-btn">Delete</button>
                 <button type="button" id="save-btn" class="primary-btn">Save</button>
             </div>
         </div>

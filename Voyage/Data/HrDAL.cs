@@ -208,13 +208,13 @@ namespace Voyage.Data
                             break;
 
                         case (int)SaveAction.Remove:
-                            var roleToDelete = await _db.IndividualUserRoles.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId
-                                                                                        && r.CompanyId == companyId);
 
-                            if (roleToDelete != null)
-                            {
-                                _db.IndividualUserRoles.Remove(roleToDelete);
-                            }
+                            var userToDelete = await _db.Users.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId
+                                                                                        && r.CompanyId == companyId);
+                            
+                            if (userToDelete != null)
+                                _db.Users.Remove(userToDelete);
+
                             break;
                     }
                 }
