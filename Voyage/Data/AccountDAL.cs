@@ -54,7 +54,10 @@ namespace Voyage.Data
                 //this will be the Company Owner's registration because we add a new company to the company table.
                 if (isNewCompany)
                 {
+                    companyId = await GetNextCompanyId();
+
                     Company company = new Company();
+                    company.CompanyId = companyId;
                     company.Name = details.Company.Name;
                     company.Email = details.Company.Email;
                     company.Phone = details.Company.Phone;
@@ -129,6 +132,11 @@ namespace Voyage.Data
                 _logger.LogError(e, "error: register user");
                 return null!;
             }
+        }
+
+        private async Task<int> GetNextCompanyId()
+        {
+            return await _db.Companies.MaxAsync(c => c.CompanyId) + 1;
         }
 
         private async Task AssignRoleToUser(AppUser user, int roleId, int companyId)

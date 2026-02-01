@@ -14,5 +14,7 @@
         public string TeamKey { get; set; }
         public int SaveAction { get; set; }
         public int CompanyId { get; set; }
+        public int EmployeeId { get; set; }
+        public int RoleId { get; set; }
     }
 }

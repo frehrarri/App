@@ -40,9 +40,9 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<Company>()
                 .HasKey(c => c.CompanyId);
 
-            modelBuilder.Entity<Company>()
+            modelBuilder.Entity<Company>() //must manually set the CompanyId for roleseeder to work
                 .Property(c => c.CompanyId)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedNever();
 
             //FK Users Collection
             modelBuilder.Entity<Company>()

@@ -533,48 +533,72 @@ namespace Voyage.Data
 
         public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId, string teamKey)
         {
-            using var transaction = await _db.Database.BeginTransactionAsync();
+            var teamGuid = Guid.Parse(teamKey);
+
+            using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var toRemove = dto.Where(u => u.SaveAction == (int)Constants.SaveAction.Remove);
-                var toAdd = dto.Where(u => u.SaveAction == (int)Constants.SaveAction.Add);
+                var existing = await _db.TeamUserRoles
+                    .Where(tur =>
+                        tur.CompanyId == companyId &&
+                        tur.TeamKey == teamGuid)
+                    .ToListAsync();
 
-                var users = _db.TeamUserRoles.Where(tur => tur.CompanyId == companyId && tur.TeamKey.ToString() == teamKey);
+                //remove
+                var removeIds = dto
+                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Remove)
+                    .Select(d => d.EmployeeId)
+                    .ToHashSet();
 
-                //foreach (var user in toAdd)
+                var toRemove = existing
+                    .Where(e => removeIds.Contains(e.EmployeeId))
+                    .ToList();
+
+                _db.TeamUserRoles.RemoveRange(toRemove);
+
+                //add
+                var existingEmployeeIds = existing
+                    .Select(e => e.EmployeeId)
+                    .ToHashSet();
+
+                var toAdd = dto
+                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Add)
+                    .Where(d => !existingEmployeeIds.Contains(d.EmployeeId));
+
+                foreach (var item in toAdd)
+                {
+                    _db.TeamUserRoles.Add(new TeamUserRole
+                    {
+                        TeamKey = teamGuid,
+                        CompanyId = companyId,
+                        EmployeeId = item.EmployeeId,
+                        RoleId = item.RoleId
+                    });
+                }
+
+                //update
+                //var toUpdate = dto
+                //    .Where(d => d.SaveAction == (int)Constants.SaveAction.Update);
+
+                //foreach (var item in toUpdate)
                 //{
-                //    var newMember = new TeamUserRole();
-                //    newMember.CompanyId = companyId;
-                //    newMember.TeamKey = teamKey;
+                //    var existingRow = existing
+                //        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
 
-                //    await _db.TeamUserRoles.AddAsync();
-                //}
-                
-                //users.Add()
-
-                //TeamUserRole teamUserRole = new TeamUserRole();
-                //teamUserRole.CompanyId = companyId;
-                //teamUserRole.
-                //_db.TeamUserRoles.Add();
-                //List<TeamMember> members = new List<TeamMember>();
-
-                //foreach (var m in teamMembers)
-                //{
-                //    members.Add(new TeamMember()
+                //    if (existingRow != null &&
+                //        existingRow.RoleId != item.RoleId)
                 //    {
-                //        //TeamId = m.TeamId,
-                //        //CompanyId = m.UserId
-                //    });
+                //        existingRow.RoleId = item.RoleId;
+                //    }
                 //}
 
-                //await _db.TeamMembers.AddRangeAsync(members);
                 await _db.SaveChangesAsync();
-                await transaction.CommitAsync();
+                await tx.CommitAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                _logger.LogError(e, "Error: HrDAL : AssignTeamMembers");
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "Error: HrDAL.AssignTeamMembers()");
             }
         }
 

@@ -108,6 +108,7 @@
         {
             Add = 1,
             Remove = 2,
+            Update = 3
         }
 
         public enum DefaultRoles
