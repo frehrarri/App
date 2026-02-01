@@ -18,6 +18,7 @@ namespace Voyage.Data.TableModels
         public string City { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public int PostalCode { get; set; }
+        public bool IsActiveUser { get; set; }
 
         #region FK
         //all users are associated with a company on registration

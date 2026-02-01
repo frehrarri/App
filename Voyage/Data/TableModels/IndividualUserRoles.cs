@@ -32,7 +32,7 @@ namespace Voyage.Data.TableModels
 
             // Alternate key for uniqueness
             modelBuilder.Entity<IndividualUserRole>()
-                .HasAlternateKey(cur => new { cur.CompanyId, cur.EmployeeId, cur.RoleId });
+                .HasAlternateKey(cur => new { cur.CompanyId, cur.EmployeeId });
 
             // FK to Company
             modelBuilder.Entity<IndividualUserRole>()

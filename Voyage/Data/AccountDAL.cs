@@ -98,7 +98,8 @@ namespace Voyage.Data
                     Country = details.Country.Trim(),
                     PostalCode = details.ZipCode,
                     CompanyId = companyId,
-                    EmployeeId = details.IsCompanyRegistration ? 1 : await GetNextEmployeeId(companyId) 
+                    EmployeeId = details.IsCompanyRegistration ? 1 : await GetNextEmployeeId(companyId),
+                    IsActiveUser = isNewCompany ? true : false
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user, details.Password);

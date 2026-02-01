@@ -80,7 +80,11 @@ namespace Voyage.Business
             dto.TeamMembers = list; 
             dto.Teams = await GetTeams(companyId);
             return dto;
+        }
 
+        public async Task<bool> SavePersonnel(List<ManagePersonnelDTO> personnel, int companyId)
+        {
+            return await _hrDAL.SavePersonnel(personnel, companyId);
         }
 
         public async Task<bool> SaveRoles(List<ManageRolesDTO> roles, int companyId)

@@ -143,7 +143,6 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 async function saveRoles() {
 
     if (changeTracker.size === 0) {
-        alert('No changes to save');
         return;
     }
 

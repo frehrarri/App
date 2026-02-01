@@ -40,7 +40,8 @@ namespace Voyage.Data
                         Username = u.UserName!,
                         Email = u.Email!,
                         RoleId = u.IndividualUserRoles.Where(iur => iur.EmployeeId == u.EmployeeId).Select(iur => iur.RoleId).FirstOrDefault(),
-                        Role = u.IndividualUserRoles.Where(iur => iur.EmployeeId == u.EmployeeId).Select(iur => iur.Role.RoleName).FirstOrDefault() ?? ""
+                        Role = u.IndividualUserRoles.Where(iur => iur.EmployeeId == u.EmployeeId).Select(iur => iur.Role.RoleName).FirstOrDefault() ?? "",
+                        IsUserActive = u.IsActiveUser
                     }).ToListAsync();
             }
             catch (Exception e)
@@ -177,6 +178,58 @@ namespace Voyage.Data
                 _logger.LogError(e, "Error: HrDAL : GetTeamMembers");
                 return null!;
             }
+        }
+
+        public async Task<bool> SavePersonnel(List<ManagePersonnelDTO> personnel, int companyId)
+        {
+            var datetime = DateTime.UtcNow;
+
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var person in personnel)
+                {
+                    switch (person.DbSaveAction)
+                    {         
+                        case (int)SaveAction.Save:
+                            var existingRole = await _db.IndividualUserRoles.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId && r.CompanyId == companyId);
+
+                            if (existingRole != null)
+                            {
+                                existingRole.IsActive = person.IsUserActive;
+                                existingRole.RoleId = person.RoleId;
+
+                                var user = await _db.Users.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId && r.CompanyId == companyId);
+
+                                if(user != null)
+                                    user.IsActiveUser = person.IsUserActive;
+                            }
+
+                            break;
+
+                        case (int)SaveAction.Remove:
+                            var roleToDelete = await _db.IndividualUserRoles.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId
+                                                                                        && r.CompanyId == companyId);
+
+                            if (roleToDelete != null)
+                            {
+                                _db.IndividualUserRoles.Remove(roleToDelete);
+                            }
+                            break;
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(e, "Error: HrDAL.SaveRoles()");
+                return false;
+            }
+
         }
 
         public async Task<bool> SaveRoles(List<ManageRolesDTO> roles, int companyId)

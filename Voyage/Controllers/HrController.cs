@@ -47,7 +47,6 @@ namespace Voyage.Controllers
                     vm.Roles = roles;
             }
 
-                
             return PartialView("~/Views/App/HR/_ManagePersonnel.cshtml", vm);
         }
 
@@ -139,8 +138,6 @@ namespace Voyage.Controllers
             return PartialView("~/Views/App/HR/_HrSettings.cshtml");
         }
 
-
-
         [HttpGet]
         public async Task<List<ManagePersonnelDTO>> GetPersonnel()
         {
@@ -174,6 +171,20 @@ namespace Voyage.Controllers
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
             return await _hrBLL.GetPermissions();
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task<IActionResult> SavePersonnel([FromBody] List<ManagePersonnelDTO> personnel)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var username = HttpContext.Session.GetString("Username");
+
+            if (!string.IsNullOrEmpty(username))
+                personnel.ForEach(r => r.CreatedBy = username);
+
+            bool isSuccess = await _hrBLL.SavePersonnel(personnel, companyId!.Value);
+            return Json(isSuccess);
         }
 
         [HttpPost]

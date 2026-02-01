@@ -8,22 +8,14 @@
         <div id="dv-personnel-grid">
 
             <h4>Manage Personnel</h4>
-            <div id="dv-register-personnel">
-                <button id="self-register-button" class="primary-btn" type="button">Register</button>
-
-                <div id="dv-send-registration-email">
-                    <button id="register-email-button" class="secondary-btn" type="button">Send</button>
-                    <input type="email" placeholder="Employee Registration Email" />
-                </div>
-
-            </div>
+            
 
             <table class="app-table">
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header"></th>
                         <th class="app-table-header">Role</th>
-                        <th class="app-table-header">Id</th>
+                        <th class="app-table-header">Employee Id</th>
                         <th class="app-table-header">First Name</th>
                         <th class="app-table-header">Last Name</th>
                         <th class="app-table-header">Username</th>
@@ -35,17 +27,22 @@
                 <tbody>
                     @foreach (var user in Model.Personnel)
                     {
-                        <tr class="app-table-row">
+                        Guid guid = Guid.NewGuid();
+
+                        <tr class="app-table-row" data-key="@guid">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td>
-                                @{
-                                    bool isDisabled = user.RoleId == (int)Constants.DefaultRoles.Principal;
-                                }
+                                <select class="sel-assign-role" data-key="@guid" data-userid="@user.EmployeeId" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "")>
 
-                                <select class="sel-assign-role" data-userid="@user.EmployeeId" disabled="@isDisabled">
-                                    <option value="@((int)Constants.DefaultRoles.Unassigned)" selected="@((user.RoleId == (int)Constants.DefaultRoles.Unassigned).ToString().ToLower())">Unassigned</option>
+                                    @if (user.RoleId == (int)Constants.DefaultRoles.Unassigned){
+                                        <option value="@((int)Constants.DefaultRoles.Unassigned)" selected>Unassigned</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@((int)Constants.DefaultRoles.Unassigned)">Unassigned</option>
+                                    }
 
                                     @foreach (var role in Model.Roles)
                                     {
@@ -88,16 +85,25 @@
                                 @* phone *@
                             </td>
                             <td class="app-table-data">
-                                <input type="checkbox" />
+                                <input class="cbx-active" type="checkbox" data-userid="@user.EmployeeId" data-key="@guid" 
+                                        @(user.IsUserActive ? "checked" : "") 
+                                        @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
                             </td>
                         </tr>
                     }
 
                 </tbody>
             </table>
-
- 
-
+            <div id="btn-container">
+                <div id="dv-register-personnel">
+                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
+                    <div id="dv-send-registration-email">
+                        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
+                        <input type="email" placeholder="Employee Registration Email" />
+                    </div>
+                </div>
+                <button type="button" id="save-btn" class="primary-btn">Save</button>
+            </div>
         </div>
 
     </form>

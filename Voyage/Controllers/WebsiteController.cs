@@ -29,6 +29,7 @@ namespace Voyage.Controllers
 
         public IActionResult Home()
         {
+            ViewBag.FirstName = HttpContext.Session.GetString("FirstName");
             return View("Home");
         }
 

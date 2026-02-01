@@ -1,5 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
+const changeTracker = new Map();
+
 export async function getManagePersonnelPartial() {
     try {
         const companyId = parseInt(document.getElementById('hdnCompanyId').value);
@@ -9,22 +11,106 @@ export async function getManagePersonnelPartial() {
         });
 
         return response.data;
-    } catch (error) {
+    }
+    catch (error) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
 } 
 
+function toggleActiveStatus(e) {
+    let key = e.target.dataset.key;
+    
+    let record = changeTracker.get(key);
+    if (record) {
+        record.isUserActive = e.target.checked;
+    }
+    else {
+        const roleId = document.querySelector(`.sel-assign-role[data-key="${key}"]`).value;
+        let changes = {
+            isUserActive: e.target.checked ?? false,
+            roleId: roleId,
+            employeeId: parseInt(e.target.dataset.userid),
+            dbSaveAction: 1
+        }
+
+        changeTracker.set(key, changes);
+    }
+}
+
+function assignIndividualRoles(e) {
+    
+    let key = e.target.dataset.key;
+    
+    //existing changes
+    let record = changeTracker.get(key);
+    if (record) {
+        record.roleId = e.target.value;
+    }
+    //new change
+    else {
+        const isActive = document.querySelector(`.cbx-active[data-key="${key}"]`).checked;
+        let changes = {
+            isUserActive: isActive ?? false,
+            roleId: e.target.value,
+            employeeId: parseInt(e.target.dataset.userid),
+            dbSaveAction: 1
+        }
+
+        changeTracker.set(key, changes);
+    }
+}
+
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+async function save(e) {
+    if (changeTracker.size === 0) {
+        return;
+    }
+    debugger;
+    const payload = Array.from(changeTracker.values());
+
+    try {
+        const response = await axios.post('/Hr/SavePersonnel', payload, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.data) {
+            alert("Success")
+            changeTracker.clear();
+        } else {
+            alert("Error");
+        }
+
+        return response.data;
+    } catch (error) {
+        alert("Error");
+        console.error("error", error);
+        return false;
+    }
+}
 
 async function handleEvents(e) {
-    if (e.target.tagName == "INPUT")
-        return;
+    if (e.type == "click") {
+        if (e.target.id === "self-register-button") {
+            e.preventDefault();
+            await loadModule("registerEmployee");
+        }
 
-    if (e.target.id == "self-register-button") {
-        e.preventDefault();
-        await loadModule("registerEmployee");
+        if (e.target.id === "save-btn")
+            await save(e);
+
+        if (e.target.tagName == "INPUT" && e.target.type === "checkbox")
+            toggleActiveStatus(e);
     }
-
+    else if (e.type == "change") {
+        if (e.target.className === "sel-assign-role") {
+            assignIndividualRoles(e);
+        }
+    }
 }
 
 
@@ -35,6 +121,10 @@ export async function init() {
 
     //event handlers
     const container = document.getElementById('hr-partial-container');
-    if (container)
+    if (container) {
         container.addEventListener("click", handleEvents);
+        container.addEventListener("change", handleEvents);
+    }
+
+
 }

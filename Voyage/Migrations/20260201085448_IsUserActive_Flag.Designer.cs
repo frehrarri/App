@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260201085448_IsUserActive_Flag")]
+    partial class IsUserActive_Flag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -516,7 +519,7 @@ namespace Voyage.Migrations
 
                     b.HasKey("IndivUserRoleKey");
 
-                    b.HasAlternateKey("CompanyId", "EmployeeId");
+                    b.HasAlternateKey("CompanyId", "EmployeeId", "RoleId");
 
                     b.HasIndex("RoleKey");
 

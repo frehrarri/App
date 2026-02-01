@@ -42,6 +42,8 @@ namespace Voyage.Utilities
                         context.Session.SetInt32("CompanyId", user.CompanyId);
                         context.Session.SetInt32("EmployeeId", user.EmployeeId);
                         context.Session.SetString("Username", user.UserName);
+                        context.Session.SetString("FirstName", user.FirstName);
+                        context.Session.SetString("LastName", user.LastName);
                     }
                 }
             }
