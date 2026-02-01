@@ -7,7 +7,6 @@ namespace Voyage.Data.TableModels
     {
         public Guid DepartmentKey { get; set; }
         public int DepartmentId { get; set; }
-        public decimal DepartmentVersion { get; set; }
         public string Name { get; set; } = string.Empty;
 
         #region FK
@@ -40,14 +39,6 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<Department>()
                 .HasIndex(t => t.DepartmentId);
     
-            modelBuilder.Entity<Department>()
-                .Property(d => d.DepartmentVersion)
-                .HasPrecision(5, 2);
-
-            //versioning
-            modelBuilder.Entity<Department>()
-                .HasAlternateKey(t => new { t.DepartmentId, t.DepartmentVersion });
-
             //FK from Company
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Company)

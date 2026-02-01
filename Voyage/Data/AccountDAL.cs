@@ -146,7 +146,6 @@ namespace Voyage.Data
                 // Always fetch the tracked Role instance
                 var role = await _db.CompanyRoles
                     .Where(r => r.RoleId == roleId)
-                    .OrderByDescending(r => r.RoleVersion)
                     .FirstOrDefaultAsync();
 
                 if (role == null)
@@ -164,7 +163,6 @@ namespace Voyage.Data
                 var userRole = new IndividualUserRole
                 {
                     IndivUserRoleKey = Guid.NewGuid(),
-                    IndivUserRoleVersion = 1m,
                     CompanyId = companyId,
                     EmployeeId = user.EmployeeId,
                     RoleId = role.RoleId,

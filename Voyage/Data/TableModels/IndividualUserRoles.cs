@@ -6,7 +6,6 @@ namespace Voyage.Data.TableModels
     public class IndividualUserRole : BaseClass, IModelBuilderEF
     {
         public Guid IndivUserRoleKey { get; set; } // surrogate PK
-        public decimal IndivUserRoleVersion { get; set; } // versioning
 
         public int CompanyId { get; set; }
         public int EmployeeId { get; set; }
@@ -31,13 +30,9 @@ namespace Voyage.Data.TableModels
                 .Property(cur => cur.IndivUserRoleKey)
                 .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<IndividualUserRole>()
-                .Property(cur => cur.IndivUserRoleVersion)
-                .HasPrecision(5, 2);
-
             // Alternate key for uniqueness
             modelBuilder.Entity<IndividualUserRole>()
-                .HasAlternateKey(cur => new { cur.CompanyId, cur.EmployeeId, cur.RoleId, cur.IndivUserRoleVersion });
+                .HasAlternateKey(cur => new { cur.CompanyId, cur.EmployeeId, cur.RoleId });
 
             // FK to Company
             modelBuilder.Entity<IndividualUserRole>()

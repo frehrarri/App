@@ -174,13 +174,6 @@ namespace Voyage.Controllers
             return await _hrBLL.GetPermissions();
         }
 
-        //[HttpGet]
-        //public async Task<List<TeamMemberDTO>> GetTeamMembers()
-        //{
-        //    return await _hrBLL.GetTeamMembers();
-        //}
-
-
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public async Task SaveRoles([FromBody] List<string> roles)

@@ -55,8 +55,8 @@ namespace Voyage.Data
             try
             {
                 return await _db.CompanyRoles
-                  .Where(r => r.CompanyId == companyId
-                    || r.CompanyId == null
+                  .Where(r => (r.CompanyId == companyId
+                    || r.CompanyId == 0)
                     && r.IsLatest == true
                     && r.IsActive == true)
                   .Select(r => new ManageRolesDTO
@@ -223,7 +223,6 @@ namespace Voyage.Data
                                 RoleId = existing.RoleId,
                                 RoleName = roleDto.Name,
                                 CompanyId = companyId,
-                                RoleVersion = existing.RoleVersion + 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = existing.CreatedDate,
@@ -237,7 +236,6 @@ namespace Voyage.Data
                                 RoleId = nextRoleId,
                                 RoleName = roleDto.Name,
                                 CompanyId = companyId,
-                                RoleVersion = 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = DateTime.UtcNow,
@@ -304,7 +302,6 @@ namespace Voyage.Data
                                 DepartmentId = existing.DepartmentId,
                                 Name = deptDto.Name,
                                 CompanyId = companyId,
-                                DepartmentVersion = existing.DepartmentVersion + 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = existing.CreatedDate,
@@ -319,7 +316,6 @@ namespace Voyage.Data
                                 DepartmentId = nextDepartmentId,
                                 Name = deptDto.Name,
                                 CompanyId = companyId,
-                                DepartmentVersion = 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = DateTime.UtcNow,
@@ -343,7 +339,6 @@ namespace Voyage.Data
                         DepartmentId = deptToDelete.DepartmentId,
                         Name = deptToDelete.Name,
                         CompanyId = companyId,
-                        DepartmentVersion = deptToDelete.DepartmentVersion + 1.0M,
                         IsLatest = true,
                         IsActive = false, // mark as deleted
                         CreatedDate = deptToDelete.CreatedDate,
@@ -457,7 +452,6 @@ namespace Voyage.Data
                                 TeamId = existing.TeamId,
                                 Name = teamDto.Name,
                                 CompanyId = companyId,
-                                TeamVersion = existing.TeamVersion + 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = existing.CreatedDate,
@@ -472,7 +466,6 @@ namespace Voyage.Data
                                 TeamId = nextTeamId,
                                 Name = teamDto.Name,
                                 CompanyId = companyId,
-                                TeamVersion = 1.0M,
                                 IsLatest = true,
                                 IsActive = true,
                                 CreatedDate = DateTime.UtcNow,
@@ -496,7 +489,6 @@ namespace Voyage.Data
                         TeamId = teamToDelete.TeamId,
                         Name = teamToDelete.Name,
                         CompanyId = companyId,
-                        TeamVersion = teamToDelete.TeamVersion + 1.0M,
                         IsLatest = true,
                         IsActive = false, // mark as deleted
                         CreatedDate = teamToDelete.CreatedDate,

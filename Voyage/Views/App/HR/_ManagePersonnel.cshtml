@@ -41,19 +41,31 @@
                             </td>
                             <td>
                                 @{
-                                    bool isDisabled = user.Role == Constants.DefaultRoles.Principal.ToString() 
-                                                        && user.RoleId == (int)Constants.DefaultRoles.Principal;
+                                    bool isDisabled = user.RoleId == (int)Constants.DefaultRoles.Principal;
                                 }
 
                                 <select class="sel-assign-role" data-userid="@user.EmployeeId" disabled="@isDisabled">
-                                    <option value="@((int)Constants.DefaultRoles.Unassigned)" selected="@(user.RoleId == (int)Constants.DefaultRoles.Unassigned)">Unassigned</option>
+                                    <option value="@((int)Constants.DefaultRoles.Unassigned)" selected="@((user.RoleId == (int)Constants.DefaultRoles.Unassigned).ToString().ToLower())">Unassigned</option>
 
                                     @foreach (var role in Model.Roles)
                                     {
+                                        //prevent duplicate unassigned, keep it as default value
                                         if (role.Name == Constants.DefaultRoles.Unassigned.ToString())
                                             continue;
 
-                                        <option value="@role.RoleId" selected="@(role.Name.ToUpper() == user.Role.ToUpper() && role.RoleId == user.RoleId)">@role.Name</option>
+                                        //prevent assigning of principal role
+                                        if (user.RoleId != (int)Constants.DefaultRoles.Principal && role.RoleId == (int)Constants.DefaultRoles.Principal)
+                                            continue;
+
+                                        //default to assigned roles
+                                        if (role.RoleId == user.RoleId)
+                                        {
+                                            <option value="@role.RoleId" selected>@role.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@role.RoleId">@role.Name</option>
+                                        }
                                     }
                                 </select>
                             </td>

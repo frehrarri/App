@@ -34,7 +34,6 @@ namespace Voyage.Utilities
                             .Include(ur => ur.Role)
                             .Where(ur => ur.EmployeeId == user.EmployeeId
                                          && ur.CompanyId == user.CompanyId)
-                            .OrderByDescending(ur => ur.IndivUserRoleVersion)
                             .FirstOrDefaultAsync();
 
                         if (userRole != null)

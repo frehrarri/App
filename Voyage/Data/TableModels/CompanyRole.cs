@@ -7,7 +7,6 @@ namespace Voyage.Data.TableModels
     {
         public Guid RoleKey { get; set; }             
         public int RoleId { get; set; }                
-        public decimal RoleVersion { get; set; }      
 
         public int? CompanyId { get; set; }
         public string RoleName { get; set; } = string.Empty;

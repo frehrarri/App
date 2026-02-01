@@ -8,7 +8,6 @@ namespace Voyage.Data.TableModels
     {
         public Guid TeamKey { get; set; }
         public int TeamId { get; set; }
-        public decimal TeamVersion { get; set; }
         public string Name { get; set; } = string.Empty;
 
         #region FK
@@ -43,11 +42,7 @@ namespace Voyage.Data.TableModels
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Team>()
-                .Property(t => t.TeamVersion)
-                .HasPrecision(5, 2);
-
-            modelBuilder.Entity<Team>()
-                .HasAlternateKey(t => new { t.TeamId, t.TeamVersion });
+                .HasAlternateKey(t => t.TeamId);
 
             //FK to Company
             modelBuilder.Entity<Team>()

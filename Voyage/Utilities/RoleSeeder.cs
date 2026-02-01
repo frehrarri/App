@@ -43,7 +43,6 @@ namespace Voyage.Utilities
                     var newRole = new CompanyRole
                     {
                         RoleKey = Guid.NewGuid(),
-                        RoleVersion = 0.0M,
                         CompanyId = COMPANYID_SEED,
                         RoleId = Convert.ToInt32(role),
                         RoleName = roleName,

@@ -168,14 +168,35 @@ function insertSearchResults(user) {
     });
 }
 
-function saveTeamMembers() {
-    
-    let teamKey = document.getElementById('hdn-team-key');
+const changeTracker = [{}];
+
+async function saveTeamMembers() {
+    let response;
+    debugger;
+    let payload = {
+        teamKey: document.getElementById('hdn-team-key'),
+        dto: changeTracker
+    }
+
+    try {
+        response = await axios.post('/Hr/AssignTeamMembers', payload, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response && response.data) {
+            showSuccess(true);
+            return response.data;
+        }
+
+    } catch (error) {
+        showSuccess(false);
+        console.error("error", error);
+        return false;
+    }
 }
-
-const changeTracker = [{
-
-}];
 
 async function handleEvents(e) {
 
@@ -198,6 +219,9 @@ async function handleEvents(e) {
         if (e.target.classList.contains("add-user-span"))
             addUserInput(e);
 
+        //save members to team
+        if (e.target.id == "assign-btn")
+            await saveTeamMembers();
     }
     else if (e.type === "input") {
         if (e.target.classList.contains("add-user-input")) {
@@ -206,23 +230,7 @@ async function handleEvents(e) {
         }
     }
 
-    
-    ////catch changes to assign team members
-    //if (e.target.classList.contains('sel-assign-team-member')) {
 
-    //    if (e.target.dataset.userid && e.target.value) {
-
-    //        const teamDto = {
-    //            userId: parseInt(e.target.dataset.userid),
-    //            teamId: parseInt(e.target.value)
-    //        }
-    //        teamMembers.push(teamDto);
-    //    }
-    //}
-
-    ////save members to team
-    //if (e.target.id == "team-member-save-btn")
-    //    await saveTeamMembers();
 }
 
 export async function init() {

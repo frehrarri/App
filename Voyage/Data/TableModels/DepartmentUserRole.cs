@@ -6,7 +6,6 @@ namespace Voyage.Data.TableModels
     public class DepartmentUserRole : BaseClass, IModelBuilderEF
     {
         public Guid DepartmentUserRoleKey { get; set; }
-        public decimal DeptUserRoleVersion { get; set; }
         public Guid DepartmentKey { get; set; }
 
         public int CompanyId { get; set; }
@@ -27,7 +26,7 @@ namespace Voyage.Data.TableModels
 
             //versioning
             modelBuilder.Entity<DepartmentUserRole>()
-                .HasAlternateKey(dur => new { dur.DepartmentKey, dur.CompanyId, dur.EmployeeId, dur.RoleId, dur.DeptUserRoleVersion });
+                .HasAlternateKey(dur => new { dur.DepartmentKey, dur.CompanyId, dur.EmployeeId, dur.RoleId });
 
             // Department FK
             modelBuilder.Entity<DepartmentUserRole>()
@@ -48,8 +47,8 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<DepartmentUserRole>()
                .HasOne(dur => dur.Role)
                .WithMany(r => r.DepartmentUserRoles)
-               .HasForeignKey(dur => new { dur.RoleId, dur.DeptUserRoleVersion })
-               .HasPrincipalKey(r => new { r.RoleId, r.RoleVersion }) // matches the alternate key
+               .HasForeignKey(dur => dur.RoleId)
+               .HasPrincipalKey(r => r.RoleId) // matches the alternate key
                .OnDelete(DeleteBehavior.Restrict);
         }
     }
