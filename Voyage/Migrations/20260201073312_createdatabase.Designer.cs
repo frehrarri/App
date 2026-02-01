@@ -12,8 +12,8 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    [Migration("20260201011643_RemoveVersioning")]
-    partial class RemoveVersioning
+    [Migration("20260201073312_createdatabase")]
+    partial class createdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

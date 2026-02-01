@@ -17,15 +17,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var team in Model.Roles.Where(r => r.Name != Constants.DefaultRoles.Unassigned.ToString() 
+                    @foreach (var role in Model.Roles.Where(r => r.Name != Constants.DefaultRoles.Unassigned.ToString() 
                                                                 && r.Name != Constants.DefaultRoles.Principal.ToString()))
                     {
-                        <tr class="app-table-row">
+                        Guid uid = new Guid();
+
+                        <tr class="app-table-row" data-role-id="@role.RoleId" data-tracking-key="@(role.RoleId > 0 ? role.RoleId : uid)">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-                                @team.Name
+                                <span data-role-id="@role.RoleId" data-tracking-key="@(role.RoleId > 0 ? role.RoleId : uid)" class="add-role-span">@role.Name</span>
                             </td>
                         </tr>
                     }
@@ -33,7 +35,7 @@
                 </tbody>
             </table>
 
-            <div id="dv-team-btns" class="container">
+            <div id="dv-role-btns" class="container">
                 <div id="btn-container">
                     <button id="add-role-btn" class="primary-btn" type="button">Add</button>
                     <button id="remove-role-btn" class="warning-btn" type="button">Remove</button>

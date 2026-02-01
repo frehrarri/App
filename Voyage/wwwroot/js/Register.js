@@ -123,8 +123,9 @@ const registerCompany = async (e) => {
                     'X-CSRF-TOKEN': token
                 }
             });
-            
+            debugger;
             if (response.data.redirectURL) {
+                alert("Registration Successful");
                 window.location.href = response.data.redirectURL;
             }
 

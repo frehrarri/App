@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace Voyage.Controllers
     public class HrController : Controller
     {
         private readonly HrBLL _hrBLL;
+    
 
         public HrController(HrBLL hrBLL)
         {
@@ -176,16 +178,16 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveRoles([FromBody] List<string> roles)
+        public async Task<IActionResult> SaveRoles([FromBody] List<ManageRolesDTO> roles)
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var dto = roles.Select(d => new RoleDTO
-            {
-                Name = d,
-                CompanyId = companyId!.Value
-            }).ToList();
+            var username = HttpContext.Session.GetString("Username");
 
-            await _hrBLL.SaveRoles(dto, companyId!.Value);
+            if (!string.IsNullOrEmpty(username))
+                roles.ForEach(r => r.CreatedBy = username);
+
+            bool isSuccess = await _hrBLL.SaveRoles(roles, companyId!.Value);
+            return Json(isSuccess);
         }
 
         [HttpPost]

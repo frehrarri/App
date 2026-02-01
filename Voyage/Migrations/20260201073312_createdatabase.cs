@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Voyage.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstCommit : Migration
+    public partial class createdatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,8 +43,7 @@ namespace Voyage.Migrations
                 name: "Company",
                 columns: table => new
                 {
-                    CompanyId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     StreetAddress = table.Column<string>(type: "text", nullable: false),
                     City = table.Column<string>(type: "text", nullable: false),
@@ -158,7 +157,6 @@ namespace Voyage.Migrations
                 {
                     RoleKey = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
-                    RoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     RoleName = table.Column<string>(type: "text", nullable: false),
                     RoleDescription = table.Column<string>(type: "text", nullable: false),
@@ -173,7 +171,7 @@ namespace Voyage.Migrations
                 {
                     table.PrimaryKey("PK_CompanyRoles", x => x.RoleKey);
                     table.UniqueConstraint("AK_CompanyRoles_CompanyId_RoleId", x => new { x.CompanyId, x.RoleId });
-                    table.UniqueConstraint("AK_CompanyRoles_RoleId_RoleVersion", x => new { x.RoleId, x.RoleVersion });
+                    table.UniqueConstraint("AK_CompanyRoles_RoleId", x => x.RoleId);
                     table.ForeignKey(
                         name: "FK_CompanyRoles_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -188,7 +186,6 @@ namespace Voyage.Migrations
                 {
                     DepartmentKey = table.Column<Guid>(type: "uuid", nullable: false),
                     DepartmentId = table.Column<int>(type: "integer", nullable: false),
-                    DepartmentVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -201,7 +198,6 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Department", x => x.DepartmentKey);
-                    table.UniqueConstraint("AK_Department_DepartmentId_DepartmentVersion", x => new { x.DepartmentId, x.DepartmentVersion });
                     table.ForeignKey(
                         name: "FK_Department_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -337,7 +333,6 @@ namespace Voyage.Migrations
                 columns: table => new
                 {
                     IndivUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
-                    IndivUserRoleVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
                     RoleId = table.Column<int>(type: "integer", nullable: false),
@@ -352,7 +347,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IndividualUserRoles", x => x.IndivUserRoleKey);
-                    table.UniqueConstraint("AK_IndividualUserRoles_CompanyId_EmployeeId_RoleId_IndivUserRo~", x => new { x.CompanyId, x.EmployeeId, x.RoleId, x.IndivUserRoleVersion });
+                    table.UniqueConstraint("AK_IndividualUserRoles_CompanyId_EmployeeId_RoleId", x => new { x.CompanyId, x.EmployeeId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_IndividualUserRoles_AspNetUsers_CompanyId_EmployeeId",
                         columns: x => new { x.CompanyId, x.EmployeeId },
@@ -378,7 +373,6 @@ namespace Voyage.Migrations
                 columns: table => new
                 {
                     DepartmentUserRoleKey = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeptUserRoleVersion = table.Column<decimal>(type: "numeric", nullable: false),
                     DepartmentKey = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeId = table.Column<int>(type: "integer", nullable: false),
@@ -394,7 +388,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DepartmentUserRoles", x => x.DepartmentUserRoleKey);
-                    table.UniqueConstraint("AK_DepartmentUserRoles_DepartmentKey_CompanyId_EmployeeId_Role~", x => new { x.DepartmentKey, x.CompanyId, x.EmployeeId, x.RoleId, x.DeptUserRoleVersion });
+                    table.UniqueConstraint("AK_DepartmentUserRoles_DepartmentKey_CompanyId_EmployeeId_Role~", x => new { x.DepartmentKey, x.CompanyId, x.EmployeeId, x.RoleId });
                     table.ForeignKey(
                         name: "FK_DepartmentUserRoles_AspNetUsers_CompanyId_EmployeeId",
                         columns: x => new { x.CompanyId, x.EmployeeId },
@@ -402,10 +396,10 @@ namespace Voyage.Migrations
                         principalColumns: new[] { "CompanyId", "EmployeeId" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DepartmentUserRoles_CompanyRoles_RoleId_DeptUserRoleVersion",
-                        columns: x => new { x.RoleId, x.DeptUserRoleVersion },
+                        name: "FK_DepartmentUserRoles_CompanyRoles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "CompanyRoles",
-                        principalColumns: new[] { "RoleId", "RoleVersion" },
+                        principalColumn: "RoleId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DepartmentUserRoles_Department_DepartmentKey",
@@ -421,7 +415,6 @@ namespace Voyage.Migrations
                 {
                     TeamKey = table.Column<Guid>(type: "uuid", nullable: false),
                     TeamId = table.Column<int>(type: "integer", nullable: false),
-                    TeamVersion = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: true),
                     DepartmentKey = table.Column<Guid>(type: "uuid", nullable: true),
@@ -435,7 +428,7 @@ namespace Voyage.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Team", x => x.TeamKey);
-                    table.UniqueConstraint("AK_Team_TeamId_TeamVersion", x => new { x.TeamId, x.TeamVersion });
+                    table.UniqueConstraint("AK_Team_TeamId", x => x.TeamId);
                     table.ForeignKey(
                         name: "FK_Team_Company_CompanyId",
                         column: x => x.CompanyId,
@@ -649,9 +642,9 @@ namespace Voyage.Migrations
                 columns: new[] { "CompanyId", "EmployeeId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DepartmentUserRoles_RoleId_DeptUserRoleVersion",
+                name: "IX_DepartmentUserRoles_RoleId",
                 table: "DepartmentUserRoles",
-                columns: new[] { "RoleId", "DeptUserRoleVersion" });
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IndividualUserRoles_RoleKey",

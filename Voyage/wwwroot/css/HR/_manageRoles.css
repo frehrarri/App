@@ -7,7 +7,12 @@
     padding: 30px 20px;
 }
 
-#dv-team-btns{
+#dv-role-btns {
+    display: flex;
+    justify-content: space-between;
+}
+
+#dv-team-btns {
     display: flex;
     justify-content: space-between;
 }

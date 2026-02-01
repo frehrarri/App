@@ -83,10 +83,9 @@ namespace Voyage.Business
 
         }
 
-        public async Task SaveRoles(List<RoleDTO> roles, int companyId)
+        public async Task<bool> SaveRoles(List<ManageRolesDTO> roles, int companyId)
         {
-            //IgnoreAddDefaultRoles(ref roles);
-            await _hrDAL.SaveRoles(roles, companyId);
+            return await _hrDAL.SaveRoles(roles, companyId);
         }
 
         public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)

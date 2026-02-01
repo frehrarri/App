@@ -168,15 +168,16 @@ function insertSearchResults(user) {
     });
 }
 
+
 const changeTracker = [{}];
 
 async function saveTeamMembers() {
     let response;
-    debugger;
     let payload = {
         teamKey: document.getElementById('hdn-team-key'),
         dto: changeTracker
     }
+    debugger;
 
     try {
         response = await axios.post('/Hr/AssignTeamMembers', payload, {
@@ -199,12 +200,6 @@ async function saveTeamMembers() {
 }
 
 async function handleEvents(e) {
-
-    ////save teams
-    //if (e.target.id == "team-save-btn") {
-    //    e.preventDefault();
-    //    await saveTeams();
-    //}
 
     if (e.type === "click") {
         //remove user
@@ -243,7 +238,4 @@ export async function init() {
     container.addEventListener("click", handleEvents);
     container.addEventListener("keydown", handleEvents);
     container.addEventListener("input", handleEvents);
-
-    //let tbody = container.querySelector('#tbl-allocate-personnel > tbody');
-    //tbody.addEventListener("change", handleEvents);
 }

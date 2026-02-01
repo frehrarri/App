@@ -115,7 +115,7 @@ namespace Voyage.Data
 
                     response.StatusCode = HttpStatusCode.OK;
                     response.Message = Constants.RegistrationSuccessful;
-                    response.RedirectURL = "/Website/Home";
+                    response.RedirectURL = Constants.BaseUrl + "/Website/Home";
                 }
                 else
                 {
@@ -124,14 +124,14 @@ namespace Voyage.Data
                 }
 
                 await transaction.CommitAsync();
-                return response;
             }
             catch (Exception e)
             {
                 transaction.Rollback();
                 _logger.LogError(e, "error: register user");
-                return null!;
             }
+
+            return response;
         }
 
         private async Task<int> GetNextCompanyId()

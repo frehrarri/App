@@ -179,88 +179,71 @@ namespace Voyage.Data
             }
         }
 
-        public async Task SaveRoles(List<RoleDTO> roles, int companyId)
+        public async Task<bool> SaveRoles(List<ManageRolesDTO> roles, int companyId)
         {
-            using var transaction = await _db.Database.BeginTransactionAsync();
+            var datetime = DateTime.UtcNow;
+
+            using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                //make old roles inactive because we will create new ones to keep history
-                await _db.CompanyRoles
-                    .Where(r => r.CompanyId == companyId
-                             && r.IsLatest == true
-                             && r.IsActive == true
-                             && r.RoleName != "Principal" //ignore default roles
-                             && r.RoleName != "Unassigned") //ignore default roles
-                    .ExecuteUpdateAsync(setters => 
-                        setters.SetProperty(r => r.IsLatest, false));
-
-
-                var latestRoles = await _db.CompanyRoles
-                    .AsNoTracking()
-                    .Where(r => r.CompanyId == companyId 
-                        && r.IsLatest == true 
-                        && r.IsActive == true)
-                    .ToListAsync();
-
-
-                int nextRoleId = await GetNextRoleId(companyId);
-
-                var rolesToSave = new List<CompanyRole>();
-
-                // Process incoming roles - create new versions for all
-                if (roles != null && roles.Any())
+                foreach (var role in roles)
                 {
-                    foreach (var roleDto in roles)
+                    switch (role.DbChangeAction)
                     {
-                        // Check if this role existed before (excluding Principal and Unassigned)
-                        var existing = latestRoles.FirstOrDefault(ct => ct.RoleName == roleDto.Name
-                                                                      && ct.RoleName != "Principal"
-                                                                      && ct.RoleName != "Unassigned");
-                        if (existing != null)
-                        {
-                            rolesToSave.Add(new CompanyRole
+                        case (int)SaveAction.Save:
+                            var existingRole = await _db.CompanyRoles.FirstOrDefaultAsync(r => r.RoleId == role.RoleId
+                                                                                    && r.CompanyId == companyId);
+                            // Update existing record
+                            if (existingRole != null)
                             {
-                                RoleId = existing.RoleId,
-                                RoleName = roleDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = existing.CreatedDate,
-                                ModifiedDate = DateTime.UtcNow
-                            });
-                        }
-                        else
-                        {
-                            rolesToSave.Add(new CompanyRole
+                                existingRole.RoleName = role.Name;
+                                existingRole.ModifiedDate = datetime;
+                                existingRole.ModifiedBy = role.CreatedBy;
+                            }
+                            // Add new role
+                            else
                             {
-                                RoleId = nextRoleId,
-                                RoleName = roleDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = DateTime.UtcNow,
-                                ModifiedDate = DateTime.UtcNow
-                            });
+                                int nextRoleId = await GetNextRoleId(companyId);
 
-                            nextRoleId++;
-                        }
+                                var newRole = new CompanyRole
+                                {
+                                    RoleId = nextRoleId,
+                                    RoleName = role.Name,
+                                    CompanyId = companyId,
+                                    IsLatest = true,
+                                    IsActive = true,
+                                    CreatedDate = datetime,
+                                    CreatedBy = role.CreatedBy
+                                };
+
+                                await _db.CompanyRoles.AddAsync(newRole);
+                            }
+                            break;
+
+                        case (int)SaveAction.Remove:
+                            var roleToDelete = await _db.CompanyRoles.FirstOrDefaultAsync(r => r.RoleId == role.RoleId
+                                                                                        && r.CompanyId == companyId);
+
+                            if (roleToDelete != null)
+                            {
+                                _db.CompanyRoles.Remove(roleToDelete);
+                            }
+                            break;
                     }
                 }
 
-                if (rolesToSave.Any())
-                {
-                    await _db.CompanyRoles.AddRangeAsync(rolesToSave);
-                    await _db.SaveChangesAsync();
-                }
-
-                await transaction.CommitAsync();
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+                return true;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
-                _logger.LogError(e, "Error: HrDAL : SaveRoles");
+                await tx.RollbackAsync();
+                _logger.LogError(e, "Error: HrDAL.SaveRoles()");
+                return false;
             }
         }
+
 
         public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
@@ -554,7 +537,7 @@ namespace Voyage.Data
                     .ToHashSet();
 
                 var toAdd = dto
-                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Add)
+                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Save)
                     .Where(d => !existingEmployeeIds.Contains(d.EmployeeId));
 
                 foreach (var item in toAdd)

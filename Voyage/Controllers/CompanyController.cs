@@ -43,11 +43,11 @@ namespace Voyage.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateHeaderAntiForgeryToken]
-        public async Task RegisterCompany([FromBody] RegistrationDetailsDTO details)
+        public async Task<IActionResult> RegisterCompany([FromBody] RegistrationDetailsDTO details)
         {
             await Task.Delay(10);
             var response = await _accountBLL.Register(details);
-            //return Json(response);
+            return Json(response);
         }
 
 

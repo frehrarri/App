@@ -106,9 +106,8 @@
 
         public enum SaveAction
         {
-            Add = 1,
+            Save = 1, //add, update if exists
             Remove = 2,
-            Update = 3
         }
 
         public enum DefaultRoles
