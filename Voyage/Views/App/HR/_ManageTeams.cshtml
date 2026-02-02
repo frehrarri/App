@@ -22,12 +22,14 @@
                 <tbody>
                     @foreach (var team in Model.Teams)
                     {
-                        <tr class="app-table-row">
+                        Guid guid = Guid.NewGuid();
+
+                        <tr class="app-table-row" data-key="@guid" data-teamkey="@team.TeamKey">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-                                <a href="#" class="goto-assign-team" data-id="@team.TeamId">@team.Name</a>
+                                <a href="#" class="goto-assign-team" data-id="@team.TeamId" data-key="@guid" data-teamkey="@team.TeamKey">@team.Name</a>
                             </td>
                         </tr>
                     }

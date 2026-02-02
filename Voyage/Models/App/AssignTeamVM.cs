@@ -10,6 +10,7 @@ namespace Voyage.Models.App
 
         public int TeamId { get; set; }
         public string TeamName { get; set; } = string.Empty;
+        public string TeamKey { get; set; } = string.Empty;
         public int SaveAction { get; set; }
         public int EmployeeId { get; set; }
         public int RoleId { get; set; }

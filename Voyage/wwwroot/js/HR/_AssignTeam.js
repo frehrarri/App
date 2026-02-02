@@ -2,7 +2,6 @@
 
 export async function getAssignTeamPartial(params) {
     try {
-        debugger;
         const response = await axios.get('/Hr/AssignTeamPartial', {
             params: params
         });
@@ -173,15 +172,16 @@ function insertSearchResults(user) {
 }
 
 
-const changeTracker = [{}];
+const changeTracker = [];
 
-async function saveTeamMembers() {
+async function saveTeamMembers(e) {
+    e.preventDefault();
     let response;
     let payload = {
-        teamKey: document.getElementById('hdn-team-key'),
+        teamKey: document.getElementById('hdn-team-key').value,
         dto: changeTracker
     }
-
+    debugger;
     try {
         response = await axios.post('/Hr/AssignTeamMembers', payload, {
             headers: {
@@ -219,7 +219,7 @@ async function handleEvents(e) {
 
         //save members to team
         if (e.target.id == "assign-btn")
-            await saveTeamMembers();
+            await saveTeamMembers(e);
     }
     else if (e.type === "input") {
         if (e.target.classList.contains("add-user-input")) {

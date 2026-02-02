@@ -13,12 +13,12 @@ export async function getManageTeamsPartial() {
 }
 
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
+const changeTracker = new Map();
 
 async function saveTeams() {
-
+    debugger;
     let response;
-    let payload = getTeams();
+    let payload = changeTracker;
 
     try {
         response = await axios.post('/Hr/SaveTeams', payload, {
@@ -33,35 +33,22 @@ async function saveTeams() {
             //showSuccess(true);
 
             //hyperlink results
-            const teams = document.querySelectorAll(".add-team-span");
-            teams.forEach(t => {
-                let text = t.textContent.trim();
-
+            let team = "";
+            
+            for (let [key,value] of changeTracker.entries()) {
+                team = document.querySelector(`.add-team-span[data-key='${key}']`);
+                
                 let anchortag = document.createElement('a');
                 anchortag.href = "#";
                 anchortag.className.Add('goto-assign-team');
+                anchortag.dataset.teamkey = value.teamKey;
+
+                let text = team.textContet.trim();
                 anchortag.value = text;
+                debugger;
+                team.replaceWith(anchortag);
+            }
 
-                t.replaceWith()
-            });
-
-            //update dropdown with save
-            document.querySelectorAll('.sel-assign-team-member')?.forEach(dropdown => {
-                dropdown.replaceChildren();
-
-                let option = document.createElement('option');
-                option.value = "";
-                option.innerText = "Unassigned";
-                dropdown.appendChild(option);
-
-                response.data.forEach(team => {
-                    option = document.createElement('option');
-                    option.value = team.teamId;
-                    option.innerText = team.name;
-                    dropdown.appendChild(option);
-                });
-            });
-                
             return response.data;
         }
         
@@ -79,6 +66,10 @@ function addNewTeamRow() {
 
     const tr = document.createElement("tr");
     tr.classList.add("app-table-row");
+
+    let key = tr.dataset.key;
+    if (!key)
+        tr.dataset.key = crypto.randomUUID();
 
     //checkbox
     const td1 = document.createElement("td");
@@ -102,26 +93,38 @@ function addNewTeamRow() {
 
 
 function addTeamInput(e) {
-    const target = e.target;
-
     // Only act on spans
-    if (target.classList.contains("add-team-span") && e.type === "click") {
+    if (e.target.classList.contains("add-team-span") && e.type === "click") {
+        const row = e.target.parentElement.parentElement;
+
+        const key = row.dataset.key;
+        if (!key)
+            key = crypto.randomUUID();
+        
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = "Team Name";
         input.className = "add-team-input";
-        input.value = target.textContent;
+        input.value = e.target.textContent;
 
-        target.replaceWith(input);
+        e.target.replaceWith(input);
         input.focus();
         input.value = "";
+        input.dataset.key = key;
 
         // Save on blur
         input.addEventListener("blur", () => {
             const span = document.createElement("span");
             span.className = "add-team-span";
             span.textContent = input.value || "Click to add team";
+            span.dataset.key = key;
+           
             input.replaceWith(span);
+
+            changeTracker.set(key, {
+                teamKey: 0, //placeholder for a new entry that will be assigned by db
+                saveaction: 1 //add
+            });
         });
 
         // Save on Enter
@@ -140,63 +143,22 @@ function removeTeam(e) {
     //remove row of checked boxes
     checkedBoxes.forEach(cb => {
         const row = cb.closest("tr"); 
-        if (row)
+        if (row) {
+            let key = row.dataset.key;
+
+            changeTracker.set(key, {
+                teamKey : row.dataset.teamkey,
+                saveaction: 2 //remove
+            });
+
             row.remove();
+        }
+            
     });
 }
 
-function getTeams() {
-    let results = [];
-    const teams = document.querySelectorAll(".add-team-span");
-
-    teams.forEach(t => {
-
-        if (t.textContent.trim() != "Click to add team")
-            results.push(t.textContent.trim());
-    });
-
-    return results;
-}
-
-
-const teamMembers = [];
-
-async function saveTeamMembers() {
-    try {
-        response = await axios.post('/Hr/SaveTeamMembers', teamMembers, {
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        teamMembers = [];
-
-        showSuccess(true);
-
-        return response.data;
-    } catch (error) {
-        showSuccess(false);
-        console.error("error", error);
-        return false;
-    }
-}
-
-async function handleToggleTabs(e) {
-    
-    if (e.target.classList.contains("btn-get-manage-teams")) {
-        document.getElementById("dv-allocate-personnel").classList.add("hidden");
-        document.getElementById("dv-manage-teams").classList.remove("hidden");
-    } else if (e.target.classList.contains("btn-get-allocate-teams")) {
-        document.getElementById("dv-allocate-personnel").classList.remove("hidden");
-        document.getElementById("dv-manage-teams").classList.add("hidden");
-    }
-        
-}
 
 async function handleEvents(e) {
-
-    await handleToggleTabs(e);
 
     //save teams
     if (e.target.id == "team-save-btn") {
@@ -217,26 +179,9 @@ async function handleEvents(e) {
         addTeamInput(e);
     }
 
-    //catch changes to assign team members
-    if (e.target.classList.contains('sel-assign-team-member')) {
-
-        if (e.target.dataset.userid && e.target.value) {
-
-            const teamDto = {
-                userId: parseInt(e.target.dataset.userid),
-                teamId: parseInt(e.target.value)
-            }
-            teamMembers.push(teamDto);
-        }
-    }
-
-    //save members to team
-    if (e.target.id == "team-member-save-btn")
-        await saveTeamMembers();
-
     if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
         let params = {
-            teamId: e.target.dataset.id,
+            teamkey: e.target.dataset.key,
             teamName: e.target.textContent.trim()
         };
         

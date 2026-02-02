@@ -102,6 +102,7 @@ namespace Voyage.Data
                         && u.IsLatest == true)
                     .Select(u => new TeamDTO
                     {
+                        TeamKey = u.TeamKey.ToString(),
                         TeamId = u.TeamId,
                         Name = u.Name
                     }).ToListAsync();
@@ -113,13 +114,13 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<AssignTeamDTO>> GetAssignTeam(int teamId, int companyId)
+        public async Task<List<AssignTeamDTO>> GetAssignTeam(string teamKey, int companyId)
         {
             try
             {
                 return await _db.TeamUserRoles
                     .Where(tur =>
-                        tur.TeamId == teamId &&
+                        tur.TeamKey == Guid.Parse(teamKey) &&
                         tur.Team.CompanyId == companyId)
                     .Select(u => new AssignTeamDTO
                     {
@@ -132,7 +133,8 @@ namespace Voyage.Data
                         RoleId = u.RoleId,
                         Role = u.Role.RoleName,
                         TeamName = u.Team.Name,
-                        TeamId = u.TeamId
+                        TeamId = u.TeamId,
+                        TeamKey = u.TeamKey.ToString()
                     }).ToListAsync();
             }
             catch (Exception e)

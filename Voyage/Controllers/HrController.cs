@@ -92,24 +92,28 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AssignTeamPartial([FromQuery] int teamId, [FromQuery] string teamName)
+        public async Task<IActionResult> AssignTeamPartial([FromQuery] string teamKey, [FromQuery] string teamName)
         {
             List<AssignTeamVM> vm = new List<AssignTeamVM>();
 
             ViewBag.TeamName = teamName;
+            ViewBag.TeamKey = teamKey;
 
-            var dto = await GetAssignTeam(teamId);
+            var dto = await GetAssignTeam(teamKey);
 
-            if (dto != null)
+            if (dto.Count > 0)
+            {
                 vm = MapToVM(dto);
+            }
+                
 
             return PartialView("~/Views/App/HR/_AssignTeam.cshtml", vm);
         }
 
-        private async Task<List<AssignTeamDTO>> GetAssignTeam(int teamId)
+        private async Task<List<AssignTeamDTO>> GetAssignTeam(string teamKey)
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return await _hrBLL.GetAssignTeam(teamId, companyId!.Value);
+            return await _hrBLL.GetAssignTeam(teamKey, companyId!.Value);
         }
 
         [HttpGet]
@@ -267,6 +271,7 @@ namespace Voyage.Controllers
                 vm.Email = dto.Email;
                 vm.TeamName = dto.TeamName;
                 vm.TeamId = dto.TeamId;
+                vm.TeamKey = dto.TeamKey;
                 list.Add(vm);
             }
 

@@ -11,6 +11,7 @@
         public int RoleId { get; set; }
         public string Role { get; set; } = string.Empty;
         public int TeamId { get; set; }
+        public string TeamKey { get; set; }
         public string TeamName { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
