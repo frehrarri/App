@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202232550_Update_TeamUserRole_Ak_TeamKey")]
+    partial class Update_TeamUserRole_Ak_TeamKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,8 +378,6 @@ namespace Voyage.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("RoleKey");
-
-                    b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyRoles", (string)null);
                 });
@@ -784,9 +785,9 @@ namespace Voyage.Migrations
 
                     b.HasAlternateKey("TeamKey", "CompanyId", "EmployeeId");
 
-                    b.HasIndex("RoleId");
-
                     b.HasIndex("CompanyId", "EmployeeId");
+
+                    b.HasIndex("CompanyId", "RoleId");
 
                     b.ToTable("TeamUserRoles", (string)null);
                 });
@@ -1131,13 +1132,6 @@ namespace Voyage.Migrations
 
             modelBuilder.Entity("Voyage.Data.TableModels.TeamUserRole", b =>
                 {
-                    b.HasOne("Voyage.Data.TableModels.CompanyRole", "Role")
-                        .WithMany("TeamUserRoles")
-                        .HasForeignKey("RoleId")
-                        .HasPrincipalKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Voyage.Data.TableModels.Team", "Team")
                         .WithMany("TeamUserRoles")
                         .HasForeignKey("TeamKey")
@@ -1149,6 +1143,13 @@ namespace Voyage.Migrations
                         .HasForeignKey("CompanyId", "EmployeeId")
                         .HasPrincipalKey("CompanyId", "EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Voyage.Data.TableModels.CompanyRole", "Role")
+                        .WithMany("TeamUserRoles")
+                        .HasForeignKey("CompanyId", "RoleId")
+                        .HasPrincipalKey("CompanyId", "RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Role");

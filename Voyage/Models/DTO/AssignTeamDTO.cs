@@ -1,12 +1,12 @@
 ﻿namespace Voyage.Models.DTO
 {
-    public class AssignTeamDTO
+    public class AssignTeamDTO : BaseClass
     {
         public AssignTeamDTO()
         {
         }
 
-        public int SaveAction { get; set; }
+        public int DbChangeAction { get; set; }
         public int EmployeeId { get; set; }
         public int RoleId { get; set; }
         public string Role { get; set; } = string.Empty;
@@ -17,5 +17,6 @@
         public string LastName { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        
     }
 }

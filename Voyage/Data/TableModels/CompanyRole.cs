@@ -8,7 +8,7 @@ namespace Voyage.Data.TableModels
         public Guid RoleKey { get; set; }             
         public int RoleId { get; set; }                
 
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
         public string RoleName { get; set; } = string.Empty;
         public string RoleDescription { get; set; } = string.Empty;
 
@@ -28,6 +28,9 @@ namespace Voyage.Data.TableModels
             // Surrogate PK
             modelBuilder.Entity<CompanyRole>()
                 .HasKey(r => r.RoleKey);
+
+            modelBuilder.Entity<CompanyRole>()
+                .HasAlternateKey(r => r.RoleId );
 
             modelBuilder.Entity<CompanyRole>()
                 .Property(r => r.RoleKey)

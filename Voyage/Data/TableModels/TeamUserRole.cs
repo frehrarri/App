@@ -30,14 +30,14 @@ namespace Voyage.Data.TableModels
 
             // Alternate key for uniqueness
             modelBuilder.Entity<TeamUserRole>()
-                .HasAlternateKey(tur => new { tur.TeamId, tur.CompanyId, tur.EmployeeId});
+                .HasAlternateKey(tur => new { tur.TeamKey, tur.CompanyId, tur.EmployeeId});
 
             // FK to Team
             modelBuilder.Entity<TeamUserRole>()
-                .HasOne(tur => tur.Team)
+                .HasOne(t => t.Team)
                 .WithMany(t => t.TeamUserRoles)
-                .HasForeignKey(tur => new { tur.CompanyId, tur.TeamId })
-                .HasPrincipalKey(t => new { t.CompanyId, t.TeamId })
+                .HasForeignKey(t => t.TeamKey)
+                .HasPrincipalKey(t => t.TeamKey)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // FK to User
@@ -52,8 +52,8 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<TeamUserRole>()
                 .HasOne(tur => tur.Role)
                 .WithMany(r => r.TeamUserRoles)
-                .HasForeignKey(tur => new { tur.CompanyId, tur.RoleId })
-                .HasPrincipalKey(r => new { r.CompanyId, r.RoleId })
+                .HasForeignKey(tur => tur.RoleId)
+                .HasPrincipalKey(r => r.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

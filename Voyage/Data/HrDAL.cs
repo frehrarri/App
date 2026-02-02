@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Css;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Utilities.IO;
@@ -507,66 +508,72 @@ namespace Voyage.Data
         }
 
 
-        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId, string teamKey)
+        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
         {
-            var teamGuid = Guid.Parse(teamKey);
+            var teamKey = Guid.Parse(dto[0].TeamKey);
+            var datetime = DateTime.UtcNow;
 
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
                 var existing = await _db.TeamUserRoles
-                    .Where(tur =>
-                        tur.CompanyId == companyId &&
-                        tur.TeamKey == teamGuid)
+                    .Where(t =>
+                        t.CompanyId == companyId &&
+                        t.TeamKey == teamKey)
                     .ToListAsync();
 
-                //remove
-                var removeIds = dto
-                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Remove)
-                    .Select(d => d.EmployeeId)
-                    .ToHashSet();
-
-                var toRemove = existing
-                    .Where(e => removeIds.Contains(e.EmployeeId))
-                    .ToList();
-
-                _db.TeamUserRoles.RemoveRange(toRemove);
-
-                //add
-                var existingEmployeeIds = existing
-                    .Select(e => e.EmployeeId)
-                    .ToHashSet();
-
-                var toAdd = dto
-                    .Where(d => d.SaveAction == (int)Constants.SaveAction.Save)
-                    .Where(d => !existingEmployeeIds.Contains(d.EmployeeId));
-
-                foreach (var item in toAdd)
+                foreach (var item in dto)
                 {
-                    _db.TeamUserRoles.Add(new TeamUserRole
+                    
+                    switch (item.DbChangeAction)
                     {
-                        TeamKey = teamGuid,
-                        CompanyId = companyId,
-                        EmployeeId = item.EmployeeId,
-                        RoleId = item.RoleId
-                    });
+                        // INSERT or UPDATE
+                        case (int)SaveAction.Save:
+                            {
+                                var existingRow = existing
+                                    .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+
+                                // insert
+                                if (existingRow == null)
+                                {
+                                    await _db.TeamUserRoles.AddAsync(new TeamUserRole
+                                    {
+                                        CompanyId = companyId,
+                                        TeamKey = teamKey,
+                                        EmployeeId = item.EmployeeId,
+                                        RoleId = item.RoleId,
+                                        CreatedDate = datetime,
+                                        CreatedBy = item.CreatedBy,
+                                        IsLatest = true,
+                                        IsActive = true
+                                    });
+                                }
+                                // update
+                                else if (existingRow.RoleId != item.RoleId)
+                                {
+                                    existingRow.RoleId = item.RoleId;
+                                    existingRow.ModifiedDate = datetime;
+                                    existingRow.ModifiedBy = item.CreatedBy;
+                                }
+
+                                break;
+                            }
+
+                        // DELETE (hard delete)
+                        case (int)SaveAction.Remove:
+                            {
+                                var toDelete = existing
+                                    .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+
+                                if (toDelete != null)
+                                {
+                                    _db.TeamUserRoles.Remove(toDelete);
+                                }
+
+                                break;
+                            }
+                    }
                 }
-
-                //update
-                //var toUpdate = dto
-                //    .Where(d => d.SaveAction == (int)Constants.SaveAction.Update);
-
-                //foreach (var item in toUpdate)
-                //{
-                //    var existingRow = existing
-                //        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
-
-                //    if (existingRow != null &&
-                //        existingRow.RoleId != item.RoleId)
-                //    {
-                //        existingRow.RoleId = item.RoleId;
-                //    }
-                //}
 
                 await _db.SaveChangesAsync();
                 await tx.CommitAsync();
@@ -575,6 +582,7 @@ namespace Voyage.Data
             {
                 await tx.RollbackAsync();
                 _logger.LogError(ex, "Error: HrDAL.AssignTeamMembers()");
+                throw;
             }
         }
 

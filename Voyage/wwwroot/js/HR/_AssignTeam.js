@@ -20,6 +20,10 @@ function addNewRow() {
     const tr = document.createElement("tr");
     tr.classList.add("app-table-row");
 
+    let uid = tr.dataset.uid;
+    if (!uid)
+        tr.dataset.uid = crypto.randomUUID();
+
     //checkbox
     const td1 = document.createElement("td");
     td1.classList.add("app-table-data");
@@ -44,6 +48,11 @@ function addUserInput(e) {
     const target = e.target;
 
     if (target.classList.contains("add-user-span") && e.type === "click") {
+        const row = e.target.parentElement.parentElement;
+
+        let uid = row.dataset.uid;
+        if (!uid)
+            uid = crypto.randomUUID();
 
         //need a wrapper to append children to
         const wrapper = document.createElement("div");
@@ -54,7 +63,7 @@ function addUserInput(e) {
         input.placeholder = "User Name";
         input.className = "add-user-input";
         input.value = "";
-        input.dataset.uid = crypto.randomUUID();
+        input.dataset.uid = uid;
 
         // Replace span with wrapper, then add input
         target.replaceWith(wrapper);
@@ -64,34 +73,61 @@ function addUserInput(e) {
 
         input.addEventListener("blur", () => {
             const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
-            if (ul) ul.classList.remove("show");
+            if (ul)
+                ul.classList.remove("show");
 
-            //const span = document.createElement("span");
-            //span.className = "add-user-span";
-            //span.textContent = input.value || "Click to add user";
-            //wrapper.replaceWith(span); // remove wrapper + input safely
+            const span = document.createElement("span");
+            span.className = "add-user-span";
+            span.textContent = input.value || "Click to add user";
+            span.dataset.uid = uid;
+
+            wrapper.replaceWith(span); // remove wrapper + input safely
+
+            changeTracker.set(uid, {
+               /* name: span.textContent,*/
+                teamKey: null, //placeholder for a new entry that will be assigned by db
+                dbChangeAction: 1 //add
+            });
+
         });
 
         input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") input.blur();
+            if (ev.key === "Enter")
+                input.blur();
         });
     }
 }
 
 function removeUser(e) {
+    if (!confirm("Remove team members?")) {
+        return;
+    }
     const checkedBoxes = document.querySelectorAll("#tbl-allocate-personnel tbody input[type='checkbox']:checked");
 
     //remove row of checked boxes
     checkedBoxes.forEach(cb => {
-        const row = cb.closest("tr");
 
+        const row = cb.closest("tr");
         if (row) {
-            changeTracker.push({
-                id: row.dataset.userid,
-                saveaction: 2 //remove
-            });
+            let uid = row.dataset.uid;
+            let teamKey = document.getElementById('hdn-team-key').value;
+
+            // remove unsaved addition from change tracker
+            const existingChange = changeTracker.get(uid);
+            if (existingChange && existingChange.dbChangeAction === 1)
+                changeTracker.delete(uid)
+
+             // prepare for database deletion
+            else if (teamKey != null)
+                changeTracker.set(uid, {
+                  /*  name: row.childNodes[1].textContent,*/
+                    teamKey: teamKey,
+                    dbChangeAction: 2 //remove
+                });
 
             row.remove();
+
+            //await saveTeamMembers(e);
         }
             
     });
@@ -132,6 +168,8 @@ function insertSearchResults(user) {
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
     tr.dataset.userid = user.id;
+    tr.dataset.employeeid = user.employeeid;
+    tr.dataset.roleid = user.roleid;
 
     let checkbox = document.createElement('td');
     checkbox.className = 'app-table-data'
@@ -163,25 +201,31 @@ function insertSearchResults(user) {
     tr.appendChild(email);
 
     let row = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
+    tr.dataset.uid = row.dataset.uid;
     row.replaceWith(tr);
-
-    changeTracker.push({
-        id: user.id,
-        saveaction: 1 //add
-    });
 }
 
-
-const changeTracker = [];
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+const changeTracker = new Map();
 
 async function saveTeamMembers(e) {
     e.preventDefault();
+
     let response;
-    let payload = {
-        teamKey: document.getElementById('hdn-team-key').value,
-        dto: changeTracker
-    }
-    debugger;
+    const teamKey = document.getElementById('hdn-team-key').value;
+
+    const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
+
+        const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
+
+        return {
+            employeeId: parseInt(row.dataset.employeeid),
+            teamKey: teamKey,
+            dbChangeAction: value.dbChangeAction,
+            roleId: row.dataset.roleid
+        };
+    });
+
     try {
         response = await axios.post('/Hr/AssignTeamMembers', payload, {
             headers: {
@@ -191,12 +235,10 @@ async function saveTeamMembers(e) {
         });
 
         if (response && response.data) {
-            showSuccess(true);
             return response.data;
         }
 
     } catch (error) {
-        showSuccess(false);
         console.error("error", error);
         return false;
     }

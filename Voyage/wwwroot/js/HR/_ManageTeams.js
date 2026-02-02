@@ -146,7 +146,7 @@ function addTeamInput(e) {
 }
 
 function removeTeam(e) {
-    if (!confirm("Are you sure you want to remove teams?")) {
+    if (!confirm("Remove teams?")) {
         return;
     }
 
@@ -202,7 +202,7 @@ async function handleEvents(e) {
 
     if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
         let params = {
-            teamkey: e.target.dataset.key,
+            teamkey: e.target.dataset.teamkey,
             teamName: e.target.textContent.trim()
         };
         

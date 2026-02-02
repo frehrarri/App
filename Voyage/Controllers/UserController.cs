@@ -167,14 +167,19 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string query)
         {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
             if (string.IsNullOrWhiteSpace(query))
                 return Ok(Enumerable.Empty<object>());
 
-            var users = await _userManager.Users
-                .Where(u => (u.UserName ?? "").Contains(query) 
+            var users = await _userManager.Users.Where(u => 
+                u.CompanyId == companyId &&
+                (
+                    (u.UserName ?? "").Contains(query) 
                     || (u.Email ?? "").Contains(query) 
                     || (u.FirstName ?? "").Contains(query) 
-                    || (u.LastName ?? "").Contains(query))
+                    || (u.LastName ?? "").Contains(query)
+                ))
                 .OrderBy(u => u.UserName)
                 .Take(10)
                 .Select(u => new {
@@ -183,7 +188,9 @@ namespace Voyage.Controllers
                     email = u.Email,
                     firstname = u.FirstName,
                     lastname = u.LastName,
-                    phone = u.PhoneAreaCode + u.PhoneNumber
+                    phone = u.PhoneAreaCode + u.PhoneNumber,
+                    employeeid = u.EmployeeId,
+                    roleid = u.IndividualUserRoles.Select(r => r.RoleId).SingleOrDefault()
                 })
                 .ToListAsync();
 

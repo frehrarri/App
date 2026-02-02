@@ -10,7 +10,7 @@
             <div id="assign-team-header">
                 <h4>Assign Personnel</h4>
                 
-                <h5>@ViewBag.TeamName</h5>
+                <h4 id="team-name">@ViewBag.TeamName</h4>
             </div>
 
             <table id="tbl-allocate-personnel" class="app-table table">
@@ -26,7 +26,7 @@
                 <tbody>
                 @foreach (var teamMember in Model)
                 {
-                    <tr class="app-table-row" data-key="@Guid.NewGuid().ToString()">
+                    <tr class="app-table-row" data-uid="@Guid.NewGuid().ToString()">
                         <td class="app-table-data">
                             <input type="checkbox" />
                         </td>
@@ -42,9 +42,6 @@
                         <td class="app-table-data">
                             @teamMember.Email
                         </td>
-                      @*   <td class="app-table-data">
-                            @teamMember.PhoneNumber
-                        </td> *@
                     </tr>
                 }
 

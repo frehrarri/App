@@ -2,6 +2,7 @@
     display: flex;
 }
 
-h5 {
+#team-name {
     margin-left: 25%;
 }
+

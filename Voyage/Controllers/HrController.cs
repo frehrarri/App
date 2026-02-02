@@ -246,10 +246,13 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task AssignTeamMembers([FromBody] List<AssignTeamDTO> dto, string teamKey)
+        public async Task AssignTeamMembers([FromBody] List<AssignTeamDTO> dto)
         {
             int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            await _hrBLL.AssignTeamMembers(dto, companyId, teamKey);
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.AssignTeamMembers(dto, companyId);
         }
 
         private List<AssignTeamVM> MapToVM(List<AssignTeamDTO> dtos)
@@ -259,7 +262,7 @@ namespace Voyage.Controllers
             foreach (var dto in dtos)
             {
                 AssignTeamVM vm = new AssignTeamVM();
-                vm.SaveAction = dto.SaveAction;
+                vm.SaveAction = dto.DbChangeAction;
                 vm.EmployeeId = dto.EmployeeId;
                 vm.RoleId = dto.RoleId;
                 vm.Role = dto.Role;
