@@ -15,10 +15,11 @@ export async function getManageTeamsPartial() {
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 const changeTracker = new Map();
 
-async function saveTeams() {
-    debugger;
+async function saveTeams(e) {
+    e.preventDefault();
+
     let response;
-    let payload = changeTracker;
+    let payload = Array.from(changeTracker.values());
 
     try {
         response = await axios.post('/Hr/SaveTeams', payload, {
@@ -29,34 +30,40 @@ async function saveTeams() {
         });
 
         if (response && response.data) {
-            alert("Success");
-            //showSuccess(true);
 
-            //hyperlink results
-            let team = "";
-            
-            for (let [key,value] of changeTracker.entries()) {
-                team = document.querySelector(`.add-team-span[data-key='${key}']`);
-                
-                let anchortag = document.createElement('a');
-                anchortag.href = "#";
-                anchortag.className.Add('goto-assign-team');
-                anchortag.dataset.teamkey = value.teamKey;
+            //did not add any records so there is nothing to hyperlink
+            if (response.data.length > 0) {
+                //hyperlink results
+                let team = "";
+                let index = 0;
 
-                let text = team.textContet.trim();
-                anchortag.value = text;
-                debugger;
-                team.replaceWith(anchortag);
+                let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
+
+                for (let [key, value] of addedEntries) {
+                    team = document.querySelector(`.add-team-span[data-key='${key}']`);
+
+                    let anchortag = document.createElement('a');
+                    anchortag.href = "#";
+                    anchortag.classList.add('goto-assign-team')
+                    anchortag.textContent = team.textContent.trim();
+                    anchortag.dataset.key = key;
+
+                    let teamKey = response.data[index];
+                    anchortag.dataset.teamKey = teamKey;
+
+                    team.replaceWith(anchortag);
+                    index++;
+                }
             }
 
-            return response.data;
+            alert("Success");
+
+           /* return response.data;*/
         }
         
     } catch (error) {
         alert("Error");
-        //showSuccess(false);
         console.error("error", error);
-        return false;
     }
 }
 
@@ -122,8 +129,9 @@ function addTeamInput(e) {
             input.replaceWith(span);
 
             changeTracker.set(key, {
-                teamKey: 0, //placeholder for a new entry that will be assigned by db
-                saveaction: 1 //add
+                name: span.textContent,
+                teamKey: null, //placeholder for a new entry that will be assigned by db
+                dbChangeAction: 1 //add
             });
         });
 
@@ -138,6 +146,10 @@ function addTeamInput(e) {
 }
 
 function removeTeam(e) {
+    if (!confirm("Are you sure you want to remove teams?")) {
+        return;
+    }
+
     const checkedBoxes = document.querySelectorAll("#manage-teams tbody input[type='checkbox']:checked");
 
     //remove row of checked boxes
@@ -146,12 +158,22 @@ function removeTeam(e) {
         if (row) {
             let key = row.dataset.key;
 
-            changeTracker.set(key, {
-                teamKey : row.dataset.teamkey,
-                saveaction: 2 //remove
-            });
+            // remove unsaved addition from change tracker
+            const existingChange = changeTracker.get(key);
+            if (existingChange && existingChange.dbChangeAction === 1)
+                changeTracker.delete(key)
+
+            // prepare for database deletion
+            else if (row.dataset.teamkey != null)
+                changeTracker.set(key, {
+                    name: row.childNodes[1].textContent,
+                    teamKey : row.dataset.teamkey,
+                    dbChangeAction: 2 //remove
+                });
 
             row.remove();
+
+            saveTeams(e);
         }
             
     });
@@ -162,8 +184,7 @@ async function handleEvents(e) {
 
     //save teams
     if (e.target.id == "team-save-btn") {
-        e.preventDefault();
-        await saveTeams();
+        await saveTeams(e);
     }
 
     //remove team

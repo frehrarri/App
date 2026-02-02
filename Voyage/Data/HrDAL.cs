@@ -418,115 +418,81 @@ namespace Voyage.Data
             }
         }
 
-        //public async Task AssignTeam()
-        //{
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e, "Error: HrDAL : AssignTeam");
-        //    }
-        //}
-
-        public async Task SaveTeams(List<TeamDTO> teams, int companyId)
+        public async Task<List<string>> SaveTeams(List<TeamDTO> teams, int companyId)
         {
-            using var transaction = await _db.Database.BeginTransactionAsync();
+            List<string> newKeys = new List<string>();
+            var newTeams = new List<Team>();
+            var datetime = DateTime.UtcNow;
+
+            using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                // Make old teams not latest because we will create new versions
-                await _db.Teams
-                    .Where(t => t.CompanyId == companyId
-                             && t.IsLatest == true
-                             && t.IsActive == true)
-                    .ExecuteUpdateAsync(setters =>
-                        setters.SetProperty(t => t.IsLatest, false));
-
-                // Get latest teams for comparison (no tracking to avoid conflicts)
-                var latestTeams = await _db.Teams
-                    .AsNoTracking()
-                    .Where(t => t.CompanyId == companyId
-                             && t.IsLatest == true
-                             && t.IsActive == true)
-                    .ToListAsync();
-
+                var existingTeams = await _db.Teams.Where(t => t.CompanyId == companyId).ToListAsync();
                 int nextTeamId = await GetNextTeamId(companyId);
 
-                var teamsToSave = new List<Team>();
-
-                if (teams != null && teams.Any())
+                foreach (var team in teams)
                 {
-                    foreach (var teamDto in teams)
+                    switch (team.DbChangeAction)
                     {
-                        // Check if this team already existed
-                        var existing = latestTeams.FirstOrDefault(t => t.Name == teamDto.Name);
-
-                        if (existing != null)
-                        {
-                            // Existing team: create new version
-                            teamsToSave.Add(new Team
+                        case (int)SaveAction.Save:
                             {
-                                TeamId = existing.TeamId,
-                                Name = teamDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = existing.CreatedDate,
-                                ModifiedDate = DateTime.UtcNow
-                            });
-                        }
-                        else
-                        {
-                            // New team
-                            teamsToSave.Add(new Team
-                            {
-                                TeamId = nextTeamId,
-                                Name = teamDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = DateTime.UtcNow,
-                                ModifiedDate = DateTime.UtcNow
-                            });
+                                //new insert
+                                if (team.TeamKey == null)
+                                {
+                                    var newTeam = new Team
+                                    {
+                                        TeamId = nextTeamId++,
+                                        Name = team.Name,
+                                        CompanyId = companyId,
+                                        CreatedDate = datetime,
+                                        CreatedBy = team.CreatedBy,
+                                        IsLatest = true,
+                                        IsActive = true,
+                                    };
+                                    newTeams.Add(newTeam);
+                                    await _db.Teams.AddAsync(newTeam);
+                                }
 
-                            nextTeamId++;
-                        }
+                                // update existing
+                                else
+                                {
+                                    var existingTeam = existingTeams.FirstOrDefault(t => t.TeamKey == Guid.Parse(team.TeamKey));
+                                    
+                                    if (existingTeam != null)
+                                    {
+                                        existingTeam.Name = team.Name;
+                                        existingTeam.ModifiedDate = datetime;
+                                        existingTeam.ModifiedBy = team.CreatedBy;
+                                    }
+                                }
+
+                                break;
+                            }
+
+                        case (int)SaveAction.Remove:
+                            {
+                                var teamToDelete = existingTeams.FirstOrDefault(t => t.TeamKey == Guid.Parse(team.TeamKey) && t.CompanyId == companyId);
+
+                                if (teamToDelete != null)
+                                {
+                                    _db.Teams.Remove(teamToDelete);
+                                }
+                                break;
+                            }
                     }
                 }
 
-                // Handle deletions: teams that existed before but are missing now
-                var teamNamesToKeep = teams?.Select(t => t.Name).ToList() ?? new List<string>();
-                var teamsToDelete = latestTeams
-                    .Where(t => !teamNamesToKeep.Contains(t.Name));
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
 
-                foreach (var teamToDelete in teamsToDelete)
-                {
-                    teamsToSave.Add(new Team
-                    {
-                        TeamId = teamToDelete.TeamId,
-                        Name = teamToDelete.Name,
-                        CompanyId = companyId,
-                        IsLatest = true,
-                        IsActive = false, // mark as deleted
-                        CreatedDate = teamToDelete.CreatedDate,
-                        ModifiedDate = DateTime.UtcNow
-                    });
-                }
-
-                // Save all new team versions
-                if (teamsToSave.Any())
-                {
-                    await _db.Teams.AddRangeAsync(teamsToSave);
-                    await _db.SaveChangesAsync();
-                }
-
-                await transaction.CommitAsync();
+                newKeys = newTeams.Select(t => t.TeamKey.ToString()).ToList();
+                return newKeys;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
-                _logger.LogError(e, "Error: HrDAL : SaveTeams");
+                await tx.RollbackAsync();
+                _logger.LogError(e, "Error: HrDAL.SaveTeams()");
+                return null!;
             }
         }
 

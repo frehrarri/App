@@ -16,8 +16,9 @@
     flex-wrap: nowrap;
 }
 
-#btn-container {
+#btns-container {
     display: flex;
+    margin-top: 0px;
 }
 
 #dv-team-member-save-btn{
@@ -27,8 +28,8 @@
 
 #manage-teams th:first-child,
 #manage-teams td:first-child {
-    width: 50px !important;
     text-align: center !important;
+    max-width: 1px;
 }
 
 
@@ -44,3 +45,6 @@
     align-items: center;
 }
 
+.app-table{
+    table-layout: auto !important;
+}

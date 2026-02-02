@@ -234,16 +234,14 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task<List<TeamDTO>> SaveTeams([FromBody] List<string> teams)
+        public async Task<List<string>> SaveTeams([FromBody] List<TeamDTO> teams)
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var dto = teams.Select(d => new TeamDTO
-            {
-                Name = d,
-                CompanyId = companyId!.Value
-            }).ToList();
 
-            return await _hrBLL.SaveTeams(dto, companyId!.Value);
+            var username = HttpContext.Session.GetString("Username");
+            teams.ForEach(t => t.CreatedBy = username);
+
+            return await _hrBLL.SaveTeams(teams, companyId!.Value);
         }
 
         [HttpPost]
