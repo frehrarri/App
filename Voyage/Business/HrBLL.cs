@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Voyage.Data;
+using Voyage.Data.TableModels;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
 using static Voyage.Utilities.CustomAttributes;
@@ -37,50 +38,26 @@ namespace Voyage.Business
             return await _hrDAL.GetTeams(companyId);
         }
 
-        //private async Task<AssignTeamDTO> GetAssignTeam()
-        //{
-        //    var availableUsers = _hrDAL.GetAvailableUsers();
-        //    var assignedUsers = _hrDAL.GetTeamAssignedUsers();
-        //}
+        public async Task<List<AssignTeamDTO>> GetAssignTeam(int teamId, int companyId)
+        {
+            return await _hrDAL.GetAssignTeam(teamId, companyId);
+        }
 
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
             return await _hrDAL.GetPermissions();
         }
 
-        public async Task<List<TeamMemberDTO>> GetTeamMembers(int companyId)
-        {
-            return await _hrDAL.GetTeamMembers(companyId);
-        }
 
-        public async Task<ManageTeamsDTO> GetAssignedTeams(int companyId)
-        {
-            ManageTeamsDTO dto = new ManageTeamsDTO();
-            List<TeamMemberDTO> list = new List<TeamMemberDTO>();
+        //public async Task<ManageTeamsDTO> GetAssignedTeams(int companyId)
+        //{
+        //    ManageTeamsDTO dto = new ManageTeamsDTO();
+        //    List<TeamMemberDTO> list = new List<TeamMemberDTO>();
 
-            var personnel = await GetPersonnel(companyId);
-            var teamMembers = await GetTeamMembers(companyId);
-
-            //check each person in person for a reference to teams in the teamMember
-            //if there is not a result then add the person to the default team member list
-            foreach (var person in personnel)
-            {
-                if (!teamMembers.Any(e => e.EmployeeId == person.EmployeeId))
-                {
-                    TeamMemberDTO teamMemberDTO = new TeamMemberDTO();
-                    teamMemberDTO.FirstName = person.FirstName;
-                    teamMemberDTO.LastName = person.LastName;
-                    teamMemberDTO.Username = person.Username;
-                    teamMemberDTO.Email = person.Email;
-                    teamMemberDTO.PhoneNumber = person.PhoneNumber;
-                    list.Add(teamMemberDTO);
-                }
-            }
-
-            dto.TeamMembers = list; 
-            dto.Teams = await GetTeams(companyId);
-            return dto;
-        }
+        //    var personnel = await GetPersonnel(companyId);
+        //    dto.Teams = await GetTeams(companyId);
+        //    return dto;
+        //}
 
         public async Task<bool> SavePersonnel(List<ManagePersonnelDTO> personnel, int companyId)
         {

@@ -1,8 +1,12 @@
 ﻿
 
-export async function getAssignTeamPartial() {
+export async function getAssignTeamPartial(params) {
     try {
-        const response = await axios.get('/Hr/AssignTeamPartial');
+        debugger;
+        const response = await axios.get('/Hr/AssignTeamPartial', {
+            params: params
+        });
+
         return response.data;
     } catch (error) {
         alert("Error: getAssignTeamPartial")
@@ -177,7 +181,6 @@ async function saveTeamMembers() {
         teamKey: document.getElementById('hdn-team-key'),
         dto: changeTracker
     }
-    debugger;
 
     try {
         response = await axios.post('/Hr/AssignTeamMembers', payload, {
@@ -228,9 +231,9 @@ async function handleEvents(e) {
 
 }
 
-export async function init() {
+export async function init(params) {
     //load initial partial
-    let partial = await getAssignTeamPartial();
+    let partial = await getAssignTeamPartial(params);
     let container = document.getElementById('hr-partial-container');
     container.innerHTML = partial;
 

@@ -1,1 +1,7 @@
-﻿
+﻿#assign-team-header {
+    display: flex;
+}
+
+h5 {
+    margin-left: 25%;
+}

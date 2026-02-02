@@ -7,6 +7,7 @@ namespace Voyage.Data.TableModels
     {
         public Guid TeamUserRoleKey { get; set; } // surrogate PK
         public Guid TeamKey { get; set; }
+        public int TeamId { get; set; }
         public int CompanyId { get; set; }
         public int EmployeeId { get; set; }
         public int RoleId { get; set; }
@@ -29,13 +30,14 @@ namespace Voyage.Data.TableModels
 
             // Alternate key for uniqueness
             modelBuilder.Entity<TeamUserRole>()
-                .HasAlternateKey(tur => new { tur.TeamKey, tur.CompanyId, tur.EmployeeId});
+                .HasAlternateKey(tur => new { tur.TeamId, tur.CompanyId, tur.EmployeeId});
 
             // FK to Team
             modelBuilder.Entity<TeamUserRole>()
                 .HasOne(tur => tur.Team)
                 .WithMany(t => t.TeamUserRoles)
-                .HasForeignKey(tur => tur.TeamKey)
+                .HasForeignKey(tur => new { tur.CompanyId, tur.TeamId })
+                .HasPrincipalKey(t => new { t.CompanyId, t.TeamId })
                 .OnDelete(DeleteBehavior.Cascade);
 
             // FK to User

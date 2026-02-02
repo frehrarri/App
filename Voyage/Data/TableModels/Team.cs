@@ -13,7 +13,7 @@ namespace Voyage.Data.TableModels
         #region FK
 
         //every company can have multiple teams
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
         public Company? Company { get; set; }
 
 
@@ -42,7 +42,7 @@ namespace Voyage.Data.TableModels
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Team>()
-                .HasAlternateKey(t => t.TeamId);
+                .HasAlternateKey(t => new { t.CompanyId, t.TeamId });
 
             //FK to Company
             modelBuilder.Entity<Team>()

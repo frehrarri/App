@@ -29,8 +29,22 @@ async function saveTeams() {
         });
 
         if (response && response.data) {
-            showSuccess(true);
- 
+            alert("Success");
+            //showSuccess(true);
+
+            //hyperlink results
+            const teams = document.querySelectorAll(".add-team-span");
+            teams.forEach(t => {
+                let text = t.textContent.trim();
+
+                let anchortag = document.createElement('a');
+                anchortag.href = "#";
+                anchortag.className.Add('goto-assign-team');
+                anchortag.value = text;
+
+                t.replaceWith()
+            });
+
             //update dropdown with save
             document.querySelectorAll('.sel-assign-team-member')?.forEach(dropdown => {
                 dropdown.replaceChildren();
@@ -52,7 +66,8 @@ async function saveTeams() {
         }
         
     } catch (error) {
-        showSuccess(false);
+        alert("Error");
+        //showSuccess(false);
         console.error("error", error);
         return false;
     }
@@ -220,7 +235,12 @@ async function handleEvents(e) {
         await saveTeamMembers();
 
     if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
-        await loadModule("assignTeam");
+        let params = {
+            teamId: e.target.dataset.id,
+            teamName: e.target.textContent.trim()
+        };
+        
+        await loadModule("assignTeam", params);
     }
 }
 

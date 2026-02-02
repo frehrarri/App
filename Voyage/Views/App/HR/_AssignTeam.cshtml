@@ -1,16 +1,16 @@
-﻿@model AssignTeamVM
+﻿@model List<AssignTeamVM>
 
 <div id="assign-team-container">
     <form id="assign-team-form">
         @Html.AntiForgeryToken()
 
-        <div id="dv-team">
-            <h3>Team Name</h3>
-        </div>
-
         <div id="dv-allocate-personnel" class="container table-responsive">
-            <div class="allocate-header">
+            
+
+            <div id="assign-team-header">
                 <h4>Assign Personnel</h4>
+                
+                <h5>@ViewBag.TeamName</h5>
             </div>
 
             <table id="tbl-allocate-personnel" class="app-table table">

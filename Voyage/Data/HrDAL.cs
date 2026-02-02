@@ -113,28 +113,34 @@ namespace Voyage.Data
             }
         }
 
-        //public async Task<List<UserDTO>> GetAvailableUsers(int companyId)
-        //{
-        //    try
-        //    {
-        //        var users = await _db.Users
-        //            .Where(u => u.CompanyId == companyId
-        //                && (u.IndividualUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)
-        //                    || u.TeamUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)
-        //                    || u.DepartmentUserRoles.Any(r => r.RoleId == (int)Constants.DefaultRoles.Unassigned)))
-        //            .ToListAsync();
-        //            //.Select(u => new UserDTO()
-        //            //{
-
-        //            //}
-                   
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e, "Error: HrDAL : GetTeams");
-        //        return null!;
-        //    }
-        //}
+        public async Task<List<AssignTeamDTO>> GetAssignTeam(int teamId, int companyId)
+        {
+            try
+            {
+                return await _db.TeamUserRoles
+                    .Where(tur =>
+                        tur.TeamId == teamId &&
+                        tur.Team.CompanyId == companyId)
+                    .Select(u => new AssignTeamDTO
+                    {
+                        //phone
+                        EmployeeId = u.EmployeeId,
+                        FirstName = u.User.FirstName,
+                        LastName = u.User.LastName,
+                        Username = u.User.UserName!,
+                        Email = u.User.Email!,
+                        RoleId = u.RoleId,
+                        Role = u.Role.RoleName,
+                        TeamName = u.Team.Name,
+                        TeamId = u.TeamId
+                    }).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : GetAssignTeam()");
+                return null!;
+            }
+        }
 
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
@@ -153,32 +159,6 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<TeamMemberDTO>> GetTeamMembers(int companyId)
-        {
-            try
-            {
-                return new List<TeamMemberDTO>();
-                //return await _db.TeamMembers
-                //    .Where(tm => tm.CompanyId == companyId)
-                //    .Select(tm => new TeamMemberDTO
-                //    {
-                //        //TeamId = tm.TeamId,
-                //        TeamName = tm.Team.Name,
-                //        EmployeeId = tm.EmployeeId, 
-                //        Username = tm.User.UserName,
-                //        FirstName = tm.User.FirstName,
-                //        LastName = tm.User.LastName,
-                //        Email = tm.User.Email,
-                //        PhoneNumber = tm.User.PhoneNumber
-                //    })
-                //    .ToListAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error: HrDAL : GetTeamMembers");
-                return null!;
-            }
-        }
 
         public async Task<bool> SavePersonnel(List<ManagePersonnelDTO> personnel, int companyId)
         {
@@ -436,17 +416,17 @@ namespace Voyage.Data
             }
         }
 
-        public async Task AssignTeam()
-        {
-            try
-            {
+        //public async Task AssignTeam()
+        //{
+        //    try
+        //    {
 
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error: HrDAL : AssignTeam");
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e, "Error: HrDAL : AssignTeam");
+        //    }
+        //}
 
         public async Task SaveTeams(List<TeamDTO> teams, int companyId)
         {

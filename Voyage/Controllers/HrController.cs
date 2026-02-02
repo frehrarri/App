@@ -84,27 +84,33 @@ namespace Voyage.Controllers
             ManageTeamsVM vm = new ManageTeamsVM();
             var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await _hrBLL.GetAssignedTeams(companyId!.Value);
+            var dto = await _hrBLL.GetTeams(companyId!.Value);
             if (dto != null)
-                vm.ManageTeamsDTO = dto;
+                vm.Teams = dto;
 
             return PartialView("~/Views/App/HR/_ManageTeams.cshtml", vm);
         }
 
         [HttpGet]
-        public async Task<IActionResult> AssignTeamPartial()
+        public async Task<IActionResult> AssignTeamPartial([FromQuery] int teamId, [FromQuery] string teamName)
         {
-            AssignTeamVM vm = new AssignTeamVM();
+            List<AssignTeamVM> vm = new List<AssignTeamVM>();
 
-            //var dto = GetAssignTeam();
+            ViewBag.TeamName = teamName;
+
+            var dto = await GetAssignTeam(teamId);
+
+            if (dto != null)
+                vm = MapToVM(dto);
 
             return PartialView("~/Views/App/HR/_AssignTeam.cshtml", vm);
         }
 
-        //private async Task<AssignTeamDTO> GetAssignTeam()
-        //{
-        //    return _hrBLL.GetAssignTeam();
-        //}
+        private async Task<List<AssignTeamDTO>> GetAssignTeam(int teamId)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetAssignTeam(teamId, companyId!.Value);
+        }
 
         [HttpGet]
         public async Task<IActionResult> ManageRolesPartial()
@@ -242,6 +248,29 @@ namespace Voyage.Controllers
         {
             int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             await _hrBLL.AssignTeamMembers(dto, companyId, teamKey);
+        }
+
+        private List<AssignTeamVM> MapToVM(List<AssignTeamDTO> dtos)
+        {
+            List<AssignTeamVM> list = new List<AssignTeamVM>();
+
+            foreach (var dto in dtos)
+            {
+                AssignTeamVM vm = new AssignTeamVM();
+                vm.SaveAction = dto.SaveAction;
+                vm.EmployeeId = dto.EmployeeId;
+                vm.RoleId = dto.RoleId;
+                vm.Role = dto.Role;
+                vm.FirstName = dto.FirstName;
+                vm.LastName = dto.LastName;
+                vm.Username = dto.Username;
+                vm.Email = dto.Email;
+                vm.TeamName = dto.TeamName;
+                vm.TeamId = dto.TeamId;
+                list.Add(vm);
+            }
+
+            return list;
         }
 
     }
