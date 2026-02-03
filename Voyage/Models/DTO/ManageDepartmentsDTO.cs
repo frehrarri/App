@@ -7,6 +7,8 @@
             Name = string.Empty;
         }
 
+        public string DepartmentKey { get; set; }
+        public int DepartmentId { get; set; }
         public string Name { get; set; }
     }
 }

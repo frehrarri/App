@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Utilities.IO;
 using System.Data;
 using System.Threading.Tasks;
 using Voyage.Business;
@@ -64,7 +65,7 @@ namespace Voyage.Controllers
             ManageDepartmentsVM vm = new ManageDepartmentsVM();
             var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await GetDepartments();
+            var dto = await _hrBLL.GetDepartments(companyId!.Value);
             if (dto != null)
                 vm.Departments = dto;
 
@@ -162,13 +163,13 @@ namespace Voyage.Controllers
             return await _hrBLL.GetRoles(companyId!.Value);
         }
 
-        [HttpGet]
-        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return await _hrBLL.GetDepartments(companyId!.Value);
+        //[HttpGet]
+        //public async Task<List<ManageDepartmentsDTO>> GetDepartments()
+        //{
+        //    var companyId = HttpContext.Session.GetInt32("CompanyId");
+        //    return await _hrBLL.GetDepartments(companyId!.Value);
             
-        }
+        //}
 
         [HttpGet]
         public async Task<List<TeamDTO>> GetTeams()
@@ -213,16 +214,14 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveDepartments([FromBody] List<string> departments)
+        public async Task<List<string>> SaveDepartments([FromBody] List<DepartmentDTO> departments)
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var dto = departments.Select(d => new DepartmentDTO
-            {
-                Name = d,
-                CompanyId = companyId!.Value
-            }).ToList();
 
-            await _hrBLL.SaveDepartments(dto, companyId!.Value);
+            var username = HttpContext.Session.GetString("Username");
+            departments.ForEach(t => t.CreatedBy = username);
+
+            return await _hrBLL.SaveDepartments(departments, companyId!.Value);
         }
 
         [HttpPost]

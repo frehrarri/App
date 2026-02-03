@@ -83,6 +83,8 @@ namespace Voyage.Data
                     .Where(u => u.CompanyId == companyId)
                     .Select(u => new ManageDepartmentsDTO
                     {
+                        DepartmentKey = u.DepartmentKey.ToString(),
+                        DepartmentId = u.DepartmentId,
                         Name = u.Name
                     }).ToListAsync();
             }
@@ -281,104 +283,95 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
+        public async Task<List<string>> SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
-            using var transaction = await _db.Database.BeginTransactionAsync();
+            List<string> newKeys = new();
+            var newDepartments = new List<Department>();
+            var datetime = DateTime.UtcNow;
+
+            using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                // Make old departments inactive because we will create new versions
-                await _db.Departments
-                    .Where(d => d.CompanyId == companyId
-                             && d.IsLatest == true
-                             && d.IsActive == true)
-                    .ExecuteUpdateAsync(setters =>
-                        setters.SetProperty(d => d.IsLatest, false));
-
-                // Get the latest departments for comparison
-                var latestDepartments = await _db.Departments
-                    .AsNoTracking()
-                    .Where(d => d.CompanyId == companyId
-                             && d.IsLatest == true
-                             && d.IsActive == true)
-                    .ToListAsync();
+                var existingDepartments = await _db.Departments.Where(d => d.CompanyId == companyId).ToListAsync();
 
                 int nextDepartmentId = await GetNextDepartmentId(companyId);
 
-                var deptsToSave = new List<Department>();
-
-                if (departments != null && departments.Any())
+                foreach (var dept in departments)
                 {
-                    foreach (var deptDto in departments)
+                    switch ((SaveAction)dept.DbChangeAction)
                     {
-                        // Check if this department already existed
-                        var existing = latestDepartments.FirstOrDefault(d => d.Name == deptDto.Name);
-
-                        if (existing != null)
-                        {
-                            // Existing: create new version
-                            deptsToSave.Add(new Department
+                        case SaveAction.Save:
                             {
-                                DepartmentId = existing.DepartmentId,
-                                Name = deptDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = existing.CreatedDate,
-                                ModifiedDate = DateTime.UtcNow
-                            });
-                        }
-                        else
-                        {
-                            // New department
-                            deptsToSave.Add(new Department
-                            {
-                                DepartmentId = nextDepartmentId,
-                                Name = deptDto.Name,
-                                CompanyId = companyId,
-                                IsLatest = true,
-                                IsActive = true,
-                                CreatedDate = DateTime.UtcNow,
-                                ModifiedDate = DateTime.UtcNow
-                            });
+                                // INSERT
+                                if (string.IsNullOrEmpty(dept.DeptKey))
+                                {
+                                    var newDept = new Department
+                                    {
+                                        DepartmentId = nextDepartmentId++,
+                                        Name = dept.Name,
+                                        CompanyId = companyId,
+                                        CreatedDate = datetime,
+                                        CreatedBy = dept.CreatedBy,
+                                        IsLatest = true,
+                                        IsActive = true
+                                    };
 
-                            nextDepartmentId++;
-                        }
+                                    newDepartments.Add(newDept);
+                                    await _db.Departments.AddAsync(newDept);
+                                }
+                                // UPDATE
+                                else
+                                {
+                                    var existing = existingDepartments.FirstOrDefault(d => d.DepartmentKey == Guid.Parse(dept.DeptKey));
+
+                                    if (existing != null)
+                                    {
+                                        existing.Name = dept.Name;
+                                        existing.ModifiedDate = datetime;
+                                        existing.ModifiedBy = dept.CreatedBy;
+                                    }
+                                }
+
+                                break;
+                            }
+
+                        case SaveAction.Remove:
+                            {
+                                if (!string.IsNullOrEmpty(dept.DeptKey))
+                                {
+                                    var deptToDelete = existingDepartments
+                                        .FirstOrDefault(d =>
+                                            d.DepartmentKey == Guid.Parse(dept.DeptKey) &&
+                                            d.CompanyId == companyId);
+
+                                    if (deptToDelete != null)
+                                    {
+                                        _db.Departments.Remove(deptToDelete);
+                                    }
+                                }
+
+                                break;
+                            }
                     }
                 }
 
-                // Handle deletions: departments that existed before but are missing now
-                var deptNamesToKeep = departments?.Select(d => d.Name).ToList() ?? new List<string>();
-                var deptsToDelete = latestDepartments
-                    .Where(d => !deptNamesToKeep.Contains(d.Name));
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
 
-                foreach (var deptToDelete in deptsToDelete)
-                {
-                    deptsToSave.Add(new Department
-                    {
-                        DepartmentId = deptToDelete.DepartmentId,
-                        Name = deptToDelete.Name,
-                        CompanyId = companyId,
-                        IsLatest = true,
-                        IsActive = false, // mark as deleted
-                        CreatedDate = deptToDelete.CreatedDate,
-                        ModifiedDate = DateTime.UtcNow
-                    });
-                }
+                newKeys = newDepartments
+                    .Select(d => d.DepartmentKey.ToString())
+                    .ToList();
 
-                if (deptsToSave.Any())
-                {
-                    await _db.Departments.AddRangeAsync(deptsToSave);
-                    await _db.SaveChangesAsync();
-                }
-
-                await transaction.CommitAsync();
+                return newKeys;
             }
             catch (Exception e)
             {
-                await transaction.RollbackAsync();
-                _logger.LogError(e, "Error: HrDAL : SaveDepartments");
+                await tx.RollbackAsync();
+                _logger.LogError(e, "Error: HrDAL.SaveDepartments()");
+                return null!;
             }
         }
+
 
         private async Task<int> GetNextDepartmentId(int companyId)
         {

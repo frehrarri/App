@@ -1,5 +1,8 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+const changeTracker = new Map();
+
 export async function getManageTeamsPartial() {
     try {
         const response = await getPartial("Hr", "ManageTeamsPartial");
@@ -12,8 +15,6 @@ export async function getManageTeamsPartial() {
     }
 }
 
-const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-const changeTracker = new Map();
 
 async function saveTeams(e) {
     e.preventDefault();
@@ -29,7 +30,7 @@ async function saveTeams(e) {
             }
         });
 
-        if (response && response.data) {
+        if (response && response.status == 200) {
 
             //did not add any records so there is nothing to hyperlink
             if (response.data.length > 0) {
@@ -55,12 +56,11 @@ async function saveTeams(e) {
                     index++;
                 }
             }
-
             alert("Success");
-
-           /* return response.data;*/
         }
-        
+        else {
+            alert("Error saving");
+        }
     } catch (error) {
         alert("Error");
         console.error("error", error);
@@ -104,7 +104,7 @@ function addTeamInput(e) {
     if (e.target.classList.contains("add-team-span") && e.type === "click") {
         const row = e.target.parentElement.parentElement;
 
-        const key = row.dataset.key;
+        let key = row.dataset.key;
         if (!key)
             key = crypto.randomUUID();
         
@@ -112,7 +112,7 @@ function addTeamInput(e) {
         input.type = "text";
         input.placeholder = "Team Name";
         input.className = "add-team-input";
-        input.value = e.target.textContent;
+        input.value = e.target.textContent.trim();
 
         e.target.replaceWith(input);
         input.focus();
@@ -145,7 +145,7 @@ function addTeamInput(e) {
 
 }
 
-function removeTeam(e) {
+async function removeTeam(e) {
     if (!confirm("Remove teams?")) {
         return;
     }
@@ -172,11 +172,10 @@ function removeTeam(e) {
                 });
 
             row.remove();
-
-            saveTeams(e);
         }
-            
     });
+
+    await saveTeams(e);
 }
 
 
@@ -189,7 +188,7 @@ async function handleEvents(e) {
 
     //remove team
     if (e.target.id == "remove-team-btn")
-        removeTeam(e);
+        await removeTeam(e);
 
     //add new team row
     if (e.target.id == "add-team-btn")

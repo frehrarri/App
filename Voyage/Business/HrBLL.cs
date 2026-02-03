@@ -69,9 +69,9 @@ namespace Voyage.Business
             return await _hrDAL.SaveRoles(roles, companyId);
         }
 
-        public async Task SaveDepartments(List<DepartmentDTO> departments, int companyId)
+        public async Task<List<String>> SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
-            await _hrDAL.SaveDepartments(departments, companyId);
+            return await _hrDAL.SaveDepartments(departments, companyId);
         }
 
         public async Task SavePermissions(List<string> permissions)

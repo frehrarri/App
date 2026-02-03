@@ -1,5 +1,7 @@
 import { loadModule } from "/js/__moduleLoader.js";
 
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+const changeTracker = new Map();
 
 export async function getManageDepartmentsPartial() {
     try {
@@ -16,6 +18,10 @@ function addNewDeptRow() {
 
     const tr = document.createElement("tr");
     tr.classList.add("app-table-row");
+
+    let key = tr.dataset.key;
+    if (!key)
+        tr.dataset.key = crypto.randomUUID();
 
     //checkbox
     const td1 = document.createElement("td");
@@ -42,11 +48,18 @@ function addDeptInput(e) {
 
     // Only act on spans
     if (target.classList.contains("add-dept-span") && e.type === "click") {
+        const row = e.target.parentElement.parentElement;
+
+        let key = row.dataset.key;
+        if (!key)
+            key = crypto.randomUUID();
+
         const input = document.createElement("input");
         input.type = "text";
         input.placeholder = "Dept Name";
         input.className = "add-dept-input";
-        input.value = target.textContent;
+        input.value = target.textContent.trim();
+        input.dataset.key = key;
 
         target.replaceWith(input);
         input.focus();
@@ -57,7 +70,17 @@ function addDeptInput(e) {
             const span = document.createElement("span");
             span.className = "add-dept-span";
             span.textContent = input.value || "Click to add department";
+            span.dataset.key = key;
+
             input.replaceWith(span);
+
+
+            changeTracker.set(key, {
+                name: span.textContent,
+                deptKey: null, //placeholder for a new entry that will be assigned by db
+                dbChangeAction: 1 //add
+            });
+
         });
 
         // Save on Enter
@@ -70,27 +93,14 @@ function addDeptInput(e) {
 
 }
 
-function getDepts() {
-    let results = [];
-    const teams = document.querySelectorAll(".add-dept-span");
-
-    teams.forEach(t => {
-
-        if (t.textContent.trim() != "Click to add department")
-            results.push(t.textContent.trim());
-    });
-
-    return results;
-}
-
-
-const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 async function saveDepartments(e) {
     e.preventDefault();
     let response;
-    let payload = getDepts();
+    let payload = Array.from(changeTracker.values());
 
+    debugger;
+    
     try {
         response = await axios.post('/Hr/SaveDepartments', payload, {
             headers: {
@@ -99,9 +109,37 @@ async function saveDepartments(e) {
             }
         });
 
-        showSuccess(true);
+        if (response && response.status == 200) {
 
-        return response.data;
+            //did not add any records so there is nothing to hyperlink
+            if (response.data.length > 0) {
+                //hyperlink results
+                let dept = "";
+                let index = 0;
+
+                let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
+
+                for (let [key, value] of addedEntries) {
+                    dept = document.querySelector(`.add-dept-span[data-key='${key}']`);
+
+                    let anchortag = document.createElement('a');
+                    anchortag.href = "#";
+                    anchortag.classList.add('goto-assign-dept')
+                    anchortag.textContent = dept.textContent.trim();
+                    anchortag.dataset.key = key;
+
+                    let deptKey = response.data[index];
+                    anchortag.dataset.deptKey = deptKey;
+
+                    dept.replaceWith(anchortag);
+                    index++;
+                }
+            }
+
+            alert("Success");
+        } else {
+            alert("Error saving");
+        }
     } catch (error) {
         showSuccess(false);
         console.error("error", error);
@@ -109,15 +147,38 @@ async function saveDepartments(e) {
     }
 }
 
-function removeDept(e) {
+async function removeDept(e) {
+    if (!confirm("Remove departments?")) {
+        return;
+    }
+
     const checkedBoxes = document.querySelectorAll("#manage-depts tbody input[type='checkbox']:checked");
 
     //remove row of checked boxes
     checkedBoxes.forEach(cb => {
+        debugger;
         const row = cb.closest("tr");
-        if (row)
+        if (row) {
+            let key = row.dataset.key;
+
+            // remove unsaved addition from change tracker
+            const existingChange = changeTracker.get(key);
+            if (existingChange && existingChange.dbChangeAction === 1)
+                changeTracker.delete(key)
+
+            // prepare for database deletion
+            else if (row.dataset.deptkey != null)
+                changeTracker.set(key, {
+                    name: row.childNodes[1].textContent,
+                    deptKey: row.dataset.deptkey,
+                    dbChangeAction: 2 //remove
+                });
+
             row.remove();
+        }
     });
+
+    await saveDepartments(e);
 }
 
 
@@ -130,7 +191,7 @@ async function handleEvents(e) {
 
     //remove team
     if (e.target.id == "remove-dept-btn")
-        removeDept(e);
+        await removeDept(e);
 
     //add new team row
     if (e.target.id == "add-dept-btn")

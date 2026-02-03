@@ -23,12 +23,14 @@
                 <tbody>
                     @foreach (var dept in Model.Departments)
                     {
-                        <tr class="app-table-row">
+                        Guid guid = Guid.NewGuid();
+
+                        <tr class="app-table-row" data-key="@guid" data-deptKey="@dept.DepartmentKey">
                             <td class="app-table-data">
                                 <input type="checkbox" />
                             </td>
                             <td class="app-table-data">
-                                <a href="#" class="goto-assign-dept" data-id="@* @dept. *@">@dept.Name</a>
+                                <a href="#" class="goto-assign-dept" data-id="@dept.DepartmentId" data-key="@guid" data-deptKey="@dept.DepartmentKey">@dept.Name</a>
                             </td>
                         </tr>
                     }
