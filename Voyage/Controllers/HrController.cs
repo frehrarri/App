@@ -231,7 +231,6 @@ namespace Voyage.Controllers
         public async Task<List<string>> SaveTeams([FromBody] List<TeamDTO> teams)
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-
             var username = HttpContext.Session.GetString("Username");
             teams.ForEach(t => t.CreatedBy = username);
 
@@ -248,6 +247,29 @@ namespace Voyage.Controllers
 
             await _hrBLL.AssignTeamMembers(dto, companyId);
         }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.SaveAssignDepartmentTeams(dto);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.SaveAssignDepartmentUsers(dto);
+        }
+
 
         private List<AssignTeamVM> MapToVM(List<AssignTeamDTO> dtos)
         {

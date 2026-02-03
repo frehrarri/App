@@ -575,9 +575,25 @@ namespace Voyage.Data
             {
                 await tx.RollbackAsync();
                 _logger.LogError(ex, "Error: HrDAL.AssignTeamMembers()");
-                throw;
             }
         }
+
+
+        public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto)
+        {
+
+        }
+
+        public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto)
+        {
+
+        }
+
+
+
+
+
+
 
     }
 }

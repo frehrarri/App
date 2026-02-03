@@ -41,7 +41,7 @@ function addNewRow(newId) {
     tbody.appendChild(tr);
 }
 
-function addUserInput(e, newId, controlType) {
+function addUserInput(e, newId, controlType, changeTracker) {
     const target = e.target;
 
     if (target.classList.contains(`add-${newId}-span`) && e.type === "click") {
@@ -129,7 +129,7 @@ function renameIds(newId) {
     saveBtn.id = `${newId}-save-btn`;
 }
 
-function remove(e, newId, saveCallback) {
+function remove(e, newId, saveCallback, changeTracker) {
     if (!confirm("Are you sure?")) {
         return;
     }
@@ -354,10 +354,8 @@ function handleSearchUrl(controlType) {
     switch (controlType) {
         case 1:
             return "/SearchService/Users";
-            formatResults = r => `${r.lastname}, ${r.firstname} [${r.username}]`;
         case 2:
             return "/SearchService/Teams";
-            formatResults = r => `${r.name}`;
         default:
             break;
     }
@@ -367,8 +365,7 @@ function formatSearchResults(controlType, r) {
     let result = "";
     switch (controlType) {
         case 1:
-            result = `${r.lastname}, ${r.firstname} [${r.username}]`;
-            return result;
+            return `${r.lastname}, ${r.firstname} [${r.username}]`;
         case 2:
             return `${r}`;
         default:
@@ -423,11 +420,11 @@ function debounceSearch(input, controlType) {
 }
 
 
-async function handleEvents(e, newId, saveCallback, controlType, containerId) {
+async function handleEvents(e, newId, saveCallback, controlType, changeTracker) {
     if (e.type === "click") {
         //remove user
         if (e.target.id == `${newId}-remove-btn`)
-            remove(e, newId, saveCallback);
+            remove(e, newId, saveCallback. changeTracker);
 
         //add row
         if (e.target.id == `${newId}-add-btn`)
@@ -435,11 +432,13 @@ async function handleEvents(e, newId, saveCallback, controlType, containerId) {
 
         //input control for adding data
         if (e.target.classList.contains(`add-${newId}-span`))
-            addUserInput(e, newId, controlType);
+            addUserInput(e, newId, controlType, changeTracker);
 
         //handle save events 
-        if (e.target.id == `${newId}-save-btn`)
-            await saveCallback(e);
+        if (e.target.id == `${newId}-save-btn`) {
+            await saveCallback(e, changeTracker);
+        }
+            
     }
 
 }
@@ -495,19 +494,7 @@ export async function init(params) {
     //event handlers
     const container = document.querySelector(`#dv-${newId}[data-key='${key}']`);
 
-    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType));
-    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, tracker));
-
-    //api for accessing changetracker for specific instance
-    const api = {
-        getChanges: () => Array.from(changeTracker.entries()),
-        getChangeTracker: () => changeTracker,
-        clearChanges: () => changeTracker.clear(),
-        destroy: () => {
-            container?.removeEventListener("click", handleEvents);
-            container?.removeEventListener("keydown", handleEvents);
-            changeTracker.clear();
-        }
-    };
+    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
+    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
 }
 
