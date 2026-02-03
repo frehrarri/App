@@ -69,9 +69,13 @@ body {
     border-radius: 10px; 
 }
 
+.app-table-row {
+       border: 1px solid lightgray;
+}
+
 .app-table-header,
 .app-table-data {
-    border: 1px solid lightgray;
+ /*   border: 1px solid lightgray;*/
     padding: 8px;
     text-align: left;
     overflow: hidden; 
@@ -81,16 +85,23 @@ body {
 
 .app-table td input,
 .app-table td select {
+    margin-left: 2px;
     width: 100%;
-    max-width: 100%;
     box-sizing: border-box;
 }
 
-.app-table th:first-child.app-table-header,
-.app-table td:first-child.app-table-data {
-    width: 50px !important;
+.app-table-header:first-child,
+.app-table-data:first-child {
+    width: 4% !important;
     text-align: center !important;
-    padding: 4px !important;
+    border-right: 1px solid lightgray;
+    /* padding: 4px !important;*/
+}
+
+.app-table td:first-child input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    padding: 0;
 }
 
 .message-popup {

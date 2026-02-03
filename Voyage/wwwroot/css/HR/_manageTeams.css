@@ -26,13 +26,6 @@
     justify-content: flex-end;
 }
 
-#manage-teams th:first-child,
-#manage-teams td:first-child {
-    text-align: center !important;
-    max-width: 1px;
-}
-
-
 .allocate-header {
     position: relative;
     display: flex;
@@ -45,6 +38,6 @@
     align-items: center;
 }
 
-.app-table{
+/*.app-table{
     table-layout: auto !important;
-}
+}*/

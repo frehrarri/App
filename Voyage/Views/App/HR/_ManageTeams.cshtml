@@ -1,7 +1,7 @@
 ﻿@model ManageTeamsVM
 
 <div id="manage-teams-container" class="container">
-    <form id="manage-teams" class="container">
+    <form id="form-manage-teams" class="container">
         @Html.AntiForgeryToken()
 
 
@@ -10,11 +10,11 @@
                 <h4>Manage Teams</h4>
             </div>
 
-            <table id="manage-teams" class="app-table table">
+            <table id="manage-teams" class="app-table">
                 <thead>
                     <tr class="app-table-row">
                         <th class="app-table-header">
-                            <input type="hidden" />
+                         @*    <input type="hidden" /> *@
                         </th>
                         <th class="app-table-header">Team</th>
                     </tr>

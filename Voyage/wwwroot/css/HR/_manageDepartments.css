@@ -18,12 +18,12 @@
 #btn-container {
     display: flex;
 }
-
+/*
 
 #manage-depts th:first-child,
 #manage-depts td:first-child {
-    width: 50px !important;
+    max-width: 1px;
     text-align: center !important;
 }
-
+*/
 
