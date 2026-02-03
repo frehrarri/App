@@ -22,13 +22,8 @@
 
 #manage-depts th:first-child,
 #manage-depts td:first-child {
-    max-width: 1px;
+    width: 50px !important;
     text-align: center !important;
 }
 
 
-.manage-dept-header {
-    position: relative;
-    display: flex;
-    align-items: center;
-}

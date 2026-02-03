@@ -203,12 +203,13 @@ async function handleEvents(e) {
     }
 
     if (e.type == "click" && e.target.classList.contains("goto-assign-dept")) {
-        await loadModule("assignDepartment");
-    }
+        let params = {
+            deptKey: e.target.dataset.deptkey,
+            deptName: e.target.textContent.trim()
+        };
 
-    ////save members to team
-    //if (e.target.id == "team-member-save-btn")
-    //    await saveTeamMembers();
+        await loadModule("assignDepartment", params);
+    }
 
 }
 

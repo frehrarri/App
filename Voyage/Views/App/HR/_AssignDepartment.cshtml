@@ -2,26 +2,104 @@
 
 <div id="assign-department-container">
 
-    <div id="dv-department">
-        <h3>Department Name</h3>
-    </div>
-
     <div id="dv-dept-teams">
-        <div class="dept-teams-header">
-            <h4>Teams</h4>
+        <div class="assign-dept-header">
+            <h4>Assign Teams</h4>
+
+            <h4 class="dept-name">@ViewBag.DeptName</h4>
         </div>
 
-        <button>Assign</button>
+        <table id="manage-dept-teams" class="app-table table">
+            <thead>
+                <tr class="app-table-row">
+                    <th class="app-table-header">
+                        <input type="hidden" />
+                    </th>
+                    <th class="app-table-header">Team</th>
+                </tr>
+            </thead>
+            <tbody>
+              @*   @foreach (var team in Model.Teams)
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    <tr class="app-table-row" data-key="@guid" data-teamkey="@team.TeamKey">
+                        <td class="app-table-data">
+                            <input type="checkbox" />
+                        </td>
+                        <td class="app-table-data">
+                            <a href="#" class="goto-assign-team" data-id="@team.TeamId" data-key="@guid" data-teamkey="@team.TeamKey">@team.Name</a>
+                        </td>
+                    </tr>
+                } *@
+            </tbody>
+        </table>
+
+        <br />
+
+        <div id="dv-dept-team-btns" class="container">
+            <div id="btn-container">
+                <button id="dept-add-team-btn" class="primary-btn" type="button">Add</button>
+                <button id="dept-remove-team-btn" class="warning-btn" type="button">Remove</button>
+            </div>
+
+            <button id="dept-assign-team-btn" class="primary-btn">Save</button>
+        </div>
     </div>
 
     <br />
 
-    <div id="dv-dept-indiv">
-        <div class="dept-teams-header">
-            <h4>Users</h4>
+    <div id="dv-dept-personnel">
+        <div class="assign-dept-header">
+            <h4>Assign Personnel</h4>
+
+            <h4 class="dept-name">@ViewBag.DeptName</h4>
         </div>
 
-        <button>Assign</button>
+                <table id="tbl-allocate-dept-personnel" class="app-table table">
+            <thead>
+                <tr class="app-table-row">
+                    <th class="app-table-header" scope="col"></th>
+                    <th class="app-table-header" scope="col">Last Name</th>
+                    <th class="app-table-header" scope="col">First Name</th>
+                    <th class="app-table-header" scope="col">Username</th>
+                    <th class="app-table-header" scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+              @*   @foreach (var teamMember in Model)
+                {
+                    <tr class="app-table-row" data-uid="@Guid.NewGuid().ToString()">
+                        <td class="app-table-data">
+                            <input type="checkbox" />
+                        </td>
+                        <td class="app-table-data">
+                            @teamMember.LastName
+                        </td>
+                        <td class="app-table-data">
+                            @teamMember.FirstName
+                        </td>
+                        <td class="app-table-data">
+                            @teamMember.Username
+                        </td>
+                        <td class="app-table-data">
+                            @teamMember.Email
+                        </td>
+                    </tr>
+                } *@
+
+            </tbody>
+
+        </table>
+        <br />
+        <div id="dv-dept-user-btns" class="container">
+            <div id="btn-container">
+                <button id="dept-add-user-btn" class="primary-btn" type="button">Add</button>
+                <button id="dept-remove-user-btn" class="warning-btn" type="button">Remove</button>
+            </div>
+
+            <button id="dept-assign-user-btn" class="primary-btn">Save</button>
+        </div>
     </div>
 
 

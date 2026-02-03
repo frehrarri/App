@@ -1,7 +1,27 @@
-﻿#dv-dept-teams, #dv-dept-indiv {
+﻿#dv-dept-teams, #dv-dept-personnel {
     box-sizing: border-box;
     border-radius: 5px;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     background-color: #e8f0fe;
     padding: 30px 20px;
+    width: 100%;
+    position: relative;
+}
+
+.assign-dept-header {
+    display: flex;
+}
+
+.dept-name {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#dv-dept-user-btns, #dv-dept-team-btns {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
 }

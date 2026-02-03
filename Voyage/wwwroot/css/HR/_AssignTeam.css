@@ -1,8 +1,20 @@
-﻿#assign-team-header {
+﻿#dv-allocate-team-personnel {
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    background-color: #e8f0fe;
+    padding: 30px 20px;
+    width: 100%;
+    position: relative;
+}
+
+#assign-team-header {
     display: flex;
 }
 
 #team-name {
-    margin-left: 25%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 

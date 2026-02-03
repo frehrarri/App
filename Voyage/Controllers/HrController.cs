@@ -73,8 +73,11 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AssignDepartmentPartial()
+        public async Task<IActionResult> AssignDepartmentPartial([FromQuery] string deptKey, [FromQuery] string deptName)
         {
+            ViewBag.DeptName = deptName;
+            ViewBag.DeptKey = deptKey;
+
             return PartialView("~/Views/App/HR/_AssignDepartment.cshtml");
         }
 
@@ -162,14 +165,6 @@ namespace Voyage.Controllers
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             return await _hrBLL.GetRoles(companyId!.Value);
         }
-
-        //[HttpGet]
-        //public async Task<List<ManageDepartmentsDTO>> GetDepartments()
-        //{
-        //    var companyId = HttpContext.Session.GetInt32("CompanyId");
-        //    return await _hrBLL.GetDepartments(companyId!.Value);
-            
-        //}
 
         [HttpGet]
         public async Task<List<TeamDTO>> GetTeams()
