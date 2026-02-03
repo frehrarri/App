@@ -105,16 +105,54 @@ function clampResultsToContainer(containerBodyId, ul, input) {
     ul.style.maxWidth = `${maxWidth}px`;
 }
 
-function addUserSearchEventListener(containerBodyId, input, resultsContainer, onSelect) {
-    addSearchEventListener({
-        containerBodyId,
-        input,
-        resultsContainer,
-        url: "/User/Search",
-        displayText: u => `${u.lastname}, ${u.firstname} [${u.username}] [${u.email}]`,
-        valueField: "id",
-        onSelect
-    });
+function addSearchEventListener(containerBodyId, input, resultsContainer, onSelect, controlType) {
+    let url = "";
+    let displayText = ""
+    switch (controlType) {
+        case 1:
+            url = "/SearchService/Users";
+            displayText = '${u.lastname}, ${u.firstname} [${u.username}] [${u.email}';
+            break;
+        case 2:
+            url = "/SearchService/Teams";
+            displayText = '${u.name}';
+            break;
+        default:
+            break;
+
+    }
+
+    input.oninput = async () => {
+        const q = input.value.trim();
+
+        if (q.length < 2)
+            return;
+
+        const res = await axios.get(url, {
+            params: { query: q }
+        });
+
+        resultsContainer.innerHTML = "";
+
+        res.data.forEach(u => {
+            const li = document.createElement("li");
+
+            li.textContent = displayText
+
+            li.onclick = () => onSelect(u);
+            resultsContainer.appendChild(li);
+        });
+    };
+
+    //addSearchEventListener({
+    //    containerBodyId,
+    //    input,
+    //    resultsContainer,
+    //    url: url,
+    //    displayText: u => `[${displayText}]`,
+    //    valueField: "id",
+    //    onSelect
+    //});
 }
 
 

@@ -1,0 +1,26 @@
+﻿
+<form>
+    @Html.AntiForgeryToken()
+    <div id="dv-newid">
+        <table id="tbl-newid" class="app-table">
+            <thead>
+                <tr class="app-table-row">
+                    <th class="app-table-header"></th>
+                    @* headers appended via js *@
+                </tr>
+            </thead>
+            <tbody>
+                @* rows and row data will be appended via js *@
+            </tbody>
+        </table>
+        <div id="newid-btns-container" class="container grid-btn-container">
+            <div class="add-remove-container">
+                <button id="newid-add-btn" class="primary-btn" type="button">Add</button>
+                <button id="newid-remove-btn" class="warning-btn" type="button">Remove</button>
+            </div>
+
+            <button id="newid-save-btn" class="primary-btn">Save</button>
+        </div>
+    </div>
+</form>
+

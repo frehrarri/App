@@ -227,3 +227,8 @@ body {
 select:has(option[value=""]:checked){
     color:gray;
 }
+
+.grid-btn-container{
+    display: flex;
+    justify-content: space-between;
+}

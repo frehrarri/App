@@ -12,6 +12,10 @@ const moduleRegistry = {
         js: () => import(`./register.js?v=${scriptVersion}`),
         css: `/css/register.css?v=${scriptVersion}`
     },
+    gridControl: {
+        js: () => import(`./_gridControl.js?v=${scriptVersion}`),
+        css: `/css/_gridControl.css?v=${scriptVersion}`
+    },
 
     //hr
     hrControl: {

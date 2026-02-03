@@ -110,6 +110,14 @@
             Remove = 2,
         }
 
+        public enum GridControlType
+        {
+            Basic = 0,
+            User = 1,
+            Teams = 2
+
+        }
+
         public enum DefaultRoles
         {
             Principal = -1,
