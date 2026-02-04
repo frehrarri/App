@@ -138,7 +138,8 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
         
         const row = cb.closest("tr");
         if (row) {
-            let uid = row.dataset.uid ?? row.dataset.key;
+            /*let uid = row.dataset.uid ?? row.dataset.key;*/
+            let uid = row.dataset.uid
        
             // remove unsaved addition from change tracker
             const existingChange = changeTracker.get(uid);
@@ -160,7 +161,7 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
     saveCallback(e, changeTracker);
 }
 
-async function hydrateGrid(headerList, newId, rows, key, controlType) {
+async function hydrateGrid(headerList, newId, rows, uid, controlType) {
     const headers = headerList;
     const data = rows;
     
@@ -169,12 +170,12 @@ async function hydrateGrid(headerList, newId, rows, key, controlType) {
     document.getElementById(`${newId}-grid-container`).innerHTML = partial;
 
     const table = document.getElementById("tbl-newid");
-    table.dataset.key = key;
+    table.dataset.uid = uid;
     table.id = `tbl-${newId}`;
 
     renameIds(newId);
     let eventWrapper = document.getElementById(`dv-${newId}`);
-    eventWrapper.dataset.key = key;
+    eventWrapper.dataset.uid = uid;
 
     //add headers
     const headerRow = table.querySelector('thead tr');
@@ -192,14 +193,14 @@ async function hydrateGrid(headerList, newId, rows, key, controlType) {
     const tbody = table.querySelector('tbody');
     data.forEach(row => {
         debugger;
-        let key = crypto.randomUUID();
+        let uid = crypto.randomUUID();
 
         const tr = document.createElement('tr');
 
         handleGetDataAttr(tr, row, controlType);
 
         tr.classList.add('app-table-row');
-        tr.dataset.key = key;
+        tr.dataset.uid = uid;
 
         const tdcbx = document.createElement('td');
         tdcbx.classList.add('app-table-data');
@@ -476,7 +477,7 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker) 
 export async function init(params) {
 
     const changeTracker = new Map();
-    const key = crypto.randomUUID();
+    const uid = crypto.randomUUID();
 
     if (!params) {
         console.log("need to pass parameters");
@@ -508,10 +509,10 @@ export async function init(params) {
     if (params.controlType) 
         headers = handleHeaders(params);
 
-    await hydrateGrid(headers, newId, params.rows, key, controlType); 
+    await hydrateGrid(headers, newId, params.rows, uid, controlType); 
     
     //event handlers
-    const container = document.querySelector(`#dv-${newId}[data-key='${key}']`);
+    const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
     debugger;
     container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
     container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
