@@ -579,14 +579,145 @@ namespace Voyage.Data
         }
 
 
-        public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto)
+        public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto, int companyId)
         {
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                if (!dto.Any() || companyId == 0)
+                    return;
 
+                if (string.IsNullOrEmpty(dto[0].DepartmentKey))
+                    return;
+
+                var deptKey = Guid.Parse(dto[0].DepartmentKey);
+                var datetime = DateTime.UtcNow;
+
+                var existingTeams = await _db.Teams.Where(t => t.CompanyId == companyId && t.IsActive == true).ToListAsync();
+
+                foreach (var team in dto)
+                {
+                    if (string.IsNullOrEmpty(team.TeamKey))
+                        return;
+
+                    var teamKey = Guid.Parse(team.TeamKey);
+                    var existingRow = existingTeams.FirstOrDefault(t => t.TeamKey == teamKey);
+
+                    switch (team.DbChangeAction)
+                    {
+                        //assign team to department
+                        case (int)SaveAction.Save:
+                            {
+                                if (existingRow != null)
+                                {
+                                    existingRow.DepartmentKey = deptKey;
+                                    existingRow.ModifiedBy = team.CreatedBy;
+                                    existingRow.ModifiedDate = datetime;
+                                }
+
+                                break;
+                            }
+
+                        // unassign department
+                        case (int)SaveAction.Remove:
+                            {
+                                if (existingRow != null)
+                                {
+                                    existingRow.DepartmentKey = null;
+                                    existingRow.ModifiedBy = team.CreatedBy;
+                                    existingRow.ModifiedDate = datetime;
+                                }
+
+                                break;
+                            }
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "Error: HrDAL.SaveAssignDepartmentTeams()");
+            }
         }
 
-        public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto)
+        public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto, int companyId)
         {
+            //var teamKey = Guid.Parse(dto[0].TeamKey);
+            //var datetime = DateTime.UtcNow;
 
+            //using var tx = await _db.Database.BeginTransactionAsync();
+            //try
+            //{
+            //    var existing = await _db.TeamUserRoles
+            //        .Where(t =>
+            //            t.CompanyId == companyId &&
+            //            t.TeamKey == teamKey)
+            //        .ToListAsync();
+
+            //    foreach (var item in dto)
+            //    {
+
+            //        switch (item.DbChangeAction)
+            //        {
+            //            // INSERT or UPDATE
+            //            case (int)SaveAction.Save:
+            //                {
+            //                    var existingRow = existing
+            //                        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+
+            //                    // insert
+            //                    if (existingRow == null)
+            //                    {
+            //                        await _db.TeamUserRoles.AddAsync(new TeamUserRole
+            //                        {
+            //                            CompanyId = companyId,
+            //                            TeamKey = teamKey,
+            //                            EmployeeId = item.EmployeeId,
+            //                            RoleId = item.RoleId,
+            //                            CreatedDate = datetime,
+            //                            CreatedBy = item.CreatedBy,
+            //                            IsLatest = true,
+            //                            IsActive = true
+            //                        });
+            //                    }
+            //                    // update
+            //                    else if (existingRow.RoleId != item.RoleId)
+            //                    {
+            //                        existingRow.RoleId = item.RoleId;
+            //                        existingRow.ModifiedDate = datetime;
+            //                        existingRow.ModifiedBy = item.CreatedBy;
+            //                    }
+
+            //                    break;
+            //                }
+
+            //            // DELETE (hard delete)
+            //            case (int)SaveAction.Remove:
+            //                {
+            //                    var toDelete = existing
+            //                        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+
+            //                    if (toDelete != null)
+            //                    {
+            //                        _db.TeamUserRoles.Remove(toDelete);
+            //                    }
+
+            //                    break;
+            //                }
+            //        }
+            //    }
+
+            //    await _db.SaveChangesAsync();
+            //    await tx.CommitAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    await tx.RollbackAsync();
+            //    _logger.LogError(ex, "Error: HrDAL.SaveAssignDepartmentUsers()");
+            //}
         }
 
 

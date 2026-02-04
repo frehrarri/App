@@ -69,7 +69,7 @@ function addUserInput(e, newId, controlType, changeTracker) {
         input.focus();
         
         input.addEventListener("input", () => {
-            debounceSearch(input, controlType);
+            debounceSearch(input, controlType, uid, changeTracker);
         });
 
         input.addEventListener("blur", () => {
@@ -83,15 +83,6 @@ function addUserInput(e, newId, controlType, changeTracker) {
             span.dataset.uid = uid;
 
             wrapper.replaceWith(span); // remove wrapper + input safely
-
-            let args = handleChangeTrackerParams(controlType);
-
-            changeTracker.set(uid, {
-                /* name: span.textContent,*/
-               // teamKey: null, //placeholder for a new entry that will be assigned by db
-                dbChangeAction: 1 //add
-            });
-
         });
 
         input.addEventListener("keydown", (ev) => {
@@ -101,15 +92,22 @@ function addUserInput(e, newId, controlType, changeTracker) {
     }
 }
 
-function handleChangeTrackerParams(controlType) {
+function handleChangeTrackerParams(controlType, row) {
+    let params = {};
+    
     switch (controlType) {
         case 1:
-            return;
+            break;
         case 2:
-            return;
+            params = {
+                teamKey: row.teamKey
+            }
+            break;
         default:
             break;
     }
+
+    return params;
 }
 
 function renameIds(newId) {
@@ -141,22 +139,16 @@ function remove(e, newId, saveCallback, changeTracker) {
         const row = cb.closest("tr");
         if (row) {
             let uid = row.dataset.uid;
-            //let teamKey = document.getElementById('hdn-team-key').value;
-
+       
             // remove unsaved addition from change tracker
             const existingChange = changeTracker.get(uid);
             if (existingChange && existingChange.dbChangeAction === 1)
                 changeTracker.delete(uid)
-
-            // prepare for database deletion/    *if (teamKey != null)*/
+            
             else {
-                let args = handleChangeTrackerParams(controlType);
-
-                changeTracker.set(uid, {
-                    /*  name: row.childNodes[1].textContent,*/
-                    //teamKey: teamKey,
-                    dbChangeAction: 2 //remove
-                });
+                let args = handleChangeTrackerParams(controlType, uid);
+                args.dbChangeAction = 2;
+                changeTracker.set(uid, args);
 
                 saveCallback(e);
             }
@@ -254,10 +246,11 @@ function attachAutoComplete(e) {
     return ul;
 }
 
-function insertSearchResults(row, controlType) {
+function insertSearchResults(row, controlType, uid, changeTracker) {
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
-    
+    tr.dataset.uid = uid;
+
     if (row.length == 0)
         return;
 
@@ -276,8 +269,11 @@ function insertSearchResults(row, controlType) {
     handleControlData(controlType, tr, row);
 
     let wrapper = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
-    tr.dataset.uid = wrapper.dataset.uid;
     wrapper.replaceWith(tr);
+
+    let args = handleChangeTrackerParams(controlType, row);
+    args.dbChangeAction = 1; //add
+    changeTracker.set(uid, args);
 }
 
 function handleControlData(controlType, tr, row) {
@@ -305,8 +301,9 @@ function handleControlData(controlType, tr, row) {
             break;
         case 2: //Teams control
             let teamName = document.createElement('td');
-            teamName.textContent = row;
+            teamName.textContent = row.name;
             teamName.className = 'app-table-data';
+            teamName.dataset.teamKey = tr.dataset.teamKey;
             tr.appendChild(teamName);
             break;
         default:
@@ -323,6 +320,7 @@ function handleControlTypeDataAttr(controlType, tr, row)
             tr.dataset.roleid = row.roleid;
             break;
         case 2:
+            tr.dataset.teamKey = row.teamKey;
             //tr.dataset.userid = row.id;
             //tr.dataset.employeeid = row.employeeid;
             //tr.dataset.roleid = row.roleid;
@@ -367,14 +365,14 @@ function formatSearchResults(controlType, r) {
         case 1:
             return `${r.lastname}, ${r.firstname} [${r.username}]`;
         case 2:
-            return `${r}`;
+            return `${r.name}`;
         default:
             break;
     }
 }
 
 
-async function handleSearchInput(e, controlType) {
+async function handleSearchInput(e, controlType, uid, changeTracker) {
     const input = e.target;
     const query = input.value.trim();
 
@@ -395,16 +393,15 @@ async function handleSearchInput(e, controlType) {
     res.data.forEach(r => {
         
         const li = document.createElement("li");
-        
         li.textContent = formatSearchResults(controlType, r);
 
-        li.onclick = () => insertSearchResults(r, controlType);
+        li.onclick = () => insertSearchResults(r, controlType, uid, changeTracker);
         ul.appendChild(li);
     });
 
 }
 
-function debounceSearch(input, controlType) {
+function debounceSearch(input, controlType, uid, changeTracker) {
     let state = autocompleteState.get(input);
 
     if (!state) {
@@ -415,7 +412,7 @@ function debounceSearch(input, controlType) {
     clearTimeout(state.timer);
 
     state.timer = setTimeout(() => {
-        handleSearchInput({ target: input }, controlType);
+        handleSearchInput({ target: input }, controlType, uid, changeTracker);
     }, 300);
 }
 
@@ -449,10 +446,9 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker) 
 
 //parameters:
 //newId = to be reused in string interpolation for unique ids
-//headers = list of headers to be inserted in th
-//rows = list of data to be inserted in td
+//headers = list of headers to be inserted in thead
+//rows = list of data to be inserted in tbody
 //saveCallback = a callback function required for any saving
-//containerId = required for autocomplete
 
 export async function init(params) {
 

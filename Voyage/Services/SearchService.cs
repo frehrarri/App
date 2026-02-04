@@ -63,7 +63,10 @@ namespace Voyage.Services
                                     .Contains(query.ToLower()))
                                     .OrderBy(u => u.Name)
                                     .Take(10)
-                                    .Select(u => u.Name)
+                                    .Select(u => new { 
+                                        u.Name,
+                                        u.TeamKey
+                                    })
                                     .ToListAsync();
 
             return Ok(teams);

@@ -18,21 +18,18 @@ export async function getAssignDepartmentPartial(params) {
 
 async function saveDeptTeams(e, changeTracker) {
     e.preventDefault();
-
     let response;
-    //const teamKey = document.getElementById('hdn-team-key').value;
-
+    
+    const deptKey = document.getElementById('hdn-dept-key').value;
+    debugger;
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
-
-        const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
-
-        //return {
-        //    //employeeId: parseInt(row.dataset.employeeid),
-        //    //teamKey: teamKey,
-        //    dbChangeAction: value.dbChangeAction,
-        //    /*roleId: row.dataset.roleid*/
-        //};
+        return {
+            departmentKey: deptKey,
+            teamKey: value.teamKey,
+            dbChangeAction: value.dbChangeAction,
+        };
     });
+    
 
     try {
         response = await axios.post('/Hr/SaveAssignDepartmentTeams', payload, {
@@ -56,13 +53,16 @@ async function saveDeptUsers(e, changeTracker) {
     e.preventDefault();
 
     let response;
+    const deptKey = document.getElementById('hdn-dept-key').value;
+
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
 
         const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
 
         return {
-            //employeeId: parseInt(row.dataset.employeeid),
+            deptKey: deptKey,
             //teamKey: teamKey,
+            //employeeId: parseInt(row.dataset.employeeid),
             dbChangeAction: value.dbChangeAction,
            /* roleId: row.dataset.roleid*/
         };
@@ -94,16 +94,14 @@ export async function init(params) {
     document.getElementById("hr-partial-container").innerHTML = partial;
 
     let deptTeam = {
-        containerId: 'assign-department-container',
         newId: 'dept-team',
-        rows: ["IT"],
+        rows: [],
         controlType: 2,
         saveCallback: saveDeptTeams
     }
     await loadModule("gridControl", deptTeam);
 
     let deptUser = { 
-        containerId: 'assign-department-container',
         newId: 'dept-user',
         rows: [],
         controlType: 1,

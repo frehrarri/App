@@ -250,24 +250,24 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto)
+        public async Task SaveAssignDepartmentTeams([FromBody] List<AssignDepartmentDTO> dto)
         {
             int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             string? username = HttpContext.Session.GetString("Username");
             dto.ForEach(d => d.CreatedBy = username!);
 
-            await _hrBLL.SaveAssignDepartmentTeams(dto);
+            await _hrBLL.SaveAssignDepartmentTeams(dto, companyId);
         }
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto)
+        public async Task SaveAssignDepartmentUsers([FromBody] List<AssignDepartmentDTO> dto)
         {
             int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             string? username = HttpContext.Session.GetString("Username");
             dto.ForEach(d => d.CreatedBy = username!);
 
-            await _hrBLL.SaveAssignDepartmentUsers(dto);
+            await _hrBLL.SaveAssignDepartmentUsers(dto, companyId);
         }
 
 
