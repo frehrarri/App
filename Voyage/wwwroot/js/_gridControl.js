@@ -233,7 +233,7 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType) {
         const tr = document.createElement('tr');
 
         //set attributes on load
-        handleGetDataAttr(tr, row, controlType);
+        handleDataAttr(tr, row, controlType);
 
         tr.classList.add('app-table-row');
         tr.dataset.uid = uid;
@@ -293,7 +293,7 @@ function insertSearchResults(row, controlType, uid, changeTracker) {
     if (row.length == 0)
         return;
 
-    handleSaveControlTypeDataAttr(controlType, tr, row);
+    handleDataAttr(tr, row, controlType);
 
     //create checkbox
     let checkbox = document.createElement('td');
@@ -343,8 +343,8 @@ function handleChangeTrackerParams(controlType, row) {
     return params;
 }
 
-//ensure these match the data attributes in handleSaveControlTypeDataAttr
-function handleGetDataAttr(tr, row, controlType) {
+//apply data attributes for get and remove
+function handleDataAttr(tr, row, controlType) {
 
     switch (controlType) {
         case 1: //get all users
@@ -361,23 +361,9 @@ function handleGetDataAttr(tr, row, controlType) {
     }
 }
 
-function handleSaveControlTypeDataAttr(controlType, tr, row) {
-    switch (controlType) {
-        case 1: //get all users
-        case 4: //get unassigned department users
-            tr.dataset.employeeid = row.employeeid;
-            tr.dataset.roleid = row.roleid;
-            break;
-        case 2://get all teams
-        case 3://get unassigned department teams
-            tr.dataset.teamKey = row.teamKey;
-            break;
-        default:
-            break;
-    }
-}
 
 
+//grid rows
 function handleControlData(controlType, tr, row) {
     switch (controlType) {
         case 1: //get all users
@@ -415,8 +401,6 @@ function handleControlData(controlType, tr, row) {
     }
 }
 
-
-
 function handleHeaders(params) {
     const type = params.controlType;
 
@@ -450,6 +434,7 @@ function handleSearchUrl(controlType) {
     }
 }
 
+//params for our debounced search lookups
 function handleSearchParams(controlType) {
     switch (controlType) {
         case 1://get all users
@@ -463,6 +448,7 @@ function handleSearchParams(controlType) {
     }
 }
 
+//format autocomplete popup
 function formatSearchResults(controlType, r) {
     switch (controlType) {
         case 1: //get all users
@@ -475,7 +461,6 @@ function formatSearchResults(controlType, r) {
             break;
     }
 }
-
 
 async function handleSearchInput(e, controlType, uid, changeTracker) {
     const input = e.target;
