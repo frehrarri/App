@@ -266,6 +266,13 @@ namespace Voyage.Controllers
             await _hrBLL.SaveAssignDepartmentTeams(dto, companyId);
         }
 
+        [HttpGet]
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            return await _hrBLL.GetAssignedDepartmentUsers(departmentKey, companyId);
+        }
+
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public async Task SaveAssignDepartmentUsers([FromBody] List<AssignDepartmentDTO> dto)

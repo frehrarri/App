@@ -1,6 +1,61 @@
 ﻿
 const autocompleteState = new WeakMap();
 
+
+//how to use:
+//add element with id `${newId}-grid-container` where we want to render the grid
+//call loadModule("gridControl", params) from init function of page
+
+//parameters:
+//newId = to be reused in string interpolation for unique ids
+//headers = list of headers to be inserted in thead
+//rows = list of data to be inserted in tbody
+//saveCallback = a callback function required for any saving
+
+export async function init(params) {
+
+    const changeTracker = new Map();
+    const uid = crypto.randomUUID();
+
+    if (!params) {
+        console.log("need to pass parameters");
+        return;
+    }
+
+    if (!params.newId) {
+        console.log("need unique text property newId in params");
+        return;
+    }
+
+    //control type must be 1 or greater OR have headers.length > 1
+    let isValid = params.controlType >= 1 || (params.headers && params.headers.length > 0)
+
+    if (!isValid) {
+        console.log("must enter headers manually or use non basic control type");
+        return;
+    }
+
+    let controlType = params.controlType ?? 0;
+    let newId = params.newId;
+
+    //basic control requires user input headers
+    let headers = [];
+    if (params.headers && params.headers.length > 0)
+        headers = params.headers;
+
+    //default to basic grid control
+    if (params.controlType)
+        headers = handleHeaders(params);
+
+    await hydrateGrid(headers, newId, params.rows, uid, controlType);
+
+    //event handlers
+    const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
+
+    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
+    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
+}
+
 async function getGridControlPartial() {
     try {
         const response = await axios.get('/Common/GridControlPartial');
@@ -92,23 +147,7 @@ function addUserInput(e, newId, controlType, changeTracker) {
     }
 }
 
-function handleChangeTrackerParams(controlType, row) {
-    let params = {};
-    
-    switch (controlType) {
-        case 1:
-            break;
-        case 2:
-            params = {
-                teamKey: row.teamKey ?? row.dataset.teamKey
-            }
-            break;
-        default:
-            break;
-    }
 
-    return params;
-}
 
 function renameIds(newId) {
     const eventWrapper = document.getElementById('dv-newid');
@@ -150,8 +189,6 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
                 let args = handleChangeTrackerParams(controlType, row);
                 args.dbChangeAction = 2;
                 changeTracker.set(uid, args);
-                debugger;
-                
             }
 
             row.remove();
@@ -192,11 +229,10 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType) {
     //add data
     const tbody = table.querySelector('tbody');
     data.forEach(row => {
-        debugger;
         let uid = crypto.randomUUID();
-
         const tr = document.createElement('tr');
 
+        //set attributes on load
         handleGetDataAttr(tr, row, controlType);
 
         tr.classList.add('app-table-row');
@@ -211,33 +247,14 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType) {
         tdcbx.appendChild(cbx);
         tr.appendChild(tdcbx);
 
+        //set table data columns
         if (row) {
             handleControlData(controlType, tr, row);
-
-            //const td = document.createElement('td');
-            //td.classList.add('app-table-data');
-            //td.textContent = row;
-            //tr.appendChild(td);
         }
 
         tbody.appendChild(tr);
     })
 }
-
-//ensure these match the data attributes in handleSaveControlTypeDataAttr
-function handleGetDataAttr(tr, row, controlType) {
-    
-    switch (controlType) {
-        case 1:
-            break;
-        case 2:
-            tr.dataset.teamKey = row.teamKey;
-            break;
-        default:
-            break;
-    }
-}
-
 
 function attachAutoComplete(e) {
     const input = e.target;
@@ -287,20 +304,84 @@ function insertSearchResults(row, controlType, uid, changeTracker) {
 
     checkbox.appendChild(cbx);
     tr.appendChild(checkbox);
- 
+
+    //set table data columns
     handleControlData(controlType, tr, row);
 
     let wrapper = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
     wrapper.replaceWith(tr);
 
+    //prepare for save
     let args = handleChangeTrackerParams(controlType, row);
     args.dbChangeAction = 1; //add
     changeTracker.set(uid, args);
 }
 
+//row.param = on retrieve
+//row.dataset.param = on remove
+function handleChangeTrackerParams(controlType, row) {
+    let params = {};
+   
+    switch (controlType) {
+        case 1: //get all users
+        case 4: //get unassigned department users
+            params = {
+                employeeid: row.employeeid ?? row.dataset.employeeid,
+                roleid: row.roleid ?? row.dataset.roleid
+            }
+            break;
+        case 2: //get all teams
+        case 3: //get unassigned department teams
+            params = {
+                teamKey: row.teamKey ?? row.dataset.teamKey
+            }
+            break;
+        default:
+            break;
+    }
+
+    return params;
+}
+
+//ensure these match the data attributes in handleSaveControlTypeDataAttr
+function handleGetDataAttr(tr, row, controlType) {
+
+    switch (controlType) {
+        case 1: //get all users
+        case 4: //get unassigned department users
+            tr.dataset.employeeid = row.employeeid;
+            tr.dataset.roleid = row.roleid;
+            break;
+        case 2:   //get all teams
+        case 3:   //get unassigned department teams
+            tr.dataset.teamKey = row.teamKey;
+            break;
+        default:
+            break;
+    }
+}
+
+function handleSaveControlTypeDataAttr(controlType, tr, row) {
+    switch (controlType) {
+        case 1: //get all users
+        case 4: //get unassigned department users
+            tr.dataset.employeeid = row.employeeid;
+            tr.dataset.roleid = row.roleid;
+            break;
+        case 2://get all teams
+        case 3://get unassigned department teams
+            tr.dataset.teamKey = row.teamKey;
+            break;
+        default:
+            break;
+    }
+}
+
+
 function handleControlData(controlType, tr, row) {
     switch (controlType) {
-        case 1: //Users control
+        case 1: //get all users
+        case 4: //get unassigned department users
             let firstName = document.createElement('td');
             firstName.textContent = row.firstname;
             firstName.className = 'app-table-data';
@@ -321,7 +402,8 @@ function handleControlData(controlType, tr, row) {
             email.className = 'app-table-data';
             tr.appendChild(email);
             break;
-        case 2: //Teams control
+        case 2: //get all teams
+        case 3: //get unassigned department teams
             let teamName = document.createElement('td');
             teamName.textContent = row.name ?? row.teamName;
             teamName.className = 'app-table-data';
@@ -333,26 +415,7 @@ function handleControlData(controlType, tr, row) {
     }
 }
 
-function handleSaveControlTypeDataAttr(controlType, tr, row)
-{
-    switch (controlType) {
-        case 1:
-            tr.dataset.userid = row.id;
-            tr.dataset.employeeid = row.employeeid;
-            tr.dataset.roleid = row.roleid;
-            break;
-        case 2:
-            tr.dataset.teamKey = row.teamKey;
-            //tr.dataset.userid = row.id;
-            //tr.dataset.employeeid = row.employeeid;
-            //tr.dataset.roleid = row.roleid;
-            break;
-        default:
-            break;
-    }
-        
 
-}
 
 function handleHeaders(params) {
     const type = params.controlType;
@@ -361,9 +424,11 @@ function handleHeaders(params) {
         return;
 
     switch (type) {
-        case 1: //User control
+        case 1: //get all users
+        case 4: //get unassigned department users
             return ["Last Name", "First Name", "Username", "Email"];
-        case 2: //Teams control
+        case 2: //get all teams
+        case 3: //get unassigned department teams
             return ["Teams"]
         default:
             break;
@@ -376,17 +441,35 @@ function handleSearchUrl(controlType) {
             return "/SearchService/Users";
         case 2:
             return "/SearchService/Teams";
+        case 3:
+            return "/SearchService/UnassignedDeptTeams";
+        case 4:
+            return "/SearchService/UnassignedDeptUsers";
+        default:
+            break;
+    }
+}
+
+function handleSearchParams(controlType) {
+    switch (controlType) {
+        case 1://get all users
+        case 2://get all teams
+        case 3://get unassigned department teams
+            return;
+        case 4://get unassigned department users
+            return document.getElementById('hdn-dept-key');
         default:
             break;
     }
 }
 
 function formatSearchResults(controlType, r) {
-    let result = "";
     switch (controlType) {
-        case 1:
+        case 1: //get all users
+        case 4: //get unassigned department users
             return `${r.lastname}, ${r.firstname} [${r.username}]`;
-        case 2:
+        case 2: //get all teams
+        case 3: //get unassigned department teams
             return `${r.name}`;
         default:
             break;
@@ -405,10 +488,22 @@ async function handleSearchInput(e, controlType, uid, changeTracker) {
     const ul = attachAutoComplete(e);
 
     let url = handleSearchUrl(controlType);
+    let searchParam = handleSearchParams(controlType);
 
-    const res = await axios.get(url, {
+    let res = "";
+    if (searchParam) {
+        res = await axios.get(url, {
+            params: {
+                query: query,
+                parameter: searchParam
+            }
+        });
+    } else {
+        res = await axios.get(url, {
             params: { query }
         });
+    }
+   
 
     ul.innerHTML = "";
 
@@ -441,11 +536,9 @@ function debounceSearch(input, controlType, uid, changeTracker) {
 
 async function handleEvents(e, newId, saveCallback, controlType, changeTracker) {
     if (e.type === "click") {
-        //remove user
-        if (e.target.id == `${newId}-remove-btn`) {
+        //remove
+        if (e.target.id == `${newId}-remove-btn`) 
             remove(e, newId, saveCallback, changeTracker, controlType);
-        }
-            
 
         //add row
         if (e.target.id == `${newId}-add-btn`)
@@ -456,65 +549,7 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker) 
             addUserInput(e, newId, controlType, changeTracker);
 
         //handle save events 
-        if (e.target.id == `${newId}-save-btn`) {
+        if (e.target.id == `${newId}-save-btn`) 
             await saveCallback(e, changeTracker);
-        }
-            
     }
-
 }
-
-//how to use:
-//add element with id `${newId}-grid-container` where we want to render the grid
-//call loadModule("gridControl", params) from init function of page
-
-//parameters:
-//newId = to be reused in string interpolation for unique ids
-//headers = list of headers to be inserted in thead
-//rows = list of data to be inserted in tbody
-//saveCallback = a callback function required for any saving
-
-export async function init(params) {
-
-    const changeTracker = new Map();
-    const uid = crypto.randomUUID();
-
-    if (!params) {
-        console.log("need to pass parameters");
-        return;
-    }
-
-    if (!params.newId) {
-        console.log("need unique text property newId in params");
-        return;
-    }
-
-    //control type must be 1 or greater OR have headers.length > 1
-    let isValid = params.controlType >= 1 || (params.headers && params.headers.length > 0)
-
-    if (!isValid) {
-        console.log("must enter headers manually or use non basic control type");
-        return;
-    }
-
-    let controlType = params.controlType ?? 0;
-    let newId = params.newId;
-
-    //basic control requires user input headers
-    let headers = [];
-    if (params.headers && params.headers.length > 0)
-        headers = params.headers;
-
-    //default to basic grid control
-    if (params.controlType) 
-        headers = handleHeaders(params);
-
-    await hydrateGrid(headers, newId, params.rows, uid, controlType); 
-    
-    //event handlers
-    const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
-    debugger;
-    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
-    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
-}
-

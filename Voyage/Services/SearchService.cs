@@ -72,6 +72,61 @@ namespace Voyage.Services
             return Ok(teams);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UnassignedDeptTeams(string query)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(Enumerable.Empty<object>());
+
+            var teams = await _db.Teams.Where(u => u.CompanyId == companyId
+                                        && u.DepartmentKey == null
+                                        && (u.Name.ToLower() ?? "")
+                                    .Contains(query.ToLower()))
+                                    .OrderBy(u => u.Name)
+                                    .Take(10)
+                                    .Select(u => new {
+                                        u.Name,
+                                        u.TeamKey
+                                    })
+                                    .ToListAsync();
+
+            return Ok(teams);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UnassignedDeptUsers(string query, string parameter)
+        {
+            string deptKey = parameter;
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(Enumerable.Empty<object>());
+
+            var users = await _userManager.Users.Where(u =>
+                     u.CompanyId == companyId
+                     && !u.DepartmentUserRoles.Any()
+                     && ((u.UserName.ToLower() ?? "").Contains(query)
+                     || (u.Email.ToLower() ?? "").Contains(query)
+                     || (u.FirstName.ToLower() ?? "").Contains(query)
+                     || (u.LastName.ToLower() ?? "").Contains(query)))
+                 .OrderBy(u => u.UserName)
+                 .Take(10)
+                 .Select(u => new {
+                     id = u.Id,
+                     username = u.UserName,
+                     email = u.Email,
+                     firstname = u.FirstName,
+                     lastname = u.LastName,
+                     phone = u.PhoneAreaCode + u.PhoneNumber,
+                     employeeid = u.EmployeeId,
+                     roleid = u.IndividualUserRoles.Select(r => r.RoleId).SingleOrDefault()
+                 })
+                 .ToListAsync();
+
+            return Ok(users);
+        }
 
     }
 }

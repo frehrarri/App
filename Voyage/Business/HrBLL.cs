@@ -100,6 +100,11 @@ namespace Voyage.Business
             await _hrDAL.SaveAssignDepartmentTeams(dto, companyId);
         }
 
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey, int companyId)
+        {
+            return await _hrDAL.GetAssignedDepartmentUsers(departmentKey, companyId);
+        }
+
         public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto, int companyId)
         {
             await _hrDAL.SaveAssignDepartmentUsers(dto, companyId);

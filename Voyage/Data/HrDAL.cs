@@ -666,81 +666,113 @@ namespace Voyage.Data
             }
         }
 
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey, int companyId)
+        {
+            try
+            {
+                return await _db.DepartmentUserRoles
+                    .Where(t =>
+                        t.CompanyId == companyId
+                        && t.DepartmentKey == Guid.Parse(departmentKey))
+                    .Select(t => new AssignDepartmentDTO
+                    {
+                        DepartmentKey = t.DepartmentKey.ToString(),
+                        EmployeeId = t.EmployeeId,
+                        RoleId = t.RoleId,
+                        Username = t.User.UserName,
+                        FirstName = t.User.FirstName,
+                        LastName = t.User.LastName,
+                        Email = t.User.Email
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
+                return null!;
+            }
+        }
+
         public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto, int companyId)
         {
-            //var teamKey = Guid.Parse(dto[0].TeamKey);
-            //var datetime = DateTime.UtcNow;
+            if (!dto.Any() || companyId == 0)
+                return;
 
-            //using var tx = await _db.Database.BeginTransactionAsync();
-            //try
-            //{
-            //    var existing = await _db.TeamUserRoles
-            //        .Where(t =>
-            //            t.CompanyId == companyId &&
-            //            t.TeamKey == teamKey)
-            //        .ToListAsync();
+            if (string.IsNullOrEmpty(dto[0].DepartmentKey))
+                return;
 
-            //    foreach (var item in dto)
-            //    {
+            var deptKey = Guid.Parse(dto[0].DepartmentKey);
+            var datetime = DateTime.UtcNow;
 
-            //        switch (item.DbChangeAction)
-            //        {
-            //            // INSERT or UPDATE
-            //            case (int)SaveAction.Save:
-            //                {
-            //                    var existingRow = existing
-            //                        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var existing = await _db.DepartmentUserRoles
+                    .Where(t =>
+                        t.CompanyId == companyId &&
+                        t.DepartmentKey == deptKey)
+                    .ToListAsync();
 
-            //                    // insert
-            //                    if (existingRow == null)
-            //                    {
-            //                        await _db.TeamUserRoles.AddAsync(new TeamUserRole
-            //                        {
-            //                            CompanyId = companyId,
-            //                            TeamKey = teamKey,
-            //                            EmployeeId = item.EmployeeId,
-            //                            RoleId = item.RoleId,
-            //                            CreatedDate = datetime,
-            //                            CreatedBy = item.CreatedBy,
-            //                            IsLatest = true,
-            //                            IsActive = true
-            //                        });
-            //                    }
-            //                    // update
-            //                    else if (existingRow.RoleId != item.RoleId)
-            //                    {
-            //                        existingRow.RoleId = item.RoleId;
-            //                        existingRow.ModifiedDate = datetime;
-            //                        existingRow.ModifiedBy = item.CreatedBy;
-            //                    }
+                foreach (var user in dto)
+                {
 
-            //                    break;
-            //                }
+                    switch (user.DbChangeAction)
+                    {
+                        // INSERT or UPDATE
+                        case (int)SaveAction.Save:
+                            {
+                                var existingRow = existing.FirstOrDefault(e => e.EmployeeId == user.EmployeeId);
 
-            //            // DELETE (hard delete)
-            //            case (int)SaveAction.Remove:
-            //                {
-            //                    var toDelete = existing
-            //                        .FirstOrDefault(e => e.EmployeeId == item.EmployeeId);
+                                // insert
+                                if (existingRow == null)
+                                {
+                                    await _db.DepartmentUserRoles.AddAsync(new DepartmentUserRole
+                                    {
+                                        CompanyId = companyId,
+                                        DepartmentKey = deptKey,
+                                        EmployeeId = user.EmployeeId,
+                                        RoleId = user.RoleId,
+                                        CreatedDate = datetime,
+                                        CreatedBy = user.CreatedBy,
+                                        IsLatest = true,
+                                        IsActive = true
+                                    });
+                                }
+                                // update
+                                else if (existingRow.RoleId != user.RoleId)
+                                {
+                                    existingRow.RoleId = user.RoleId;
+                                    existingRow.ModifiedDate = datetime;
+                                    existingRow.ModifiedBy = user.CreatedBy;
+                                }
 
-            //                    if (toDelete != null)
-            //                    {
-            //                        _db.TeamUserRoles.Remove(toDelete);
-            //                    }
+                                break;
+                            }
 
-            //                    break;
-            //                }
-            //        }
-            //    }
+                        // DELETE
+                        case (int)SaveAction.Remove:
+                            {
+                                var toDelete = existing
+                                    .FirstOrDefault(e => e.EmployeeId == user.EmployeeId);
 
-            //    await _db.SaveChangesAsync();
-            //    await tx.CommitAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    await tx.RollbackAsync();
-            //    _logger.LogError(ex, "Error: HrDAL.SaveAssignDepartmentUsers()");
-            //}
+                                if (toDelete != null)
+                                {
+                                    _db.DepartmentUserRoles.Remove(toDelete);
+                                }
+
+                                break;
+                            }
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "Error: HrDAL.AssignTeamMembers()");
+            }
         }
 
 

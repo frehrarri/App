@@ -113,8 +113,11 @@
         public enum GridControlType
         {
             Basic = 0,
-            User = 1,
-            Teams = 2
+            AllUsers = 1,
+            AllTeams = 2,
+            UnassignedDeptTeams = 3,
+            UnassignedDeptUsers = 4,
+
 
         }
 

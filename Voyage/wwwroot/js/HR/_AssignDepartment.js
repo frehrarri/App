@@ -49,20 +49,18 @@ async function saveDeptTeams(e, changeTracker) {
 
 async function saveDeptUsers(e, changeTracker) {
     e.preventDefault();
-
     let response;
     const deptKey = document.getElementById('hdn-dept-key').value;
 
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
-
         const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
 
         return {
-            deptKey: deptKey,
-            //teamKey: teamKey,
-            //employeeId: parseInt(row.dataset.employeeid),
+            departmentKey: deptKey,
+            employeeId: parseInt(value.employeeid),
+            roleId: value.roleid,
             dbChangeAction: value.dbChangeAction,
-           /* roleId: row.dataset.roleid*/
+           
         };
     });
 
@@ -84,7 +82,7 @@ async function saveDeptUsers(e, changeTracker) {
     }
 }
 
-export async function getAssignedDepartmentTeams() {
+async function getAssignedDepartmentTeams() {
     const deptKey = document.getElementById('hdn-dept-key').value;
     try {
         const response = await axios.get('/Hr/GetAssignedDepartmentTeams', {
@@ -99,6 +97,21 @@ export async function getAssignedDepartmentTeams() {
     }
 }
 
+async function getAssignedDepartmentUsers(params) {
+    const departmentKey = params.deptKey;
+   
+    try {
+        const response = await axios.get('/Hr/GetAssignedDepartmentUsers', {
+            params: { departmentKey }
+        });
+
+        return response.data;
+    } catch (error) {
+        alert("Error: getAssignedDepartmentUsers")
+        console.error("error", error);
+        return false;
+    }
+}
 
 
 export async function init(params) {
@@ -118,15 +131,29 @@ export async function init(params) {
     let deptTeam = {
         newId: 'dept-team',
         rows: teamNames,
-        controlType: 2,
+        controlType: 3,
         saveCallback: saveDeptTeams
     }
     await loadModule("gridControl", deptTeam);
 
+    let assignedUsers = await getAssignedDepartmentUsers(params);
+    const users = assignedUsers.map(list => {
+        
+        return {
+            deptKey: list.departmentKey,
+            employeeid: list.employeeId,
+            roleid: list.roleId,
+            firstname: list.firstName,
+            lastname: list.lastName,
+            username: list.username,
+            email: list.email
+        }
+    });
+
     let deptUser = { 
         newId: 'dept-user',
-        rows: [],
-        controlType: 1,
+        rows: users,
+        controlType: 4,
         saveCallback: saveDeptUsers
     }
 
