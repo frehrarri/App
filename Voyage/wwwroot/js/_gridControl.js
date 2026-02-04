@@ -100,7 +100,7 @@ function handleChangeTrackerParams(controlType, row) {
             break;
         case 2:
             params = {
-                teamKey: row.teamKey
+                teamKey: row.teamKey ?? row.dataset.teamKey
             }
             break;
         default:
@@ -127,7 +127,7 @@ function renameIds(newId) {
     saveBtn.id = `${newId}-save-btn`;
 }
 
-function remove(e, newId, saveCallback, changeTracker) {
+function remove(e, newId, saveCallback, changeTracker, controlType) {
     if (!confirm("Are you sure?")) {
         return;
     }
@@ -135,10 +135,10 @@ function remove(e, newId, saveCallback, changeTracker) {
 
     //remove row of checked boxes
     checkedBoxes.forEach(cb => {
-
+        
         const row = cb.closest("tr");
         if (row) {
-            let uid = row.dataset.uid;
+            let uid = row.dataset.uid ?? row.dataset.key;
        
             // remove unsaved addition from change tracker
             const existingChange = changeTracker.get(uid);
@@ -146,23 +146,24 @@ function remove(e, newId, saveCallback, changeTracker) {
                 changeTracker.delete(uid)
             
             else {
-                let args = handleChangeTrackerParams(controlType, uid);
+                let args = handleChangeTrackerParams(controlType, row);
                 args.dbChangeAction = 2;
                 changeTracker.set(uid, args);
-
-                saveCallback(e);
+                debugger;
+                
             }
 
             row.remove();
         }
-
     });
+
+    saveCallback(e, changeTracker);
 }
 
-async function hydrateGrid(headerList, newId, rows, key) {
+async function hydrateGrid(headerList, newId, rows, key, controlType) {
     const headers = headerList;
     const data = rows;
-
+    
     //load
     let partial = await getGridControlPartial();
     document.getElementById(`${newId}-grid-container`).innerHTML = partial;
@@ -189,11 +190,14 @@ async function hydrateGrid(headerList, newId, rows, key) {
 
     //add data
     const tbody = table.querySelector('tbody');
-
-    data.forEach(item => {
+    data.forEach(row => {
+        debugger;
         let key = crypto.randomUUID();
 
         const tr = document.createElement('tr');
+
+        handleGetDataAttr(tr, row, controlType);
+
         tr.classList.add('app-table-row');
         tr.dataset.key = key;
 
@@ -206,16 +210,33 @@ async function hydrateGrid(headerList, newId, rows, key) {
         tdcbx.appendChild(cbx);
         tr.appendChild(tdcbx);
 
-        if (item) {
-            const td = document.createElement('td');
-            td.classList.add('app-table-data');
-            td.textContent = item;
-            tr.appendChild(td);
+        if (row) {
+            handleControlData(controlType, tr, row);
+
+            //const td = document.createElement('td');
+            //td.classList.add('app-table-data');
+            //td.textContent = row;
+            //tr.appendChild(td);
         }
 
         tbody.appendChild(tr);
     })
 }
+
+//ensure these match the data attributes in handleSaveControlTypeDataAttr
+function handleGetDataAttr(tr, row, controlType) {
+    
+    switch (controlType) {
+        case 1:
+            break;
+        case 2:
+            tr.dataset.teamKey = row.teamKey;
+            break;
+        default:
+            break;
+    }
+}
+
 
 function attachAutoComplete(e) {
     const input = e.target;
@@ -254,7 +275,7 @@ function insertSearchResults(row, controlType, uid, changeTracker) {
     if (row.length == 0)
         return;
 
-    handleControlTypeDataAttr(controlType, tr, row);
+    handleSaveControlTypeDataAttr(controlType, tr, row);
 
     //create checkbox
     let checkbox = document.createElement('td');
@@ -301,7 +322,7 @@ function handleControlData(controlType, tr, row) {
             break;
         case 2: //Teams control
             let teamName = document.createElement('td');
-            teamName.textContent = row.name;
+            teamName.textContent = row.name ?? row.teamName;
             teamName.className = 'app-table-data';
             teamName.dataset.teamKey = tr.dataset.teamKey;
             tr.appendChild(teamName);
@@ -311,7 +332,7 @@ function handleControlData(controlType, tr, row) {
     }
 }
 
-function handleControlTypeDataAttr(controlType, tr, row)
+function handleSaveControlTypeDataAttr(controlType, tr, row)
 {
     switch (controlType) {
         case 1:
@@ -420,8 +441,10 @@ function debounceSearch(input, controlType, uid, changeTracker) {
 async function handleEvents(e, newId, saveCallback, controlType, changeTracker) {
     if (e.type === "click") {
         //remove user
-        if (e.target.id == `${newId}-remove-btn`)
-            remove(e, newId, saveCallback. changeTracker);
+        if (e.target.id == `${newId}-remove-btn`) {
+            remove(e, newId, saveCallback, changeTracker, controlType);
+        }
+            
 
         //add row
         if (e.target.id == `${newId}-add-btn`)
@@ -485,11 +508,11 @@ export async function init(params) {
     if (params.controlType) 
         headers = handleHeaders(params);
 
-    await hydrateGrid(headers, newId, params.rows, key); 
+    await hydrateGrid(headers, newId, params.rows, key, controlType); 
     
     //event handlers
     const container = document.querySelector(`#dv-${newId}[data-key='${key}']`);
-
+    debugger;
     container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
     container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
 }

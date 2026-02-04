@@ -21,7 +21,6 @@ async function saveDeptTeams(e, changeTracker) {
     let response;
     
     const deptKey = document.getElementById('hdn-dept-key').value;
-    debugger;
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
         return {
             departmentKey: deptKey,
@@ -29,7 +28,6 @@ async function saveDeptTeams(e, changeTracker) {
             dbChangeAction: value.dbChangeAction,
         };
     });
-    
 
     try {
         response = await axios.post('/Hr/SaveAssignDepartmentTeams', payload, {
@@ -86,6 +84,21 @@ async function saveDeptUsers(e, changeTracker) {
     }
 }
 
+export async function getAssignedDepartmentTeams() {
+    const deptKey = document.getElementById('hdn-dept-key').value;
+    try {
+        const response = await axios.get('/Hr/GetAssignedDepartmentTeams', {
+            params: { deptKey }
+        });
+
+        return response.data;
+    } catch (error) {
+        alert("Error: getAssignedDepartmentTeams")
+        console.error("error", error);
+        return false;
+    }
+}
+
 
 
 export async function init(params) {
@@ -93,9 +106,18 @@ export async function init(params) {
     let partial = await getAssignDepartmentPartial(params);
     document.getElementById("hr-partial-container").innerHTML = partial;
 
+    let assignedTeams = await getAssignedDepartmentTeams();
+
+    const teamNames = assignedTeams.map(list => {
+        return {
+            teamName: list.teamName,
+            teamKey: list.teamKey
+        }
+    });
+
     let deptTeam = {
         newId: 'dept-team',
-        rows: [],
+        rows: teamNames,
         controlType: 2,
         saveCallback: saveDeptTeams
     }

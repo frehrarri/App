@@ -578,6 +578,29 @@ namespace Voyage.Data
             }
         }
 
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string departmentKey, int companyId)
+        {
+            try
+            {
+                return await _db.Teams
+                    .Where(t => 
+                        t.CompanyId == companyId 
+                        && t.DepartmentKey == Guid.Parse(departmentKey))
+                    .Select(t => new AssignDepartmentDTO 
+                    { 
+                        DepartmentKey = t.DepartmentKey.ToString(),
+                        TeamId = t.TeamId,
+                        TeamKey = t.TeamKey.ToString(),
+                        TeamName = t.Name
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
+                return null!;
+            }
+        }
 
         public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto, int companyId)
         {
