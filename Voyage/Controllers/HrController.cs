@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Utilities.IO;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Threading.Tasks;
 using Voyage.Business;
@@ -72,6 +73,14 @@ namespace Voyage.Controllers
             return PartialView("~/Views/App/HR/_ManageDepartments.cshtml", vm);
         }
 
+        [HttpGet]        
+        public async Task<List<ManageDepartmentsDTO>> GetDepartments()
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetDepartments(companyId!.Value);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> AssignDepartmentPartial([FromQuery] string deptKey, [FromQuery] string deptName)
         {
@@ -88,11 +97,11 @@ namespace Voyage.Controllers
             ManageTeamsVM vm = new ManageTeamsVM();
             var companyId = HttpContext.Session.GetInt32("CompanyId");
 
-            var dto = await _hrBLL.GetTeams(companyId!.Value);
-            if (dto != null)
-                vm.Teams = dto;
+            //var dto = await _hrBLL.GetTeams(companyId!.Value);
+            //if (dto != null)
+            //    vm.Teams = dto;
 
-            return PartialView("~/Views/App/HR/_ManageTeams.cshtml", vm);
+            return PartialView("~/Views/App/HR/_ManageTeams.cshtml");
         }
 
         [HttpGet]

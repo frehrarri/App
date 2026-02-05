@@ -71,6 +71,7 @@ export async function init() {
     let partial = await getManageTeamsPartial();
     document.getElementById("hr-partial-container").innerHTML = partial;
 
+    //grid
     let teams = await getTeams();
     
     const teamNames = teams.map(list => {
@@ -93,5 +94,4 @@ export async function init() {
     //event handlers
     let container = document.getElementById('hr-partial-container');
     container.addEventListener("click", handleEvents);
-    container.addEventListener("keydown", handleEvents);
 }

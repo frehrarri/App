@@ -1,53 +1,10 @@
-﻿@model ManageDepartmentsVM
+﻿
+<div id="dv-manage-departments" class="container">
 
-<div id="manage-departments-container" class="container">
-    <form id="manage-departments" class="container">
-        @Html.AntiForgeryToken()
+    <div class="manage-dept-header">
+        <h4>Manage Departments</h4>
+    </div>
 
-        <div id="dv-manage-departments" class="container">
+    <div id="manage-dept-grid-container"></div>
+ </div>
 
-            <div class="manage-dept-header">
-                <h4>Manage Departments</h4>
-            </div>
-
-
-            <table id="manage-depts" class="app-table table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header">
-                            <input type="hidden" />
-                        </th>
-                        <th class="app-table-header">Department</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var dept in Model.Departments)
-                    {
-                        Guid guid = Guid.NewGuid();
-
-                        <tr class="app-table-row" data-key="@guid" data-deptKey="@dept.DepartmentKey">
-                            <td class="app-table-data">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="app-table-data">
-                                <a href="#" class="goto-assign-dept" data-id="@dept.DepartmentId" data-key="@guid" data-deptKey="@dept.DepartmentKey">@dept.Name</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div id="dv-dept-btns" class="container">
-                <div id="btn-container">
-                    <button id="add-dept-btn" class="primary-btn" type="button">Add</button>
-                    <button id="remove-dept-btn" class="warning-btn" type="button">Remove</button>
-                </div>
-
-                <button id="dept-save-btn" class="primary-btn">Save</button>
-            </div>
-
-        </div>
-
-
-    </form>
-</div>

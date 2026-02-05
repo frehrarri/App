@@ -272,8 +272,15 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectCl
     const data = rows;
     
     //load
+
+
+    let gridElement = document.getElementById(`${newId}-grid-container`);
+    if (!gridElement) {
+        console.log("must insert an element with ${newId}-grid-container to be referenced");
+    }
+
     let partial = await getGridControlPartial();
-    document.getElementById(`${newId}-grid-container`).innerHTML = partial;
+    gridElement.innerHTML = partial;
 
     const table = document.getElementById("tbl-newid");
     table.dataset.uid = uid;
