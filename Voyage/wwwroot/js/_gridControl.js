@@ -8,12 +8,12 @@
 //headers = list of headers to be inserted in thead
 //rows = list of data to be inserted in tbody
 //saveCallback = a callback function required for any saving
-//redirectClass = class for event listener for hyperlinking and redirecting on click
 
 export async function init(params) {
 
+    const retrievedVals = new Map();
     const changeTracker = new Map();
-    const uid = crypto.randomUUID();
+    const tableUid = crypto.randomUUID();
 
     if (!params) {
         console.log("need to pass parameters");
@@ -35,7 +35,6 @@ export async function init(params) {
 
     let controlType = params.controlType ?? 0;
     let newId = params.newId;
-    let redirectClass = params.redirectClass;
 
     //basic control requires user input headers
     let headers = [];
@@ -46,17 +45,25 @@ export async function init(params) {
     if (params.controlType)
         headers = handleHeaders(params);
 
-    await hydrateGrid(headers, newId, params.rows, uid, controlType, redirectClass);
+    //save data into map with uid for easy referencing.
+    //this is so we can easily use hidden inputs instead of data-attributes.
+    params.rows.forEach(r => {
+        let dataUid = crypto.randomUUID();
+        retrievedVals.set(dataUid, r);
+    })
 
-    const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
+    //generate the grid
+    await hydrateGrid(headers, newId, retrievedVals, tableUid, controlType);
+   
+    const container = document.querySelector(`#dv-${newId}[data-table-uid='${tableUid}']`);
 
     // Store state on the container element for easy access
     const autocompleteState = new WeakMap();
     container.autocompleteState = autocompleteState;
 
     //event handlers
-    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker, autocompleteState));
-    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker, autocompleteState));
+    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker, autocompleteState, retrievedVals));
+    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker, autocompleteState, retrievedVals));
 
     updateSaveButtonState(newId, changeTracker);
 }
@@ -185,6 +192,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
         else {
             // For non-autocomplete controls, just save whatever the user types
             input.addEventListener("blur", () => {
+                debugger;
                 const span = document.createElement("span");
                 span.className = `add-${newId}-span`;
                 // Keep the user's input or revert to placeholder if empty
@@ -232,7 +240,7 @@ function renameIds(newId) {
     saveBtn.id = `${newId}-save-btn`;
 }
 
-function remove(e, newId, saveCallback, changeTracker, controlType) {
+function remove(e, newId, saveCallback, changeTracker, controlType, existingVals) {
     if (!confirm("Are you sure?")) {
         return;
     }
@@ -243,6 +251,7 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
         
         const row = cb.closest("tr");
         if (row) {
+            debugger;
             /*let uid = row.dataset.uid ?? row.dataset.key;*/
             let uid = row.dataset.uid
        
@@ -252,7 +261,8 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
                 changeTracker.delete(uid)
             
             else {
-                let args = handleChangeTrackerParams(controlType, row);
+                let vals = existingVals.get(uid);
+                let args = handleChangeTrackerParams(controlType, vals);
                 args.dbChangeAction = 2;
                 changeTracker.set(uid, args);
             }
@@ -267,13 +277,9 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
     saveCallback(e, changeTracker);
 }
 
-async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectClass) {
+async function hydrateGrid(headerList, newId, retrievedVals, tableUid, controlType) {
     const headers = headerList;
-    const data = rows;
     
-    //load
-
-
     let gridElement = document.getElementById(`${newId}-grid-container`);
     if (!gridElement) {
         console.log("must insert an element with ${newId}-grid-container to be referenced");
@@ -283,12 +289,12 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectCl
     gridElement.innerHTML = partial;
 
     const table = document.getElementById("tbl-newid");
-    table.dataset.uid = uid;
+    table.dataset.uid = tableUid;
     table.id = `tbl-${newId}`;
 
     renameIds(newId);
     let eventWrapper = document.getElementById(`dv-${newId}`);
-    eventWrapper.dataset.uid = uid;
+    eventWrapper.dataset.tableUid = tableUid;
 
     //add headers
     const headerRow = table.querySelector('thead tr');
@@ -302,17 +308,17 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectCl
         headerRow.appendChild(th);
     })
 
-    //add data
     const tbody = table.querySelector('tbody');
-    data.forEach(row => {
-        let uid = crypto.randomUUID();
+
+    //populate data
+    retrievedVals.forEach((value, key) => {
         const tr = document.createElement('tr');
 
         //set attributes on load
-        handleDataAttr(tr, row, controlType);
+        /*handleDataAttr(tr, row, controlType);*/
 
         tr.classList.add('app-table-row');
-        tr.dataset.uid = uid;
+        tr.dataset.uid = key;
 
         const tdcbx = document.createElement('td');
         tdcbx.classList.add('app-table-data');
@@ -323,16 +329,16 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectCl
         tdcbx.appendChild(cbx);
         tr.appendChild(tdcbx);
 
-        //set table data columns
-        if (row) {
-            handleControlData(controlType, tr, row);
+        if (value) {
+            populateControlData(controlType, tr, value);
         }
 
         tbody.appendChild(tr);
-    })
+    });
 
     if (controlType == 0)
-        hyperlinkNames(redirectClass);
+        hyperlinkNames();
+
 }
 
 function attachAutoComplete(e) {
@@ -424,7 +430,7 @@ function usesAutocomplete(controlType) {
 
 //row.param = on retrieve
 //row.dataset.param = on remove
-function handleChangeTrackerParams(controlType, row) {
+function handleChangeTrackerParams(controlType, values) {
     let params = {};
    
     switch (controlType) {
@@ -432,24 +438,26 @@ function handleChangeTrackerParams(controlType, row) {
         case 4: //get unassigned department users
         case 5: //get unassigned team users
             params = {
-                employeeid: row.employeeid ?? row.dataset.employeeid,
-                roleid: row.roleid ?? row.dataset.roleid
+                employeeid: value.employeeid ?? value.dataset.employeeid,
+                roleid: value.roleid ?? value.dataset.roleid
             }
             break;
         case 2: //get all teams
         case 3: //get unassigned department teams
             params = {
-                teamKey: row.teamKey ?? row.dataset.teamKey
+                teamKey: value.teamKey ?? value.dataset.teamKey
             }
             break;
         case 0:
         default:
-            let name = row;
+            //default save params
+            let name = values;
             let datakey = null;
 
-            if (row.dataset) {
-                name = row.dataset.name;
-                datakey = row.dataset.datakey;
+            //set params for remove
+            if (values.name && values.datakey) {
+                name = values.name;
+                datakey = values.datakey;
             }
 
             params = {
@@ -488,45 +496,45 @@ function handleDataAttr(tr, row, controlType) {
 
 
 //grid rows
-function handleControlData(controlType, tr, row) {
+function populateControlData(controlType, tr, value) {
     switch (controlType) {
         case 1: //get all users
         case 4: //get unassigned department users
         case 5: //get unassigned team users
             let firstName = document.createElement('td');
-            firstName.textContent = row.firstname;
+            firstName.textContent = value.firstname;
             firstName.className = 'app-table-data';
             tr.appendChild(firstName);
 
             let lastName = document.createElement('td');
-            lastName.textContent = row.lastname;
+            lastName.textContent = value.lastname;
             lastName.className = 'app-table-data';
             tr.appendChild(lastName);
 
             let username = document.createElement('td');
-            username.textContent = row.username;
+            username.textContent = value.username;
             username.className = 'app-table-data';
             tr.appendChild(username);
 
             let email = document.createElement('td');
-            email.textContent = row.email;
+            email.textContent = value.email;
             email.className = 'app-table-data';
             tr.appendChild(email);
             break;
         case 2: //get all teams
         case 3: //get unassigned department teams
             let teamName = document.createElement('td');
-            teamName.textContent = row.name ?? row.teamName;
+            teamName.textContent = value.name ?? value.teamName;
             teamName.className = 'app-table-data';
-            teamName.dataset.teamKey = tr.dataset.teamKey;
+          /*  teamName.dataset.teamKey = tr.dataset.teamKey;*/
             tr.appendChild(teamName);
             break;
         case 0: //basic control
         default:
             let name = document.createElement('td');
-            name.textContent = row.name;
+            name.textContent = value.name;
             name.className = 'app-table-data';
-            name.dataset.datakey = tr.dataset.datakey;
+        /*    name.dataset.datakey = tr.dataset.datakey;*/
             tr.appendChild(name);
             break;
     }
@@ -656,11 +664,11 @@ function debounceSearch(input, controlType, uid, changeTracker, autocompleteStat
 }
 
 
-async function handleEvents(e, newId, saveCallback, controlType, changeTracker, autocompleteState) {
+async function handleEvents(e, newId, saveCallback, controlType, changeTracker, autocompleteState, currentVals) {
     if (e.type === "click") {
         //remove
         if (e.target.id == `${newId}-remove-btn`) 
-            remove(e, newId, saveCallback, changeTracker, controlType);
+            remove(e, newId, saveCallback, changeTracker, controlType, currentVals);
 
         //add row
         if (e.target.id == `${newId}-add-btn`)
@@ -668,14 +676,12 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker, 
 
         //input control for adding data
         if (e.target.classList.contains(`add-${newId}-span`)) {
-           
             addUserInput(e, newId, controlType, changeTracker, autocompleteState);
         }
-            
 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) 
-            await saveCallback(e, changeTracker, newId);
+            await saveCallback(e, changeTracker, newId, currentVals);
     }
 }
 
@@ -709,9 +715,7 @@ function updateSaveButtonState(newId, changeTracker) {
     }
 }
 
-export function hyperlinkNames(redirectClass) {
-    if (!redirectClass)
-        return;
+export function hyperlinkNames() {
 
     document.querySelectorAll("tbody tr").forEach(tr => {
         const td = tr.querySelector("td:nth-child(2)"); // skip checkbox column
@@ -720,9 +724,8 @@ export function hyperlinkNames(redirectClass) {
         const link = document.createElement("a");
         link.href = "#"
         link.textContent = td.textContent;
-        link.dataset.datakey = tr.dataset.datakey
-        /*link.dataset.uid = tr.dataset.uid*/
-        link.classList.add(`${redirectClass}`);
+        link.dataset.uid = tr.dataset.uid
+        link.classList.add(`redirect`);
 
         td.textContent = "";
         td.appendChild(link);

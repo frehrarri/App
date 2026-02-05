@@ -122,7 +122,6 @@ namespace Voyage.Controllers
         #endregion
 
 
-
         #region Save Methods
 
 
@@ -148,6 +147,17 @@ namespace Voyage.Controllers
             departments.ForEach(t => t.CreatedBy = username);
 
             return await _hrBLL.SaveDepartments(departments, companyId!.Value);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SaveAssignTeamMembers([FromBody] List<AssignTeamDTO> dto)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.SaveAssignTeamMembers(dto, companyId);
         }
 
         #endregion
@@ -255,16 +265,7 @@ namespace Voyage.Controllers
 
 
 
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task SaveAssignTeamMembers([FromBody] List<AssignTeamDTO> dto)
-        {
-            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            string? username = HttpContext.Session.GetString("Username");
-            dto.ForEach(d => d.CreatedBy = username!);
 
-            await _hrBLL.SaveAssignTeamMembers(dto, companyId);
-        }
 
         [HttpGet]
         public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string deptKey)

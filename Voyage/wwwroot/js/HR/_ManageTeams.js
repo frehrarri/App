@@ -17,6 +17,9 @@ export async function getManageTeamsPartial() {
 async function saveTeams(e, changeTracker, newId) {
     e.preventDefault();
     let response;
+
+    debugger;
+
     let values = Array.from(changeTracker.values());
     
     let payload = values.map(list => {
@@ -73,7 +76,7 @@ export async function init() {
 
     //grid
     let teams = await getTeams();
-    
+
     const teamNames = teams.map(list => {
         return {
             name: list.name,
