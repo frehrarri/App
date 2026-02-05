@@ -430,6 +430,7 @@ function handleChangeTrackerParams(controlType, row) {
     switch (controlType) {
         case 1: //get all users
         case 4: //get unassigned department users
+        case 5: //get unassigned team users
             params = {
                 employeeid: row.employeeid ?? row.dataset.employeeid,
                 roleid: row.roleid ?? row.dataset.roleid
@@ -468,6 +469,7 @@ function handleDataAttr(tr, row, controlType) {
         
         case 1: //get all users
         case 4: //get unassigned department users
+        case 5: //get unassigned team users
             tr.dataset.employeeid = row.employeeid;
             tr.dataset.roleid = row.roleid;
             break;
@@ -490,6 +492,7 @@ function handleControlData(controlType, tr, row) {
     switch (controlType) {
         case 1: //get all users
         case 4: //get unassigned department users
+        case 5: //get unassigned team users
             let firstName = document.createElement('td');
             firstName.textContent = row.firstname;
             firstName.className = 'app-table-data';
@@ -538,6 +541,7 @@ function handleHeaders(params) {
     switch (type) {
         case 1: //get all users
         case 4: //get unassigned department users
+        case 5: //get unassigned team users
             return ["Last Name", "First Name", "Username", "Email"];
         case 2: //get all teams
         case 3: //get unassigned department teams
@@ -557,6 +561,8 @@ function handleSearchUrl(controlType) {
             return "/SearchService/UnassignedDeptTeams";
         case 4:
             return "/SearchService/UnassignedDeptUsers";
+        case 5:
+            return "/SearchService/UnassignedTeamUsers";
         default:
             break;
     }
@@ -571,6 +577,8 @@ function handleSearchParams(controlType) {
             return;
         case 4://get unassigned department users
             return document.getElementById('hdn-dept-key');
+        case 5://get unassigned team users
+            return document.getElementById('hdn-team-key');
         default:
             break;
     }
@@ -581,7 +589,8 @@ function formatSearchResults(controlType, r) {
     switch (controlType) {
         case 1: //get all users
         case 4: //get unassigned department users
-            return `${r.lastname}, ${r.firstname} [${r.username}]`;
+        case 5://get unassigned team users
+            return `${r.lastname}, ${r.firstname} [${r.username}] [${r.email}]`;
         case 2: //get all teams
         case 3: //get unassigned department teams
             return `${r.name}`;

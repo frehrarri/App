@@ -1,6 +1,19 @@
-﻿@model List<AssignTeamVM>
+﻿@* @model List<AssignTeamVM> *@
 
-<div id="assign-team-container">
+<div id="dv-allocate-team-personnel" class="container">
+    <div id="assign-team-header">
+        <h4>Assign Personnel</h4>
+
+        <h4 id="team-name">@ViewBag.TeamName</h4>
+    </div>
+
+    <div id="assign-team-grid-container"></div>
+
+</div>
+<input type="hidden" id="hdn-team-key" value="@ViewBag.TeamKey" />
+
+
+@* <div id="assign-team-container">
     <form id="assign-team-form">
         @Html.AntiForgeryToken()
 
@@ -62,6 +75,6 @@
         </div>
 
     </form>
-</div>
-<input type="hidden" id="hdn-team-key" value="@ViewBag.TeamKey" />
+</div> *@
+@* <input type="hidden" id="hdn-team-key" value="@ViewBag.TeamKey" /> *@
 

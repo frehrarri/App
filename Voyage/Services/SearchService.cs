@@ -128,5 +128,38 @@ namespace Voyage.Services
             return Ok(users);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UnassignedTeamUsers(string query, string parameter)
+        {
+            string deptKey = parameter;
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
+            if (string.IsNullOrWhiteSpace(query))
+                return Ok(Enumerable.Empty<object>());
+
+            var users = await _userManager.Users.Where(u =>
+                     u.CompanyId == companyId
+                     && !u.TeamUserRoles.Any()
+                     && ((u.UserName.ToLower() ?? "").Contains(query)
+                     || (u.Email.ToLower() ?? "").Contains(query)
+                     || (u.FirstName.ToLower() ?? "").Contains(query)
+                     || (u.LastName.ToLower() ?? "").Contains(query)))
+                 .OrderBy(u => u.UserName)
+                 .Take(10)
+                 .Select(u => new {
+                     id = u.Id,
+                     username = u.UserName,
+                     email = u.Email,
+                     firstname = u.FirstName,
+                     lastname = u.LastName,
+                     phone = u.PhoneAreaCode + u.PhoneNumber,
+                     employeeid = u.EmployeeId,
+                     roleid = u.IndividualUserRoles.Select(r => r.RoleId).SingleOrDefault()
+                 })
+                 .ToListAsync();
+
+            return Ok(users);
+        }
+
     }
 }

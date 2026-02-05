@@ -117,6 +117,7 @@
             AllTeams = 2,
             UnassignedDeptTeams = 3,
             UnassignedDeptUsers = 4,
+            UnassignedTeamUsers = 5
         }
 
         public enum DefaultRoles

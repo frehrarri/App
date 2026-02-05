@@ -117,7 +117,7 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<AssignTeamDTO>> GetAssignTeam(string teamKey, int companyId)
+        public async Task<List<AssignTeamDTO>> GetAssignedTeamPersonnel(string teamKey, int companyId)
         {
             try
             {
@@ -501,7 +501,7 @@ namespace Voyage.Data
         }
 
 
-        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
+        public async Task SaveAssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
         {
             var teamKey = Guid.Parse(dto[0].TeamKey);
             var datetime = DateTime.UtcNow;

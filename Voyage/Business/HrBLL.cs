@@ -38,9 +38,9 @@ namespace Voyage.Business
             return await _hrDAL.GetTeams(companyId);
         }
 
-        public async Task<List<AssignTeamDTO>> GetAssignTeam(string teamKey, int companyId)
+        public async Task<List<AssignTeamDTO>> GetAssignedTeamPersonnel(string teamKey, int companyId)
         {
-            return await _hrDAL.GetAssignTeam(teamKey, companyId);
+            return await _hrDAL.GetAssignedTeamPersonnel(teamKey, companyId);
         }
 
         public async Task<List<ManagePermissionsDTO>> GetPermissions()
@@ -85,9 +85,9 @@ namespace Voyage.Business
             return await _hrDAL.SaveTeams(teams, companyId);
         }
 
-        public async Task AssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
+        public async Task SaveAssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
         {
-            await _hrDAL.AssignTeamMembers(dto, companyId);
+            await _hrDAL.SaveAssignTeamMembers(dto, companyId);
         }
 
         public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string departmentKey, int companyId)

@@ -1,4 +1,6 @@
-﻿
+﻿import { loadModule } from "/js/__moduleLoader.js";
+
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function getAssignTeamPartial(params) {
     try {
@@ -14,201 +16,7 @@ export async function getAssignTeamPartial(params) {
     }
 }
 
-function addNewRow() {
-    const tbody = document.querySelector("#tbl-allocate-personnel > tbody");
-
-    const tr = document.createElement("tr");
-    tr.classList.add("app-table-row");
-
-    let uid = tr.dataset.uid;
-    if (!uid)
-        tr.dataset.uid = crypto.randomUUID();
-
-    //checkbox
-    const td1 = document.createElement("td");
-    td1.classList.add("app-table-data");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    td1.appendChild(checkbox);
-    tr.appendChild(td1);
-
-    //add
-    const td2 = document.createElement("td");
-    td2.classList.add("app-table-data");
-    const addSpan = document.createElement("span")
-    addSpan.classList.add("add-user-span");
-    addSpan.textContent = "Click to add user";
-    td2.appendChild(addSpan);
-    tr.appendChild(td2);
-
-    tbody.appendChild(tr);
-}
-
-function addUserInput(e) {
-    const target = e.target;
-
-    if (target.classList.contains("add-user-span") && e.type === "click") {
-        const row = e.target.parentElement.parentElement;
-
-        let uid = row.dataset.uid;
-        if (!uid)
-            uid = crypto.randomUUID();
-
-        //need a wrapper to append children to
-        const wrapper = document.createElement("div");
-        wrapper.className = "autocomplete-wrapper";
-
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "User Name";
-        input.className = "add-user-input";
-        input.value = "";
-        input.dataset.uid = uid;
-
-        // Replace span with wrapper, then add input
-        target.replaceWith(wrapper);
-        wrapper.appendChild(input);
-
-        input.focus();
-
-        input.addEventListener("blur", () => {
-            const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
-            if (ul)
-                ul.classList.remove("show");
-
-            const span = document.createElement("span");
-            span.className = "add-user-span";
-            span.textContent = input.value || "Click to add user";
-            span.dataset.uid = uid;
-
-            wrapper.replaceWith(span); // remove wrapper + input safely
-
-            changeTracker.set(uid, {
-               /* name: span.textContent,*/
-                teamKey: null, //placeholder for a new entry that will be assigned by db
-                dbChangeAction: 1 //add
-            });
-
-        });
-
-        input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter")
-                input.blur();
-        });
-    }
-}
-
-function removeUser(e) {
-    if (!confirm("Remove team members?")) {
-        return;
-    }
-    const checkedBoxes = document.querySelectorAll("#tbl-allocate-personnel tbody input[type='checkbox']:checked");
-
-    //remove row of checked boxes
-    checkedBoxes.forEach(cb => {
-
-        const row = cb.closest("tr");
-        if (row) {
-            let uid = row.dataset.uid;
-            let teamKey = document.getElementById('hdn-team-key').value;
-
-            // remove unsaved addition from change tracker
-            const existingChange = changeTracker.get(uid);
-            if (existingChange && existingChange.dbChangeAction === 1)
-                changeTracker.delete(uid)
-
-             // prepare for database deletion
-            else if (teamKey != null)
-                changeTracker.set(uid, {
-                  /*  name: row.childNodes[1].textContent,*/
-                    teamKey: teamKey,
-                    dbChangeAction: 2 //remove
-                });
-
-            row.remove();
-
-            //await saveTeamMembers(e);
-        }
-            
-    });
-
-   
-}
-
-function attachAutoComplete(e) {
-    const input = e.target;
-    if (!input.isConnected) return null;
-
-    // reuse UL if it already exists
-    let ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
-
-    if (!ul) {
-        ul = document.createElement("ul");
-        ul.className = "autocomplete-list";
-        ul.dataset.for = input.dataset.uid;
-
-        // prevent blur when clicking results
-        ul.addEventListener("mousedown", ev => ev.preventDefault());
-
-        document.body.appendChild(ul);
-    }
-
-    // position UL under the input
-    const rect = input.getBoundingClientRect();
-    ul.style.position = "fixed";
-    ul.style.top = `${rect.bottom + 4}px`;
-    ul.style.left = `${rect.left}px`;
-    ul.style.zIndex = 99999;
-
-    ul.classList.add("show");
-    return ul;
-}
-
-function insertSearchResults(user) {
-    let tr = document.createElement('tr');
-    tr.className = 'app-table-row';
-    tr.dataset.userid = user.id;
-    tr.dataset.employeeid = user.employeeid;
-    tr.dataset.roleid = user.roleid;
-
-    let checkbox = document.createElement('td');
-    checkbox.className = 'app-table-data'
-
-    let cbx = document.createElement('input');
-    cbx.type = 'checkbox'
-
-    checkbox.appendChild(cbx);
-    tr.appendChild(checkbox);
-
-    let firstName = document.createElement('td');
-    firstName.textContent = user.firstname;
-    firstName.className = 'app-table-data';
-    tr.appendChild(firstName);
-
-    let lastName = document.createElement('td');
-    lastName.textContent = user.lastname;
-    lastName.className = 'app-table-data';
-    tr.appendChild(lastName);
-
-    let username = document.createElement('td');
-    username.textContent = user.username;
-    username.className = 'app-table-data';
-    tr.appendChild(username);
-
-    let email = document.createElement('td');
-    email.textContent = user.email;
-    email.className = 'app-table-data';
-    tr.appendChild(email);
-
-    let row = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
-    tr.dataset.uid = row.dataset.uid;
-    row.replaceWith(tr);
-}
-
-const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-const changeTracker = new Map();
-
-async function saveTeamMembers(e) {
+async function saveAssignTeamMembers(e) {
     e.preventDefault();
 
     let response;
@@ -227,7 +35,7 @@ async function saveTeamMembers(e) {
     });
 
     try {
-        response = await axios.post('/Hr/AssignTeamMembers', payload, {
+        response = await axios.post('/Hr/SaveAssignTeamMembers', payload, {
             headers: {
                 'X-CSRF-TOKEN': token,
                 'Content-Type': 'application/json'
@@ -244,34 +52,20 @@ async function saveTeamMembers(e) {
     }
 }
 
-async function handleEvents(e) {
+async function getAssignedTeamPersonnel(teamKey) {
+    try {
+        const response = await axios.get('/Hr/GetAssignedTeamPersonnel', {
+            params: { teamKey }
+        });
 
-    if (e.type === "click") {
-        //remove user
-        if (e.target.id == "remove-user-btn")
-            removeUser(e);
-
-        //add new user row
-        if (e.target.id == "add-user-btn")
-            addNewRow();
-
-        //input control for adding team member
-        if (e.target.classList.contains("add-user-span"))
-            addUserInput(e);
-
-        //save members to team
-        if (e.target.id == "assign-btn")
-            await saveTeamMembers(e);
+        return response.data;
+    } catch (error) {
+        alert("Error: getAssignedTeamPersonnel")
+        console.error("error", error);
+        return false;
     }
-    else if (e.type === "input") {
-        if (e.target.classList.contains("add-user-input")) {
-            const resultsContainer = attachAutoComplete(e);
-            addUserSearchEventListener("dv-allocate-personnel", e.target, resultsContainer, (user) => insertSearchResults(user));
-        }
-    }
-
-
 }
+
 
 export async function init(params) {
     //load initial partial
@@ -279,8 +73,27 @@ export async function init(params) {
     let container = document.getElementById('hr-partial-container');
     container.innerHTML = partial;
 
+    //grid
+    let assignedTeams = await getAssignedTeamPersonnel(params.teamkey);
+    let teamMembers = assignedTeams;
+
+    //const teamMembers = assignedTeams.map(list => {
+    //    return {
+    //        teamName: list.teamName,
+    //        teamKey: list.teamKey
+    //    }
+    //});
+
+    let assignTeam = {
+        newId: 'assign-team',
+        rows: teamMembers,
+        controlType: 5,
+        saveCallback: saveAssignTeamMembers
+    }
+    await loadModule("gridControl", assignTeam);
+
     //event handlers
-    container.addEventListener("click", handleEvents);
-    container.addEventListener("keydown", handleEvents);
-    container.addEventListener("input", handleEvents);
+    //container.addEventListener("click", handleEvents);
+    //container.addEventListener("keydown", handleEvents);
+    //container.addEventListener("input", handleEvents);
 }
