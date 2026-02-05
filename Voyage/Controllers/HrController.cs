@@ -96,6 +96,13 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public async Task<List<TeamDTO>> GetTeams()
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetTeams(companyId!.Value);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AssignTeamPartial([FromQuery] string teamKey, [FromQuery] string teamName)
         {
             List<AssignTeamVM> vm = new List<AssignTeamVM>();
@@ -164,13 +171,6 @@ namespace Voyage.Controllers
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             return await _hrBLL.GetRoles(companyId!.Value);
-        }
-
-        [HttpGet]
-        public async Task<List<TeamDTO>> GetTeams()
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return await _hrBLL.GetTeams(companyId!.Value);
         }
 
         [HttpGet]

@@ -1,54 +1,11 @@
 ﻿@model ManageTeamsVM
 
 <div id="manage-teams-container" class="container">
-    <form id="form-manage-teams" class="container">
-        @Html.AntiForgeryToken()
 
+    <div class="manage-teams-header">
+        <h4>Manage Teams</h4>
+    </div>
 
-        <div id="dv-manage-teams" class="container table-responsive">
-            <div class="manage-teams-header">
-                <h4>Manage Teams</h4>
-            </div>
+    <div id="manage-team-grid-container"></div>
 
-            <table id="manage-teams" class="app-table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header">
-                         @*    <input type="hidden" /> *@
-                        </th>
-                        <th class="app-table-header">Team</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var team in Model.Teams)
-                    {
-                        Guid guid = Guid.NewGuid();
-
-                        <tr class="app-table-row" data-key="@guid" data-teamkey="@team.TeamKey">
-                            <td class="app-table-data">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="app-table-data">
-                                <a href="#" class="goto-assign-team" data-id="@team.TeamId" data-key="@guid" data-teamkey="@team.TeamKey">@team.Name</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div id="dv-team-btns" class="container">
-                <div id="btns-container">
-                    <button id="add-team-btn" class="primary-btn" type="button">Add</button>
-                    <button id="remove-team-btn" class="warning-btn" type="button">Delete</button>
-                </div>
-                <div>
-                    <button id="team-save-btn" class="primary-btn">Save</button>
-                </div>
-            </div>
-            
-
-            
-        </div>
-
-    </form>
 </div>

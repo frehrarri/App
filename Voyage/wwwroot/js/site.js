@@ -143,18 +143,42 @@ function addSearchEventListener(containerBodyId, input, resultsContainer, onSele
             resultsContainer.appendChild(li);
         });
     };
-
-    //addSearchEventListener({
-    //    containerBodyId,
-    //    input,
-    //    resultsContainer,
-    //    url: url,
-    //    displayText: u => `[${displayText}]`,
-    //    valueField: "id",
-    //    onSelect
-    //});
 }
 
+function hyperlinkResponse(response, changeTracker, newId, redirectClass) {
+    if (response && response.status == 200) {
+
+        //did not add any records so there is nothing to hyperlink
+        if (response.data.length > 0) {
+
+            //hyperlink results
+            let newEntry = "";
+            let index = 0;
+
+            let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
+
+            for (let [key, value] of addedEntries) {
+                newEntry = document.querySelector(`.add-${newId}-span[data-uid='${key}']`);
+
+                let anchortag = document.createElement('a');
+                anchortag.href = "#";
+                anchortag.classList.add(`${redirectClass}`)
+                anchortag.textContent = newEntry.textContent.trim();
+                anchortag.dataset.key = key;
+
+                let datakey = response.data[index];
+                anchortag.dataset.datakey = datakey;
+
+                newEntry.replaceWith(anchortag);
+                index++;
+            }
+        }
+        alert("Success");
+    }
+    else {
+        alert("Error saving");
+    }
+}
 
 async function handlePaste(e) {
     e.preventDefault();

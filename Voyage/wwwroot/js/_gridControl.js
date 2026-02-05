@@ -8,6 +8,7 @@
 //headers = list of headers to be inserted in thead
 //rows = list of data to be inserted in tbody
 //saveCallback = a callback function required for any saving
+//redirectClass = class for event listener for hyperlinking and redirecting on click
 
 export async function init(params) {
 
@@ -34,6 +35,7 @@ export async function init(params) {
 
     let controlType = params.controlType ?? 0;
     let newId = params.newId;
+    let redirectClass = params.redirectClass;
 
     //basic control requires user input headers
     let headers = [];
@@ -44,7 +46,7 @@ export async function init(params) {
     if (params.controlType)
         headers = handleHeaders(params);
 
-    await hydrateGrid(headers, newId, params.rows, uid, controlType);
+    await hydrateGrid(headers, newId, params.rows, uid, controlType, redirectClass);
 
     const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
 
@@ -129,7 +131,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
 
         // Disable save button when input is opened
         updateSaveButtonState(newId, changeTracker)
-
+        
         //set up autocomplete
         if (usesAutocomplete(controlType)) {
             input.addEventListener("input", () => {
@@ -150,6 +152,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
 
                     const span = document.createElement("span");
                     span.className = `add-${newId}-span`;
+
                     // Always revert to placeholder unless selection was made
                     span.textContent = selectionMade ? input.value : "Click here";
                     span.dataset.uid = uid;
@@ -189,12 +192,10 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
                 span.dataset.uid = uid;
 
                 wrapper.replaceWith(span);
-
+             
                 // If user entered text, prepare it for saving
                 if (input.value.trim()) {
-                    let args = handleChangeTrackerParams(controlType, {
-                        customText: input.value.trim()
-                    });
+                    let args = handleChangeTrackerParams(controlType, input.value.trim());
                     args.dbChangeAction = 1; // add
                     changeTracker.set(uid, args);
                 }
@@ -266,7 +267,7 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
     saveCallback(e, changeTracker);
 }
 
-async function hydrateGrid(headerList, newId, rows, uid, controlType) {
+async function hydrateGrid(headerList, newId, rows, uid, controlType, redirectClass) {
     const headers = headerList;
     const data = rows;
     
@@ -322,6 +323,9 @@ async function hydrateGrid(headerList, newId, rows, uid, controlType) {
 
         tbody.appendChild(tr);
     })
+
+    if (controlType == 0)
+        hyperlinkNames(redirectClass);
 }
 
 function attachAutoComplete(e) {
@@ -430,7 +434,20 @@ function handleChangeTrackerParams(controlType, row) {
                 teamKey: row.teamKey ?? row.dataset.teamKey
             }
             break;
+        case 0:
         default:
+            let name = row;
+            let datakey = null;
+
+            if (row.dataset) {
+                name = row.dataset.name;
+                datakey = row.dataset.datakey;
+            }
+
+            params = {
+                name: name,
+                datakey: datakey
+            }
             break;
     }
 
@@ -441,6 +458,7 @@ function handleChangeTrackerParams(controlType, row) {
 function handleDataAttr(tr, row, controlType) {
 
     switch (controlType) {
+        
         case 1: //get all users
         case 4: //get unassigned department users
             tr.dataset.employeeid = row.employeeid;
@@ -450,7 +468,10 @@ function handleDataAttr(tr, row, controlType) {
         case 3:   //get unassigned department teams
             tr.dataset.teamKey = row.teamKey;
             break;
+        case 0://basic control
         default:
+            tr.dataset.name = row.name;
+            tr.dataset.datakey = row.datakey;
             break;
     }
 }
@@ -490,7 +511,13 @@ function handleControlData(controlType, tr, row) {
             teamName.dataset.teamKey = tr.dataset.teamKey;
             tr.appendChild(teamName);
             break;
+        case 0: //basic control
         default:
+            let name = document.createElement('td');
+            name.textContent = row.name;
+            name.className = 'app-table-data';
+            name.dataset.datakey = tr.dataset.datakey;
+            tr.appendChild(name);
             break;
     }
 }
@@ -624,12 +651,15 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker, 
             addNewRow(newId, changeTracker);
 
         //input control for adding data
-        if (e.target.classList.contains(`add-${newId}-span`))
+        if (e.target.classList.contains(`add-${newId}-span`)) {
+           
             addUserInput(e, newId, controlType, changeTracker, autocompleteState);
+        }
+            
 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) 
-            await saveCallback(e, changeTracker);
+            await saveCallback(e, changeTracker, newId);
     }
 }
 
@@ -661,4 +691,25 @@ function updateSaveButtonState(newId, changeTracker) {
         saveBtn.removeAttribute('disabled');
 
     }
+}
+
+export function hyperlinkNames(redirectClass) {
+    if (!redirectClass)
+        return;
+
+    document.querySelectorAll("tbody tr").forEach(tr => {
+        const td = tr.querySelector("td:nth-child(2)"); // skip checkbox column
+        if (!td) return;
+
+        const link = document.createElement("a");
+        link.href = "#"
+        link.textContent = td.textContent;
+        link.dataset.datakey = tr.dataset.datakey
+        /*link.dataset.uid = tr.dataset.uid*/
+        link.classList.add(`${redirectClass}`);
+
+        td.textContent = "";
+        td.appendChild(link);
+    });
+
 }
