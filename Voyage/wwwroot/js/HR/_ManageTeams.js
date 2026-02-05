@@ -44,10 +44,9 @@ async function saveTeams(e, changeTracker, newId) {
 }
 
 async function handleEvents(e) {
-
     if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
         let params = {
-            teamkey: e.target.dataset.teamkey,
+            teamkey: e.target.dataset.datakey,
             teamName: e.target.textContent.trim()
         };
         
