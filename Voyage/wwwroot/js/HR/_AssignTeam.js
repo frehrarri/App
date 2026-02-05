@@ -75,7 +75,7 @@ export async function init(params) {
     container.innerHTML = partial;
 
     //grid
-    let assignedTeams = await getAssignedTeamPersonnel(params.teamkey);
+    let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
 
     const teamMembers = assignedTeams.map(list => {
         return {

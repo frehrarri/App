@@ -8,9 +8,9 @@
 //headers = list of headers to be inserted in thead
 //rows = list of data to be inserted in tbody
 //saveCallback = a callback function required for any saving
+//redirectCallback = callback function for redirecting (usually after hyperlinking)
 
 export async function init(params) {
-
     const retrievedVals = new Map();
     const changeTracker = new Map();
     const tableUid = crypto.randomUUID();
@@ -62,8 +62,14 @@ export async function init(params) {
     container.autocompleteState = autocompleteState;
 
     //event handlers
-    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker, autocompleteState, retrievedVals));
-    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker, autocompleteState, retrievedVals));
+    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback,
+                                                            controlType, changeTracker, autocompleteState,
+                                                            retrievedVals, params.redirectCallback));
+
+
+    container?.addEventListener("keydown", e => handleEvents(e, newId, null,
+                                                            controlType, changeTracker, autocompleteState,
+                                                            retrievedVals, params.redirectCallback));
 
     updateSaveButtonState(newId, changeTracker);
 }
@@ -664,7 +670,10 @@ function debounceSearch(input, controlType, uid, changeTracker, autocompleteStat
 }
 
 
-async function handleEvents(e, newId, saveCallback, controlType, changeTracker, autocompleteState, currentVals) {
+async function handleEvents(e, newId, saveCallback,
+                            controlType, changeTracker, autocompleteState,
+                            currentVals, redirectCallback) {
+
     if (e.type === "click") {
         //remove
         if (e.target.id == `${newId}-remove-btn`) 
@@ -682,6 +691,12 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker, 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) 
             await saveCallback(e, changeTracker, newId, currentVals);
+
+        if (e.target.classList.contains("redirect")) {
+            const data = currentVals.get(e.target.dataset.uid);
+            await redirectCallback(data);
+        }
+            
     }
 }
 

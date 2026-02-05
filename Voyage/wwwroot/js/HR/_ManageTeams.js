@@ -18,8 +18,6 @@ async function saveTeams(e, changeTracker, newId) {
     e.preventDefault();
     let response;
 
-    debugger;
-
     let values = Array.from(changeTracker.values());
     
     let payload = values.map(list => {
@@ -46,15 +44,9 @@ async function saveTeams(e, changeTracker, newId) {
     }
 }
 
-async function handleEvents(e) {
-    if (e.type == "click" && e.target.classList.contains("goto-assign-team")) {
-        let params = {
-            teamkey: e.target.dataset.datakey,
-            teamName: e.target.textContent.trim()
-        };
-        
-        await loadModule("assignTeam", params);
-    }
+
+async function redirect(data) {
+    await loadModule("assignTeam", data);
 }
 
 async function getTeams() {
@@ -90,11 +82,7 @@ export async function init() {
         rows: teamNames,
         controlType: 0,
         saveCallback: saveTeams,
-        redirectClass: "goto-assign-team"
+        redirectCallback: redirect
     }
     await loadModule("gridControl", manageTeam);
-
-    //event handlers
-    let container = document.getElementById('hr-partial-container');
-    container.addEventListener("click", handleEvents);
 }
