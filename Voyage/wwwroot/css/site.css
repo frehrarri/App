@@ -163,6 +163,17 @@ body {
     touch-action: manipulation;
 }
 
+button:disabled,
+button.disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #ccc;
+    color: #666;
+    pointer-events: none;
+}
+
 .app-table-row:nth-child(odd) {
 }
 

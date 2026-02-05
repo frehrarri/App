@@ -1,7 +1,4 @@
 ﻿
-const autocompleteState = new WeakMap();
-
-
 //how to use:
 //add element with id `${newId}-grid-container` where we want to render the grid
 //call loadModule("gridControl", params) from init function of page
@@ -49,11 +46,17 @@ export async function init(params) {
 
     await hydrateGrid(headers, newId, params.rows, uid, controlType);
 
-    //event handlers
     const container = document.querySelector(`#dv-${newId}[data-uid='${uid}']`);
 
-    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker));
-    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker));
+    // Store state on the container element for easy access
+    const autocompleteState = new WeakMap();
+    container.autocompleteState = autocompleteState;
+
+    //event handlers
+    container?.addEventListener("click", e => handleEvents(e, newId, params.saveCallback, controlType, changeTracker, autocompleteState));
+    container?.addEventListener("keydown", e => handleEvents(e, newId, null, controlType, changeTracker, autocompleteState));
+
+    updateSaveButtonState(newId, changeTracker);
 }
 
 async function getGridControlPartial() {
@@ -66,7 +69,7 @@ async function getGridControlPartial() {
     }
 }
 
-function addNewRow(newId) {
+function addNewRow(newId, changeTracker) {
     const tbody = document.querySelector(`#tbl-${newId} > tbody`);
 
     const tr = document.createElement("tr");
@@ -94,9 +97,11 @@ function addNewRow(newId) {
     tr.appendChild(td2);
 
     tbody.appendChild(tr);
+
+    updateSaveButtonState(newId, changeTracker);
 }
 
-function addUserInput(e, newId, controlType, changeTracker) {
+function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
     const target = e.target;
 
     if (target.classList.contains(`add-${newId}-span`) && e.type === "click") {
@@ -112,7 +117,6 @@ function addUserInput(e, newId, controlType, changeTracker) {
 
         const input = document.createElement("input");
         input.type = "text";
-        input.placeholder = "User Name";
         input.className = `add-${newId}-input`;
         input.value = "";
         input.dataset.uid = uid;
@@ -122,28 +126,89 @@ function addUserInput(e, newId, controlType, changeTracker) {
         wrapper.appendChild(input);
 
         input.focus();
-        
-        input.addEventListener("input", () => {
-            debounceSearch(input, controlType, uid, changeTracker);
-        });
 
-        input.addEventListener("blur", () => {
-            const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
-            if (ul)
-                ul.classList.remove("show");
+        // Disable save button when input is opened
+        updateSaveButtonState(newId, changeTracker)
 
-            const span = document.createElement("span");
-            span.className = `add-${newId}-span`;
-            span.textContent = input.value || "Click to add user";
-            span.dataset.uid = uid;
+        //set up autocomplete
+        if (usesAutocomplete(controlType)) {
+            input.addEventListener("input", () => {
+                debounceSearch(input, controlType, uid, changeTracker, autocompleteState);
+            });
 
-            wrapper.replaceWith(span); // remove wrapper + input safely
-        });
+            autocompleteState.set(input, { selectionMade: false });
 
-        input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter")
-                input.blur();
-        });
+            input.addEventListener("blur", () => {
+                // Delay to allow autocomplete click to register
+                setTimeout(() => {
+                    const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
+                    if (ul)
+                        ul.classList.remove("show");
+
+                    const state = autocompleteState.get(input);
+                    const selectionMade = state?.selectionMade || false;
+
+                    const span = document.createElement("span");
+                    span.className = `add-${newId}-span`;
+                    // Always revert to placeholder unless selection was made
+                    span.textContent = selectionMade ? input.value : "Click here";
+                    span.dataset.uid = uid;
+
+                    wrapper.replaceWith(span); // remove wrapper + input safely
+
+                    // Clean up autocomplete state
+                    autocompleteState.delete(input);
+
+                    // Re-enable save button after input is closed
+                    updateSaveButtonState(newId, changeTracker);
+                }, 150);
+            });
+
+            input.addEventListener("keydown", (ev) => {
+                if (ev.key === "Enter") {
+                    // For autocomplete, Enter should not save the query text
+                    const state = autocompleteState.get(input);
+                    if (state) state.selectionMade = false;
+                    input.blur();
+                }
+                if (ev.key === "Escape") {
+                    const state = autocompleteState.get(input);
+                    if (state) state.selectionMade = false;
+                    input.blur();
+                }
+            });
+
+        }
+        else {
+            // For non-autocomplete controls, just save whatever the user types
+            input.addEventListener("blur", () => {
+                const span = document.createElement("span");
+                span.className = `add-${newId}-span`;
+                // Keep the user's input or revert to placeholder if empty
+                span.textContent = input.value.trim() || "Click here";
+                span.dataset.uid = uid;
+
+                wrapper.replaceWith(span);
+
+                // If user entered text, prepare it for saving
+                if (input.value.trim()) {
+                    let args = handleChangeTrackerParams(controlType, {
+                        customText: input.value.trim()
+                    });
+                    args.dbChangeAction = 1; // add
+                    changeTracker.set(uid, args);
+                }
+
+                // Re-enable save button after input is closed
+                updateSaveButtonState(newId, changeTracker);
+            });
+
+            input.addEventListener("keydown", (ev) => {
+                if (ev.key === "Enter" || ev.key === "Escape") {
+                    input.blur();
+                }
+            });
+        }
     }
 }
 
@@ -194,6 +259,9 @@ function remove(e, newId, saveCallback, changeTracker, controlType) {
             row.remove();
         }
     });
+
+    // Update save button state after removing rows
+    updateSaveButtonState(newId, changeTracker);
 
     saveCallback(e, changeTracker);
 }
@@ -285,7 +353,7 @@ function attachAutoComplete(e) {
     return ul;
 }
 
-function insertSearchResults(row, controlType, uid, changeTracker) {
+function insertSearchResults(row, controlType, uid, changeTracker, autocompleteState) {
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
     tr.dataset.uid = uid;
@@ -308,13 +376,39 @@ function insertSearchResults(row, controlType, uid, changeTracker) {
     //set table data columns
     handleControlData(controlType, tr, row);
 
-    let wrapper = document.querySelector('.autocomplete-wrapper').parentElement.parentElement;
-    wrapper.replaceWith(tr);
+    let wrapper = document.querySelector('.autocomplete-wrapper');
+
+    //handle autcomplete
+    const input = wrapper?.querySelector('input');
+    if (input && autocompleteState) {
+        const state = autocompleteState.get(input);
+        if (state) state.selectionMade = true;
+    }
+
+    let wrapperParent = wrapper.parentElement.parentElement;
+    wrapperParent.replaceWith(tr);
 
     //prepare for save
     let args = handleChangeTrackerParams(controlType, row);
     args.dbChangeAction = 1; //add
     changeTracker.set(uid, args);
+
+    // Extract newId from the input class name (e.g., "add-myGrid-input" -> "myGrid")
+    const inputClass = input?.className || '';
+    const match = inputClass.match(/add-(.+)-input/);
+    if (match) {
+        const newId = match[1];
+        // Update save button state after inserting result
+        updateSaveButtonState(newId);
+    }
+
+}
+
+function usesAutocomplete(controlType) {
+    if (controlType == 0)
+        return false;
+    else
+        return true;
 }
 
 //row.param = on retrieve
@@ -462,7 +556,7 @@ function formatSearchResults(controlType, r) {
     }
 }
 
-async function handleSearchInput(e, controlType, uid, changeTracker) {
+async function handleSearchInput(e, controlType, uid, changeTracker, autocompleteState) {
     const input = e.target;
     const query = input.value.trim();
 
@@ -497,13 +591,13 @@ async function handleSearchInput(e, controlType, uid, changeTracker) {
         const li = document.createElement("li");
         li.textContent = formatSearchResults(controlType, r);
 
-        li.onclick = () => insertSearchResults(r, controlType, uid, changeTracker);
+        li.onclick = () => insertSearchResults(r, controlType, uid, changeTracker, autocompleteState);
         ul.appendChild(li);
     });
 
 }
 
-function debounceSearch(input, controlType, uid, changeTracker) {
+function debounceSearch(input, controlType, uid, changeTracker, autocompleteState) {
     let state = autocompleteState.get(input);
 
     if (!state) {
@@ -514,12 +608,12 @@ function debounceSearch(input, controlType, uid, changeTracker) {
     clearTimeout(state.timer);
 
     state.timer = setTimeout(() => {
-        handleSearchInput({ target: input }, controlType, uid, changeTracker);
+        handleSearchInput({ target: input }, controlType, uid, changeTracker, autocompleteState);
     }, 300);
 }
 
 
-async function handleEvents(e, newId, saveCallback, controlType, changeTracker) {
+async function handleEvents(e, newId, saveCallback, controlType, changeTracker, autocompleteState) {
     if (e.type === "click") {
         //remove
         if (e.target.id == `${newId}-remove-btn`) 
@@ -527,14 +621,44 @@ async function handleEvents(e, newId, saveCallback, controlType, changeTracker) 
 
         //add row
         if (e.target.id == `${newId}-add-btn`)
-            addNewRow(newId);
+            addNewRow(newId, changeTracker);
 
         //input control for adding data
         if (e.target.classList.contains(`add-${newId}-span`))
-            addUserInput(e, newId, controlType, changeTracker);
+            addUserInput(e, newId, controlType, changeTracker, autocompleteState);
 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) 
             await saveCallback(e, changeTracker);
+    }
+}
+
+function updateSaveButtonState(newId, changeTracker) {
+    const saveBtn = document.getElementById(`${newId}-save-btn`);
+    if (!saveBtn) return;
+
+    // Check if there are any additions in the change tracker (dbChangeAction === 1)
+    let hasPendingAdditions = false;
+    if (changeTracker) {
+        for (let [key, value] of changeTracker.entries()) {
+            if (value.dbChangeAction === 1) {
+                hasPendingAdditions = true;
+                break;
+            }
+        }
+    }
+
+    // Check if there are any open input fields
+    const hasOpenInputs = document.querySelector(`.autocomplete-wrapper`) !== null;
+
+    // Enable only if there are pending additions AND no open inputs
+    const shouldDisable = !hasPendingAdditions || hasOpenInputs;
+
+    if (shouldDisable) {
+        saveBtn.setAttribute('disabled', 'disabled');
+
+    } else {
+        saveBtn.removeAttribute('disabled');
+
     }
 }
