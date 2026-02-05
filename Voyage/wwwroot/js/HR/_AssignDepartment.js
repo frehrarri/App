@@ -53,7 +53,6 @@ async function saveDeptUsers(e, changeTracker) {
     const deptKey = document.getElementById('hdn-dept-key').value;
 
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
-        const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
 
         return {
             departmentKey: deptKey,

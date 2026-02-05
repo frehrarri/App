@@ -16,21 +16,19 @@ export async function getAssignTeamPartial(params) {
     }
 }
 
-async function saveAssignTeamMembers(e) {
+async function saveAssignTeamMembers(e, changeTracker, newId) {
     e.preventDefault();
-
     let response;
+
     const teamKey = document.getElementById('hdn-team-key').value;
 
     const payload = Array.from(changeTracker.entries()).map(([key, value]) => {
 
-        const row = document.querySelector(`.app-table-row[data-uid='${key}']`);
-
         return {
-            employeeId: parseInt(row.dataset.employeeid),
+            employeeId: value.employeeid,
             teamKey: teamKey,
             dbChangeAction: value.dbChangeAction,
-            roleId: row.dataset.roleid
+            roleId: value.roleid
         };
     });
 
@@ -43,8 +41,11 @@ async function saveAssignTeamMembers(e) {
         });
 
         if (response && response.data) {
-            return response.data;
+            alert("Success");
+            return;
         }
+
+        alert("Error saving");
 
     } catch (error) {
         console.error("error", error);
@@ -75,14 +76,19 @@ export async function init(params) {
 
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.teamkey);
-    let teamMembers = assignedTeams;
 
-    //const teamMembers = assignedTeams.map(list => {
-    //    return {
-    //        teamName: list.teamName,
-    //        teamKey: list.teamKey
-    //    }
-    //});
+    const teamMembers = assignedTeams.map(list => {
+        return {
+            teamName: list.teamName,
+            teamKey: list.teamKey,
+            employeeid: list.employeeId,
+            roleid: list.roleId,
+            firstname: list.firstName,
+            lastname: list.lastName,
+            username: list.username,
+            email: list.email
+        }
+    });
 
     let assignTeam = {
         newId: 'assign-team',
@@ -91,9 +97,4 @@ export async function init(params) {
         saveCallback: saveAssignTeamMembers
     }
     await loadModule("gridControl", assignTeam);
-
-    //event handlers
-    //container.addEventListener("click", handleEvents);
-    //container.addEventListener("keydown", handleEvents);
-    //container.addEventListener("input", handleEvents);
 }

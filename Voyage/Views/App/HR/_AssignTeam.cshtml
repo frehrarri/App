@@ -1,5 +1,4 @@
-﻿@* @model List<AssignTeamVM> *@
-
+﻿
 <div id="dv-allocate-team-personnel" class="container">
     <div id="assign-team-header">
         <h4>Assign Personnel</h4>
@@ -13,68 +12,4 @@
 <input type="hidden" id="hdn-team-key" value="@ViewBag.TeamKey" />
 
 
-@* <div id="assign-team-container">
-    <form id="assign-team-form">
-        @Html.AntiForgeryToken()
-
-        <div id="dv-allocate-team-personnel" class="container table-responsive">
-            
-
-            <div id="assign-team-header">
-                <h4>Assign Personnel</h4>
-                
-                <h4 id="team-name">@ViewBag.TeamName</h4>
-            </div>
-
-            <table id="tbl-allocate-personnel" class="app-table table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header"></th>
-                        <th class="app-table-header">Last Name</th>
-                        <th class="app-table-header">First Name</th>
-                        <th class="app-table-header">Username</th>
-                        <th class="app-table-header">Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var teamMember in Model)
-                {
-                    <tr class="app-table-row" data-uid="@Guid.NewGuid().ToString()">
-                        <td class="app-table-data">
-                            <input type="checkbox" />
-                        </td>
-                            <td class="app-table-data">
-                                @teamMember.LastName
-                            </td>
-                        <td class="app-table-data">
-                            @teamMember.FirstName
-                        </td>
-                        <td class="app-table-data">
-                            @teamMember.Username
-                        </td>
-                        <td class="app-table-data">
-                            @teamMember.Email
-                        </td>
-                    </tr>
-                }
-
-                </tbody>
-           
-            </table>
-            <br />
-            <div id="dv-team-btns" class="container">
-                <div id="btn-container">
-                    <button id="add-user-btn" class="primary-btn" type="button">Add</button>
-                    <button id="remove-user-btn" class="warning-btn" type="button">Remove</button>
-                </div>
-
-                <button id="assign-btn" class="primary-btn">Save</button>
-            </div>
-
-
-        </div>
-
-    </form>
-</div> *@
-@* <input type="hidden" id="hdn-team-key" value="@ViewBag.TeamKey" /> *@
 
