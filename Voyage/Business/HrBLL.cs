@@ -65,22 +65,27 @@ namespace Voyage.Business
         {
             return await _hrDAL.SavePersonnel(personnel, companyId);
         }
+
         public async Task<List<string>> SaveRoles(List<ManageRolesDTO> roles, int companyId)
         {
             return await _hrDAL.SaveRoles(roles, companyId);
         }
+
         public async Task<List<String>> SaveDepartments(List<DepartmentDTO> departments, int companyId)
         {
             return await _hrDAL.SaveDepartments(departments, companyId);
         }
+
         public async Task<List<string>> SaveTeams(List<TeamDTO> teams, int companyId)
         {
             return await _hrDAL.SaveTeams(teams, companyId);
         }
+
         public async Task SaveAssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
         {
             await _hrDAL.SaveAssignTeamMembers(dto, companyId);
         }
+
         public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto, int companyId)
         {
             await _hrDAL.SaveAssignDepartmentTeams(dto, companyId);

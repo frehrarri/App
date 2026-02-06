@@ -58,6 +58,10 @@ const moduleRegistry = {
         js: () => import(`./HR/_AssignTeam.js?v=${scriptVersion}`),
         css: `/css/HR/_AssignTeam.css?v=${scriptVersion}`
     },
+    assignRolePermissions: {
+        js: () => import(`./HR/_AssignRolePermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_AssignRolePermissions.css?v=${scriptVersion}`
+    },
 
 
     //tickets

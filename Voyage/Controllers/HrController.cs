@@ -183,7 +183,6 @@ namespace Voyage.Controllers
             return await _hrBLL.SaveTeams(teams, companyId!.Value);
         }
 
-
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public async Task<List<string>> SaveDepartments([FromBody] List<DepartmentDTO> departments)

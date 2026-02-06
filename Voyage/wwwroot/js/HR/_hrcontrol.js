@@ -42,31 +42,33 @@ async function handleSettings(e) {
 
 async function handleTabs(e) {
     let response;
-    let partial;
 
-    const companyId = parseInt(document.getElementById('hdnCompanyId').value);
+    const tab = e.target.closest('.hr-control-tab');
+    if (!tab)
+        return;
+
     const header = document.getElementById('hr-control-header');
     let activeTab = header.querySelector('.hr-control-tab.nav-link.active');
 
-    if (e.target.dataset.tab === "Personnel") {
+    if (tab.dataset.tab === "Personnel") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
         await init();
     }
 
-    else if (e.target.dataset.tab === "Teams") {
+    else if (tab.dataset.tab === "Teams") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
         await loadModule("manageTeams");
     }
 
-    else if (e.target.dataset.tab === "Departments") {
+    else if (tab.dataset.tab === "Departments") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
         await loadModule("manageDepartments");
     }
 
-    else if (e.target.dataset.tab === "Permissions") {
+    else if (tab.dataset.tab === "Permissions") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
 
@@ -75,7 +77,7 @@ async function handleTabs(e) {
         await loadModule("managePermissions");
     }
 
-    else if (e.target.dataset.tab === "Roles") {
+    else if (tab.dataset.tab === "Roles") {
         activeTab.classList.remove('active');
         e.target.classList.add('active');
         await loadModule("manageRoles");
