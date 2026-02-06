@@ -58,14 +58,21 @@ namespace Voyage.Controllers
         [HttpGet]
         public IActionResult ManageDepartmentPartial()
         {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
             return PartialView("~/Views/App/HR/_ManageDepartments.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult AssignDepartmentPartial([FromQuery] string deptKey, [FromQuery] string deptName)
+        {
+            ViewBag.DeptName = deptName;
+            ViewBag.DeptKey = deptKey;
+
+            return PartialView("~/Views/App/HR/_AssignDepartment.cshtml");
         }
 
         [HttpGet]
         public IActionResult ManageTeamsPartial()
         {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
             return PartialView("~/Views/App/HR/_ManageTeams.cshtml");
         }
 
@@ -76,6 +83,12 @@ namespace Voyage.Controllers
             ViewBag.TeamKey = teamKey;
 
             return PartialView("~/Views/App/HR/_AssignTeam.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult ManageRolesPartial()
+        {
+            return PartialView("~/Views/App/HR/_ManageRoles.cshtml");
         }
 
         [HttpGet]
@@ -106,6 +119,20 @@ namespace Voyage.Controllers
         }
 
         [HttpGet]
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string deptKey)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            return await _hrBLL.GetAssignedDepartmentTeams(deptKey, companyId);
+        }
+
+        [HttpGet]
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            return await _hrBLL.GetAssignedDepartmentUsers(departmentKey, companyId);
+        }
+
+        [HttpGet]
         public async Task<List<TeamDTO>> GetTeams()
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
@@ -119,11 +146,31 @@ namespace Voyage.Controllers
             return await _hrBLL.GetAssignedTeamPersonnel(teamKey, companyId!.Value);
         }
 
+        [HttpGet]
+        public async Task<List<ManageRolesDTO>> GetRoles()
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return await _hrBLL.GetRoles(companyId!.Value);
+        }
+
         #endregion
 
 
         #region Save Methods
 
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task<IActionResult> SavePersonnel([FromBody] List<ManagePersonnelDTO> personnel)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var username = HttpContext.Session.GetString("Username");
+
+            if (!string.IsNullOrEmpty(username))
+                personnel.ForEach(r => r.CreatedBy = username);
+
+            bool isSuccess = await _hrBLL.SavePersonnel(personnel, companyId!.Value);
+            return Json(isSuccess);
+        }
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
@@ -151,6 +198,28 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
+        public async Task SaveAssignDepartmentTeams([FromBody] List<AssignDepartmentDTO> dto)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.SaveAssignDepartmentTeams(dto, companyId);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SaveAssignDepartmentUsers([FromBody] List<AssignDepartmentDTO> dto)
+        {
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            string? username = HttpContext.Session.GetString("Username");
+            dto.ForEach(d => d.CreatedBy = username!);
+
+            await _hrBLL.SaveAssignDepartmentUsers(dto, companyId);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
         public async Task SaveAssignTeamMembers([FromBody] List<AssignTeamDTO> dto)
         {
             int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
@@ -160,36 +229,48 @@ namespace Voyage.Controllers
             await _hrBLL.SaveAssignTeamMembers(dto, companyId);
         }
 
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task<List<string>> SaveRoles([FromBody] List<ManageRolesDTO> roles)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var username = HttpContext.Session.GetString("Username");
+
+            if (!string.IsNullOrEmpty(username))
+                roles.ForEach(r => r.CreatedBy = username);
+
+            return await _hrBLL.SaveRoles(roles, companyId!.Value);
+        }
+
         #endregion
 
 
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> AssignDepartmentPartial([FromQuery] string deptKey, [FromQuery] string deptName)
-        {
-            ViewBag.DeptName = deptName;
-            ViewBag.DeptKey = deptKey;
 
-            return PartialView("~/Views/App/HR/_AssignDepartment.cshtml");
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> HrSettingsPartial()
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            return PartialView("~/Views/App/HR/_HrSettings.cshtml");
         }
 
 
-
-
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task SavePermissions([FromBody] List<string> permissions)
+        {
+            await _hrBLL.SavePermissions(permissions);
+        }
 
         [HttpGet]
-        public async Task<IActionResult> ManageRolesPartial()
+        public async Task<List<ManagePermissionsDTO>> GetPermissions()
         {
-            ManageRolesVM vm = new ManageRolesVM();
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-
-            var dto = await GetRoles();
-            if (dto != null)
-                vm.Roles = dto;
-
-            return PartialView("~/Views/App/HR/_ManageRoles.cshtml", vm);
+            return await _hrBLL.GetPermissions();
         }
 
         [HttpGet]
@@ -204,107 +285,14 @@ namespace Voyage.Controllers
             return PartialView("~/Views/App/HR/_ManagePermissions.cshtml", vm);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> HrSettingsPartial()
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return PartialView("~/Views/App/HR/_HrSettings.cshtml");
-        }
-
-
-
-        [HttpGet]
-        public async Task<List<ManageRolesDTO>> GetRoles()
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return await _hrBLL.GetRoles(companyId!.Value);
-        }
-
-        [HttpGet]
-        public async Task<List<ManagePermissionsDTO>> GetPermissions()
-        {
-            return await _hrBLL.GetPermissions();
-        }
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> SavePersonnel([FromBody] List<ManagePersonnelDTO> personnel)
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var username = HttpContext.Session.GetString("Username");
-
-            if (!string.IsNullOrEmpty(username))
-                personnel.ForEach(r => r.CreatedBy = username);
-
-            bool isSuccess = await _hrBLL.SavePersonnel(personnel, companyId!.Value);
-            return Json(isSuccess);
-        }
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task<IActionResult> SaveRoles([FromBody] List<ManageRolesDTO> roles)
-        {
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var username = HttpContext.Session.GetString("Username");
-
-            if (!string.IsNullOrEmpty(username))
-                roles.ForEach(r => r.CreatedBy = username);
-
-            bool isSuccess = await _hrBLL.SaveRoles(roles, companyId!.Value);
-            return Json(isSuccess);
-        }
-
-
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task SavePermissions([FromBody] List<string> permissions)
-        {
-            await _hrBLL.SavePermissions(permissions);
-        }
 
 
 
 
 
-        [HttpGet]
-        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string deptKey)
-        {
-            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            return await _hrBLL.GetAssignedDepartmentTeams(deptKey, companyId);
-        }
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task SaveAssignDepartmentTeams([FromBody] List<AssignDepartmentDTO> dto)
-        {
-            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            string? username = HttpContext.Session.GetString("Username");
-            dto.ForEach(d => d.CreatedBy = username!);
-
-            await _hrBLL.SaveAssignDepartmentTeams(dto, companyId);
-        }
-
-        [HttpGet]
-        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey)
-        {
-            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            return await _hrBLL.GetAssignedDepartmentUsers(departmentKey, companyId);
-        }
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task SaveAssignDepartmentUsers([FromBody] List<AssignDepartmentDTO> dto)
-        {
-            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            string? username = HttpContext.Session.GetString("Username");
-            dto.ForEach(d => d.CreatedBy = username!);
-
-            await _hrBLL.SaveAssignDepartmentUsers(dto, companyId);
-        }
 
 
-   
+
 
     }
 }

@@ -22,7 +22,10 @@ export async function getAssignDepartmentPartial(params) {
 }
 
 async function saveDeptTeams(e, changeTracker) {
-    e.preventDefault();
+    if (changeTracker.size === 0) {
+        return;
+    }
+
     let response;
     
     const deptKey = document.getElementById('hdn-dept-key').value;
@@ -44,6 +47,7 @@ async function saveDeptTeams(e, changeTracker) {
 
         if (response && response.status === 200) {
             alert("Success");
+            changeTracker.clear();
         }
         else {
             alert("Error");
@@ -56,7 +60,10 @@ async function saveDeptTeams(e, changeTracker) {
 }
 
 async function saveDeptUsers(e, changeTracker) {
-    e.preventDefault();
+    if (changeTracker.size === 0) {
+        return;
+    }
+
     let response;
     const deptKey = document.getElementById('hdn-dept-key').value;
 
@@ -81,6 +88,7 @@ async function saveDeptUsers(e, changeTracker) {
 
         if (response && response.status === 200) {
             alert("Success");
+            changeTracker.clear();
         }
         else {
             alert("Error");

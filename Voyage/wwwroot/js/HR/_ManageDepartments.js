@@ -53,7 +53,10 @@ async function getDepartments() {
 }
 
 async function saveDepartments(e, changeTracker, newId, currentVals) {
-    e.preventDefault();
+    if (changeTracker.size === 0) {
+        return;
+    }
+
     let response;
 
     let values = Array.from(changeTracker.values());
@@ -77,6 +80,7 @@ async function saveDepartments(e, changeTracker, newId, currentVals) {
         if (response && response.status === 200) {
             alert("Success");
             hyperlinkResponse(response, changeTracker, newId, currentVals);
+            changeTracker.clear();
         }
         else {
             alert("Error");

@@ -25,6 +25,11 @@ namespace Voyage.Data
             _logger = logger;
         }
 
+
+
+
+        #region Get Methods
+
         public async Task<List<ManagePersonnelDTO>> GetPersonnel(int companyId)
         {
             try
@@ -52,7 +57,7 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManageRolesDTO>> GetRoles(int? companyId)
+        public async Task<List<ManageRolesDTO>> GetRoles(int companyId)
         {
             try
             {
@@ -63,6 +68,7 @@ namespace Voyage.Data
                     && r.IsActive == true)
                   .Select(r => new ManageRolesDTO
                   {
+                      RoleKey = r.RoleKey.ToString(),
                       Name = r.RoleName,
                       RoleId = r.RoleId,
                       CompanyId = r.CompanyId
@@ -95,13 +101,14 @@ namespace Voyage.Data
             }
         }
 
+
         public async Task<List<TeamDTO>> GetTeams(int companyId)
         {
             try
             {
                 return await _db.Teams
-                    .Where(u => 
-                        u.CompanyId == companyId 
+                    .Where(u =>
+                        u.CompanyId == companyId
                         && u.IsLatest == true)
                     .Select(u => new TeamDTO
                     {
@@ -116,6 +123,7 @@ namespace Voyage.Data
                 return null!;
             }
         }
+
 
         public async Task<List<AssignTeamDTO>> GetAssignedTeamPersonnel(string teamKey, int companyId)
         {
@@ -147,23 +155,63 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<ManagePermissionsDTO>> GetPermissions()
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string departmentKey, int companyId)
         {
             try
             {
-                return await _db.Permissions
-                    .Select(u => new ManagePermissionsDTO
+                return await _db.Teams
+                    .Where(t =>
+                        t.CompanyId == companyId
+                        && t.DepartmentKey == Guid.Parse(departmentKey))
+                    .Select(t => new AssignDepartmentDTO
                     {
-                        Name = u.Name
-                    }).ToListAsync();
+                        DepartmentKey = t.DepartmentKey.ToString(),
+                        TeamId = t.TeamId,
+                        TeamKey = t.TeamKey.ToString(),
+                        TeamName = t.Name
+                    })
+                    .ToListAsync();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logger.LogError(e, "Error: HrDAL : GetPermissions");
+                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
                 return null!;
             }
         }
 
+        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey, int companyId)
+        {
+            try
+            {
+                return await _db.DepartmentUserRoles
+                    .Where(t =>
+                        t.CompanyId == companyId
+                        && t.DepartmentKey == Guid.Parse(departmentKey))
+                    .Select(t => new AssignDepartmentDTO
+                    {
+                        DepartmentKey = t.DepartmentKey.ToString(),
+                        EmployeeId = t.EmployeeId,
+                        RoleId = t.RoleId,
+                        Username = t.User.UserName,
+                        FirstName = t.User.FirstName,
+                        LastName = t.User.LastName,
+                        Email = t.User.Email
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
+                return null!;
+            }
+        }
+
+
+        #endregion
+
+
+
+        #region Save Methods
 
         public async Task<bool> SavePersonnel(List<ManagePersonnelDTO> personnel, int companyId)
         {
@@ -175,7 +223,7 @@ namespace Voyage.Data
                 foreach (var person in personnel)
                 {
                     switch (person.DbSaveAction)
-                    {         
+                    {
                         case (int)SaveAction.Save:
                             var existingRole = await _db.IndividualUserRoles.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId && r.CompanyId == companyId);
 
@@ -186,7 +234,7 @@ namespace Voyage.Data
 
                                 var user = await _db.Users.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId && r.CompanyId == companyId);
 
-                                if(user != null)
+                                if (user != null)
                                     user.IsActiveUser = person.IsUserActive;
                             }
 
@@ -196,7 +244,7 @@ namespace Voyage.Data
 
                             var userToDelete = await _db.Users.FirstOrDefaultAsync(r => r.EmployeeId == person.EmployeeId
                                                                                         && r.CompanyId == companyId);
-                            
+
                             if (userToDelete != null)
                                 _db.Users.Remove(userToDelete);
 
@@ -211,74 +259,81 @@ namespace Voyage.Data
             catch (Exception e)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(e, "Error: HrDAL.SaveRoles()");
+                _logger.LogError(e, "Error: HrDAL.SavePersonnel()");
                 return false;
             }
-
         }
 
-        public async Task<bool> SaveRoles(List<ManageRolesDTO> roles, int companyId)
+
+        public async Task<List<string>> SaveRoles(List<ManageRolesDTO> roles, int companyId)
         {
+            List<string> newKeys = new List<string>();
+            var newRoles = new List<CompanyRole>();
             var datetime = DateTime.UtcNow;
 
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
+                var existingRoles = await _db.CompanyRoles.Where(r => r.CompanyId == companyId).ToListAsync();
+                int nextRoleId = await GetNextRoleId(companyId);
+
                 foreach (var role in roles)
                 {
                     switch (role.DbChangeAction)
                     {
                         case (int)SaveAction.Save:
-                            var existingRole = await _db.CompanyRoles.FirstOrDefaultAsync(r => r.RoleId == role.RoleId
-                                                                                    && r.CompanyId == companyId);
-                            // Update existing record
-                            if (existingRole != null)
                             {
-                                existingRole.RoleName = role.Name;
-                                existingRole.ModifiedDate = datetime;
-                                existingRole.ModifiedBy = role.CreatedBy;
-                            }
-                            // Add new role
-                            else
-                            {
-                                int nextRoleId = await GetNextRoleId(companyId);
-
-                                var newRole = new CompanyRole
+                                // New insert
+                                if (role.RoleKey == null)
                                 {
-                                    RoleId = nextRoleId,
-                                    RoleName = role.Name,
-                                    CompanyId = companyId,
-                                    IsLatest = true,
-                                    IsActive = true,
-                                    CreatedDate = datetime,
-                                    CreatedBy = role.CreatedBy
-                                };
+                                    var newRole = new CompanyRole
+                                    {
+                                        RoleId = nextRoleId++,
+                                        RoleName = role.Name,
+                                        CompanyId = companyId,
+                                        IsLatest = true,
+                                        IsActive = true,
+                                        CreatedDate = datetime,
+                                        CreatedBy = role.CreatedBy
+                                    };
+                                    newRoles.Add(newRole);
+                                    await _db.CompanyRoles.AddAsync(newRole);
+                                }
+                                // Update existing
+                                else
+                                {
+                                    var existingRole = existingRoles.FirstOrDefault(r => r.RoleKey == Guid.Parse(role.RoleKey));
 
-                                await _db.CompanyRoles.AddAsync(newRole);
+                                    if (existingRole != null)
+                                    {
+                                        existingRole.RoleName = role.Name;
+                                        existingRole.ModifiedDate = datetime;
+                                        existingRole.ModifiedBy = role.CreatedBy;
+                                    }
+                                }
+                                break;
                             }
-                            break;
-
                         case (int)SaveAction.Remove:
-                            var roleToDelete = await _db.CompanyRoles.FirstOrDefaultAsync(r => r.RoleId == role.RoleId
-                                                                                        && r.CompanyId == companyId);
-
-                            if (roleToDelete != null)
                             {
-                                _db.CompanyRoles.Remove(roleToDelete);
+                                var roleToDelete = existingRoles.FirstOrDefault(r => r.RoleKey == Guid.Parse(role.RoleKey));
+                                if (roleToDelete != null)
+                                {
+                                    _db.CompanyRoles.Remove(roleToDelete);
+                                }
+                                break;
                             }
-                            break;
                     }
                 }
 
                 await _db.SaveChangesAsync();
                 await tx.CommitAsync();
-                return true;
+                return newRoles.Select(r => r.RoleKey.ToString()).ToList();
             }
             catch (Exception e)
             {
                 await tx.RollbackAsync();
                 _logger.LogError(e, "Error: HrDAL.SaveRoles()");
-                return false;
+                return null!;
             }
         }
 
@@ -373,45 +428,6 @@ namespace Voyage.Data
         }
 
 
-        private async Task<int> GetNextDepartmentId(int companyId)
-        {
-            var maxDeptId = await _db.Departments
-                .Where(d => d.CompanyId == companyId)
-                .MaxAsync(d => (int?)d.DepartmentId) ?? 0;
-
-            return maxDeptId + 1;
-        }
-
-        private async Task<int> GetNextRoleId(int companyId)
-        {
-            var maxRolesId = await _db.CompanyRoles
-                .Where(d => d.CompanyId == companyId)
-                .MaxAsync(d => (int?)d.RoleId) ?? 0;
-
-            return maxRolesId + 1;
-        }
-
-     
-
-        public async Task SavePermissions(List<string> permissions)
-        {
-            try
-            {
-                List<Permissions> permissionsToSave = permissions.Select(p => new Permissions() { Name = p }).ToList();
-
-                if (permissionsToSave.Any())
-                {
-                    await _db.Permissions.AddRangeAsync(permissionsToSave);
-                }
-
-                await _db.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error: HrDAL : SavePermissions");
-            }
-        }
-
         public async Task<List<string>> SaveTeams(List<TeamDTO> teams, int companyId)
         {
             List<string> newKeys = new List<string>();
@@ -451,7 +467,7 @@ namespace Voyage.Data
                                 else
                                 {
                                     var existingTeam = existingTeams.FirstOrDefault(t => t.TeamKey == Guid.Parse(team.TeamKey));
-                                    
+
                                     if (existingTeam != null)
                                     {
                                         existingTeam.Name = team.Name;
@@ -491,16 +507,6 @@ namespace Voyage.Data
         }
 
 
-        private async Task<int> GetNextTeamId(int companyId)
-        {
-            var maxTeamId = await _db.Teams
-                .Where(t => t.CompanyId == companyId)
-                .MaxAsync(t => (int?)t.TeamId) ?? 0;
-
-            return maxTeamId + 1;
-        }
-
-
         public async Task SaveAssignTeamMembers(List<AssignTeamDTO> dto, int companyId)
         {
             var teamKey = Guid.Parse(dto[0].TeamKey);
@@ -517,7 +523,7 @@ namespace Voyage.Data
 
                 foreach (var item in dto)
                 {
-                    
+
                     switch (item.DbChangeAction)
                     {
                         // INSERT or UPDATE
@@ -578,29 +584,6 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentTeams(string departmentKey, int companyId)
-        {
-            try
-            {
-                return await _db.Teams
-                    .Where(t => 
-                        t.CompanyId == companyId 
-                        && t.DepartmentKey == Guid.Parse(departmentKey))
-                    .Select(t => new AssignDepartmentDTO 
-                    { 
-                        DepartmentKey = t.DepartmentKey.ToString(),
-                        TeamId = t.TeamId,
-                        TeamKey = t.TeamKey.ToString(),
-                        TeamName = t.Name
-                    })
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
-                return null!;
-            }
-        }
 
         public async Task SaveAssignDepartmentTeams(List<AssignDepartmentDTO> dto, int companyId)
         {
@@ -666,32 +649,6 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<List<AssignDepartmentDTO>> GetAssignedDepartmentUsers(string departmentKey, int companyId)
-        {
-            try
-            {
-                return await _db.DepartmentUserRoles
-                    .Where(t =>
-                        t.CompanyId == companyId
-                        && t.DepartmentKey == Guid.Parse(departmentKey))
-                    .Select(t => new AssignDepartmentDTO
-                    {
-                        DepartmentKey = t.DepartmentKey.ToString(),
-                        EmployeeId = t.EmployeeId,
-                        RoleId = t.RoleId,
-                        Username = t.User.UserName,
-                        FirstName = t.User.FirstName,
-                        LastName = t.User.LastName,
-                        Email = t.User.Email
-                    })
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error: HrDAL.GetAssignedDepartmentTeams()");
-                return null!;
-            }
-        }
 
         public async Task SaveAssignDepartmentUsers(List<AssignDepartmentDTO> dto, int companyId)
         {
@@ -774,6 +731,98 @@ namespace Voyage.Data
                 _logger.LogError(ex, "Error: HrDAL.AssignTeamMembers()");
             }
         }
+
+        #endregion
+
+
+        #region Private methods
+
+        private async Task<int> GetNextDepartmentId(int companyId)
+        {
+            var maxDeptId = await _db.Departments
+                .Where(d => d.CompanyId == companyId)
+                .MaxAsync(d => (int?)d.DepartmentId) ?? 0;
+
+            return maxDeptId + 1;
+        }
+
+        private async Task<int> GetNextRoleId(int companyId)
+        {
+            var maxRolesId = await _db.CompanyRoles
+                .Where(d => d.CompanyId == companyId)
+                .MaxAsync(d => (int?)d.RoleId) ?? 0;
+
+            return maxRolesId + 1;
+        }
+
+        private async Task<int> GetNextTeamId(int companyId)
+        {
+            var maxTeamId = await _db.Teams
+                .Where(t => t.CompanyId == companyId)
+                .MaxAsync(t => (int?)t.TeamId) ?? 0;
+
+            return maxTeamId + 1;
+        }
+
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+        public async Task<List<ManagePermissionsDTO>> GetPermissions()
+        {
+            try
+            {
+                return await _db.Permissions
+                    .Select(u => new ManagePermissionsDTO
+                    {
+                        Name = u.Name
+                    }).ToListAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : GetPermissions");
+                return null!;
+            }
+        }
+
+        public async Task SavePermissions(List<string> permissions)
+        {
+            try
+            {
+                List<Permissions> permissionsToSave = permissions.Select(p => new Permissions() { Name = p }).ToList();
+
+                if (permissionsToSave.Any())
+                {
+                    await _db.Permissions.AddRangeAsync(permissionsToSave);
+                }
+
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: HrDAL : SavePermissions");
+            }
+        }
+
+   
+
+
+     
+
+  
+
+      
+
+      
 
 
 

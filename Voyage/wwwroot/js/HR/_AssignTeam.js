@@ -22,7 +22,10 @@ export async function getAssignTeamPartial(params) {
 }
 
 async function saveAssignTeamMembers(e, changeTracker, newId) {
-    e.preventDefault();
+    if (changeTracker.size === 0) {
+        return;
+    }
+
     let response;
 
     const teamKey = document.getElementById('hdn-team-key').value;
@@ -47,6 +50,7 @@ async function saveAssignTeamMembers(e, changeTracker, newId) {
 
         if (response && response.status === 200) {
             alert("Success");
+            changeTracker.clear();
         }
         else {
             alert("Error");

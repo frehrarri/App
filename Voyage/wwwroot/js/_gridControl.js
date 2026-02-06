@@ -206,7 +206,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
                 span.dataset.uid = uid;
 
                 wrapper.replaceWith(span);
-             
+               
                 // If user entered text, prepare it for saving
                 if (input.value.trim()) {
                     let args = handleChangeTrackerParams(controlType, input.value.trim());
@@ -504,7 +504,6 @@ function populateControlData(controlType, tr, value) {
             let teamName = document.createElement('td');
             teamName.textContent = value.name ?? value.teamName;
             teamName.className = 'app-table-data';
-          /*  teamName.dataset.teamKey = tr.dataset.teamKey;*/
             tr.appendChild(teamName);
             break;
         case 0: //basic control
@@ -512,7 +511,6 @@ function populateControlData(controlType, tr, value) {
             let name = document.createElement('td');
             name.textContent = value.name;
             name.className = 'app-table-data';
-        /*    name.dataset.datakey = tr.dataset.datakey;*/
             tr.appendChild(name);
             break;
     }
@@ -659,7 +657,7 @@ async function handleEvents(e, newId, saveCallback,
 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) {
-
+            e.preventDefault();
             await saveCallback(e, changeTracker, newId, currentVals);
         }
             
