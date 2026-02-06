@@ -77,13 +77,16 @@ export async function init() {
 
     //grid
     let teams = await getTeams();
+    let teamNames = [];
 
-    const teamNames = teams.map(list => {
-        return {
-            name: list.name,
-            datakey: list.teamKey
-        }
-    });
+    if (teams) {
+        teamNames = teams.map(list => {
+            return {
+                name: list.name,
+                datakey: list.teamKey
+            }
+        });
+    }
 
     let manageTeam = {
         headers: ["Team"],

@@ -81,19 +81,23 @@ export async function init(params) {
 
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
+    let teamMembers = [];
 
-    const teamMembers = assignedTeams.map(list => {
-        return {
-            teamName: list.teamName,
-            teamKey: list.teamKey,
-            employeeid: list.employeeId,
-            roleid: list.roleId,
-            firstname: list.firstName,
-            lastname: list.lastName,
-            username: list.username,
-            email: list.email
-        }
-    });
+    if (assignedTeams) {
+        teamMembers = assignedTeams.map(list => {
+            return {
+                teamName: list.teamName,
+                teamKey: list.teamKey,
+                employeeid: list.employeeId,
+                roleid: list.roleId,
+                firstname: list.firstName,
+                lastname: list.lastName,
+                username: list.username,
+                email: list.email
+            }
+        });
+    }
+   
 
     let assignTeam = {
         newId: 'assign-team',

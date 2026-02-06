@@ -9,13 +9,16 @@ export async function init() {
 
     //grid
     let depts = await getDepartments();
+    let departments = [];
 
-    const departments = depts.map(list => {
-        return {
-            name: list.name,
-            datakey: list.departmentKey
-        }
-    });
+    if (depts) {
+        departments = depts.map(list => {
+            return {
+                name: list.name,
+                datakey: list.departmentKey
+            }
+        });
+    }
 
     let manageDept = {
         headers: ["Department"],
@@ -73,7 +76,7 @@ async function saveDepartments(e, changeTracker, newId, currentVals) {
 
         if (response && response.status === 200) {
             alert("Success");
-            hyperlinkresponse(response, changetracker, newid, currentvals);
+            hyperlinkResponse(response, changeTracker, newId, currentVals);
         }
         else {
             alert("Error");
