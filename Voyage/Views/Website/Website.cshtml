@@ -2,7 +2,16 @@
     ViewData["Title"] = "Home";
 }
 <div id="homepage-container">
-    @await Html.PartialAsync("_Website");
+ 
+    @if(User.Identity?.IsAuthenticated == true)
+    {
+        @await Html.PartialAsync("Home");
+    }
+    else
+    {
+        @await Html.PartialAsync("_Website");
+    }
+
 </div>
 
 <link href="~/css/website.css" rel="stylesheet" asp-append-version="true" />

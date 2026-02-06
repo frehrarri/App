@@ -19,12 +19,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Index", "Website")">Home</a>
                     </li>
+
+      @*               @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "App")">App</a>
+                        </li>
+                    } *@
+
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Home", "Website")">About</a>
+                        <a class="nav-link" href="">About</a>
                     </li>
-  @*                   <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Contact", "Home")">Contact</a>
-                    </li> *@
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Contact</a>
+                    </li>
                 </ul>
 
                 <!-- Right side (Login & Register buttons) -->
