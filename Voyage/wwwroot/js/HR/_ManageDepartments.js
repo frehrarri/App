@@ -2,6 +2,32 @@ import { loadModule } from "/js/__moduleLoader.js";
 
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+export async function init() {
+    //load initial partial
+    let partial = await getManageDepartmentsPartial();
+    document.getElementById("hr-partial-container").innerHTML = partial;
+
+    //grid
+    let depts = await getDepartments();
+
+    const departments = depts.map(list => {
+        return {
+            name: list.name,
+            datakey: list.departmentKey
+        }
+    });
+
+    let manageDept = {
+        headers: ["Department"],
+        newId: 'manage-dept',
+        rows: departments,
+        controlType: 0,
+        saveCallback: saveDepartments,
+        redirectCallback: redirect
+    }
+    await loadModule("gridControl", manageDept);
+}
+
 export async function getManageDepartmentsPartial() {
     try {
         const response = await axios.get('/Hr/ManageDepartmentPartial');
@@ -11,6 +37,17 @@ export async function getManageDepartmentsPartial() {
         return false;
     }
 } 
+
+async function getDepartments() {
+    try {
+        const response = await axios.get('/Hr/GetDepartments');
+        return response.data;
+    } catch (error) {
+        alert("Error: getDepartments")
+        console.error("error", error);
+        return false;
+    }
+}
 
 async function saveDepartments(e, changeTracker, newId) {
     e.preventDefault();
@@ -44,57 +81,10 @@ async function saveDepartments(e, changeTracker, newId) {
     }
 }
 
-async function handleEvents(e) {
-
-    if (e.type == "click" && e.target.classList.contains("goto-assign-dept")) {
-        let params = {
-            deptKey: e.target.dataset.deptkey,
-            deptName: e.target.textContent.trim()
-        };
-
-        await loadModule("assignDepartment", params);
-    }
-}
-
-async function getDepartments() {
-    try {
-        const response = await axios.get('/Hr/GetDepartments');
-        return response.data;
-    } catch (error) {
-        alert("Error: getDepartments")
-        console.error("error", error);
-        return false;
-    }
+async function redirect(data) {
+    await loadModule("assignDepartment", data);
 }
 
 
-export async function init() {
-    //load initial partial
-    let partial = await getManageDepartmentsPartial();
-    document.getElementById("hr-partial-container").innerHTML = partial;
 
-    //grid
-    let depts = await getDepartments();
 
-    const departments = depts.map(list => {
-        return {
-            name: list.name,
-            datakey: list.departmentKey
-        }
-    });
-  
-    let manageDept = {
-        headers: ["Department"],
-        newId: 'manage-dept',
-        rows: departments,
-        controlType: 0,
-        saveCallback: saveDepartments,
-        redirectClass: "goto-assign-dept"
-    }
-    await loadModule("gridControl", manageDept);
-
-    //event handlers
-    let container = document.getElementById('hr-partial-container');
-    container.addEventListener("click", handleEvents);
-   
-}

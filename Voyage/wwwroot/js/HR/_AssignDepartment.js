@@ -4,8 +4,13 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 
 export async function getAssignDepartmentPartial(params) {
     try {
+        const payload = {
+            deptKey : params.datakey,
+            deptName : params.name
+        }
+
         const response = await axios.get('/Hr/AssignDepartmentPartial', {
-            params: params
+            params: payload
         });
 
         return response.data;
@@ -82,6 +87,7 @@ async function saveDeptUsers(e, changeTracker) {
 }
 
 async function getAssignedDepartmentTeams() {
+    debugger;
     const deptKey = document.getElementById('hdn-dept-key').value;
     try {
         const response = await axios.get('/Hr/GetAssignedDepartmentTeams', {
@@ -114,18 +120,22 @@ async function getAssignedDepartmentUsers(params) {
 
 
 export async function init(params) {
+    debugger;
     //load initial partial
     let partial = await getAssignDepartmentPartial(params);
     document.getElementById("hr-partial-container").innerHTML = partial;
 
     let assignedTeams = await getAssignedDepartmentTeams();
+    let teamNames = [];
 
-    const teamNames = assignedTeams.map(list => {
-        return {
-            teamName: list.teamName,
-            teamKey: list.teamKey
-        }
-    });
+    if (assignedTeams) {
+        teamNames = assignedTeams.map(list => {
+            return {
+                teamName: list.teamName,
+                teamKey: list.teamKey
+            }
+        });
+    }
 
     let deptTeam = {
         newId: 'dept-team',
@@ -136,18 +146,22 @@ export async function init(params) {
     await loadModule("gridControl", deptTeam);
 
     let assignedUsers = await getAssignedDepartmentUsers(params);
-    const users = assignedUsers.map(list => {
-        
-        return {
-            deptKey: list.departmentKey,
-            employeeid: list.employeeId,
-            roleid: list.roleId,
-            firstname: list.firstName,
-            lastname: list.lastName,
-            username: list.username,
-            email: list.email
-        }
-    });
+    let users = [];
+
+    if (assignedUsers) {
+        users = assignedUsers.map(list => {
+            return {
+                deptKey: list.departmentKey,
+                employeeid: list.employeeId,
+                roleid: list.roleId,
+                firstname: list.firstName,
+                lastname: list.lastName,
+                username: list.username,
+                email: list.email
+            }
+        });
+    }
+   
 
     let deptUser = { 
         newId: 'dept-user',

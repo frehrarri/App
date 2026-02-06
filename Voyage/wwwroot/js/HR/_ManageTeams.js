@@ -36,7 +36,7 @@ async function saveTeams(e, changeTracker, newId) {
             }
         });
 
-        hyperlinkResponse(response, changeTracker, newId, 'goto-assign-team');
+        hyperlinkResponse(response, changeTracker, newId);
        
     } catch (error) {
         alert("Error");

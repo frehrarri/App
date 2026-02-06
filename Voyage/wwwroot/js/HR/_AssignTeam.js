@@ -3,6 +3,11 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function getAssignTeamPartial(params) {
+    params = {
+        teamKey: params.datakey,
+        teamName: params.name
+    };
+
     try {
         const response = await axios.get('/Hr/AssignTeamPartial', {
             params: params
@@ -40,12 +45,12 @@ async function saveAssignTeamMembers(e, changeTracker, newId) {
             }
         });
 
-        if (response && response.data) {
+        if (response && response.status === 200) {
             alert("Success");
-            return;
         }
-
-        alert("Error saving");
+        else {
+            alert("Error");
+        }
 
     } catch (error) {
         console.error("error", error);

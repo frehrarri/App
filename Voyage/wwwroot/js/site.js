@@ -145,39 +145,34 @@ function addSearchEventListener(containerBodyId, input, resultsContainer, onSele
     };
 }
 
-function hyperlinkResponse(response, changeTracker, newId, redirectClass) {
-    if (response && response.status == 200) {
+function hyperlinkResponse(response, changeTracker, newId) {
 
-        //did not add any records so there is nothing to hyperlink
-        if (response.data.length > 0) {
+    //did not add any records so there is nothing to hyperlink
+    if (response.data.length > 0) {
 
-            //hyperlink results
-            let newEntry = "";
-            let index = 0;
+        //hyperlink results
+        let newEntry = "";
+        let index = 0;
 
-            let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
+        let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
 
-            for (let [key, value] of addedEntries) {
-                newEntry = document.querySelector(`.add-${newId}-span[data-uid='${key}']`);
+        for (let [key, value] of addedEntries) {
+            newEntry = document.querySelector(`.add-${newId}-span[data-uid='${key}']`);
 
-                let anchortag = document.createElement('a');
-                anchortag.href = "#";
-                anchortag.classList.add(`${redirectClass}`)
-                anchortag.textContent = newEntry.textContent.trim();
-                anchortag.dataset.key = key;
+            let anchortag = document.createElement('a');
+            anchortag.href = "#";
+            anchortag.classList.add(`redirect`);
+            anchortag.textContent = newEntry.textContent.trim();
+            anchortag.dataset.key = key;
 
-                let datakey = response.data[index];
-                anchortag.dataset.datakey = datakey;
+            let datakey = response.data[index];
+            anchortag.dataset.datakey = datakey;
 
-                newEntry.replaceWith(anchortag);
-                index++;
-            }
+            newEntry.replaceWith(anchortag);
+            index++;
         }
-        alert("Success");
     }
-    else {
-        alert("Error saving");
-    }
+ 
 }
 
 async function handlePaste(e) {

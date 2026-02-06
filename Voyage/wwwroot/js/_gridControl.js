@@ -116,7 +116,7 @@ function addNewRow(newId, changeTracker) {
     updateSaveButtonState(newId, changeTracker);
 }
 
-function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
+function addUserInput(e, newId, controlType, changeTracker, autocompleteState, currentVals) {
     const target = e.target;
 
     if (target.classList.contains(`add-${newId}-span`) && e.type === "click") {
@@ -148,7 +148,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
         //set up autocomplete
         if (usesAutocomplete(controlType)) {
             input.addEventListener("input", () => {
-                debounceSearch(input, controlType, uid, changeTracker, autocompleteState);
+                debounceSearch(input, controlType, uid, changeTracker, autocompleteState, currentVals);
             });
 
             autocompleteState.set(input, { selectionMade: false });
@@ -198,7 +198,6 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState) {
         else {
             // For non-autocomplete controls, just save whatever the user types
             input.addEventListener("blur", () => {
-                debugger;
                 const span = document.createElement("span");
                 span.className = `add-${newId}-span`;
                 // Keep the user's input or revert to placeholder if empty
@@ -257,8 +256,6 @@ function remove(e, newId, saveCallback, changeTracker, controlType, existingVals
         
         const row = cb.closest("tr");
         if (row) {
-            debugger;
-            /*let uid = row.dataset.uid ?? row.dataset.key;*/
             let uid = row.dataset.uid
        
             // remove unsaved addition from change tracker
@@ -320,9 +317,6 @@ async function hydrateGrid(headerList, newId, retrievedVals, tableUid, controlTy
     retrievedVals.forEach((value, key) => {
         const tr = document.createElement('tr');
 
-        //set attributes on load
-        /*handleDataAttr(tr, row, controlType);*/
-
         tr.classList.add('app-table-row');
         tr.dataset.uid = key;
 
@@ -376,15 +370,13 @@ function attachAutoComplete(e) {
     return ul;
 }
 
-function insertSearchResults(row, controlType, uid, changeTracker, autocompleteState) {
+function insertSearchResults(searchResult, controlType, uid, changeTracker, autocompleteState, currentVals) {
     let tr = document.createElement('tr');
     tr.className = 'app-table-row';
     tr.dataset.uid = uid;
 
-    if (row.length == 0)
+    if (searchResult.length == 0)
         return;
-
-    handleDataAttr(tr, row, controlType);
 
     //create checkbox
     let checkbox = document.createElement('td');
@@ -397,7 +389,7 @@ function insertSearchResults(row, controlType, uid, changeTracker, autocompleteS
     tr.appendChild(checkbox);
 
     //set table data columns
-    handleControlData(controlType, tr, row);
+    populateControlData(controlType, tr, searchResult);
 
     let wrapper = document.querySelector('.autocomplete-wrapper');
 
@@ -412,7 +404,7 @@ function insertSearchResults(row, controlType, uid, changeTracker, autocompleteS
     wrapperParent.replaceWith(tr);
 
     //prepare for save
-    let args = handleChangeTrackerParams(controlType, row);
+    let args = handleChangeTrackerParams(controlType, searchResult);
     args.dbChangeAction = 1; //add
     changeTracker.set(uid, args);
 
@@ -438,20 +430,20 @@ function usesAutocomplete(controlType) {
 //row.dataset.param = on remove
 function handleChangeTrackerParams(controlType, values) {
     let params = {};
-   
+
     switch (controlType) {
         case 1: //get all users
         case 4: //get unassigned department users
         case 5: //get unassigned team users
             params = {
-                employeeid: value.employeeid ?? value.dataset.employeeid,
-                roleid: value.roleid ?? value.dataset.roleid
+                employeeid: values.employeeid,
+                roleid: values.roleid
             }
             break;
         case 2: //get all teams
         case 3: //get unassigned department teams
             params = {
-                teamKey: value.teamKey ?? value.dataset.teamKey
+                teamKey: values.teamKey
             }
             break;
         case 0:
@@ -475,31 +467,6 @@ function handleChangeTrackerParams(controlType, values) {
 
     return params;
 }
-
-//apply data attributes for get and remove
-function handleDataAttr(tr, row, controlType) {
-
-    switch (controlType) {
-        
-        case 1: //get all users
-        case 4: //get unassigned department users
-        case 5: //get unassigned team users
-            tr.dataset.employeeid = row.employeeid;
-            tr.dataset.roleid = row.roleid;
-            break;
-        case 2:   //get all teams
-        case 3:   //get unassigned department teams
-            tr.dataset.teamKey = row.teamKey;
-            break;
-        case 0://basic control
-        default:
-            tr.dataset.name = row.name;
-            tr.dataset.datakey = row.datakey;
-            break;
-    }
-}
-
-
 
 //grid rows
 function populateControlData(controlType, tr, value) {
@@ -613,7 +580,7 @@ function formatSearchResults(controlType, r) {
     }
 }
 
-async function handleSearchInput(e, controlType, uid, changeTracker, autocompleteState) {
+async function handleSearchInput(e, controlType, uid, changeTracker, autocompleteState, currentVals) {
     const input = e.target;
     const query = input.value.trim();
 
@@ -640,21 +607,19 @@ async function handleSearchInput(e, controlType, uid, changeTracker, autocomplet
         });
     }
    
-
     ul.innerHTML = "";
 
     res.data.forEach(r => {
-        
         const li = document.createElement("li");
         li.textContent = formatSearchResults(controlType, r);
 
-        li.onclick = () => insertSearchResults(r, controlType, uid, changeTracker, autocompleteState);
+        li.onclick = () => insertSearchResults(r, controlType, uid, changeTracker, autocompleteState, currentVals);
         ul.appendChild(li);
     });
 
 }
 
-function debounceSearch(input, controlType, uid, changeTracker, autocompleteState) {
+function debounceSearch(input, controlType, uid, changeTracker, autocompleteState, currentVals) {
     let state = autocompleteState.get(input);
 
     if (!state) {
@@ -665,7 +630,7 @@ function debounceSearch(input, controlType, uid, changeTracker, autocompleteStat
     clearTimeout(state.timer);
 
     state.timer = setTimeout(() => {
-        handleSearchInput({ target: input }, controlType, uid, changeTracker, autocompleteState);
+        handleSearchInput({ target: input }, controlType, uid, changeTracker, autocompleteState, currentVals);
     }, 300);
 }
 
@@ -684,9 +649,8 @@ async function handleEvents(e, newId, saveCallback,
             addNewRow(newId, changeTracker);
 
         //input control for adding data
-        if (e.target.classList.contains(`add-${newId}-span`)) {
-            addUserInput(e, newId, controlType, changeTracker, autocompleteState);
-        }
+        if (e.target.classList.contains(`add-${newId}-span`)) 
+            addUserInput(e, newId, controlType, changeTracker, autocompleteState, currentVals);
 
         //handle save events 
         if (e.target.id == `${newId}-save-btn`) 
