@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Css;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,13 +29,15 @@ namespace Voyage.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         private EmailService _emailService;
+        private _AppDbContext _db;
 
-        public UserController(AccountBLL accountBLL, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, EmailService emailService)
+        public UserController(AccountBLL accountBLL, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, EmailService emailService, _AppDbContext db)
         {
             _accountBLL = accountBLL;
             _signInManager = signInManager;
             _userManager = userManager;
             _emailService = emailService;
+            _db = db;
         }
 
         [AllowAnonymous]
@@ -45,9 +48,10 @@ namespace Voyage.Controllers
 
 
         [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync();
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
         }
@@ -84,7 +88,6 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateHeaderAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string toEmail)
         {
             if (string.IsNullOrEmpty(toEmail))
@@ -129,7 +132,6 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(PasswordResetDTO model)
         {
             if (String.IsNullOrEmpty(model.Email) || String.IsNullOrEmpty(model.Token))
@@ -210,10 +212,13 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateHeaderAntiForgeryToken]
         public async Task<IActionResult> LoginUser([FromBody] LoginDTO login)
         {
             Response response = new Response();
+
+            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
 
             if (login == null || string.IsNullOrEmpty(login.Email) || string.IsNullOrEmpty(login.Password))
             {
@@ -237,6 +242,14 @@ namespace Voyage.Controllers
 
             if (result.Succeeded)
             {
+                //deactivated account
+                if (!user.IsActiveUser)
+                {
+                    response.StatusCode = HttpStatusCode.Unauthorized;
+                    response.Message = Constants.Deactivated;
+                    return Json(response);
+                }
+
                 response.RedirectURL = Url.Action("Home", "Website");
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = Constants.LoginSuccessful;
@@ -254,30 +267,6 @@ namespace Voyage.Controllers
 
             return Json(response);
         }
-
-  
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

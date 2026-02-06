@@ -65,6 +65,7 @@
 
         //Login
         public const string LoginSuccessful = "Login successful.";
+        public const string Deactivated = "Your account has been deactivated";
 
         //Registration
         public const string RegistrationSuccessful = "Registration sucessful.";
