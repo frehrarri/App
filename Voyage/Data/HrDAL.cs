@@ -394,15 +394,25 @@ namespace Voyage.Data
                             {
                                 if (!string.IsNullOrEmpty(dept.DeptKey))
                                 {
-                                    var deptToDelete = existingDepartments
-                                        .FirstOrDefault(d =>
-                                            d.DepartmentKey == Guid.Parse(dept.DeptKey) &&
-                                            d.CompanyId == companyId);
+                                    //dissociate users
+                                    var usersToDelete = _db.DepartmentUserRoles.Where(d => d.DepartmentKey == Guid.Parse(dept.DeptKey));
+                                    if (await usersToDelete.AnyAsync())
+                                        _db.DepartmentUserRoles.RemoveRange(usersToDelete);
 
+                                    //dissociate teams
+                                    var teamsToDelete = _db.Teams.Where(d => d.DepartmentKey == Guid.Parse(dept.DeptKey));
+                                    if (await teamsToDelete.AnyAsync())
+                                        foreach(var team in teamsToDelete)
+                                        {
+                                            team.DepartmentKey = null;
+                                            team.ModifiedBy = dept.CreatedBy;
+                                            team.ModifiedDate = datetime;
+                                        }
+
+                                    //delete department
+                                    var deptToDelete = existingDepartments.FirstOrDefault(d => d.DepartmentKey == Guid.Parse(dept.DeptKey));
                                     if (deptToDelete != null)
-                                    {
                                         _db.Departments.Remove(deptToDelete);
-                                    }
                                 }
 
                                 break;
@@ -481,12 +491,16 @@ namespace Voyage.Data
 
                         case (int)SaveAction.Remove:
                             {
-                                var teamToDelete = existingTeams.FirstOrDefault(t => t.TeamKey == Guid.Parse(team.TeamKey) && t.CompanyId == companyId);
+                                //remove users from deleted team
+                                var usersToDelete = _db.TeamUserRoles.Where(t => t.TeamKey == Guid.Parse(team.TeamKey));
+                                if (await usersToDelete.AnyAsync())
+                                    _db.TeamUserRoles.RemoveRange(usersToDelete);
 
+                                //delete team
+                                var teamToDelete = existingTeams.FirstOrDefault(t => t.TeamKey == Guid.Parse(team.TeamKey));
                                 if (teamToDelete != null)
-                                {
                                     _db.Teams.Remove(teamToDelete);
-                                }
+
                                 break;
                             }
                     }
