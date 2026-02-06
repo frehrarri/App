@@ -3,6 +3,7 @@
 //add element with id `${newId}-grid-container` where we want to render the grid
 //call loadModule("gridControl", params) from init function of page
 
+
 //parameters:
 //newId = to be reused in string interpolation for unique ids
 //headers = list of headers to be inserted in thead
