@@ -145,31 +145,31 @@ function addSearchEventListener(containerBodyId, input, resultsContainer, onSele
     };
 }
 
-function hyperlinkResponse(response, changeTracker, newId) {
+function hyperlinkResponse(response, changeTracker, newId, currentVals) {
 
     //did not add any records so there is nothing to hyperlink
     if (response.data.length > 0) {
+        let span = "";
 
-        //hyperlink results
-        let newEntry = "";
-        let index = 0;
+        for (let [key, value] of changeTracker) {
 
-        let addedEntries = [...changeTracker.entries()].filter(([key, value]) => value.dbChangeAction === 1);
+            //skip removals
+            if (value.dbChangeAction === 2)
+                continue;
 
-        for (let [key, value] of addedEntries) {
-            newEntry = document.querySelector(`.add-${newId}-span[data-uid='${key}']`);
+            span = document.querySelector(`.add-${newId}-span[data-uid='${key}']`);
 
             let anchortag = document.createElement('a');
             anchortag.href = "#";
             anchortag.classList.add(`redirect`);
-            anchortag.textContent = newEntry.textContent.trim();
-            anchortag.dataset.key = key;
+            anchortag.textContent = span.textContent.trim();
+            anchortag.dataset.uid = key;
 
-            let datakey = response.data[index];
-            anchortag.dataset.datakey = datakey;
-
-            newEntry.replaceWith(anchortag);
-            index++;
+            //set map's redirect value for parsing in grid event
+            let entry = currentVals.get(key);
+            entry.datakey = response;
+         
+            span.replaceWith(anchortag);
         }
     }
  

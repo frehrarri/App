@@ -42,8 +42,11 @@ async function saveDeptTeams(e, changeTracker) {
             }
         });
 
-        if (response && response.data) {
-            return response.data;
+        if (response && response.status === 200) {
+            alert("Success");
+        }
+        else {
+            alert("Error");
         }
 
     } catch (error) {
@@ -76,8 +79,11 @@ async function saveDeptUsers(e, changeTracker) {
             }
         });
 
-        if (response && response.data) {
-            return response.data;
+        if (response && response.status === 200) {
+            alert("Success");
+        }
+        else {
+            alert("Error");
         }
 
     } catch (error) {
@@ -87,7 +93,6 @@ async function saveDeptUsers(e, changeTracker) {
 }
 
 async function getAssignedDepartmentTeams() {
-    debugger;
     const deptKey = document.getElementById('hdn-dept-key').value;
     try {
         const response = await axios.get('/Hr/GetAssignedDepartmentTeams', {
@@ -103,8 +108,7 @@ async function getAssignedDepartmentTeams() {
 }
 
 async function getAssignedDepartmentUsers(params) {
-    const departmentKey = params.deptKey;
-   
+    const departmentKey = document.getElementById('hdn-dept-key').value;
     try {
         const response = await axios.get('/Hr/GetAssignedDepartmentUsers', {
             params: { departmentKey }
@@ -120,7 +124,6 @@ async function getAssignedDepartmentUsers(params) {
 
 
 export async function init(params) {
-    debugger;
     //load initial partial
     let partial = await getAssignDepartmentPartial(params);
     document.getElementById("hr-partial-container").innerHTML = partial;

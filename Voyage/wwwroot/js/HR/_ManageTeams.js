@@ -14,7 +14,7 @@ export async function getManageTeamsPartial() {
     }
 }
 
-async function saveTeams(e, changeTracker, newId) {
+async function saveTeams(e, changeTracker, newId, currentVals) {
     e.preventDefault();
     let response;
 
@@ -36,7 +36,16 @@ async function saveTeams(e, changeTracker, newId) {
             }
         });
 
-        hyperlinkResponse(response, changeTracker, newId);
+        if (response && response.status === 200) {
+            alert("Success");
+            hyperlinkResponse(response, changeTracker, newId, currentVals);
+        }
+        else {
+            alert("Error");
+        }
+        
+
+
        
     } catch (error) {
         alert("Error");

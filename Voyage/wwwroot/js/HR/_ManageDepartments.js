@@ -49,7 +49,7 @@ async function getDepartments() {
     }
 }
 
-async function saveDepartments(e, changeTracker, newId) {
+async function saveDepartments(e, changeTracker, newId, currentVals) {
     e.preventDefault();
     let response;
 
@@ -71,7 +71,13 @@ async function saveDepartments(e, changeTracker, newId) {
             }
         });
 
-        hyperlinkResponse(response, changeTracker, newId, 'goto-assign-dept');
+        if (response && response.status === 200) {
+            alert("Success");
+            hyperlinkresponse(response, changetracker, newid, currentvals);
+        }
+        else {
+            alert("Error");
+        }
 
        
     } catch (error) {

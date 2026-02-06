@@ -200,6 +200,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
             input.addEventListener("blur", () => {
                 const span = document.createElement("span");
                 span.className = `add-${newId}-span`;
+
                 // Keep the user's input or revert to placeholder if empty
                 span.textContent = input.value.trim() || "Click here";
                 span.dataset.uid = uid;
@@ -212,6 +213,8 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
                     args.dbChangeAction = 1; // add
                     changeTracker.set(uid, args);
                 }
+
+                currentVals.set(uid, { name: input.value.trim(), datakey: null });
 
                 // Re-enable save button after input is closed
                 updateSaveButtonState(newId, changeTracker);
@@ -407,6 +410,8 @@ function insertSearchResults(searchResult, controlType, uid, changeTracker, auto
     let args = handleChangeTrackerParams(controlType, searchResult);
     args.dbChangeAction = 1; //add
     changeTracker.set(uid, args);
+
+    currentVals.set(uid, args);
 
     // Extract newId from the input class name (e.g., "add-myGrid-input" -> "myGrid")
     const inputClass = input?.className || '';
@@ -653,8 +658,11 @@ async function handleEvents(e, newId, saveCallback,
             addUserInput(e, newId, controlType, changeTracker, autocompleteState, currentVals);
 
         //handle save events 
-        if (e.target.id == `${newId}-save-btn`) 
+        if (e.target.id == `${newId}-save-btn`) {
+
             await saveCallback(e, changeTracker, newId, currentVals);
+        }
+            
 
         if (e.target.classList.contains("redirect")) {
             const data = currentVals.get(e.target.dataset.uid);
