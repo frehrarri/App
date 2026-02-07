@@ -58,9 +58,9 @@ const moduleRegistry = {
         js: () => import(`./HR/_AssignTeam.js?v=${scriptVersion}`),
         css: `/css/HR/_AssignTeam.css?v=${scriptVersion}`
     },
-    assignRolePermissions: {
-        js: () => import(`./HR/_AssignRolePermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_AssignRolePermissions.css?v=${scriptVersion}`
+    rolePermissions: {
+        js: () => import(`./HR/_RolePermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_RolePermissions.css?v=${scriptVersion}`
     },
 
 

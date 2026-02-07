@@ -91,6 +91,6 @@ export async function init() {
     await loadModule("gridControl", manageRoles);
 }
 
-async function redirect() {
-
+async function redirect(data) {
+    await loadModule("rolePermissions", data);
 }

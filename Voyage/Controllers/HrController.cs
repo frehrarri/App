@@ -99,6 +99,15 @@ namespace Voyage.Controllers
             return PartialView("~/Views/App/HR/_RegisterEmployee.cshtml", vm);
         }
 
+
+        [HttpGet]
+        public IActionResult RolePermissionsPartial([FromQuery] string name, [FromQuery] string roleKey)
+        {
+            ViewBag.RoleName = name;
+            ViewBag.RoleKey = roleKey;
+            return PartialView("~/Views/App/Settings/_RolePermissions.cshtml");
+        }
+
         #endregion
 
 
@@ -257,38 +266,6 @@ namespace Voyage.Controllers
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             return PartialView("~/Views/App/HR/_HrSettings.cshtml");
         }
-
-
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public async Task SavePermissions([FromBody] List<string> permissions)
-        {
-            await _hrBLL.SavePermissions(permissions);
-        }
-
-        [HttpGet]
-        public async Task<List<ManagePermissionsDTO>> GetPermissions()
-        {
-            return await _hrBLL.GetPermissions();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ManagePermissionsPartial()
-        {
-            ManagePermissionsVM vm = new ManagePermissionsVM();
-
-            var dto = await GetPermissions();
-            if (dto != null)
-                vm.Permissions = dto;
-
-            return PartialView("~/Views/App/HR/_ManagePermissions.cshtml", vm);
-        }
-
-
-
-
-
-
 
 
 

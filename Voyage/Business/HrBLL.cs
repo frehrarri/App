@@ -101,19 +101,6 @@ namespace Voyage.Business
 
 
 
-
-
-
-        public async Task<List<ManagePermissionsDTO>> GetPermissions()
-        {
-            return await _hrDAL.GetPermissions();
-        }
-
-        public async Task SavePermissions(List<string> permissions)
-        {
-            await _hrDAL.SavePermissions(permissions);
-        }
-
      
 
     }
