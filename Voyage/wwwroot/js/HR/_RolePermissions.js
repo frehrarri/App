@@ -1,7 +1,9 @@
 ﻿
 export async function init(data) {
-    debugger;
     const partial = await getRolePermissionsPartial(data);
+    document.getElementById('hr-partial-container').innerHTML = partial;
+
+
 }
 
 export async function getRolePermissionsPartial(data) {

@@ -1,16 +1,19 @@
 ﻿<div id="role-permissions-container" class="container">
 
     <form>
-        <div class="role-permissions-header">
-            <h4>@ViewBag.RoleName Permissions</h4>
+        <div id="role-permissions-header">
+            <h4 id="header-title">Permissions</h4>
+            <h4 id="role-name">@ViewBag.RoleName</h4>
         </div>
 
         <div id="dv-permissions">
-            <input type="checkbox" value="" />
+            @* id populated from db with the name of the permission 
+                checked/unchecked based on bool if is active or not
+            *@
+            
+            <label for="cbx-populated-db-name">Populated-db-name</label>
+            <input id="cbx-populated-db-name" class="cbx-permissions" type="checkbox" /> 
 
-            <input type="checkbox" value="" />
-
-            <input type="checkbox" value="" />
         </div>
     </form>
 

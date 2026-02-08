@@ -1,2 +1,16 @@
-﻿body {
+﻿#role-permissions-header{
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#header-title {
+    margin: 0;
+}
+
+#role-name {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
 }
