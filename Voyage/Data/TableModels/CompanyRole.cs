@@ -20,6 +20,8 @@ namespace Voyage.Data.TableModels
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
 
+        public ICollection<RolePermissions> RolePermissions { get; set; }= new List<RolePermissions>();
+
         public void CreateEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CompanyRole>()

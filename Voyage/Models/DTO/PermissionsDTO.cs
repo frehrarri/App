@@ -2,8 +2,16 @@
 {
     public class PermissionsDTO : BaseClass
     {
-        public string PermissionKey { get; set; } = string.Empty;
-        public string Permission { get; set; } = string.Empty;
+        public PermissionsDTO()
+        {
+            Permissions = new List<PermissionDTO>();
+            AccessGranted = false;
+        }
 
+        public List<PermissionDTO> Permissions { get; set; }
+        public bool AccessGranted { get; set; }
+        public int CompanyId { get; set; }
+        public string RoleKey { get; set; }
+        public int RoleType { get; set; }
     }
 }

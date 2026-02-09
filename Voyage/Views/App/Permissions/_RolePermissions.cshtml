@@ -1,0 +1,26 @@
+﻿@model PermissionsVM
+
+<div id="role-permissions-container" class="container">
+
+    <form>
+        <div id="role-permissions-header">
+            <h4 id="header-title">Permissions</h4>
+            <h4 id="role-name">@ViewBag.RoleName</h4>
+        </div>
+
+        <div id="dv-permissions">
+
+            @foreach (var p in Model.Permissions)
+            {
+                Guid guid = Guid.NewGuid();
+
+                <label for="cbx-@guid">@p.Permission</label>
+                <input id="cbx-@guid" class="cbx-permissions" type="checkbox" @(p.IsEnabled ? "checked" : "") />
+                <input id="hdn-@guid" type="hidden" value="@p.PermissionKey" />
+            }
+
+        </div>
+    </form>
+
+</div>
+<input id="hdn-rolekey" type="hidden" value="@ViewBag.RoleName" />

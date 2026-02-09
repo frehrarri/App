@@ -24,6 +24,8 @@ namespace Voyage.Data.TableModels
         //every team can have multiple TeamUserRoles
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
 
+        public ICollection<TeamPermissions> TeamPermissions { get; set; } = new List<TeamPermissions>();
+
         //every team can have a single setting
         public Settings? Settings { get; set; }
 

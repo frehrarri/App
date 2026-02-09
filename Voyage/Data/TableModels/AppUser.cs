@@ -30,6 +30,8 @@ namespace Voyage.Data.TableModels
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
         public ICollection<TeamUserRole> TeamUserRoles { get; set; } = new List<TeamUserRole>();
 
+        public ICollection<UserPermissions> UserPermissions { get; set; } = new List<UserPermissions>();
+
         public Guid? SettingsKey { get; set; }
         public Settings? Settings { get ; set; }
 
@@ -47,6 +49,8 @@ namespace Voyage.Data.TableModels
                 .WithOne(s => s.User)
                 .HasForeignKey<Settings>(s => s.SettingsKey)
                 .IsRequired(false);
+
+
         }
     }
 }

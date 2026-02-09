@@ -9,7 +9,7 @@ export async function init(data) {
 export async function getRolePermissionsPartial(data) {
 
     try {
-        const response = await axios.get('/Hr/RolePermissionsPartial', {
+        const response = await axios.get('/Permissions/RolePermissionsPartial', {
             params: {
                 name: data.name,
                 roleKey: data.datakey

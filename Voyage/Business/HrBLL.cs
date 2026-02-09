@@ -12,10 +12,12 @@ namespace Voyage.Business
     public class HrBLL
     {
         private readonly HrDAL _hrDAL;
+        private readonly PermissionsDAL _permissionsDAL;
 
-        public HrBLL(HrDAL hrDAL)
+        public HrBLL(HrDAL hrDAL, PermissionsDAL permissionsDAL)
         {
             _hrDAL = hrDAL;
+            _permissionsDAL = permissionsDAL;
         }
 
 
@@ -68,7 +70,27 @@ namespace Voyage.Business
 
         public async Task<List<string>> SaveRoles(List<ManageRolesDTO> roles, int companyId)
         {
-            return await _hrDAL.SaveRoles(roles, companyId);
+            var newRoleKeys = await _hrDAL.SaveRoles(roles, companyId);
+
+            //add default permissions to new roles
+            PermissionsDTO permissionsDTO = new PermissionsDTO();
+            permissionsDTO.CompanyId = companyId;
+
+            if (!String.IsNullOrEmpty(roles[0].CreatedBy))
+                permissionsDTO.CreatedBy = roles[0].CreatedBy;
+
+            foreach (var key in newRoleKeys)
+            {
+                permissionsDTO.Permissions.Add(new PermissionDTO
+                {
+                    PermissionKey = key
+
+                });
+            }
+            
+            await _permissionsDAL.SetDefaultRolePermissions(permissionsDTO);
+
+            return newRoleKeys;
         }
 
         public async Task<List<String>> SaveDepartments(List<DepartmentDTO> departments, int companyId)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209002303_Update_Permissions_CreateJoinTables")]
+    partial class Update_Permissions_CreateJoinTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,8 +441,6 @@ namespace Voyage.Migrations
 
                     b.HasIndex("PermissionKey");
 
-                    b.HasIndex("DepartmentKey", "PermissionKey");
-
                     b.ToTable("DepartmentPermissions", (string)null);
                 });
 
@@ -579,22 +580,15 @@ namespace Voyage.Migrations
 
             modelBuilder.Entity("Voyage.Data.TableModels.RolePermissions", b =>
                 {
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
                     b.Property<Guid>("RoleKey")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PermissionKey")
                         .HasColumnType("uuid");
 
-                    b.HasKey("CompanyId", "RoleKey", "PermissionKey");
+                    b.HasKey("RoleKey", "PermissionKey");
 
                     b.HasIndex("PermissionKey");
-
-                    b.HasIndex("RoleKey");
-
-                    b.HasIndex("CompanyId", "RoleKey", "PermissionKey");
 
                     b.ToTable("RolePermissions", (string)null);
                 });
@@ -788,8 +782,6 @@ namespace Voyage.Migrations
 
                     b.HasIndex("PermissionKey");
 
-                    b.HasIndex("TeamKey", "PermissionKey");
-
                     b.ToTable("TeamPermissions", (string)null);
                 });
 
@@ -982,14 +974,9 @@ namespace Voyage.Migrations
                     b.Property<Guid>("PermissionKey")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("InheritIsDenied")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id", "PermissionKey");
 
                     b.HasIndex("PermissionKey");
-
-                    b.HasIndex("Id", "PermissionKey");
 
                     b.ToTable("UserPermissions", (string)null);
                 });

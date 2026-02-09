@@ -15,8 +15,13 @@ namespace Voyage.Data
         public DbSet<Company> Companies { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<Permissions> Permissions { get; set; }
-        
+
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<UserPermissions> UserPermissions { get; set; }
+        public DbSet<RolePermissions> RolePermissions { get; set; }
+        public DbSet<TeamPermissions> TeamPermissions { get; set; }
+        public DbSet<DepartmentPermissions> DepartmentPermissions { get; set; }
+
         public DbSet<Section> Sections { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketDetails> TicketDetails { get; set; }

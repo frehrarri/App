@@ -100,13 +100,7 @@ namespace Voyage.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult RolePermissionsPartial([FromQuery] string name, [FromQuery] string roleKey)
-        {
-            ViewBag.RoleName = name;
-            ViewBag.RoleKey = roleKey;
-            return PartialView("~/Views/App/Settings/_RolePermissions.cshtml");
-        }
+
 
         #endregion
 
@@ -161,6 +155,8 @@ namespace Voyage.Controllers
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             return await _hrBLL.GetRoles(companyId!.Value);
         }
+
+
 
         #endregion
 

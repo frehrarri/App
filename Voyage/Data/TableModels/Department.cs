@@ -20,8 +20,9 @@ namespace Voyage.Data.TableModels
         //every department can have many teams and many department user roles
         public ICollection<Team> Teams { get; set; } = new List<Team>();
         public ICollection<DepartmentUserRole> DepartmentUserRoles { get; set; } = new List<DepartmentUserRole>();
+        public ICollection<DepartmentPermissions> DepartmentPermissions { get; set; } = new List<DepartmentPermissions>();
 
-      
+
         #endregion
 
         public void CreateEntities(ModelBuilder modelBuilder)

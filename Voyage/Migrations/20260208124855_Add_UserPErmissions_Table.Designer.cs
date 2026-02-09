@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260208124855_Add_UserPErmissions_Table")]
+    partial class Add_UserPErmissions_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -426,23 +429,6 @@ namespace Voyage.Migrations
                     b.ToTable("Department", (string)null);
                 });
 
-            modelBuilder.Entity("Voyage.Data.TableModels.DepartmentPermissions", b =>
-                {
-                    b.Property<Guid>("DepartmentKey")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PermissionKey")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("DepartmentKey", "PermissionKey");
-
-                    b.HasIndex("PermissionKey");
-
-                    b.HasIndex("DepartmentKey", "PermissionKey");
-
-                    b.ToTable("DepartmentPermissions", (string)null);
-                });
-
             modelBuilder.Entity("Voyage.Data.TableModels.DepartmentUserRole", b =>
                 {
                     b.Property<Guid>("DepartmentUserRoleKey")
@@ -575,28 +561,6 @@ namespace Voyage.Migrations
                     b.HasKey("PermissionKey");
 
                     b.ToTable("Permission", (string)null);
-                });
-
-            modelBuilder.Entity("Voyage.Data.TableModels.RolePermissions", b =>
-                {
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("RoleKey")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PermissionKey")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CompanyId", "RoleKey", "PermissionKey");
-
-                    b.HasIndex("PermissionKey");
-
-                    b.HasIndex("RoleKey");
-
-                    b.HasIndex("CompanyId", "RoleKey", "PermissionKey");
-
-                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Section", b =>
@@ -774,23 +738,6 @@ namespace Voyage.Migrations
                     b.HasIndex("DepartmentKey");
 
                     b.ToTable("Team", (string)null);
-                });
-
-            modelBuilder.Entity("Voyage.Data.TableModels.TeamPermissions", b =>
-                {
-                    b.Property<Guid>("TeamKey")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PermissionKey")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("TeamKey", "PermissionKey");
-
-                    b.HasIndex("PermissionKey");
-
-                    b.HasIndex("TeamKey", "PermissionKey");
-
-                    b.ToTable("TeamPermissions", (string)null);
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.TeamUserRole", b =>
@@ -976,20 +923,35 @@ namespace Voyage.Migrations
 
             modelBuilder.Entity("Voyage.Data.TableModels.UserPermissions", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("PermissionKey")
+                    b.Property<Guid>("UserPermissionKey")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("InheritIsDenied")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool?>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.HasKey("Id", "PermissionKey");
+                    b.Property<bool?>("IsLatest")
+                        .HasColumnType("boolean");
 
-                    b.HasIndex("PermissionKey");
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.HasIndex("Id", "PermissionKey");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserPermissionName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserPermissionKey");
 
                     b.ToTable("UserPermissions", (string)null);
                 });
@@ -1092,25 +1054,6 @@ namespace Voyage.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("Voyage.Data.TableModels.DepartmentPermissions", b =>
-                {
-                    b.HasOne("Voyage.Data.TableModels.Department", "Department")
-                        .WithMany("DepartmentPermissions")
-                        .HasForeignKey("DepartmentKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Voyage.Data.TableModels.Permission", "Permission")
-                        .WithMany("DepartmentPermissions")
-                        .HasForeignKey("PermissionKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Permission");
-                });
-
             modelBuilder.Entity("Voyage.Data.TableModels.DepartmentUserRole", b =>
                 {
                     b.HasOne("Voyage.Data.TableModels.Department", "Department")
@@ -1168,25 +1111,6 @@ namespace Voyage.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Voyage.Data.TableModels.RolePermissions", b =>
-                {
-                    b.HasOne("Voyage.Data.TableModels.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Voyage.Data.TableModels.CompanyRole", "CompanyRole")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CompanyRole");
-
-                    b.Navigation("Permission");
-                });
-
             modelBuilder.Entity("Voyage.Data.TableModels.Section", b =>
                 {
                     b.HasOne("Voyage.Data.TableModels.Settings", "Settings")
@@ -1241,25 +1165,6 @@ namespace Voyage.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("Voyage.Data.TableModels.TeamPermissions", b =>
-                {
-                    b.HasOne("Voyage.Data.TableModels.Permission", "Permission")
-                        .WithMany("TeamPermissions")
-                        .HasForeignKey("PermissionKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Voyage.Data.TableModels.Team", "Team")
-                        .WithMany("TeamPermissions")
-                        .HasForeignKey("TeamKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("Voyage.Data.TableModels.TeamUserRole", b =>
                 {
                     b.HasOne("Voyage.Data.TableModels.CompanyRole", "Role")
@@ -1311,25 +1216,6 @@ namespace Voyage.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("Voyage.Data.TableModels.UserPermissions", b =>
-                {
-                    b.HasOne("Voyage.Data.TableModels.AppUser", "AppUser")
-                        .WithMany("UserPermissions")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Voyage.Data.TableModels.Permission", "Permission")
-                        .WithMany("UserPermissions")
-                        .HasForeignKey("PermissionKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Permission");
-                });
-
             modelBuilder.Entity("Voyage.Data.TableModels.AppUser", b =>
                 {
                     b.Navigation("DepartmentUserRoles");
@@ -1339,8 +1225,6 @@ namespace Voyage.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("TeamUserRoles");
-
-                    b.Navigation("UserPermissions");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Company", b =>
@@ -1364,31 +1248,16 @@ namespace Voyage.Migrations
 
                     b.Navigation("IndividualUserRoles");
 
-                    b.Navigation("RolePermissions");
-
                     b.Navigation("TeamUserRoles");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Department", b =>
                 {
-                    b.Navigation("DepartmentPermissions");
-
                     b.Navigation("DepartmentUserRoles");
 
                     b.Navigation("Settings");
 
                     b.Navigation("Teams");
-                });
-
-            modelBuilder.Entity("Voyage.Data.TableModels.Permission", b =>
-                {
-                    b.Navigation("DepartmentPermissions");
-
-                    b.Navigation("RolePermissions");
-
-                    b.Navigation("TeamPermissions");
-
-                    b.Navigation("UserPermissions");
                 });
 
             modelBuilder.Entity("Voyage.Data.TableModels.Settings", b =>
@@ -1399,8 +1268,6 @@ namespace Voyage.Migrations
             modelBuilder.Entity("Voyage.Data.TableModels.Team", b =>
                 {
                     b.Navigation("Settings");
-
-                    b.Navigation("TeamPermissions");
 
                     b.Navigation("TeamUserRoles");
                 });

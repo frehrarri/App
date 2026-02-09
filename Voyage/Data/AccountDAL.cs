@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Css;
+using AngleSharp.Dom;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,15 @@ namespace Voyage.Data
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager; 
         private ILogger<AccountDAL> _logger;
+        private readonly PermissionsDAL _permissionsDAL;
 
-        public AccountDAL(_AppDbContext db, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<AccountDAL> logger)
+        public AccountDAL(_AppDbContext db, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<AccountDAL> logger, PermissionsDAL permissionsDAL)
         {
             _db = db;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _permissionsDAL = permissionsDAL;
         }
 
         public async Task<Response> Register(RegistrationDetailsDTO details)
@@ -171,6 +174,16 @@ namespace Voyage.Data
                 };
 
                 await _db.IndividualUserRoles.AddAsync(userRole);
+
+                //add default role based permissions
+                PermissionsDTO permissions = new PermissionsDTO();
+                permissions.CompanyId = companyId;
+                permissions.RoleKey = role.RoleKey.ToString();
+                permissions.RoleType = role.RoleId;
+                permissions.CreatedBy = user.UserName!;
+
+                await _permissionsDAL.SetDefaultRolePermissions(permissions);
+
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -180,6 +193,7 @@ namespace Voyage.Data
             
         }
 
+            
 
         private async Task<int> GetNextEmployeeId(int companyId)
         {

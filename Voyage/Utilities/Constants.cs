@@ -127,6 +127,12 @@
             Unassigned = -2
         }
 
+        public enum Roles
+        {
+            Unassigned = -2,
+            Principal = -1
+        }
+
 
         public enum PriorityLevel
         {

@@ -79,11 +79,13 @@ builder.Services.AddScoped<RoleSeeder>();
 builder.Services.AddScoped<TicketsBLL>();
 builder.Services.AddScoped<HrBLL>();
 builder.Services.AddScoped<AccountBLL>();
+builder.Services.AddScoped<PermissionsBLL>();
 
 //data layer
 builder.Services.AddScoped<TicketsDAL>();
 builder.Services.AddScoped<HrDAL>();
 builder.Services.AddScoped<AccountDAL>();
+builder.Services.AddScoped<PermissionsDAL>();
 
 //Config Constants
 Constants.Initialize(builder.Configuration);
