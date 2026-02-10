@@ -6,7 +6,7 @@ namespace Voyage.Controllers
     {
         public IActionResult AdminSettingsPartial()
         {
-            return PartialView("~/Views/App/Settings/_AdminSettings.cshtml");
+            return PartialView("~/Views/App/AdminSettings/_AdminSettings.cshtml");
         }
 
     }

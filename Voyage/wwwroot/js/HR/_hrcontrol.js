@@ -28,7 +28,7 @@ async function handleEvents(e) {
     e.stopPropagation();
 
     await handleTabs(e);
-    await handleSettings(e);
+    //await handleSettings(e);
 }
 
 async function handleSettings(e) {
