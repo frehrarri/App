@@ -34,8 +34,18 @@ namespace Voyage.Controllers
         [HttpGet]
         public async Task<PermissionsDTO> GetRolePermissions(string roleKey)
         {
-            int companyId = HttpContext.Session.GetInt32("RoleId")!.Value;
+            int companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             return await _permissionsBLL.GetRolePermissions(companyId, roleKey);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task SetRolePermissions([FromBody] PermissionsDTO dto)
+        {
+            dto.CreatedBy = HttpContext.Session.GetString("Username")!;
+            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
+            await _permissionsBLL.SetRolePermissions(dto);
         }
 
         [HttpPost]
@@ -43,7 +53,7 @@ namespace Voyage.Controllers
         public async Task SetDefaultRolePermissions(string roleKey, int roleType)
         {
             PermissionsDTO dto = new PermissionsDTO();
-            dto.CompanyId = HttpContext.Session.GetInt32("RoleId")!.Value;
+            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             dto.RoleKey = roleKey;
             dto.RoleType = roleType;
             dto.CreatedBy = HttpContext.Session.GetString("Username")!;

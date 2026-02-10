@@ -3,6 +3,7 @@
 <div id="role-permissions-container" class="container">
 
     <form>
+        @Html.AntiForgeryToken()
         <div id="role-permissions-header">
             <h4 id="header-title">Permissions</h4>
             <h4 id="role-name">@ViewBag.RoleName</h4>
@@ -13,14 +14,23 @@
             @foreach (var p in Model.Permissions)
             {
                 Guid guid = Guid.NewGuid();
+                <div class="permission-col">
+                    <input id="cbx-@guid" class="cbx-permissions" type="checkbox" @(p.IsEnabled ? "checked" : "") />
+                    <label for="cbx-@guid">@p.Permission</label>
+                    <input id="hdn-@guid" type="hidden" value="@p.PermissionKey" />
 
-                <label for="cbx-@guid">@p.Permission</label>
-                <input id="cbx-@guid" class="cbx-permissions" type="checkbox" @(p.IsEnabled ? "checked" : "") />
-                <input id="hdn-@guid" type="hidden" value="@p.PermissionKey" />
+                    @if (!String.IsNullOrEmpty(p.InheritsFrom))
+                    {
+                        <br />
+                        <label class="lbl-inherit-permission">Inherited: @p.InheritsFrom</label>
+                    }
+                </div>
             }
 
         </div>
+        <div id="role-permissions-btn-container">
+            <button id="btn-save-role-permission" type="submit" class="primary-btn" disabled>Save</button>
+        </div>
     </form>
-
 </div>
-<input id="hdn-rolekey" type="hidden" value="@ViewBag.RoleName" />
+<input id="hdn-rolekey" type="hidden" value="@ViewBag.RoleKey" />

@@ -1,4 +1,12 @@
-﻿#role-permissions-header{
+﻿#role-permissions-container {
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
+    background-color: #e8f0fe;
+    padding: 30px 20px;
+}
+
+#role-permissions-header {
     display: flex;
     align-items: center;
     position: relative;
@@ -13,4 +21,25 @@
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
+}
+
+#dv-permissions{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 80px;
+}
+
+.permission-col {
+    flex: 0 0 25%; /* 4 columns */
+    box-sizing: border-box;
+    padding: 1.5rem;
+}
+
+.lbl-inherit-permission{
+    color: red;
+}
+
+#role-permissions-btn-container{
+    display: flex;
+    justify-content: flex-end;
 }

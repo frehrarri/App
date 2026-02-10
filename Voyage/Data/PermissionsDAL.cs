@@ -31,9 +31,11 @@ namespace Voyage.Data
                         PermissionKey = p.PermissionKey.ToString(),
                         PermissionName = p.PermissionName,
 
-                        IsEnabled = p.RolePermissions.Any(tp =>
-                            tp.RoleKey == Guid.Parse(roleKey)
+                        IsEnabled = p.RolePermissions.Where(tp => 
+                            tp.RoleKey == Guid.Parse(roleKey) 
                             && tp.CompanyId == companyId)
+                        .Select(rp => rp.IsEnabled)
+                        .SingleOrDefault()
                     })
                     .OrderBy(p => p.PermissionName)
                     .ToListAsync();
@@ -100,101 +102,22 @@ namespace Voyage.Data
             }
         }
 
-        //public async Task<PermissionsDTO> GetPermissions()
-        //{
-        //    PermissionsDTO permissionsDTO = new PermissionsDTO();
+        public async Task SetRolePermissions(PermissionsDTO dto)
+        {
+            var existing = await _db.RolePermissions.Where(rp => rp.CompanyId == dto.CompanyId && rp.RoleKey == Guid.Parse(dto.RoleKey)).ToListAsync();
 
-        //    permissionsDTO.Permissions = await _db.Permissions.Select(p => new PermissionDTO()
-        //    {
-        //        PermissionKey = p.PermissionKey.ToString(),
-        //        PermissionName = p.PermissionName,
-        //    }).ToListAsync();
-
-        //    return permissionsDTO;
-        //}
-
-        //public async Task<bool> HasPermissionAsync(string userKey, string permissionName)
-        //{
-        //    return await _db.Permissions
-        //            .Where(p => p.PermissionName == permissionName)
-        //            .AnyAsync(p =>
-        //                p.UserPermissions.Any(up => up.AppUser.Id == userKey && !up.InheritIsDenied)
-
-        //                || p.TeamPermissions.Any(tp => tp.Team.TeamUserRoles
-        //                                    .Any(tur => tur.User.Id == userKey))
-
-        //                || p.DepartmentPermissions.Any(dp => dp.Department.DepartmentUserRoles
-        //                                          .Any(dur => dur.User.Id == userKey))
-
-        //                || p.RolePermissions.Any(rp => rp.CompanyRole.IndividualUserRoles
-        //                                    .Any(iur => iur.User.Id == userKey))
-        //            );
-        //}
-
-        //public async Task<PermissionsDTO> GetAllPermissions(int companyId, string userKey)
-        //{
-        //    PermissionsDTO permissionsDTO = new PermissionsDTO();
-
-        //permissionsDTO.Permissions = 
-        //    await _db.Permissions
-        //     .Select(p => new PermissionDTO
-        //     {
-        //        PermissionKey = p.PermissionKey.ToString(),
-        //        PermissionName = p.PermissionName,
-
-        //        IsEnabled = p.UserPermissions.Any(up => up.AppUser.Id == userKey)
-
-        //            || p.TeamPermissions.Any(tp => tp.Team.TeamUserRoles.Any(tur => tur.User.Id == userKey))
-
-        //            || p.DepartmentPermissions.Any(dp => dp.Department.DepartmentUserRoles.Any(dur => dur.User.Id == userKey))
-
-        //            || p.RolePermissions.Any(rp => rp.CompanyRole.IndividualUserRoles.Any(iur => iur.User.Id == userKey)),
-
-        //                // Determine first matching scope
-        //         InheritsFrom = p.UserPermissions.Any(up => up.AppUser.Id == userKey) ? "User" :
-
-        //            p.TeamPermissions.Any(tp => tp.Team.TeamUserRoles.Any(tur => tur.User.Id == userKey)) ? "Team" :
-
-        //                p.DepartmentPermissions.Any(dp => dp.Department.DepartmentUserRoles.Any(dur => dur.User.Id == userKey)) ? "Department" :
-
-        //                    p.RolePermissions.Any(rp => rp.CompanyRole.IndividualUserRoles.Any(iur => iur.User.Id == userKey)) ? "Role" : ""
-
-        //     })
-        //     .ToListAsync();
-
-        //    return permissionsDTO;
-        //}
-
-        //public async Task GetDepartmentPermissions(string deptKey)
-        //{
-        //    await _db.Permissions
-        //        .Select(p => new PermissionDTO
-        //        {
-        //            PermissionKey = p.PermissionKey.ToString(),
-        //            PermissionName = p.PermissionName,
-
-        //            IsEnabled = p.DepartmentPermissions
-        //                .Any(tp => tp.DepartmentKey == Guid.Parse(deptKey))
-        //        })
-        //        .OrderBy(p => p.PermissionName)
-        //        .ToListAsync();
-        //}
+            if (existing.Any())
+            {
+                foreach (var permission in existing)
+                {
+                    var selected = dto.Permissions.Find(p => p.PermissionKey == permission.PermissionKey.ToString());
+                    if (selected != null)
+                        permission.IsEnabled = selected.IsEnabled;
+                }
+            }
+            await _db.SaveChangesAsync();
+        }
 
 
-
-        //public async Task GetUserPermissions(string userKey)
-        //{
-        //    await _db.Permissions
-        //        .Select(p => new PermissionDTO
-        //        {
-        //            PermissionKey = p.PermissionKey.ToString(),
-        //            PermissionName = p.PermissionName,
-
-        //            IsEnabled = p.UserPermissions
-        //                .Any(tp => tp.Id == userKey)
-        //        })
-        //        .OrderBy(p => p.PermissionName)
-        //        .ToListAsync();
-        //}
     }
 }

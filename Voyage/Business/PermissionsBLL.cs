@@ -16,7 +16,10 @@ namespace Voyage.Business
             await _permissionsDAL.SetDefaultRolePermissions(dto);
         }
 
-        //public async Task SaveDefault
+        public async Task SetRolePermissions(PermissionsDTO dto)
+        {
+            await _permissionsDAL.SetRolePermissions(dto);
+        }
 
         public async Task<PermissionsDTO> GetRolePermissions(int companyId, string roleKey)
         {
