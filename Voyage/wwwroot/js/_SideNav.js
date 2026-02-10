@@ -32,6 +32,9 @@ async function getSideNavItem() {
             else if (targetId === "hr-view") {
                 await loadModule("hrControl");
             }
+            else if (targetId === "settings-view") {
+                await loadModule("adminSettings");
+            }
         });
     });
 }

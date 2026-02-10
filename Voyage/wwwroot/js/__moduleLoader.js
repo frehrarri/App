@@ -38,10 +38,6 @@ const moduleRegistry = {
         js: () => import(`./HR/_manageRoles.js?v=${scriptVersion}`),
         css: `/css/HR/_manageRoles.css?v=${scriptVersion}`
     },
-    managePermissions: {
-        js: () => import(`./HR/_managePermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_managePermissions.css?v=${scriptVersion}`
-    },
     registerEmployee: {
         js: () => import(`./HR/_registerEmployee.js?v=${scriptVersion}`),
         css: `/css/HR/_registerEmployee.css?v=${scriptVersion}`
@@ -58,21 +54,29 @@ const moduleRegistry = {
         js: () => import(`./HR/_AssignTeam.js?v=${scriptVersion}`),
         css: `/css/HR/_AssignTeam.css?v=${scriptVersion}`
     },
+
+    //admin settings
+    adminSettings: {
+        js: () => import(`./AdminSettings/_AdminSettings.js?v=${scriptVersion}`),
+        css: `/css/AdminSettings/_AdminSettings.css?v=${scriptVersion}`
+    },
+
+    //permissions
     rolePermissions: {
-        js: () => import(`./HR/_RolePermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_RolePermissions.css?v=${scriptVersion}`
+        js: () => import(`./Permissions/_RolePermissions.js?v=${scriptVersion}`),
+        css: `/css/Permissions/_RolePermissions.css?v=${scriptVersion}`
     },
     deptPermissions: {
-        js: () => import(`./HR/_DepartmentPermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_DepartmentPermissions.css?v=${scriptVersion}`
+        js: () => import(`./Permissions/_DepartmentPermissions.js?v=${scriptVersion}`),
+        css: `/css/Permissions/_DepartmentPermissions.css?v=${scriptVersion}`
     },
     teamPermissions: {
-        js: () => import(`./HR/_TeamPermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_TeamPermissions.css?v=${scriptVersion}`
+        js: () => import(`./Permissions/_TeamPermissions.js?v=${scriptVersion}`),
+        css: `/css/Permissions/_TeamPermissions.css?v=${scriptVersion}`
     },
     userPermissions: {
-        js: () => import(`./HR/_UserPermissions.js?v=${scriptVersion}`),
-        css: `/css/HR/_UserPermissions.css?v=${scriptVersion}`
+        js: () => import(`./Permissions/_UserPermissions.js?v=${scriptVersion}`),
+        css: `/css/Permissions/_UserPermissions.css?v=${scriptVersion}`
     },
 
 
