@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Voyage.Data.TableModels;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
@@ -47,9 +48,17 @@ namespace Voyage.Data
         }
 
 
-        public async Task SetDefaultRolePermissions(PermissionsDTO dto)
+        public async Task SetDefaultRolePermissions(PermissionsDTO dto, IDbContextTransaction? tx = null)
         {
-            using var tx = await _db.Database.BeginTransactionAsync();
+            bool inheritTx = false;
+
+            if (tx != null)
+                inheritTx = true;
+
+            //transaction is not passed in
+            if (!inheritTx)
+                tx = await _db.Database.BeginTransactionAsync();
+
             try
             {
                 List<Permission> permissions = await _db.Permissions.ToListAsync();
@@ -75,13 +84,18 @@ namespace Voyage.Data
                 }
 
                 await _db.SaveChangesAsync();
-                await tx.CommitAsync();
+
+                if (!inheritTx)
+                    await tx.CommitAsync();
 
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error: SetDefaultRolePermissions");
-                await tx.RollbackAsync();
+
+                if (!inheritTx)
+                    await tx.RollbackAsync();
+
                 return;
             }
         }

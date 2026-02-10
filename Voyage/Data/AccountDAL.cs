@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Net;
 using Voyage.Data.TableModels;
 using Voyage.Models;
@@ -110,9 +111,9 @@ namespace Voyage.Data
                 {
                     //assign default roles
                     if (isNewCompany)
-                        await AssignRoleToUser(user, (int)Constants.DefaultRoles.Principal, companyId);
+                        await AssignRoleToUser(user, (int)Constants.DefaultRoles.Principal, companyId, transaction);
                     else
-                        await AssignRoleToUser(user, (int)Constants.DefaultRoles.Unassigned, companyId);
+                        await AssignRoleToUser(user, (int)Constants.DefaultRoles.Unassigned, companyId, transaction);
 
                     //sign in the user immediately
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -143,7 +144,7 @@ namespace Voyage.Data
             return await _db.Companies.MaxAsync(c => c.CompanyId) + 1;
         }
 
-        private async Task AssignRoleToUser(AppUser user, int roleId, int companyId)
+        private async Task AssignRoleToUser(AppUser user, int roleId, int companyId, IDbContextTransaction tx)
         {
             try
             {
@@ -182,7 +183,7 @@ namespace Voyage.Data
                 permissions.RoleType = role.RoleId;
                 permissions.CreatedBy = user.UserName!;
 
-                await _permissionsDAL.SetDefaultRolePermissions(permissions);
+                await _permissionsDAL.SetDefaultRolePermissions(permissions, tx);
 
                 await _db.SaveChangesAsync();
             }

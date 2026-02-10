@@ -69,10 +69,14 @@ export async function init() {
 
     //grid
     let roles = await getRoles();
+
+    //remove principal
+    const filteredRoles = roles.filter(r => r.roleId !== -1);
+
     let roleNames = [];
 
     if (roles) {
-        roleNames = roles.map(list => {
+        roleNames = filteredRoles.map(list => {
             return {
                 name: list.name,
                 datakey: list.roleKey
