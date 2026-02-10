@@ -13,5 +13,8 @@
         public int CompanyId { get; set; }
         public string RoleKey { get; set; }
         public int RoleType { get; set; }
+        public string DepartmentKey { get; set; }
+        public string TeamKey { get; set; }
+        public string UserKey { get; set; }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Voyage.Data.TableModels;
 using Voyage.Models.DTO;
 using Voyage.Utilities;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Voyage.Data
 {
@@ -18,7 +17,9 @@ namespace Voyage.Data
             _logger = logger;
         }
 
-        public async Task<PermissionsDTO> GetRolePermissions(int companyId, string roleKey)
+        #region Get Methods
+
+        public async Task<PermissionsDTO> GetDeptPermissions(int companyId, string deptKey)
         {
             try
             {
@@ -31,8 +32,8 @@ namespace Voyage.Data
                         PermissionKey = p.PermissionKey.ToString(),
                         PermissionName = p.PermissionName,
 
-                        IsEnabled = p.RolePermissions.Where(tp => 
-                            tp.RoleKey == Guid.Parse(roleKey) 
+                        IsEnabled = p.DepartmentPermissions.Where(tp =>
+                            tp.DepartmentKey == Guid.Parse(deptKey)
                             && tp.CompanyId == companyId)
                         .Select(rp => rp.IsEnabled)
                         .SingleOrDefault()
@@ -48,6 +49,104 @@ namespace Voyage.Data
                 return null!;
             }
         }
+
+        public async Task<PermissionsDTO> GetRolePermissions(int companyId, string roleKey)
+        {
+            try
+            {
+                PermissionsDTO permissionsDTO = new PermissionsDTO();
+
+                permissionsDTO.Permissions = await _db.Permissions
+                    .Where(p => p.RolePermissions.Any(rp => rp.CompanyId == companyId))
+                    .Select(p => new PermissionDTO
+                    {
+                        PermissionKey = p.PermissionKey.ToString(),
+                        PermissionName = p.PermissionName,
+
+                        IsEnabled = p.RolePermissions.Where(tp =>
+                            tp.RoleKey == Guid.Parse(roleKey)
+                            && tp.CompanyId == companyId)
+                        .Select(rp => rp.IsEnabled)
+                        .SingleOrDefault()
+                    })
+                    .OrderBy(p => p.PermissionName)
+                    .ToListAsync();
+
+                return permissionsDTO;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: GetRolePermissions");
+                return null!;
+            }
+        }
+
+        public async Task<PermissionsDTO> GetTeamPermissions(int companyId, string teamKey)
+        {
+            try
+            {
+                PermissionsDTO permissionsDTO = new PermissionsDTO();
+
+                permissionsDTO.Permissions = await _db.Permissions
+                    .Where(p => p.RolePermissions.Any(rp => rp.CompanyId == companyId))
+                    .Select(p => new PermissionDTO
+                    {
+                        PermissionKey = p.PermissionKey.ToString(),
+                        PermissionName = p.PermissionName,
+
+                        IsEnabled = p.TeamPermissions.Where(tp =>
+                            tp.TeamKey == Guid.Parse(teamKey)
+                            && tp.CompanyId == companyId)
+                        .Select(rp => rp.IsEnabled)
+                        .SingleOrDefault()
+                    })
+                    .OrderBy(p => p.PermissionName)
+                    .ToListAsync();
+
+                return permissionsDTO;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: GetRolePermissions");
+                return null!;
+            }
+        }
+
+        public async Task<PermissionsDTO> GetUserPermissions(int companyId, string userKey)
+        {
+            try
+            {
+                PermissionsDTO permissionsDTO = new PermissionsDTO();
+
+                permissionsDTO.Permissions = await _db.Permissions
+                    .Where(p => p.RolePermissions.Any(rp => rp.CompanyId == companyId))
+                    .Select(p => new PermissionDTO
+                    {
+                        PermissionKey = p.PermissionKey.ToString(),
+                        PermissionName = p.PermissionName,
+
+                        IsEnabled = p.UserPermissions.Where(tp =>
+                            tp.Id == userKey
+                            && tp.CompanyId == companyId)
+                        .Select(rp => rp.IsEnabled)
+                        .SingleOrDefault()
+                    })
+                    .OrderBy(p => p.PermissionName)
+                    .ToListAsync();
+
+                return permissionsDTO;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error: GetRolePermissions");
+                return null!;
+            }
+        }
+
+
+        #endregion
+
+
 
 
         public async Task SetDefaultRolePermissions(PermissionsDTO dto, IDbContextTransaction? tx = null)
@@ -102,22 +201,96 @@ namespace Voyage.Data
             }
         }
 
-        public async Task SetRolePermissions(PermissionsDTO dto)
+        public async Task SetPermissions(PermissionsDTO dto)
         {
-            var existing = await _db.RolePermissions.Where(rp => rp.CompanyId == dto.CompanyId && rp.RoleKey == Guid.Parse(dto.RoleKey)).ToListAsync();
+            dynamic existing = null!;
 
-            if (existing.Any())
+            if (!string.IsNullOrEmpty(dto.DepartmentKey))
+                existing = await _db.DepartmentPermissions.Where(dp => dp.CompanyId == dto.CompanyId && dto.DepartmentKey == dp.DepartmentKey.ToString()).ToListAsync();
+
+            else if (!string.IsNullOrEmpty(dto.RoleKey))
+                existing = await _db.RolePermissions.Where(rp => rp.CompanyId == dto.CompanyId && rp.RoleKey == Guid.Parse(dto.RoleKey)).ToListAsync();
+
+            else if (!string.IsNullOrEmpty(dto.TeamKey))
+                existing = await _db.TeamPermissions.Where(rp => rp.CompanyId == dto.CompanyId && rp.TeamKey == Guid.Parse(dto.TeamKey)).ToListAsync();
+
+            else if (!string.IsNullOrEmpty(dto.UserKey))
+                existing = await _db.UserPermissions.Where(rp => rp.CompanyId == dto.CompanyId && rp.Id == dto.UserKey).ToListAsync();
+
+            //update
+            if (existing != null)
             {
                 foreach (var permission in existing)
                 {
                     var selected = dto.Permissions.Find(p => p.PermissionKey == permission.PermissionKey.ToString());
+
                     if (selected != null)
                         permission.IsEnabled = selected.IsEnabled;
                 }
             }
+            //add
+            else
+            {
+                var permissions = await _db.Permissions.ToListAsync();
+                foreach (var p in permissions)
+                {
+                    if (!string.IsNullOrEmpty(dto.DepartmentKey))
+                    {
+                        await _db.DepartmentPermissions.AddAsync(new DepartmentPermissions
+                        {
+                            PermissionKey = p.PermissionKey,
+                            DepartmentKey = Guid.Parse(dto.DepartmentKey),
+                            CompanyId = dto.CompanyId,
+
+                            //default to fully disabled permissions on creation
+                            IsEnabled = false
+                        });
+                    }
+
+                    else if (!string.IsNullOrEmpty(dto.RoleKey))
+                    {
+                        await _db.RolePermissions.AddAsync(new RolePermissions
+                        {
+                            PermissionKey = p.PermissionKey,
+                            RoleKey = Guid.Parse(dto.RoleKey),
+                            CompanyId = dto.CompanyId,
+
+                            //default to fully disabled permissions on creation
+                            IsEnabled = false
+                        });
+                    }
+
+                    else if (!string.IsNullOrEmpty(dto.TeamKey))
+                    {
+                        await _db.TeamPermissions.AddAsync(new TeamPermissions
+                        {
+                            PermissionKey = p.PermissionKey,
+                            TeamKey = Guid.Parse(dto.TeamKey),
+                            CompanyId = dto.CompanyId,
+
+                            //default to fully disabled permissions on creation
+                            IsEnabled = false
+                        });
+                    }
+
+                    else if (!string.IsNullOrEmpty(dto.UserKey))
+                    {
+                        await _db.UserPermissions.AddAsync(new UserPermissions
+                        {
+                            PermissionKey = p.PermissionKey,
+                            Id = dto.UserKey,
+                            CompanyId = dto.CompanyId,
+
+                            //default to fully disabled permissions on creation
+                            IsEnabled = false
+                        });
+                    }
+                }
+            }
+
             await _db.SaveChangesAsync();
         }
 
-
+ 
     }
 }

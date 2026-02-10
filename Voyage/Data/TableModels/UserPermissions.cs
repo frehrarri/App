@@ -6,6 +6,7 @@ namespace Voyage.Data.TableModels
     public class UserPermissions : IModelBuilderEF
     {
         public bool IsEnabled { get; set; }
+        public int CompanyId { get; set; }
 
         public string Id { get; set; } = null!;
         public AppUser AppUser { get; set; } = null!;

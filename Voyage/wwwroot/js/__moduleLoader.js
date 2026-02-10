@@ -62,6 +62,18 @@ const moduleRegistry = {
         js: () => import(`./HR/_RolePermissions.js?v=${scriptVersion}`),
         css: `/css/HR/_RolePermissions.css?v=${scriptVersion}`
     },
+    deptPermissions: {
+        js: () => import(`./HR/_DepartmentPermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_DepartmentPermissions.css?v=${scriptVersion}`
+    },
+    teamPermissions: {
+        js: () => import(`./HR/_TeamPermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_TeamPermissions.css?v=${scriptVersion}`
+    },
+    userPermissions: {
+        js: () => import(`./HR/_UserPermissions.js?v=${scriptVersion}`),
+        css: `/css/HR/_UserPermissions.css?v=${scriptVersion}`
+    },
 
 
     //tickets

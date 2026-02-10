@@ -6,6 +6,8 @@ namespace Voyage.Data.TableModels
     public class DepartmentPermissions : IModelBuilderEF
     {
         public bool IsEnabled { get; set; }
+        public int CompanyId { get; set; }
+
 
         public Guid DepartmentKey { get; set; }
         public Department Department { get; set; } = null!;

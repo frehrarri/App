@@ -22,7 +22,7 @@ export async function getRolePermissionsPartial(data) {
         });
         return response.data;
     } catch (error) {
-        console.error("error: AssignRolePermissions", error);
+        console.error("error: getRolePermissionsPartial", error);
         return false;
     }
 }
@@ -76,7 +76,7 @@ async function saveRolePermissions(e) {
             });
         });
 
-        response = await axios.post('/Permissions/SetRolePermissions', dto, {
+        response = await axios.post('/Permissions/SetPermissions', dto, {
             headers: {
                 'X-CSRF-TOKEN': token,
                 'Content-Type': 'application/json'

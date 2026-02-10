@@ -6,6 +6,7 @@ namespace Voyage.Data.TableModels
     public class TeamPermissions : IModelBuilderEF
     {
         public bool IsEnabled { get; set; }
+        public int CompanyId { get; set; }
 
         public Guid TeamKey { get; set; }
         public Team Team { get; set; } = null!;

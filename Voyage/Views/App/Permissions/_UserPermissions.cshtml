@@ -1,0 +1,36 @@
+﻿@model PermissionsVM
+
+<div id="user-permissions-container" class="container">
+
+    <form>
+        @Html.AntiForgeryToken()
+        <div id="user-permissions-header">
+            <h4 id="header-title">Permissions</h4>
+            <h4 id="role-name">@ViewBag.UserName</h4>
+        </div>
+
+        <div id="dv-permissions">
+
+            @foreach (var p in Model.Permissions)
+            {
+                Guid guid = Guid.NewGuid();
+                <div class="permission-col">
+                    <input id="cbx-@guid" class="cbx-permissions" type="checkbox" @(p.IsEnabled ? "checked" : "") />
+                    <label for="cbx-@guid">@p.Permission</label>
+                    <input id="hdn-@guid" type="hidden" value="@p.PermissionKey" />
+
+                    @if (!String.IsNullOrEmpty(p.InheritsFrom))
+                    {
+                        <br />
+                        <label class="lbl-inherit-permission">Inherited: @p.InheritsFrom</label>
+                    }
+                </div>
+            }
+
+        </div>
+        <div id="user-permissions-btn-container">
+            <button id="btn-save-user-permission" type="submit" class="primary-btn" disabled>Save</button>
+        </div>
+    </form>
+</div>
+<input id="hdn-userkey" type="hidden" value="@ViewBag.UserKey" />

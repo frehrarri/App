@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Voyage.Data;
@@ -11,9 +12,11 @@ using Voyage.Data;
 namespace Voyage.Migrations
 {
     [DbContext(typeof(_AppDbContext))]
-    partial class _AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260210051032_DepartmentPermissions_Add_CompanyId")]
+    partial class DepartmentPermissions_Add_CompanyId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -793,9 +796,6 @@ namespace Voyage.Migrations
                     b.Property<Guid>("PermissionKey")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
 
@@ -996,9 +996,6 @@ namespace Voyage.Migrations
 
                     b.Property<Guid>("PermissionKey")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("InheritIsDenied")
                         .HasColumnType("boolean");
