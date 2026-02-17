@@ -1,4 +1,48 @@
-﻿.side-nav {
+﻿.offcanvas{
+    max-width: 20%;
+}
+
+span{
+    float: right;
+}
+
+#nav-items, #nav-items ul {
+    list-style: none;
+}
+
+.submenu > li{
+    border-left: 1px solid lightgrey;
+}
+
+li {
+    padding:5px;
+}
+
+.icon-circle {
+    display: inline-flex; /* center contents */
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* circle size */
+    height: 40px;
+    border: 2px solid #1f2937; /* circle border */
+    border-radius: 50%; /* make it round */
+    background-color: #f3f4f6; /* optional fill */
+    color: #1f2937; /* icon color */
+    font-size: 18px; /* adjust icon size */
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+#side-nav-header{
+    display:flex;
+    justify-content:center;
+}
+
+.active-page {
+    background-color: #e6e6e6;
+}
+
+/*.side-nav {
     position: fixed;
     top: 56px;
     left: 0;
@@ -36,3 +80,4 @@
 .hidden {
     display: none;
 }
+*/

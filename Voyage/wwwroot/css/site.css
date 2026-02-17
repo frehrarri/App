@@ -24,14 +24,32 @@ html, body {
     height: 100%;
 }
 
-body {
-    margin-bottom: 60px;
-    background-color: #86b7fe17;
+#header-nav {
+    display: flex;
+    justify-content: space-around;
+    gap: 15rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    background-color:white;
 }
 
-.navbar{
-    width: 100%;
-    position:fixed;
+.breadcrumb{
+    margin-left: 4%;
+}
+
+#dv-nav-brand {
+    align-self: center;
+}
+
+#navbarNav > ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: #e8f0fe;
 }
 
 #app-container{
@@ -58,7 +76,6 @@ body {
     display: flex;
     justify-content: center; /* horizontally center content */
     align-items: flex-start; /* top align */
-    padding: 20px;
 }
 
 .app-table {
@@ -174,12 +191,6 @@ input[type="submit"]:disabled {
     pointer-events: none;
 }
 
-.app-table-row:nth-child(odd) {
-}
-
-.app-table-row:nth-child(even) {
-}
-
 .autocomplete-list {
     position: fixed;
     margin: 0;
@@ -219,16 +230,6 @@ input[type="submit"]:disabled {
     display: flex;
 }
 
-.delete-ul {
-    list-style-position: inside;
-}
-
-    .delete-ul li::marker {
-        content: "x ";
-        color: red;
-        font-weight: bold;
-    }
-
 .settings-btn {
     margin-top: 25px;
     border: none;
@@ -251,4 +252,12 @@ select:has(option[value=""]:checked){
 
 .grid-save-btn{
     margin-right: -10px;
+}
+
+.collapsed > *:not(:first-child) {
+    display: none;
+}
+
+.expanded > *:not(:first-child) {
+    display: block;
 }

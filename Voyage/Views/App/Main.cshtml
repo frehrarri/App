@@ -7,8 +7,13 @@
     Layout = "~/Views/Shared/AppLayout.cshtml";
 }
 
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active"><a href="#">Home</a></li>
+    </ol>
+</nav>
+
 <div class="app-main">
-    
     <div class="main-content container">
         <div id="hr-view" class="view active container">
             @{

@@ -256,3 +256,21 @@ async function getPartial(controller, action) {
         console.error("error: getManageTicketPartial", error);
     }
 }
+
+function expand(li) {
+    li.classList.remove('collapsed');
+    li.classList.add('expanded');
+
+    const icon = li.querySelector('i');
+    icon.classList.remove('fa-angle-right');
+    icon.classList.add('fa-angle-down');
+}
+
+function collapse(li) {
+    li.classList.remove('expanded');
+    li.classList.add('collapsed');
+
+    const icon = li.querySelector('i');
+    icon.classList.remove('fa-angle-down');
+    icon.classList.add('fa-angle-right');
+}

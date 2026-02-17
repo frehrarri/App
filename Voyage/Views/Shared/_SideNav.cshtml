@@ -1,16 +1,65 @@
 ﻿<link href="~/css/_sidenav.css" rel="stylesheet" />
 
 <nav class="side-nav">
-    <ul>
-        <li class="nav-item active" data-target="hr-view">Human Resources</li>
-        <li class="nav-item" data-target="ticket-view">Tickets</li>
-        <li class="nav-item" data-target="chat-view">Chat</li>
-        <li class="nav-item" data-target="sales-view">Sales</li>
-        <li class="nav-item" data-target="marketing-view">Marketing</li>
-        <li class="nav-item" data-target="finance-view">Finance</li>
-        @* <li class="nav-item" data-target="inventory-view">Inventory</li> *@
-        <li class="nav-item" data-target="toolbox-view">Toolbox</li>
-        <li class="nav-item" data-target="forum-view">Forum</li>
-        <li class="nav-item" data-target="settings-view">Admin Settings</li>
-    </ul>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidenav">
+
+        <div id="side-nav-header">
+            <span class="icon-circle">
+                <i class="fa-solid fa-user"></i>
+            </span>
+        </div>
+
+        <hr />
+
+        <div id="side-nav-body">
+
+            <div id="side-nav-items">
+                <ul id="nav-items">
+                    <li class="collapsed">
+                        Human Resources
+                        <span><i class="fa-solid fa-angle-right"></i></span>
+                        <ul class="submenu">
+                            <li data-target="manage-personnel">Manage Personnel</li>
+                            <li data-target="manage-teams">Manage Teams</li>
+                            <li data-target="manage-depts">Manage Departments</li>
+                        </ul>
+                    </li>
+
+                    <li data-target="ticket-view">Tickets</li>
+                    <li data-target="marketing-view">Marketing</li>
+                    <li data-target="sales-view">Sales</li>
+
+                    <li class="collapsed">
+                        Admin Settings
+                        <span><i class="fa-solid fa-angle-right"></i></span>
+                        <ul class="submenu">
+                            <li data-target="manage-roles">Manage Roles</li>
+                        </ul>
+                    </li>
+
+            @*  <li class="nav-item" data-target="chat-view">Chat</li> *@
+
+            @*  <li class="nav-item" data-target="finance-view">Finance</li> *@
+
+            @* <li class="nav-item" data-target="inventory-view">Inventory</li> *@
+
+            @*  <li class="nav-item" data-target="toolbox-view">Toolbox</li> *@
+
+@*             <li class="nav-item" data-target="forum-view">Forum</li> *@
+
+                </ul>
+            </div>
+            
+            <hr />
+
+            <div id="side-nav-quickbar">
+
+            </div>
+        </div>
+    </div>
 </nav>
+
+@* <div id="btn-side-nav-toggle">
+    >
+</div>
+ *@
