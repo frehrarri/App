@@ -1,43 +1,43 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-async function getSideNavItem() {
-    const navItems = document.querySelectorAll(".nav-item");
-    const views = document.querySelectorAll(".main-content .view");
+//async function getSideNavItem() {
+//    const navItems = document.querySelectorAll(".nav-item");
+//    const views = document.querySelectorAll(".main-content .view");
 
-    navItems.forEach(item => {
-        item.addEventListener("click", async function () {
-            // Highlight active nav
-            navItems.forEach(n => n.classList.remove("active"));
-            this.classList.add("active");
+//    navItems.forEach(item => {
+//        item.addEventListener("click", async function () {
+//            // Highlight active nav
+//            navItems.forEach(n => n.classList.remove("active"));
+//            this.classList.add("active");
 
-            // Hide all views
-            views.forEach(view => {
-                view.classList.remove("active");
-                view.classList.add("hidden");
-            });
+//            // Hide all views
+//            views.forEach(view => {
+//                view.classList.remove("active");
+//                view.classList.add("hidden");
+//            });
 
-            const targetId = this.dataset.target;
+//            const targetId = this.dataset.target;
 
-            // Show target container
-            const target = document.getElementById(targetId);
-            if (!target) return;
+//            // Show target container
+//            const target = document.getElementById(targetId);
+//            if (!target) return;
 
-            target.classList.remove("hidden");
-            target.classList.add("active");
+//            target.classList.remove("hidden");
+//            target.classList.add("active");
 
-            // Load partials based on the target
-            if (targetId === "ticket-view") {
-                await loadModule("ticketsControl");
-            }
-            else if (targetId === "hr-view") {
-                await loadModule("hrControl");
-            }
-            else if (targetId === "settings-view") {
-                await loadModule("adminSettings");
-            }
-        });
-    });
-}
+//            // Load partials based on the target
+//            if (targetId === "ticket-view") {
+//                await loadModule("ticketsControl");
+//            }
+//            else if (targetId === "hr-view") {
+//                await loadModule("hrControl");
+//            }
+//            else if (targetId === "settings-view") {
+//                await loadModule("adminSettings");
+//            }
+//        });
+//    });
+//}
 
 async function handleClicks(e) {
 
@@ -56,15 +56,16 @@ async function handleClicks(e) {
     const submenu = li.querySelector(':scope > .submenu');
 
     if (submenu) {
-        li.classList.toggle('expanded');
-        li.classList.toggle('collapsed');
+        const sidenav = document.getElementById('sidenav');
+        if (!sidenav.classList.contains('expanded')) return;
 
-        const icon = li.querySelector(':scope > span i');
+        li.classList.toggle('open');
+
+        const icon = li.querySelector(':scope > .expand-icon i');
         if (icon) {
             icon.classList.toggle('fa-angle-right');
             icon.classList.toggle('fa-angle-down');
         }
-
         return;
     }
 
@@ -100,6 +101,7 @@ async function handleClicks(e) {
             await loadModule("manageRoles");
         }
 
+        //highlight selected
         let li = document.querySelector('#nav-items .active-page'); 
         if (li)
             li.classList.remove('active-page');

@@ -7,6 +7,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadModule("sideNav");
 
+    var sidenav = document.getElementById('sidenav');
+
+    //expand
+    sidenav.addEventListener('show.bs.offcanvas', function () {
+        sidenav.classList.add('expanded');
+        document.body.classList.add('sidenav-expanded');
+    });
+
+    //collapse
+    sidenav.addEventListener('hide.bs.offcanvas', function () {
+        sidenav.classList.remove('expanded');
+        document.body.classList.remove('sidenav-expanded');
+    });
+
     ////default to open
     //const sidenavEl = document.getElementById('sidenav');
     //const sidenav = new bootstrap.Offcanvas(sidenavEl);

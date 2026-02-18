@@ -1,22 +1,98 @@
-﻿.offcanvas{
-    max-width: 20%;
+﻿.offcanvas {
+    border: none;
+    /*box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);*/
+    background-color: #f9fafb;
 }
 
-span{
-    float: right;
+.offcanvas.offcanvas-start {
+    width: 70px;
+    visibility: visible !important;
+    transform: none !important;
+    transition: width 0.3s ease-in-out;
+    top: 40px;
+    height: calc(100vh - 40px);
 }
+
+    .offcanvas.offcanvas-start.expanded {
+        width: 240px; /* percentage widths can cause issues in offcanvas */
+    }
+
+    /* Hide text and expand arrow when collapsed */
+    .offcanvas.offcanvas-start:not(.expanded) .navtext,
+    .offcanvas.offcanvas-start:not(.expanded) .expand-icon {
+        display: none;
+    }
+
+    .offcanvas.offcanvas-start.expanded #nav-items > li {
+        justify-content: flex-start; /* left-aligned when expanded */
+    }
+
+/* Submenu hidden by default */
+.submenu {
+    display: none;
+    flex-direction: column;
+    padding-left: 0;
+    margin-left: 20px;
+}
+
+/* Submenu shows only when sidenav expanded AND parent is open */
+.offcanvas.offcanvas-start.expanded li.open > .submenu {
+    display: flex;
+}
+
+.submenu > li {
+    border-left: 2px solid lightgrey;
+    padding: 6px 8px 6px 16px;
+    font-size: 0.9rem;
+    display: block; /* submenu items don't need flex */
+}
+
+    .submenu > li:hover {
+        background-color: #f3f4f6;
+    }
+
+/* Top level items */
+#nav-items > li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 6px;
+    flex-wrap: wrap; /* allows submenu to drop below on its own row */
+    justify-content: center;
+}
+
+    #nav-items > li:hover {
+        background-color: #f3f4f6;
+    }
+
+    /* Submenu takes full width inside the parent li */
+    #nav-items > li > .submenu {
+        width: 100%;
+        margin-top: 4px;
+    }
 
 #nav-items, #nav-items ul {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.submenu > li{
-    border-left: 1px solid lightgrey;
+/* Push expand icon to the right */
+.expand-icon {
+    margin-left: auto;
+    transition: transform 0.2s ease;
 }
 
-li {
-    padding:5px;
+/* Active page highlight */
+.active-page {
+    background-color: #e6e6e6;
 }
+
+
 
 .icon-circle {
     display: inline-flex; /* center contents */
@@ -33,51 +109,7 @@ li {
     margin-bottom: 50px;
 }
 
-#side-nav-header{
-    display:flex;
-    justify-content:center;
+#side-nav-header {
+    display: flex;
+    justify-content: center;
 }
-
-.active-page {
-    background-color: #e6e6e6;
-}
-
-/*.side-nav {
-    position: fixed;
-    top: 56px;
-    left: 0;
-    width: 200px; 
-    height: calc(100vh - 56px); 
-    overflow-y: auto;
-    background-color: #e8f0fe; 
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-}
-
-    .side-nav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .side-nav .nav-item {
-        padding: 14px 20px;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
-        .side-nav .nav-item:hover {
-            background: #1f2933;
-        }
-
-        .side-nav .nav-item.active {
-            background: #4B91F7;
-        }
-
-.view {
-    padding: 20px;
-}
-
-.hidden {
-    display: none;
-}
-*/

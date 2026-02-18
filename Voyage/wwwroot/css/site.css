@@ -29,7 +29,8 @@ html, body {
     justify-content: space-around;
     gap: 15rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    background-color:white;
+    background-color: #f9fafb;
+    position: relative; /* needed for absolute child positioning */
 }
 
 .breadcrumb{
@@ -38,6 +39,7 @@ html, body {
 
 #dv-nav-brand {
     align-self: center;
+    margin-left: -90px;
 }
 
 #navbarNav > ul {
@@ -47,9 +49,18 @@ html, body {
     margin: 0;
 }
 
+#btn-side-nav-toggle {
+    position: absolute;
+    left: 0;
+    width: 70px; /* match collapsed sidenav width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 body {
     margin-bottom: 60px;
-    background-color: #e8f0fe;
+    background-color: white;
 }
 
 #app-container{
@@ -254,10 +265,3 @@ select:has(option[value=""]:checked){
     margin-right: -10px;
 }
 
-.collapsed > *:not(:first-child) {
-    display: none;
-}
-
-.expanded > *:not(:first-child) {
-    display: block;
-}
