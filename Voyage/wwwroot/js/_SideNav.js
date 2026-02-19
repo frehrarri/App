@@ -1,119 +1,45 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-//async function getSideNavItem() {
-//    const navItems = document.querySelectorAll(".nav-item");
-//    const views = document.querySelectorAll(".main-content .view");
-
-//    navItems.forEach(item => {
-//        item.addEventListener("click", async function () {
-//            // Highlight active nav
-//            navItems.forEach(n => n.classList.remove("active"));
-//            this.classList.add("active");
-
-//            // Hide all views
-//            views.forEach(view => {
-//                view.classList.remove("active");
-//                view.classList.add("hidden");
-//            });
-
-//            const targetId = this.dataset.target;
-
-//            // Show target container
-//            const target = document.getElementById(targetId);
-//            if (!target) return;
-
-//            target.classList.remove("hidden");
-//            target.classList.add("active");
-
-//            // Load partials based on the target
-//            if (targetId === "ticket-view") {
-//                await loadModule("ticketsControl");
-//            }
-//            else if (targetId === "hr-view") {
-//                await loadModule("hrControl");
-//            }
-//            else if (targetId === "settings-view") {
-//                await loadModule("adminSettings");
-//            }
-//        });
-//    });
-//}
-
 async function handleClicks(e) {
+    const sidenav = document.getElementById('sidenav');
+    const isExpanded = sidenav.classList.contains('expanded');
 
-    //hamburger toggle
-    if (e.target.id == "btn-side-nav-toggle") {
-        const sideNav = document.getElementById('sidenav');
-        sideNav.classList.toggle('open');
-    }
+    const rootItem = e.target.closest('#nav-items > li');
+    if (!rootItem) return;
 
-    let li = e.target.closest('li');
-    let ul = document.querySelector('#nav-items');
-
-    if(!li || !ul.contains(li)) return;
-
-    // If it has a submenu then toggle
-    const submenu = li.querySelector(':scope > .submenu');
+    const submenu = rootItem.querySelector(':scope > .submenu');
 
     if (submenu) {
-        const sidenav = document.getElementById('sidenav');
-        if (!sidenav.classList.contains('expanded')) return;
-
-        li.classList.toggle('open');
-
-        const icon = li.querySelector(':scope > .expand-icon i');
+        // has submenu - expand sidenav if collapsed, then toggle submenu
+        if (!isExpanded) {
+            sidenav.classList.add('expanded');
+            document.body.classList.add('sidenav-expanded');
+        }
+        rootItem.classList.toggle('open');
+        const icon = rootItem.querySelector(':scope > .expand-icon i');
         if (icon) {
             icon.classList.toggle('fa-angle-right');
             icon.classList.toggle('fa-angle-down');
         }
-        return;
+    } else {
+        // no submenu - find data-target and load module
+        const targetEl = e.target.closest('li[data-target]') ?? rootItem;
+        const target = targetEl?.dataset.target;
+        if (!target) return;
+
+        if (target === "ticket-view") await loadModule("ticketsControl");
+        else if (target === "manage-personnel") await loadModule("managePersonnel");
+        else if (target === "manage-teams") await loadModule("manageTeams");
+        else if (target === "manage-depts") await loadModule("manageDepartments");
+        else if (target === "manage-roles") await loadModule("manageRoles");
+
+        document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
+        targetEl.classList.add('active-page');
     }
-
-
-    const target = li.dataset.target;
-    if (target) {
-        // handle leaf node redirect
-        if (target === "ticket-view") {
-            await loadModule("ticketsControl");
-        }
-        //else if (targetId === "hr-view") {
-        //    await loadModule("hrControl");
-        //}
-        //else if (targetId === "settings-view") {
-        //    await loadModule("adminSettings");
-        //}
-
-        //handle submenu redirects
-
-        //HR
-        else if (target === "manage-personnel") {
-            await loadModule("managePersonnel");
-        }
-        else if (target === "manage-teams") {
-            await loadModule("manageTeams");
-        }
-        else if (target === "manage-depts") {
-            await loadModule("manageDepartments");
-        }
-      
-        //AdminSettings
-        else if (target === "manage-roles") {
-            await loadModule("manageRoles");
-        }
-
-        //highlight selected
-        let li = document.querySelector('#nav-items .active-page'); 
-        if (li)
-            li.classList.remove('active-page');
-
-        e.target.classList.add('active-page');
-    }
-
-    
 }
 
 
 export async function init() {
-    let ul = document.querySelector('#nav-items');
-    ul.addEventListener("click", handleClicks);
+    let nav = document.querySelector('.side-nav');
+    nav.addEventListener("click", handleClicks);
 }

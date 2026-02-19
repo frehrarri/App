@@ -28,13 +28,28 @@ html, body {
     display: flex;
     justify-content: space-around;
     gap: 15rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    /*box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);*/
     background-color: #f9fafb;
     position: relative; /* needed for absolute child positioning */
 }
 
-.breadcrumb{
-    margin-left: 4%;
+.icon-circle {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /*height: 40px;*/
+    /*border: 1px solid #1f2937;*/ /* circle border */
+    border-radius: 50%; /* make it round */
+    background-color: lightgray; /* optional fill */
+    color: #1f2937; /* icon color */
+    font-size: 18px; /* adjust icon size */
+}
+
+#dv-header-right{
+    display:flex;
+    align-items: center;
 }
 
 #dv-nav-brand {
@@ -61,10 +76,6 @@ html, body {
 body {
     margin-bottom: 60px;
     background-color: white;
-}
-
-#app-container{
-    margin-left:200px;
 }
 
 .border-error {

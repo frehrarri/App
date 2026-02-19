@@ -40,9 +40,13 @@
             <!-- Right side (Login & Register buttons) -->
            
         </div>
-        <div>
+        <div id="dv-header-right">
             @if (User.Identity?.IsAuthenticated == true)
             {
+                <span class="icon-circle">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+
                 <form asp-controller="User"
                       asp-action="Logout"
                       method="post"
