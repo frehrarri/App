@@ -15,27 +15,7 @@
 </nav>
 
 <div class="app-main">
-    <div class="main-content container">
-        <div id="hr-view" class="view active container">
-            @{
-                await Html.RenderPartialAsync("~/Views/App/HR/_HrControl.cshtml", Model.HrVM);
-            }
-        </div>
-        <div id="ticket-view" class="view hidden container"></div>
-        <div id="chat-view" class="view hidden container"></div>
-        <div id="sales-view" class="view hidden container"></div>
-        <div id="marketing-view" class="view hidden container"></div>
-        <div id="finance-view" class="view hidden container"></div>
-        <div id="inventory-view" class="view hidden container"></div>
-        <div id="crm-view" class="view hidden container"></div>
-        <div id="toolbox-view" class="view hidden container"></div>
-        <div id="forum-view" class="view hidden container"></div>
-        <div id="settings-view" class="view hidden container">
-            @{
-                await Html.RenderPartialAsync("~/Views/App/AdminSettings/_AdminSettings.cshtml");
-            }
-        </div>
-    </div>
+    <div class="main-content container"></div>
 </div>
 <input type="hidden" id="hdnCompanyId" value="@companyId" />
 

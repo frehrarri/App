@@ -3,9 +3,13 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 
 export async function init(data) {
     const partial = await getRolePermissionsPartial(data);
-    document.getElementById('hr-partial-container').innerHTML = partial;
+    let container = document.querySelector(".main-content");
 
-    const container = document.getElementById('role-permissions-container');
+    if (container)
+        container.innerHTML = partial;
+
+
+    container = document.getElementById('role-permissions-container');
     const changeTracker = new Set();
 
     container?.addEventListener("click", (e) => handleEvents(e, changeTracker));

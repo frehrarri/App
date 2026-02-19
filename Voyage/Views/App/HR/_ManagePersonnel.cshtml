@@ -1,13 +1,20 @@
 ﻿@model ManagePersonnelVM
 
-<link href="~/css/hr/_managepersonnel.css" rel="stylesheet" asp-append-version="true" />
+<div id="register-personnel-container">
+    
+</div>
+
+
 
 <div id="manage-personnel-container">
     <form id="manage-personnel">
         @Html.AntiForgeryToken()
         <div id="dv-personnel-grid">
-            <div id="dv-header-container">
-                <h4>Manage Personnel</h4>
+
+            <div class="header-flex">
+                <div id="dv-header-container">
+                    <h4>Manage Personnel</h4>
+                </div>
                 <div id="dv-register-personnel">
                     <button id="self-register-button" class="primary-btn" type="button">Register</button>
                     <div id="dv-send-registration-email">
@@ -111,4 +118,3 @@
 
 </div>
 
-<script type="module" src="~/js/hr/_managepersonnel.js" asp-append-version="true"></script>

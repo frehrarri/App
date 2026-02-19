@@ -5,7 +5,10 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 export async function init() {
     //load initial partial
     let partial = await getManageDepartmentsPartial();
-    document.getElementById("hr-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
+
+    if (container) 
+        container.innerHTML = partial;
 
     //grid
     let depts = await getDepartments();

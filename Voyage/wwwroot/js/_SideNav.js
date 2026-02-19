@@ -4,13 +4,25 @@ async function handleClicks(e) {
     const sidenav = document.getElementById('sidenav');
     const isExpanded = sidenav.classList.contains('expanded');
 
+    // check if click came from inside a submenu (leaf node)
+    const submenuItem = e.target.closest('.submenu li[data-target]');
+    if (submenuItem) {
+        const target = submenuItem.dataset.target;
+        if (target === "manage-personnel") await loadModule("managePersonnel");
+        else if (target === "manage-teams") await loadModule("manageTeams");
+        else if (target === "manage-depts") await loadModule("manageDepartments");
+        else if (target === "manage-roles") await loadModule("manageRoles");
+
+        document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
+        submenuItem.classList.add('active-page');
+        return; 
+    }
+
     const rootItem = e.target.closest('#nav-items > li');
     if (!rootItem) return;
 
     const submenu = rootItem.querySelector(':scope > .submenu');
-
     if (submenu) {
-        // has submenu - expand sidenav if collapsed, then toggle submenu
         if (!isExpanded) {
             sidenav.classList.add('expanded');
             document.body.classList.add('sidenav-expanded');
@@ -22,19 +34,13 @@ async function handleClicks(e) {
             icon.classList.toggle('fa-angle-down');
         }
     } else {
-        // no submenu - find data-target and load module
-        const targetEl = e.target.closest('li[data-target]') ?? rootItem;
-        const target = targetEl?.dataset.target;
+        const target = rootItem.dataset.target;
         if (!target) return;
 
         if (target === "ticket-view") await loadModule("ticketsControl");
-        else if (target === "manage-personnel") await loadModule("managePersonnel");
-        else if (target === "manage-teams") await loadModule("manageTeams");
-        else if (target === "manage-depts") await loadModule("manageDepartments");
-        else if (target === "manage-roles") await loadModule("manageRoles");
 
         document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
-        targetEl.classList.add('active-page');
+        rootItem.classList.add('active-page');
     }
 }
 
@@ -42,4 +48,11 @@ async function handleClicks(e) {
 export async function init() {
     let nav = document.querySelector('.side-nav');
     nav.addEventListener("click", handleClicks);
+
+    //let navtoggle = document.querySelector('#btn-side-nav-toggle');
+    //navtoggle.addEventListener("click", () => { 
+        
+
+        
+    //})
 }

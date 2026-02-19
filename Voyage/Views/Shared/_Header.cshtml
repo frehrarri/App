@@ -2,12 +2,12 @@
     <nav id="header-nav">
         <div id="dv-nav-brand">
             <!-- Hamburger button Side Nav toggle-->
-            @if (User.Identity?.IsAuthenticated == true)
+    @*         @if (User.Identity?.IsAuthenticated == true)
             {
                 <button id="btn-side-nav-toggle" class="btn hidden" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidenav">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-            }
+            } *@
 
             <!-- Brand / Logo -->
             <a class="navbar-brand" href="@Url.Action("Index", "Website")">

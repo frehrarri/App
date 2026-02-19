@@ -122,7 +122,7 @@ async function save(e) {
     }
 }
 
-async function handleEvents(e) {
+async function handlePersonnelEvents(e) {
     if (e.type == "click") {
         if (e.target.id === "self-register-button") {
             e.preventDefault();
@@ -178,13 +178,13 @@ function updateBreadCrumb() {
 export async function init() {
     //load initial partial
     let partial = await getManagePersonnelPartial();
-    document.getElementById("hr-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
 
-    //event handlers
-    const container = document.getElementById('hr-partial-container');
     if (container) {
-        container.addEventListener("click", handleEvents);
-        container.addEventListener("change", handleEvents);
+        container.innerHTML = partial;
+
+        container.addEventListener("click", handlePersonnelEvents);
+        container.addEventListener("change", handlePersonnelEvents);
     }
 
     updateBreadCrumb();

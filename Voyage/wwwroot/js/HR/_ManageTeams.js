@@ -5,11 +5,9 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 export async function getManageTeamsPartial() {
     try {
         const response = await getPartial("Hr", "ManageTeamsPartial");
-        document.getElementById("hr-partial-container").innerHTML = response.data;
-
         return response.data;
     } catch (error) {
-        console.error("error: getManageTicketPartial", error);
+        console.error("error: getManageTeamsPartial", error);
         return false;
     }
 }
@@ -103,7 +101,10 @@ function updateBreadCrumb() {
 export async function init() {
     //load partial
     let partial = await getManageTeamsPartial();
-    document.getElementById("hr-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
+
+    if (container)
+        container.innerHTML = partial;
 
     //grid
     let teams = await getTeams();
