@@ -1,3 +1,14 @@
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    max-width: 85% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 html {
     font-size: 14px;
     position: relative;
@@ -60,13 +71,24 @@ html, body {
     list-style: none;
     padding: 0;
     margin: 0;
+   
 }
 
-#dv-nav-brand {
+    #navbarNav > ul > li {
+        font-weight: 600;
+        color: slategray;
+    }
+
+#navbar-brand {
+  /*  font-weight: 600;
+    color: slategray;*/
+}
+
+/*#dv-nav-brand {
     left: 0;
     position: fixed;
     margin-left: 50px;
-}
+}*/
 
 .border-error {
     border: 1px solid red !important;
@@ -82,16 +104,6 @@ html, body {
     padding: 20px;
 }
 
-.app-container{
-    margin-left: 5%;
-}
-
-@media (min-width: 1200px) {
-    .app-container {
-        max-width: 100% !important;
-    }
-}
-
 .app-main {
     flex: 1; /* take remaining space */
     display: flex;
@@ -101,10 +113,10 @@ html, body {
 
 .app-table {
     width: 100%;
-    table-layout: fixed !important; 
-    border-collapse: collapse; 
+    table-layout: fixed !important;
+    border-collapse: collapse;
     border: 1px solid gray;
-    border-radius: 10px; 
+    border-radius: 10px;
 }
 
 .app-table-row {
@@ -263,7 +275,7 @@ select:has(option[value=""]:checked){
 
 .grid-btn-container{
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-top:30px;
 }
 

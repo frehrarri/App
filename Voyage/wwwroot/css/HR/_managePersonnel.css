@@ -1,14 +1,13 @@
 ﻿#dv-personnel-grid {
-/*    box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: .5px 0.5px 3px 1px rgb(83 82 82 / 33%);
-    background-color: #f3f4f6;
-    padding: 30px 20px;*/
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 20px 30px;
 }
 
 #header-flex{
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
+    gap: 250px;
 }
 
 #dv-register-personnel {
@@ -20,6 +19,7 @@
 
 #self-register-button{
     margin-top: 3px;
+    padding-left: 10px;
 }
 
 input[type='email'] {
@@ -35,8 +35,8 @@ label{
     width: 70px;
 }
 
-h4 {
-    margin-bottom: 40px;
+h5{
+    padding-bottom: 20px;
 }
 
 input {
@@ -47,14 +47,15 @@ input {
 }
 
 #btn-container {
-    margin-bottom: -10px;
-    margin-top: 40px;
+    margin-bottom: 5px;
+    margin-top: 25px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
-/*#dv-header-container{
-    display: flex;
-    justify-content: space-between;
-}*/
+#dv-send-registration-email{
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 20px 30px;
+}

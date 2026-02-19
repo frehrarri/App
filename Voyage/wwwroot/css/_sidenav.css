@@ -1,7 +1,5 @@
 ﻿.offcanvas {
     border: none;
-    /*    border-top: 1px solid lightgray;*/
-    /*box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);*/
     background-color: #f3f4f6; 
     box-shadow: .5px .5px #0000004d;
 }
@@ -10,9 +8,11 @@
         width: 70px;
         visibility: visible !important;
         transform: none !important;
-        transition: none;
+        transition: width 0.3s ease-in-out;
         top: 40px;
         height: calc(100vh - 40px);
+        display: flex;
+        flex-direction: column;
     }
 
     .offcanvas.offcanvas-start.expanded {
@@ -65,6 +65,7 @@
     border-radius: 6px;
     flex-wrap: wrap; /* allows submenu to drop below on its own row */
     justify-content: center;
+
 }
 
     #nav-items > li:hover {
@@ -83,6 +84,17 @@
     padding: 0;
     margin: 0;
 }
+
+    #nav-items > li > i {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        height: 27px;
+        width: 27px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
 /* Push expand icon to the right */
 .expand-icon {
@@ -104,23 +116,19 @@
 }
 
 #btn-side-nav-toggle {
-    margin-left: 60px;
-    margin-top: 20%;
-    box-shadow: .5px .5px 2px 1px #0000004d;
-    width: 15px;
-    position: fixed;
-    z-index: 9999;
-    height: 30px;
+    margin-top: -20px;
+    margin-bottom: 50px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f3f4f6;
-    transform: translateY(-50%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-body.sidenav-expanded #btn-side-nav-toggle {
-    left: 175px;
-}
 
     body.sidenav-expanded #btn-side-nav-toggle i {
         transform: rotate(180deg);
@@ -129,3 +137,10 @@ body.sidenav-expanded #btn-side-nav-toggle {
 .fa-angle-down, .fa-angle-right {
     color: #b1b3b5;
 }
+
+#side-nav-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+

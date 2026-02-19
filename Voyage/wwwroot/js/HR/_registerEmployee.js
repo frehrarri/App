@@ -1,7 +1,5 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-
-
 function getPreviousContainer(e) {
     const containers = document.querySelectorAll(".form-container");
 
@@ -276,7 +274,6 @@ function hideErrors() {
 }
 
 async function handleEvents(e) {
-    debugger;
     if (e.target.id == "register-btn") 
         await register(e);
 
@@ -288,15 +285,53 @@ async function handleEvents(e) {
 
 }
 
+function updateBreadCrumb() {
+    const ol = document.querySelector('.breadcrumb');
+
+    ol.innerHTML = '';
+
+    const li1 = document.createElement('li');
+    li1.classList.add('breadcrumb-item');
+    li1.classList.add('active')
+
+    const a1 = document.createElement('a');
+    a1.href = "#";
+    a1.textContent = 'Human Resources'
+
+    //add event listener that when clicked on opens side nav and expands Human Resources links
+
+    li1.appendChild(a1);
+    ol.appendChild(li1);
+
+    const li2 = document.createElement('li');
+    li2.classList.add('breadcrumb-item');
+    li2.classList.add('active');
+
+    const a2 = document.createElement('a');
+    a2.href = "#";
+    a2.textContent = 'Manage Personnel'
+
+    li2.appendChild(a2);
+    ol.appendChild(li2);
+
+    const li3 = document.createElement('li');
+    li3.classList.add('breadcrumb-item');
+    li3.classList.add('active');
+    li3.textContent = 'Register Employee';
+    ol.appendChild(li3);
+}
+
 export async function init() {
     //load initial partial
  
     let partial = await getRegisterEmployeePartial();
-    document.getElementById("hr-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
+
+    if (container) {
+        container.innerHTML = partial;
+        container.addEventListener("click", handleEvents);
+    }
 
     hideErrors();
-
-    const container = document.getElementById("hr-partial-container");
-    if (container)
-        container.addEventListener("click", handleEvents);
+    updateBreadCrumb();
 }

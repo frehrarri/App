@@ -5,23 +5,27 @@
 </div>
 
 
+<div id="dv-register-personnel">
+    <div id="dv-send-registration-email">
+        <h5>Register Employee</h5>
+        <input type="email" placeholder="jon.doe@gmail.com" />
+        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
+        <a href="#" id="self-register-button">Register Manually</a>
+    </div>
 
+    @* <button id="self-register-button" class="primary-btn" type="button">Register</button> *@
+
+</div>
 <div id="manage-personnel-container">
     <form id="manage-personnel">
         @Html.AntiForgeryToken()
         <div id="dv-personnel-grid">
 
-            <div class="header-flex">
+            <div id="header-flex">
                 <div id="dv-header-container">
-                    <h4>Manage Personnel</h4>
+                    <h5>Manage Personnel</h5>
                 </div>
-                <div id="dv-register-personnel">
-                    <button id="self-register-button" class="primary-btn" type="button">Register</button>
-                    <div id="dv-send-registration-email">
-                        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
-                        <input type="email" placeholder="Employee Registration Email" />
-                    </div>
-                </div>
+               
             </div>
             
             <table class="app-table">
@@ -109,8 +113,8 @@
                 </tbody>
             </table>
             <div id="btn-container">
-                <button type="button" id="btn-delete" class="warning-btn">Delete</button>
                 <button type="button" id="save-btn" class="primary-btn">Save</button>
+                <button type="button" id="btn-delete" class="warning-btn">Delete</button>
             </div>
         </div>
 

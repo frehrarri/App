@@ -166,12 +166,8 @@ function updateBreadCrumb() {
     const li2 = document.createElement('li');
     li2.classList.add('breadcrumb-item');
     li2.classList.add('active');
+    li2.textContent = 'Manage Personnel';
 
-    const a2 = document.createElement('a');
-    a2.href = "#";
-    a2.textContent = 'Manage Personnel'
-
-    li2.appendChild(a2);
     ol.appendChild(li2);
 }
 
