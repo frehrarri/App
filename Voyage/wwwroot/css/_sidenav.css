@@ -65,8 +65,9 @@ body.sidenav-expanded #app-container {
 }
 
     .submenu > li:hover {
-        background-color: #f3f4f6;
+        background-color: lightgray;
     }
+
 
 /* Top level items */
 #nav-items > li {
@@ -84,8 +85,9 @@ body.sidenav-expanded #app-container {
 }
 
     #nav-items > li:hover {
-        background-color: #f3f4f6;
+        background-color: white;
     }
+
 
     /* Submenu takes full width inside the parent li */
     #nav-items > li > .submenu {
