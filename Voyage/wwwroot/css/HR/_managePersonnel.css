@@ -2,6 +2,7 @@
     border: 1px solid lightgrey;
     border-radius: 10px;
     padding: 20px 30px;
+    background-color: white;
 }
 
 #header-flex{
@@ -40,22 +41,22 @@ h5{
 }
 
 input {
-    background-color: ghostwhite;
+    background-color: white;
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 6px 8px;
 }
 
 #btn-container {
-    margin-bottom: 5px;
-    margin-top: 25px;
+    margin-top: 20px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
 }
 
-#dv-send-registration-email{
+#dv-send-registration-email {
     border: 1px solid lightgrey;
     border-radius: 10px;
     padding: 20px 30px;
+    background-color: white;
 }

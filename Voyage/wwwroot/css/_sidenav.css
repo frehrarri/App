@@ -4,6 +4,7 @@
     box-shadow: .5px .5px #0000004d;
 }
 
+/*side nav when collapsed*/
     .offcanvas.offcanvas-start {
         width: 70px;
         visibility: visible !important;
@@ -15,8 +16,9 @@
         flex-direction: column;
     }
 
+    /*sidenav*/
     .offcanvas.offcanvas-start.expanded {
-        width: 240px; /* percentage widths can cause issues in offcanvas */
+        width: 240px; 
     }
 
     /* Hide text and expand arrow when collapsed */
@@ -26,8 +28,20 @@
     }
 
     .offcanvas.offcanvas-start.expanded #nav-items > li {
-        justify-content: flex-start; /* left-aligned when expanded */
+        justify-content: flex-start; 
     }
+
+/*adjust content container when side nav expands*/
+body.sidenav-expanded #app-container {
+    margin-left: 270px; 
+}
+
+#app-container {
+    margin-left: 100px; 
+    transition: margin-left 0.3s ease-in-out;
+    max-width: none; /* override Bootstrap's container max-width */
+    padding: 0 20px;
+}
 
 /* Submenu hidden by default */
 .submenu {
@@ -123,10 +137,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f3f4f6;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     border-radius: 5px;
+    background-color: white;
 }
 
 

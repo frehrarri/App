@@ -27,7 +27,8 @@ html {
 
 body {
     margin-bottom: 60px;
-    background-color: white;
+    background: linear-gradient(to right, #ffffff 0%, #e5e7eb 25%, #ffffff 50%, #e5e7eb 75%, #ffffff 100% );
+    /*background-color: white;*/
 }
 
 html, body {
@@ -121,6 +122,8 @@ html, body {
 
 .app-table-row {
        border: 1px solid lightgray;
+       border-radius: 10px;
+       background-color: white;
 }
 
 .app-table-header,
@@ -173,7 +176,6 @@ html, body {
     }
 
 .primary-btn {
-    padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     border-radius: 6px;
     border: none;
@@ -187,7 +189,6 @@ html, body {
 
 .secondary-btn {
     align-items: center;
-    padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     border-radius: 6px;
     color: #3D3D3D;
@@ -201,7 +202,6 @@ html, body {
 
 .warning-btn {
     align-items: center;
-    padding: 3px 10px;
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     border-radius: 6px;
     border: 1px solid #ff9999;

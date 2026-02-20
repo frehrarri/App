@@ -47,13 +47,13 @@
         }
 
 /* Add padding to body content so it doesn't hide behind the titlebar */
-html, body {
+/*html, body {
     height: 100%;
 }
 
 body {
     padding-top: 32px;
-}
+}*/
 
 .pwa-wrapper {
     margin-top: 32px; /* below titlebar */
