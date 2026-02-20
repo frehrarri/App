@@ -115,25 +115,32 @@ html, body {
 .app-table {
     width: 100%;
     table-layout: fixed !important;
-    border-collapse: collapse;
-    border: 1px solid gray;
+    border-collapse: separate;
+    overflow: hidden;
+    border: 1px solid lightgray;
     border-radius: 10px;
+    border-spacing: 0;
 }
 
 .app-table-row {
-       border: 1px solid lightgray;
-       border-radius: 10px;
        background-color: white;
 }
 
 .app-table-header,
 .app-table-data {
- /*   border: 1px solid lightgray;*/
-    padding: 8px;
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
+    border-left: none;
+    border-right: none;
+    padding: 4px;
     text-align: left;
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    white-space: nowrap; 
+    /*overflow: hidden; */
+    /*text-overflow: ellipsis; */
+    /*white-space: nowrap; */
+}
+
+.app-table-row:last-child .app-table-data {
+    border-bottom: none;
 }
 
 .app-table td input,
@@ -177,15 +184,20 @@ html, body {
 
 .primary-btn {
     font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
-    border-radius: 6px;
-    border: none;
-    color: #fff;
-    background: #4B91F7;
     background-origin: border-box;
     box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
     -webkit-user-select: none;
     touch-action: manipulation;
+    border-radius: 6px;
+    background-color: #e9f2ff;
+    border: 1px solid #71abff;
+    color: black;
+    border-radius: 8px;
 }
+
+    .primary-btn[disabled] {
+        border: 1px solid gray;
+    }
 
 .secondary-btn {
     align-items: center;
