@@ -80,8 +80,10 @@ async function getAssignedTeamPersonnel(teamKey) {
 export async function init(params) {
     //load initial partial
     let partial = await getAssignTeamPartial(params);
-    let container = document.getElementById('hr-partial-container');
-    container.innerHTML = partial;
+    const container = document.querySelector(".main-content");
+
+    if (container)
+        container.innerHTML = partial;
 
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.datakey);

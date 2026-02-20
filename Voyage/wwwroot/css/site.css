@@ -118,7 +118,7 @@ html, body {
     border-collapse: separate;
     overflow: hidden;
     border: 1px solid lightgray;
-    border-radius: 10px;
+    border-radius: 7px;
     border-spacing: 0;
 }
 
@@ -152,7 +152,7 @@ html, body {
 
 .app-table-header:first-child,
 .app-table-data:first-child {
-    width: 4% !important;
+    width: 2% !important;
     text-align: center !important;
     border-right: 1px solid lightgray;
     /* padding: 4px !important;*/
@@ -301,4 +301,14 @@ i {
 
 h5 {
     padding-bottom: 20px;
+}
+
+a{
+    color: cadetblue;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration-line: underline;
 }

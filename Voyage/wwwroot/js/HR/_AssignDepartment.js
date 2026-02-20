@@ -134,7 +134,10 @@ async function getAssignedDepartmentUsers(params) {
 export async function init(params) {
     //load initial partial
     let partial = await getAssignDepartmentPartial(params);
-    document.getElementById("hr-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
+
+    if (container)
+        container.innerHTML = partial;
 
     let assignedTeams = await getAssignedDepartmentTeams();
     let teamNames = [];
