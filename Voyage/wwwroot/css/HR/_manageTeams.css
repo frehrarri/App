@@ -1,13 +1,4 @@
-﻿/*#dv-allocate-personnel, #dv-manage-teams {
-    border: 1px solid gray;
-    box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    background-color: #e8f0fe;
-    padding: 30px 20px;
-}*/
-
-#dv-manage-teams {
+﻿#dv-manage-teams {
     border: 1px solid lightgrey;
     border-radius: 10px;
     padding: 20px 30px;

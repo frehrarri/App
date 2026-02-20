@@ -307,7 +307,6 @@ async function hydrateGrid(headerList, newId, retrievedVals, tableUid, controlTy
     const headerRow = table.querySelector('thead tr');
 
     headers.forEach(h => {
-
         const th = document.createElement("th");
         th.classList.add('app-table-header');
         th.textContent = h;

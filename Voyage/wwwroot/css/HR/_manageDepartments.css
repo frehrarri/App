@@ -1,9 +1,9 @@
 ﻿#dv-manage-departments {
     box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    background-color: #e8f0fe;
-    padding: 30px 20px;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    padding: 20px 30px;
+    background-color: white;
 }
 
 #dv-dept-btns {
@@ -18,12 +18,3 @@
 #btn-container {
     display: flex;
 }
-/*
-
-#manage-depts th:first-child,
-#manage-depts td:first-child {
-    max-width: 1px;
-    text-align: center !important;
-}
-*/
-

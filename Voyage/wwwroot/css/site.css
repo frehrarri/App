@@ -1,4 +1,4 @@
-.container,
+/*.container,
 .container-sm,
 .container-md,
 .container-lg,
@@ -7,7 +7,7 @@
     max-width: 85% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-}
+}*/
 
 html {
     font-size: 14px;
@@ -283,10 +283,10 @@ select:has(option[value=""]:checked){
     margin-left: -10px;
 }
 
-.grid-save-btn{
-    margin-right: -10px;
-}
-
 i {
     color: #555151;
+}
+
+h5 {
+    padding-bottom: 20px;
 }

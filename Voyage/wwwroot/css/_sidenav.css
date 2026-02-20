@@ -33,14 +33,15 @@
 
 /*adjust content container when side nav expands*/
 body.sidenav-expanded #app-container {
-    margin-left: 270px; 
+    margin-left: 250px;
+    max-width: 84% !important;
 }
 
 #app-container {
-    margin-left: 100px; 
+    margin-left: 80px;
     transition: margin-left 0.3s ease-in-out;
-    max-width: none; /* override Bootstrap's container max-width */
     padding: 0 20px;
+    max-width: 92% !important;
 }
 
 /* Submenu hidden by default */

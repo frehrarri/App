@@ -125,12 +125,8 @@ function updateBreadCrumb() {
     const li2 = document.createElement('li');
     li2.classList.add('breadcrumb-item');
     li2.classList.add('active');
-
-    const a2 = document.createElement('a');
-    a2.href = "#";
-    a2.textContent = 'Manage Departments'
-
-    li2.appendChild(a2);
+    li2.textContent = 'Manage Departments';
+    
     ol.appendChild(li2);
 }
 
