@@ -2,6 +2,8 @@
 
 <link href="~/css/main.css" rel="stylesheet" asp-append-version="true"/>
 
+@* side nav loaded via js *@
+
 @{
     int? companyId = Context.Session.GetInt32("CompanyId");
     Layout = "~/Views/Shared/AppLayout.cshtml";
@@ -15,7 +17,8 @@
 </nav>
 
 <div class="app-main">
-    <div class="main-content"></div>
+    @* load main content via js *@
+    <div class="main-content"></div> 
 </div>
 <input type="hidden" id="hdnCompanyId" value="@companyId" />
 

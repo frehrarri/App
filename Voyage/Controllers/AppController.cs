@@ -6,17 +6,21 @@ namespace Voyage.Controllers
 {
     public class AppController : Controller
     {
-        TicketsBLL _ticketsB;
 
-        public AppController(TicketsBLL ticketsB)
+        public AppController()
         {
-            _ticketsB = ticketsB;
         }
 
         public IActionResult Index()
         {
             MainVM vm = new MainVM();
             return View("~/Views/App/Main.cshtml", vm);
+        }
+
+        [HttpGet]
+        public IActionResult MainDashboardPartial()
+        {
+            return PartialView("~/Views/App/_MainDashboard.cshtml");
         }
     }
 }

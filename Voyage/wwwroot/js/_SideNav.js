@@ -4,7 +4,7 @@ async function handleClicks(e) {
     const sidenav = document.getElementById('sidenav');
     const isExpanded = sidenav.classList.contains('expanded');
 
-    // check if click came from inside a submenu (leaf node)
+    // check for submenu item click
     const submenuItem = e.target.closest('.submenu li[data-target]');
     if (submenuItem) {
         const target = submenuItem.dataset.target;
@@ -21,6 +21,7 @@ async function handleClicks(e) {
     const rootItem = e.target.closest('#nav-items > li');
     if (!rootItem) return;
 
+    //expand submenus 
     const submenu = rootItem.querySelector(':scope > .submenu');
     if (submenu) {
         if (!isExpanded) {
@@ -33,11 +34,14 @@ async function handleClicks(e) {
             icon.classList.toggle('fa-angle-right');
             icon.classList.toggle('fa-angle-down');
         }
-    } else {
+    }
+    //didnt have a submenu to expand so redirect to page
+    else {
         const target = rootItem.dataset.target;
         if (!target) return;
 
-        if (target === "ticket-view") await loadModule("ticketsControl");
+        if (target === "main-dashboard") await loadModule("mainDashboard");
+        else if (target === "ticket-view") await loadModule("ticketsControl");
 
         document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
         rootItem.classList.add('active-page');
@@ -48,11 +52,4 @@ async function handleClicks(e) {
 export async function init() {
     let nav = document.querySelector('.side-nav');
     nav.addEventListener("click", handleClicks);
-
-    //let navtoggle = document.querySelector('#btn-side-nav-toggle');
-    //navtoggle.addEventListener("click", () => { 
-        
-
-        
-    //})
 }

@@ -145,6 +145,19 @@ async function handlePersonnelEvents(e) {
     }
 }
 
+function expandSideNavItem() {
+    //expand sidenav
+    const offcanvas = document.querySelector('.offcanvas.offcanvas-start');
+    offcanvas.classList.add('expanded');
+
+    //open submenus
+
+    //move content container with sidenav
+
+    //toggle icon
+    
+}
+
 function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
@@ -157,6 +170,8 @@ function updateBreadCrumb() {
     const a1 = document.createElement('a');
     a1.href = "#";
     a1.textContent = 'Human Resources'
+
+    a1.addEventListener("click", expandSideNavItem);
 
     //add event listener that when clicked on opens side nav and expands Human Resources links
 

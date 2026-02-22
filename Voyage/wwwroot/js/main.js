@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.body.classList.remove('sidenav-expanded');
     });
 
+    //replace .main-content with main dashboard partial
+    await loadModule("mainDashboard");
 });
 
 

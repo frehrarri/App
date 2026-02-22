@@ -253,7 +253,7 @@ async function getPartial(controller, action) {
         return await axios.get(route);
     }
     catch (error) {
-        console.error("error: getManageTicketPartial", error);
+        console.error("error: getPartial", error);
     }
 }
 

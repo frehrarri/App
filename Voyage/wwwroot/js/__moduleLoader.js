@@ -20,12 +20,12 @@ const moduleRegistry = {
         js: () => import(`./_gridControl.js?v=${scriptVersion}`),
         css: `/css/_gridControl.css?v=${scriptVersion}`
     },
+    mainDashboard: {
+        js: () => import(`./_MainDashboard.js?v=${scriptVersion}`),
+        css: `/css/_MainDashboard.css?v=${scriptVersion}`
+    },
 
     //hr
-    hrControl: {
-        js: () => import(`./HR/_hrcontrol.js?v=${scriptVersion}`),
-        css: `/css/HR/_hrcontrol.css?v=${scriptVersion}`
-    },
     managePersonnel: {
         js: () => import(`./HR/_managePersonnel.js?v=${scriptVersion}`),
         css: `/css/HR/_managePersonnel.css?v=${scriptVersion}`
