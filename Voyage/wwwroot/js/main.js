@@ -23,6 +23,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //replace .main-content with main dashboard partial
     await loadModule("mainDashboard");
+
+    const li = document.querySelector('li[data-target="main-dashboard"]');
+    li.classList.add('active-page');
 });
 
 

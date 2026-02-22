@@ -41,7 +41,7 @@ async function handleClicks(e) {
         if (!target) return;
 
         if (target === "main-dashboard") await loadModule("mainDashboard");
-        else if (target === "ticket-view") await loadModule("ticketsControl");
+        else if (target === "ticket-view") await loadModule("tickets");
 
         document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
         rootItem.classList.add('active-page');

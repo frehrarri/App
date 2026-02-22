@@ -1,7 +1,5 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-
-
 export async function getTicketsPartial() {
     try {
         const response = await axios.get('/Tickets/TicketsPartial');
@@ -320,7 +318,8 @@ export async function init() {
     //load initial partial
     let partial = await getTicketsPartial();
 
-    let container = document.getElementById("tickets-partial-container")
+    const container = document.querySelector('.main-content');
+
     if (container && partial) {
         container.innerHTML = partial;
     }
@@ -330,8 +329,6 @@ export async function init() {
         container.addEventListener("click", handleEvents);
         container.addEventListener("change", handleEvents);
     }
-
- 
 
 
     //document.querySelectorAll(".paginate").forEach(el => {
