@@ -10,6 +10,8 @@ export async function init() {
     if (container) 
         container.innerHTML = partial;
 
+    updateBreadCrumb();
+
     //grid
     let depts = await getDepartments();
     let departments = [];
@@ -33,7 +35,9 @@ export async function init() {
     }
     await loadModule("gridControl", manageDept);
 
-    updateBreadCrumb();
+    
+
+    
 }
 
 export async function getManageDepartmentsPartial() {
@@ -129,4 +133,5 @@ function updateBreadCrumb() {
     
     ol.appendChild(li2);
 }
+
 

@@ -1,4 +1,4 @@
-﻿#dv-dept-teams, #dv-dept-personnel {
+﻿#assign-department-container {
     box-sizing: border-box;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -10,18 +10,54 @@
 
 .assign-dept-header {
     display: flex;
+    justify-content: flex-start;
 }
 
+h5 {
+    padding-bottom: 0px;
+}
+
+h6 {
+    padding-bottom: 20px;
+}
+
+#assign-dept-tabs{
+    margin-left: 25%;
+}
+
+#assign-dept-tabs > a {
+    padding: 10px;
+    cursor: pointer;
+}
+
+    #assign-dept-tabs > a:hover {
+        text-decoration: underline;
+        color: cadetblue;
+    }
+
+.active-tab {
+    color: black !important;
+    text-decoration: none;
+}
+
+    a.active-tab:hover {
+        color: black !important;
+        text-decoration: none !important;
+        cursor: default !important;
+    }
+
 .dept-name {
-    position: absolute;
+    /*    position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%);*/
 }
 
 #dv-dept-user-btns, #dv-dept-team-btns {
-    padding-top: 20px;
+/*    padding-top: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: nowrap;*/
 }
+
+/*#dv-dept-teams, #dv-dept-personnel */

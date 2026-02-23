@@ -1,28 +1,22 @@
 ﻿<div id="assign-department-container">
 
-    <div id="dv-dept-teams">
-        <div class="assign-dept-header">
-            <h5>Assign Teams</h5>
+    <div class="assign-dept-header">
+        <h5 id="teams-header">Assign Teams</h5>
+        <h5 id="personnel-header" class="hidden">Assign Personnel</h5>
 
-            <h5 class="dept-name">@ViewBag.DeptName</h5>
+        <div id="assign-dept-tabs">
+            <a id="assign-team-tab" href="#" class="active-tab">Assign Teams</a>
+            <a id="assign-personnel-tab" href="#">Assign Personnel</a>
+            <a id="dept-permissions-link" href="#" tabindex="0">Manage Permissions</a>
         </div>
+    </div>
+    <h6 class="dept-name">@ViewBag.DeptName</h6>
 
-        <br />
-
+    <div id="dv-dept-teams">
         <div id="dept-team-grid-container"></div>
     </div>
 
-    <br />
-
-    <div id="dv-dept-personnel">
-        <div class="assign-dept-header">
-            <h5>Assign Personnel</h5>
-
-            <h5 class="dept-name">@ViewBag.DeptName</h5>
-        </div>
-
-        <br />
-
+    <div id="dv-dept-personnel" class="hidden">
         <div id="dept-user-grid-container"></div>
     </div>
     

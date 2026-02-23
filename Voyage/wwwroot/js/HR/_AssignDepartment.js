@@ -139,6 +139,12 @@ export async function init(params) {
     if (container)
         container.innerHTML = partial;
 
+    const tabs = document.getElementById('assign-dept-tabs');
+    if (tabs)
+        tabs.addEventListener("click", handleTabs);
+
+    updateBreadCrumb();
+
     let assignedTeams = await getAssignedDepartmentTeams();
     let teamNames = [];
 
@@ -186,7 +192,7 @@ export async function init(params) {
 
     await loadModule("gridControl", deptUser);
 
-    updateBreadCrumb();
+    
 }
 
 function updateBreadCrumb() {
@@ -228,4 +234,45 @@ function updateBreadCrumb() {
     li3.textContent = 'Assign Department'
 
     ol.appendChild(li3);
+}
+
+
+
+function handleTabs(e) {
+    const activeTab = document.querySelector('#assign-dept-tabs > .active-tab');
+    if (e.target.id === 'assign-team-tab') {
+        activeTab.classList.remove('active-tab');
+        e.target.classList.add('active-tab');
+
+        const previousHeader = document.getElementById('personnel-header');
+        previousHeader.classList.add('hidden');
+
+        const newHeader = document.getElementById('teams-header');
+        newHeader.classList.remove('hidden');
+
+        const previousGrid = document.getElementById('dv-dept-personnel');
+        previousGrid.classList.add('hidden');
+
+        const newGrid = document.getElementById('dv-dept-teams');
+        newGrid.classList.remove('hidden');
+    }
+    else if (e.target.id === 'assign-personnel-tab') {
+        activeTab.classList.remove('active-tab');
+        e.target.classList.add('active-tab');
+
+        const previousHeader = document.getElementById('personnel-header');
+        previousHeader.classList.remove('hidden');
+
+        const newHeader = document.getElementById('teams-header');
+        newHeader.classList.add('hidden');
+
+        const previousGrid = document.getElementById('dv-dept-personnel');
+        previousGrid.classList.remove('hidden');
+
+        const newGrid = document.getElementById('dv-dept-teams');
+        newGrid.classList.add('hidden');
+    }
+    else {
+        //await loadModule("deptPermissions", data);
+    }
 }
