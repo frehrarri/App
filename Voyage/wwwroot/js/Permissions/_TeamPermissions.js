@@ -3,12 +3,14 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 
 export async function init(data) {
     const partial = await getTeamPermissionsPartial(data);
-    document.getElementById('admin-settings-partial-container').innerHTML = partial;
+    const container = document.querySelector(".main-content");
 
-    const container = document.getElementById('team-permissions-container');
     const changeTracker = new Set();
 
-    container?.addEventListener("click", (e) => handleEvents(e, changeTracker));
+    if (container && partial) {
+        container.innerHTML = partial;
+        //container.addEventListener("click", (e) => handleEvents(e, changeTracker));
+    }
 }
 
 export async function getTeamPermissionsPartial(data) {
@@ -16,7 +18,7 @@ export async function getTeamPermissionsPartial(data) {
         const response = await axios.get('/Permissions/TeamPermissionsPartial', {
             params: {
                 name: data.name,
-                roleKey: data.datakey
+                teamkey: data.datakey
             }
         });
         return response.data;

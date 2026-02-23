@@ -1,7 +1,8 @@
 ﻿.offcanvas {
     border: none;
     background-color: #f5f5f6 !important;
-    box-shadow: .5px .5px #0000004d;
+    /*box-shadow: .5px .5px #0000004d;*/
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 /*side nav when collapsed*/

@@ -322,10 +322,6 @@ export async function init() {
 
     if (container && partial) {
         container.innerHTML = partial;
-    }
-
-    container = document.getElementById('tickets-container');
-    if (container) {
         container.addEventListener("click", handleEvents);
         container.addEventListener("change", handleEvents);
     }

@@ -117,14 +117,34 @@ function updateBreadCrumb() {
     ol.appendChild(li3);
 }
 
+async function handleEvents(e) {
+    const id = e.target.id;
+
+    if (id == 'team-permissions-link') {
+        const key = document.getElementById('hdn-team-key').value;
+        const name = document.getElementById('team-name').textContent;
+        debugger;
+        const data = {
+            name: name,
+            datakey: key
+        };
+
+        await loadModule("teamPermissions", data);
+    }
+        
+}
 
 export async function init(params) {
     //load initial partial
     let partial = await getAssignTeamPartial(params);
     const container = document.querySelector(".main-content");
 
-    if (container)
+    if (container && partial) {
         container.innerHTML = partial;
+        container.addEventListener("click", handleEvents);
+    }
+
+    updateBreadCrumb();
 
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
@@ -153,6 +173,4 @@ export async function init(params) {
         saveCallback: saveAssignTeamMembers
     }
     await loadModule("gridControl", assignTeam);
-
-    updateBreadCrumb();
 }

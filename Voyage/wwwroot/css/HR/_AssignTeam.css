@@ -12,9 +12,14 @@
     display: flex;
 }
 
-#team-name {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+h5 {
+    padding-bottom: 0px;
 }
 
+h6 {
+    padding-bottom: 20px;
+}
+
+#team-permissions-link {
+    margin-left: 33%;
+}

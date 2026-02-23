@@ -51,3 +51,15 @@ input {
     justify-content: flex-start;
 }
 
+#th-first, #th-last,
+#th-username, #th-role {
+    width: 145px !important;
+}
+
+#th-id{
+    width: 80px;
+}
+
+.sel-assign-role {
+    width: 135px !important;
+}

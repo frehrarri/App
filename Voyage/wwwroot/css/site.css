@@ -34,7 +34,7 @@ html, body {
     /*box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);*/
     background-color: #f5f5f6;
     position: relative; /* needed for absolute child positioning */
-    box-shadow: .5px .5px #0000004d;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .icon-circle {
@@ -73,6 +73,7 @@ html, body {
     color: cadetblue !important;
     font-weight: 400;
 }
+
 
 #dv-nav-brand {
     margin-left: -85px;
@@ -290,8 +291,8 @@ h5 {
     padding-bottom: 20px;
 }
 
-a{
-    color: cadetblue;
+a {
+    color: cadetblue !important;
     text-decoration: none;
 }
 
