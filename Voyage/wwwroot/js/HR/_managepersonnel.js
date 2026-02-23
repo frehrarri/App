@@ -145,17 +145,27 @@ async function handlePersonnelEvents(e) {
     }
 }
 
-function expandSideNavItem() {
-    //expand sidenav
-    const offcanvas = document.querySelector('.offcanvas.offcanvas-start');
-    offcanvas.classList.add('expanded');
+function expandSideNavItem(e) {
+    const navItems = document.querySelectorAll('#nav-items > li');
 
-    //open submenus
+    navItems.forEach(li => {
+        const text = li.querySelector('.navtext').textContent;
+        const submenuIcon = li.querySelector('.expand-icon > i');
 
-    //move content container with sidenav
+        if (text == e.target.textContent) {
+            //open submenu
+            li.classList.add('open');
 
-    //toggle icon
-    
+            //toggle submenu icon
+            submenuIcon.classList.remove('fa-angle-right');
+            submenuIcon.classList.add('fa-angle-down');
+
+            //open sidenav
+            const sidenav = document.getElementById('sidenav');
+            const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
+            offcanvas.show();
+        }
+    });
 }
 
 function updateBreadCrumb() {
@@ -172,8 +182,6 @@ function updateBreadCrumb() {
     a1.textContent = 'Human Resources'
 
     a1.addEventListener("click", expandSideNavItem);
-
-    //add event listener that when clicked on opens side nav and expands Human Resources links
 
     li1.appendChild(a1);
     ol.appendChild(li1);

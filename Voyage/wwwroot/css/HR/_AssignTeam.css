@@ -49,3 +49,7 @@ a.active-tab:hover {
     text-decoration: none !important;
     cursor: default !important;
 }
+
+#dv-allocate-team-personnel .app-table-header:not(:first-child) {
+    width: 140px !important;
+}

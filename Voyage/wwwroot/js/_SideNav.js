@@ -2,9 +2,10 @@
 
 async function handleClicks(e) {
     const sidenav = document.getElementById('sidenav');
-    const isExpanded = sidenav.classList.contains('expanded');
+    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
+    const isExpanded = sidenav.classList.contains('show'); 
 
-    // check for submenu item click
+    // if click bubbles from submenu its a leaf node so we load partial
     const submenuItem = e.target.closest('.submenu li[data-target]');
     if (submenuItem) {
         const target = submenuItem.dataset.target;
@@ -24,10 +25,13 @@ async function handleClicks(e) {
     //expand submenus 
     const submenu = rootItem.querySelector(':scope > .submenu');
     if (submenu) {
+
+        //open sidenav
         if (!isExpanded) {
-            sidenav.classList.add('expanded');
-            document.body.classList.add('sidenav-expanded');
+            offcanvas.show();
         }
+
+        //toggle submenu icon
         rootItem.classList.toggle('open');
         const icon = rootItem.querySelector(':scope > .expand-icon i');
         if (icon) {
@@ -50,6 +54,18 @@ async function handleClicks(e) {
 
 
 export async function init() {
+    //handle click events
     let nav = document.querySelector('.side-nav');
     nav.addEventListener("click", handleClicks);
+
+    //handle sidenav open icon
+    const sidenav = document.getElementById('sidenav');
+    
+    sidenav.addEventListener('show.bs.offcanvas', () => {
+        document.body.classList.add('sidenav-expanded');
+    });
+
+    sidenav.addEventListener('hide.bs.offcanvas', () => {
+        document.body.classList.remove('sidenav-expanded');
+    });
 }
