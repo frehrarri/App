@@ -67,7 +67,7 @@ async function getTeams() {
     }
 }
 
-function updateBreadCrumb() {
+async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
     ol.innerHTML = '';
@@ -80,7 +80,8 @@ function updateBreadCrumb() {
     a1.href = "#";
     a1.textContent = 'Human Resources'
 
-    //add event listener that when clicked on opens side nav and expands Human Resources links
+    const module = await loadModule('sideNav');
+    a1.addEventListener("click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -92,6 +93,8 @@ function updateBreadCrumb() {
 
     ol.appendChild(li2);
 }
+
+
 
 
 export async function init() {
@@ -125,5 +128,5 @@ export async function init() {
     }
     await loadModule("gridControl", manageTeam);
 
-    updateBreadCrumb();
+    await updateBreadCrumb();
 }

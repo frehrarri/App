@@ -145,30 +145,30 @@ async function handlePersonnelEvents(e) {
     }
 }
 
-function expandSideNavItem(e) {
-    const navItems = document.querySelectorAll('#nav-items > li');
+//function expandSideNavItem(e) {
+//    const navItems = document.querySelectorAll('#nav-items > li');
 
-    navItems.forEach(li => {
-        const text = li.querySelector('.navtext').textContent;
-        const submenuIcon = li.querySelector('.expand-icon > i');
+//    navItems.forEach(li => {
+//        const text = li.querySelector('.navtext').textContent;
+//        const submenuIcon = li.querySelector('.expand-icon > i');
 
-        if (text == e.target.textContent) {
-            //open submenu
-            li.classList.add('open');
+//        if (text == e.target.textContent) {
+//            //open submenu
+//            li.classList.add('open');
 
-            //toggle submenu icon
-            submenuIcon.classList.remove('fa-angle-right');
-            submenuIcon.classList.add('fa-angle-down');
+//            //toggle submenu icon
+//            submenuIcon.classList.remove('fa-angle-right');
+//            submenuIcon.classList.add('fa-angle-down');
 
-            //open sidenav
-            const sidenav = document.getElementById('sidenav');
-            const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
-            offcanvas.show();
-        }
-    });
-}
+//            //open sidenav
+//            const sidenav = document.getElementById('sidenav');
+//            const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
+//            offcanvas.show();
+//        }
+//    });
+//}
 
-function updateBreadCrumb() {
+async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
     ol.innerHTML = '';
@@ -181,7 +181,8 @@ function updateBreadCrumb() {
     a1.href = "#";
     a1.textContent = 'Human Resources'
 
-    a1.addEventListener("click", expandSideNavItem);
+    const module = await loadModule('sideNav');
+    a1.addEventListener("click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -206,5 +207,5 @@ export async function init() {
         container.addEventListener("change", handlePersonnelEvents);
     }
 
-    updateBreadCrumb();
+    await updateBreadCrumb();
 }

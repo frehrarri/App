@@ -15,7 +15,7 @@ export async function init(params) {
     //load permissions partial
     await loadModule("teamPermissions", params);
 
-    updateBreadCrumb();
+    await updateBreadCrumb();
 
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
@@ -120,7 +120,7 @@ async function getAssignedTeamPersonnel(teamKey) {
     }
 }
 
-function updateBreadCrumb() {
+async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
     ol.innerHTML = '';
@@ -133,8 +133,8 @@ function updateBreadCrumb() {
     a1.href = "#";
     a1.textContent = 'Human Resouces'
 
-    //add event listener that when clicked on opens side nav and expands Human Resources links
-    //a1.addEventListener("click", expandSideNavItem);
+    const module = await loadModule('sideNav');
+    a1.addEventListener("click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -147,8 +147,7 @@ function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Teams'
 
-    //add event listener that when clicked replaces the partial view
-    //a1.addEventListener("click", replacePartial);
+    a2.addEventListener("click", async () => await loadModule('manageTeams'));
 
     li2.appendChild(a2);
     ol.appendChild(li2);
@@ -183,7 +182,6 @@ function handleTabs(e) {
     if (!e.target.classList.contains('tab'))
         return;
 
-    debugger;
     const activeElements = document.querySelectorAll('.active-element:not(.tab)');
 
     //update tabs

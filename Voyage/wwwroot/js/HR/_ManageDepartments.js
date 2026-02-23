@@ -10,7 +10,7 @@ export async function init() {
     if (container) 
         container.innerHTML = partial;
 
-    updateBreadCrumb();
+    await updateBreadCrumb();
 
     //grid
     let depts = await getDepartments();
@@ -108,7 +108,7 @@ async function redirect(data) {
 }
 
 
-function updateBreadCrumb() {
+async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
     ol.innerHTML = '';
@@ -121,7 +121,8 @@ function updateBreadCrumb() {
     a1.href = "#";
     a1.textContent = 'Human Resources'
 
-    //add event listener that when clicked on opens side nav and expands Human Resources links
+    const module = await loadModule('sideNav');
+    a1.addEventListener("click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);

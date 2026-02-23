@@ -52,6 +52,29 @@ async function handleClicks(e) {
     }
 }
 
+export function expandSideNavItem(e) {
+    const navItems = document.querySelectorAll('#nav-items > li');
+
+    navItems.forEach(li => {
+        const text = li.querySelector('.navtext').textContent;
+        const submenuIcon = li.querySelector('.expand-icon > i');
+
+        if (text == e.target.textContent) {
+            //open submenu
+            li.classList.add('open');
+
+            //toggle submenu icon
+            submenuIcon.classList.remove('fa-angle-right');
+            submenuIcon.classList.add('fa-angle-down');
+
+            //open sidenav
+            const sidenav = document.getElementById('sidenav');
+            const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
+            offcanvas.show();
+        }
+    });
+}
+
 
 export async function init() {
     //handle click events

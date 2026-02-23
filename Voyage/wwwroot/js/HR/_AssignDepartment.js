@@ -146,7 +146,7 @@ export async function init(params) {
     if (tabs)
         tabs.addEventListener("click", handleTabs);
 
-    updateBreadCrumb();
+    await updateBreadCrumb();
 
     let assignedTeams = await getAssignedDepartmentTeams();
     let teamNames = [];
@@ -198,7 +198,7 @@ export async function init(params) {
     
 }
 
-function updateBreadCrumb() {
+async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
     ol.innerHTML = '';
@@ -211,8 +211,8 @@ function updateBreadCrumb() {
     a1.href = "#";
     a1.textContent = 'Human Resouces'
 
-    //add event listener that when clicked on opens side nav and expands Human Resources links
-    //a1.addEventListener("click", expandSideNavItem);
+    const module = await loadModule('sideNav');
+    a1.addEventListener("click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -225,8 +225,7 @@ function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Departments'
 
-    //add event listener that when clicked replaces the partial view
-    //a1.addEventListener("click", replacePartial);
+    a2.addEventListener("click", async () => await loadModule('manageDepartments'));
 
     li2.appendChild(a2);
     ol.appendChild(li2);
