@@ -1,20 +1,31 @@
-﻿import { loadModule } from "/js/__moduleLoader.js";
+﻿import { getTicketsPartial } from "/js/Tickets/_Tickets.js";
+import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
     //load partial
     const partial = await getTicketSettingsPartial();
-    document.getElementById("tickets-partial-container").innerHTML = partial;
+    const container = document.querySelector(".main-content");
 
-    //attach event handlers
-    document.getElementById("tickets-control-container").addEventListener("click", handleEvents);
-    document.getElementById("tickets-control-container").addEventListener("change", handleEvents);
+    if (partial && container) {
+        container.innerHTML = partial;
+
+        container.addEventListener("click", handleEvents);
+        container.addEventListener("change", handleEvents);
+
+        updateBreadCrumb();
+    }
+    debugger;
 }
 
 async function getTicketSettingsPartial() {
-    const response = await axios.get('/Tickets/SettingsPartial');
-    return response.data;
+    try {
+        const response = await axios.get('/Tickets/SettingsPartial');
+        return response.data;
+    }
+    catch (error) {
+        console.log(`Error getTicketSettingsPartial: ${error}`)
+    }
 }
-
 
 async function handleEvents(e) {
 
@@ -64,6 +75,39 @@ async function handleEvents(e) {
         const module = await loadModule("tickets");
         await module.getTicketsPartial();
     }
+}
+
+async function updateBreadCrumb() {
+    const ol = document.querySelector('.breadcrumb');
+
+    ol.innerHTML = '';
+
+    const li1 = document.createElement('li');
+    li1.classList.add('breadcrumb-item');
+    li1.classList.add('active')
+
+    const a1 = document.createElement('a');
+    a1.href = "#";
+    a1.textContent = 'Tickets'
+
+    a1.addEventListener("click", async () => {
+        const partial = await getTicketsPartial();
+        const container = document.querySelector(".main-content");
+
+        if (container && partial) {
+            container.innerHTML = partial;
+        }
+    });
+
+    li1.appendChild(a1);
+    ol.appendChild(li1);
+
+    const li2 = document.createElement('li');
+    li2.classList.add('breadcrumb-item');
+    li2.classList.add('active');
+    li2.textContent = 'Ticket Settings';
+
+    ol.appendChild(li2);
 }
 
 function addSection(section) {

@@ -1,5 +1,36 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
+export async function init() {
+
+    //load initial partial
+    let partial = await getTicketsPartial();
+
+    const container = document.querySelector('.main-content');
+
+    if (container && partial) {
+        container.innerHTML = partial;
+        container.addEventListener("click", handleEvents);
+        container.addEventListener("change", handleEvents);
+    }
+
+
+    //document.querySelectorAll(".paginate").forEach(el => {
+    //    const sectionTitle = el.dataset.section;
+
+    //    //add change event for select list
+    //    if (el.id.includes(`sel-take-section`)) {
+    //        el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
+    //    }
+    //    //click events for buttons
+    //    else {
+    //        el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
+    //    }
+    //});
+
+    //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
+
+}
+
 export async function getTicketsPartial() {
     try {
         const response = await axios.get('/Tickets/TicketsPartial');
@@ -313,33 +344,3 @@ async function handleEvents(e) {
 }
 
 
-export async function init() {
-
-    //load initial partial
-    let partial = await getTicketsPartial();
-
-    const container = document.querySelector('.main-content');
-
-    if (container && partial) {
-        container.innerHTML = partial;
-        container.addEventListener("click", handleEvents);
-        container.addEventListener("change", handleEvents);
-    }
-
-
-    //document.querySelectorAll(".paginate").forEach(el => {
-    //    const sectionTitle = el.dataset.section;
-
-    //    //add change event for select list
-    //    if (el.id.includes(`sel-take-section`)) {
-    //        el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
-    //    }
-    //    //click events for buttons
-    //    else {
-    //        el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
-    //    }
-    //});
-
-    //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
-
-}

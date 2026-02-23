@@ -10,11 +10,19 @@
 }
 
 @* update breadcrumb on module init *@
-<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        @* <li class="breadcrumb-item active"><a href="#">Home</a></li> *@
-    </ol>
-</nav>
+
+<div id="main-content-header">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            @* <li class="breadcrumb-item active"><a href="#">Home</a></li> *@
+        </ol>
+    </nav>
+
+    @* replace button's data-settings on partial load to handle events *@
+    <button class="btn-settings" data-settings="dashboard" type="button">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+</div>
 
 <div class="app-main">
     @* load main content via js *@

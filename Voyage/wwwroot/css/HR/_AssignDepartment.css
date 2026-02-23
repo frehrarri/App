@@ -50,18 +50,3 @@
         cursor: default !important;
     }
 
-.dept-name {
-    /*    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);*/
-}
-
-#dv-dept-user-btns, #dv-dept-team-btns {
-/*    padding-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;*/
-}
-
-/*#dv-dept-teams, #dv-dept-personnel */

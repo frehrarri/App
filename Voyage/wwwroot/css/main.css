@@ -7,3 +7,13 @@
     max-width:fit-content;
     font-style: italic;
 }
+
+#main-content-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-settings {
+    border: none;
+    background-color: inherit;
+}

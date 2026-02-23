@@ -1,4 +1,13 @@
-﻿.delete-section {
+﻿#dv-sections-container,
+#dv-sprint-container {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 20px 30px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.delete-section {
     display: inline-block;
     border: 1px solid black;
     border-radius: 5px;
@@ -58,12 +67,4 @@
     display: inline;
 }
 
-#dv-sections-container,
-#dv-sprint-container {
-    border: 1px solid gray;
-    box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    background-color: #e8f0fe;
-    padding: 30px 20px;
-}
+

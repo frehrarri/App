@@ -34,10 +34,6 @@ export async function init() {
         redirectCallback: redirect
     }
     await loadModule("gridControl", manageDept);
-
-    
-
-    
 }
 
 export async function getManageDepartmentsPartial() {

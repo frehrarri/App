@@ -26,6 +26,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const li = document.querySelector('li[data-target="main-dashboard"]');
     li.classList.add('active-page');
+
+    const container = document.getElementById('app-container');
+    container.addEventListener("click", handleEvents)
 });
 
+async function handleEvents(e) {
+    const target = e.target.closest('.btn-settings');
+    if (!target)
+        return;
+
+    const settings = target.dataset.settings;
+
+    //if (settings === "dashboard") await loadModule('mainDashboard');
+    if (settings === "ticket") await loadModule('ticketSettings');
+    else if (settings === "hr") await loadModule('hrSettings');
+    
+
+}
 

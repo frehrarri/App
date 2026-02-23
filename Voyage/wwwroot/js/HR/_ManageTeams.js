@@ -95,8 +95,6 @@ async function updateBreadCrumb() {
 }
 
 
-
-
 export async function init() {
     //load partial
     let partial = await getManageTeamsPartial();
@@ -104,6 +102,8 @@ export async function init() {
 
     if (container)
         container.innerHTML = partial;
+
+    await updateBreadCrumb();
 
     //grid
     let teams = await getTeams();
@@ -127,6 +127,4 @@ export async function init() {
         redirectCallback: redirect
     }
     await loadModule("gridControl", manageTeam);
-
-    await updateBreadCrumb();
 }

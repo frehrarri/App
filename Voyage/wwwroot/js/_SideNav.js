@@ -4,20 +4,10 @@ async function handleClicks(e) {
     const sidenav = document.getElementById('sidenav');
     const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(sidenav);
     const isExpanded = sidenav.classList.contains('show'); 
+    
+    const isSuccess = await handleSubmenuClicks(e);
 
-    // if click bubbles from submenu its a leaf node so we load partial
-    const submenuItem = e.target.closest('.submenu li[data-target]');
-    if (submenuItem) {
-        const target = submenuItem.dataset.target;
-        if (target === "manage-personnel") await loadModule("managePersonnel");
-        else if (target === "manage-teams") await loadModule("manageTeams");
-        else if (target === "manage-depts") await loadModule("manageDepartments");
-        else if (target === "manage-roles") await loadModule("manageRoles");
-
-        document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
-        submenuItem.classList.add('active-page');
-        return; 
-    }
+    if (!isSuccess) return;
 
     const rootItem = e.target.closest('#nav-items > li');
     if (!rootItem) return;
@@ -25,30 +15,11 @@ async function handleClicks(e) {
     //expand submenus 
     const submenu = rootItem.querySelector(':scope > .submenu');
     if (submenu) {
-
-        //open sidenav
-        if (!isExpanded) {
-            offcanvas.show();
-        }
-
-        //toggle submenu icon
-        rootItem.classList.toggle('open');
-        const icon = rootItem.querySelector(':scope > .expand-icon i');
-        if (icon) {
-            icon.classList.toggle('fa-angle-right');
-            icon.classList.toggle('fa-angle-down');
-        }
+        expandSubmenu(e, rootItem, offcanvas, isExpanded);
     }
     //didnt have a submenu to expand so redirect to page
     else {
-        const target = rootItem.dataset.target;
-        if (!target) return;
-
-        if (target === "main-dashboard") await loadModule("mainDashboard");
-        else if (target === "ticket-view") await loadModule("tickets");
-
-        document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
-        rootItem.classList.add('active-page');
+        handleLeafNodeClicks(rootItem);
     }
 }
 
@@ -64,8 +35,10 @@ export function expandSideNavItem(e) {
             li.classList.add('open');
 
             //toggle submenu icon
-            submenuIcon.classList.remove('fa-angle-right');
-            submenuIcon.classList.add('fa-angle-down');
+            if (submenuIcon) {
+                submenuIcon.classList.remove('fa-angle-right');
+                submenuIcon.classList.add('fa-angle-down');
+            }
 
             //open sidenav
             const sidenav = document.getElementById('sidenav');
@@ -91,4 +64,89 @@ export async function init() {
     sidenav.addEventListener('hide.bs.offcanvas', () => {
         document.body.classList.remove('sidenav-expanded');
     });
+}
+
+async function handleSubmenuClicks(e) {
+    // if click bubbles from submenu its a leaf node so we load partial
+    const submenuItem = e.target.closest('.submenu li[data-target]');
+    if (submenuItem) {
+        const target = submenuItem.dataset.target;
+
+        if (target === "manage-personnel") {
+            await loadModule("managePersonnel");
+            updateSettingsBtn('hr');
+        }
+        else if (target === "manage-teams") {
+            await loadModule("manageTeams");
+            updateSettingsBtn('hr');
+        }
+        else if (target === "manage-depts") {
+            await loadModule("manageDepartments");
+            updateSettingsBtn('hr');
+        }
+        else if (target === "manage-roles") {
+            await loadModule("manageRoles");
+            //updateSettingsBtn('admin');
+        }
+
+        document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
+        submenuItem.classList.add('active-page');
+
+        return false;
+    }
+
+    return true;
+}
+
+function updateSettingsBtn(setting) {
+    const btn = document.querySelector('.btn-settings');
+    btn.dataset.settings = `${setting}`;
+}
+
+function expandSubmenu(e, rootItem, offcanvas, isExpanded) {
+    //open sidenav
+    if (!isExpanded) {
+        offcanvas.show();
+    }
+
+    //toggle submenu icon
+    rootItem.classList.toggle('open');
+    const icon = rootItem.querySelector(':scope > .expand-icon i');
+    if (icon) {
+        icon.classList.toggle('fa-angle-right');
+        icon.classList.toggle('fa-angle-down');
+    }
+}
+
+async function handleLeafNodeClicks(rootItem) {
+    const target = rootItem.dataset.target;
+    if (!target) return;
+
+    if (target === "main-dashboard")
+    {
+        await loadModule("mainDashboard");
+        updateSettingsBtn('dashboard');
+    } 
+    else if (target === "tickets") {
+        await loadModule("tickets");
+        updateSettingsBtn('ticket');
+        updateTicketsBreadCrumb();
+    } 
+
+    document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
+    rootItem.classList.add('active-page');
+}
+
+//needed because we return the setup partial for tickets which limits where we can go.
+async function updateTicketsBreadCrumb() {
+    const ol = document.querySelector('.breadcrumb');
+
+    ol.innerHTML = '';
+
+    const li1 = document.createElement('li');
+    li1.classList.add('breadcrumb-item');
+    li1.classList.add('active');
+    li1.textContent = 'Tickets';
+
+    ol.appendChild(li1);
 }
