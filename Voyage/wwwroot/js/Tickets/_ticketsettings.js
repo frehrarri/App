@@ -2,19 +2,18 @@
 import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    //load partial
+    const sectionHistory = [];
     const partial = await getTicketSettingsPartial();
     const container = document.querySelector(".main-content");
 
     if (partial && container) {
         container.innerHTML = partial;
 
-        container.addEventListener("click", handleEvents);
-        container.addEventListener("change", handleEvents);
+        container.addEventListener("click", (e) => handleEvents(e, sectionHistory));
+        container.addEventListener("change", (e) => handleEvents(e, sectionHistory));
 
         updateBreadCrumb();
     }
-    debugger;
 }
 
 async function getTicketSettingsPartial() {
@@ -27,54 +26,25 @@ async function getTicketSettingsPartial() {
     }
 }
 
-async function handleEvents(e) {
-
-    if (e.type == "change" && e.target.matches("[name='rdo-repeat']"))
+async function handleEvents(e, sectionHistory) {
+    if (e.type == "change" && e.target.matches("[name='rdo-repeat']")) 
         toggleSprintDateControls(e);
 
-    if (e.target.tagName == "INPUT" && e.target.type == 'radio') {
-        debugger;
-        let previousElement = document.querySelector("[name='rdo-repeat']:checked");
-        previousElement.checked = false;
+    else if (e.type == "change" && e.target.matches("[name='rdo-section']"))
+        toggleSectionControls(e, sectionHistory);
 
-        e.target.checked = true;
-    }
+    else if (e.target.id == "add-section-btn")
+        addSection(null, sectionHistory);
 
-    // input[type='date'] workaround - don't know why it wasn't working.
-    if (e.target.tagName == "INPUT" && e.target.type === 'date') {
-        try {
-            if (e.target.showPicker) {
-                e.target.showPicker();
-            } else {
-                // Fallback for older browsers
-                e.target.focus();
-            }
-        } catch (err) {
-            console.error('showPicker failed:', err);
-        }
-        return;
-    }
-
-    if (e.target.id == "add-section-btn")
-        addSection();
-
-    if (e.target.id == 'save-settings-btn')
+    else if (e.target.id == 'save-settings-btn')
         await save(e);
 
-    if (e.target.classList.contains("delete-section")
+    else if (e.target.classList.contains("delete-section")
         || e.target.classList.contains("delete"))
-            removeSection(e);
+            removeSection(e, sectionHistory);
 
-    if (e.type == "change" && e.target.matches("[name='rdo-section']"))
-        toggleSectionControls(e);
-
-    if (e.target.id == "undo-section-btn")
-        undoSection();
-
-    if (e.target.id == "back-btn") {
-        const module = await loadModule("tickets");
-        await module.getTicketsPartial();
-    }
+    else if (e.target.id == "undo-section-btn")
+        undoSection(sectionHistory);
 }
 
 async function updateBreadCrumb() {
@@ -110,7 +80,7 @@ async function updateBreadCrumb() {
     ol.appendChild(li2);
 }
 
-function addSection(section) {
+function addSection(section, sectionHistory) {
 
     let input = document.getElementById('section-title-input').value.trim();
     if (section != null)
@@ -128,9 +98,6 @@ function addSection(section) {
     //clear after adding to container
     document.getElementById('section-title-input').value = "";
 
-    newSection.querySelector('.delete-section')?.addEventListener("click", removeSection);
-    newSection.querySelector('.delete')?.addEventListener("click", removeSection);
-
     sectionHistory.push({
         type: "add",
         element: newSection
@@ -138,9 +105,9 @@ function addSection(section) {
 
 }
 
-const sectionHistory = [];
 
-function undoSection() {
+
+function undoSection(sectionHistory) {
     if (!sectionHistory.length) return;
 
     const lastAction = sectionHistory.pop();
@@ -156,13 +123,13 @@ function undoSection() {
     }
 }
 
-function removeSection(e) {
+function removeSection(e, sectionHistory) {
     let target;
     if (e.target.classList.contains('delete')) {
         target = e.target.parentElement;
     } else {
         target = e.target;
-    }        e.target.parentElement.remove();
+    }       /* e.target.parentElement.remove();*/
 
     sectionHistory.push({
         type: "remove",
@@ -242,7 +209,7 @@ function toggleSprintDateControls(e) {
     }
 }
 
-function toggleSectionControls(e) {
+function toggleSectionControls(e, sectionHistory) {
     let container = document.getElementById('sections-container');
 
     //clear any sections that are already created
@@ -267,7 +234,7 @@ function toggleSectionControls(e) {
         }
 
         for (let section of sections)
-            addSection(section);
+            addSection(section, sectionHistory);
     }
 
 }

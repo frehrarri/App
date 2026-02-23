@@ -7,15 +7,32 @@
     margin-bottom: 20px;
 }
 
+#dv-sections-container {
+    max-width: 35%;
+    height: fit-content;
+    max-height: 500px;
+}
+
+#dv-sprint-container {
+    max-width: 35%;
+    height: fit-content;
+    max-height: 500px;
+}
+
+#sections-container {
+    margin-top: 20px;
+}
+
 .delete-section {
     display: inline-block;
-    border: 1px solid black;
+   /* border: 1px solid black;*/
     border-radius: 5px;
     padding: 2px 10px 4px 8px;
     margin: 2px;
     position: relative;
     cursor: pointer;
-    background-color: ghostwhite;
+    background-color: #f8f9fa;
+    box-shadow: .5px .5px 1px .5px #120d0dba;
 }
 
     .delete-section .delete {
@@ -23,7 +40,7 @@
         bottom: -3px;
         right: 1px;
         cursor: pointer;
-        font-weight: 500;
+        font-weight: 400;
         font-size: 0.9rem;
         color: black;
     }
@@ -31,13 +48,14 @@
 #section-title-input{
     border: 1px solid black;
     border-radius:5px;
-    background-color: ghostwhite;
+    background-color: white;
     margin-bottom: 5px;
 }
 
 #save-btn-container {
+    margin-top: 20px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 #btn-container{
@@ -59,12 +77,24 @@
     border-radius: 5px;
 }
 
-#rdo-repeat-container {
-    margin-left: 5px;
+#undo-section-btn, #add-section-btn{
+    border: none;
+    background: inherit;
 }
 
-#undo-section-btn{
-    display: inline;
+    #undo-section-btn:first-child {
+        color: blue !important;
+    }
+
+#add-section-btn:first-child {
+    color: green !important;
 }
 
+h6 {
+    margin-top: 20px;
+}
+
+label {
+    padding-right: 5px;
+}
 
