@@ -21,6 +21,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.body.classList.remove('sidenav-expanded');
     });
 
+    //prevent offcanvas focus trap that was causing issue with inputs outside of sidenav
+    sidenav.addEventListener('shown.bs.offcanvas', function () {
+        const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidenav);
+        if (offcanvasInstance) {
+            offcanvasInstance._focustrap.deactivate();
+        }
+    });
+
     //replace .main-content with main dashboard partial
     await loadModule("mainDashboard");
 

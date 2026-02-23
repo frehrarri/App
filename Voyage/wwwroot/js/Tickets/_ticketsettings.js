@@ -27,24 +27,29 @@ async function getTicketSettingsPartial() {
 }
 
 async function handleEvents(e, sectionHistory) {
+    debugger;
+    const btn = e.target.closest("button");
+
+    if (btn) {
+        if (btn.id == "add-section-btn")
+            addSection(null, sectionHistory);
+
+        else if (btn.id == 'save-settings-btn')
+            await save(e);
+
+        else if (btn.id == "undo-section-btn")
+            undoSection(sectionHistory);
+    }
+
     if (e.type == "change" && e.target.matches("[name='rdo-repeat']")) 
         toggleSprintDateControls(e);
 
     else if (e.type == "change" && e.target.matches("[name='rdo-section']"))
         toggleSectionControls(e, sectionHistory);
 
-    else if (e.target.id == "add-section-btn")
-        addSection(null, sectionHistory);
-
-    else if (e.target.id == 'save-settings-btn')
-        await save(e);
-
     else if (e.target.classList.contains("delete-section")
         || e.target.classList.contains("delete"))
             removeSection(e, sectionHistory);
-
-    else if (e.target.id == "undo-section-btn")
-        undoSection(sectionHistory);
 }
 
 async function updateBreadCrumb() {
@@ -81,7 +86,7 @@ async function updateBreadCrumb() {
 }
 
 function addSection(section, sectionHistory) {
-
+    debugger;
     let input = document.getElementById('section-title-input').value.trim();
     if (section != null)
         input = section;

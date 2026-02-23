@@ -141,13 +141,6 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
         target.replaceWith(wrapper);
         wrapper.appendChild(input);
 
-        //offcanvas steals focus when open - disable its focustrap then renable in blur handler
-        const sidenavEl = document.getElementById('sidenav');
-        const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidenavEl);
-        if (offcanvasInstance) {
-            offcanvasInstance._focustrap.deactivate();
-        }
-
         input.focus();
 
         // Disable save button when input is opened
@@ -165,13 +158,7 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
            
                 // Delay to allow autocomplete click to register
                 setTimeout(() => {
-                    // Re-enable Bootstrap focus trap
-                    const sidenavEl = document.getElementById('sidenav');
-                    const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidenavEl);
-                    if (offcanvasInstance) {
-                        offcanvasInstance._focustrap.activate();
-                    }
-
+      
                     const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
                     if (ul)
                         ul.classList.remove("show");
