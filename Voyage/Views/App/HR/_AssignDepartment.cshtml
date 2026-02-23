@@ -1,24 +1,27 @@
 ﻿<div id="assign-department-container">
 
     <div class="assign-dept-header">
-        <h5 id="teams-header">Assign Teams</h5>
-        <h5 id="personnel-header" class="hidden">Assign Personnel</h5>
+        <h5 class="teams active-element">Assign Department Teams</h5>
+        <h5 class="personnel hidden">Assign Department Personnel</h5>
+        <h5 class="permissions hidden">Permissions</h5>
 
         <div id="assign-dept-tabs">
-            <a id="assign-team-tab" href="#" class="active-tab">Assign Teams</a>
-            <a id="assign-personnel-tab" href="#">Assign Personnel</a>
-            <a id="dept-permissions-link" href="#" tabindex="0">Manage Permissions</a>
+            <a href="#" class="teams tab active-tab" tabindex="0">Assign Teams</a>
+            <a href="#" class="personnel tab" tabindex=" 0">Assign Personnel</a>
+            <a href="#" class="permissions tab" tabindex="0">Manage Permissions</a>
         </div>
     </div>
     <h6 class="dept-name">@ViewBag.DeptName</h6>
 
-    <div id="dv-dept-teams">
+    <div id="dv-dept-teams" class="teams active-element">
         <div id="dept-team-grid-container"></div>
     </div>
 
-    <div id="dv-dept-personnel" class="hidden">
+    <div id="dv-dept-personnel" class="personnel hidden">
         <div id="dept-user-grid-container"></div>
     </div>
+
+    <div id="dv-dept-permissions" class="permissions hidden"></div>
     
 </div>
 <input type="hidden" id="hdn-dept-key" value="@ViewBag.DeptKey">

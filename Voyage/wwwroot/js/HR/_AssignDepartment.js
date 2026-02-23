@@ -139,6 +139,9 @@ export async function init(params) {
     if (container)
         container.innerHTML = partial;
 
+    //load permissions partial
+    await loadModule("deptPermissions", params);
+
     const tabs = document.getElementById('assign-dept-tabs');
     if (tabs)
         tabs.addEventListener("click", handleTabs);
@@ -239,40 +242,37 @@ function updateBreadCrumb() {
 
 
 function handleTabs(e) {
+    if (!e.target.classList.contains('tab'))
+        return;
+
+    const activeElements = document.querySelectorAll('.active-element:not(.tab)');
+
+    //update tabs
     const activeTab = document.querySelector('#assign-dept-tabs > .active-tab');
-    if (e.target.id === 'assign-team-tab') {
-        activeTab.classList.remove('active-tab');
-        e.target.classList.add('active-tab');
+    activeTab.classList.remove('active-tab');
+    e.target.classList.add('active-tab');
 
-        const previousHeader = document.getElementById('personnel-header');
-        previousHeader.classList.add('hidden');
+    //hide previous elements
+    activeElements.forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('active-element')
+    });
 
-        const newHeader = document.getElementById('teams-header');
-        newHeader.classList.remove('hidden');
-
-        const previousGrid = document.getElementById('dv-dept-personnel');
-        previousGrid.classList.add('hidden');
-
-        const newGrid = document.getElementById('dv-dept-teams');
-        newGrid.classList.remove('hidden');
+    //show current elements
+    let elements = null;
+    if (e.target.classList.contains('teams')) {
+        elements = document.querySelectorAll('.teams');
     }
-    else if (e.target.id === 'assign-personnel-tab') {
-        activeTab.classList.remove('active-tab');
-        e.target.classList.add('active-tab');
-
-        const previousHeader = document.getElementById('personnel-header');
-        previousHeader.classList.remove('hidden');
-
-        const newHeader = document.getElementById('teams-header');
-        newHeader.classList.add('hidden');
-
-        const previousGrid = document.getElementById('dv-dept-personnel');
-        previousGrid.classList.remove('hidden');
-
-        const newGrid = document.getElementById('dv-dept-teams');
-        newGrid.classList.add('hidden');
+    else if (e.target.classList.contains('personnel')) {
+        elements = document.querySelectorAll('.personnel');
     }
-    else {
-        //await loadModule("deptPermissions", data);
+    else if (e.target.classList.contains('permissions')) {
+        elements = document.querySelectorAll('.permissions');
     }
+
+    if (elements)
+        elements.forEach(el => {
+            el.classList.add('active-element');
+            el.classList.remove('hidden');
+        });
 }

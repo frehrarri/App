@@ -1,14 +1,9 @@
 ﻿@model PermissionsVM
 
-<div id="dept-permissions-container" class="container">
+<div id="dept-permissions-container">
 
     <form>
         @Html.AntiForgeryToken()
-        <div id="dept-permissions-header">
-            <h4 id="header-title">Permissions</h4>
-            <h4 id="role-name">@ViewBag.DeptName</h4>
-        </div>
-
         <div id="dv-permissions">
 
             @foreach (var p in Model.Permissions)

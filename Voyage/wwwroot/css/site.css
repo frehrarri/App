@@ -93,13 +93,6 @@ html, body {
     padding: 20px;
 }
 
-.app-main {
-    flex: 1; /* take remaining space */
-    display: flex;
-    justify-content: center; /* horizontally center content */
-    align-items: flex-start; /* top align */
-}
-
 .app-table {
     width: 100%;
     table-layout: fixed !important;

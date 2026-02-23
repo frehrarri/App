@@ -2,9 +2,9 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(data) {
+    debugger;
     const partial = await getDepartmentPermissionsPartial(data);
-    document.getElementById('hr-partial-container').innerHTML = partial;
-
+    document.getElementById('dv-dept-permissions').innerHTML = partial;
     //const container = document.getElementById('dept-permissions-container');
     //const changeTracker = new Set();
 
@@ -15,8 +15,8 @@ export async function getDepartmentPermissionsPartial(data) {
     try {
         const response = await axios.get('/Permissions/DeptPermissionsPartial', {
             params: {
-                name: data.name,
-                roleKey: data.datakey
+                name: data.deptName,
+                deptKey: data.deptKey
             }
         });
         return response.data;
@@ -35,23 +35,23 @@ export async function getDepartmentPermissionsPartial(data) {
 
 //}
 
-function toggleSaveButton(e, changeTracker) {
-    const existingChange = changeTracker.has(e.target.id);
+//function toggleSaveButton(e, changeTracker) {
+//    const existingChange = changeTracker.has(e.target.id);
 
-    //remove existing change
-    if (existingChange) {
-        changeTracker.delete(e.target.id);
+//    //remove existing change
+//    if (existingChange) {
+//        changeTracker.delete(e.target.id);
 
-        //if there are no changes in the change tracker disable save
-        if (changeTracker.size === 0)
-            document.getElementById('btn-save-dept-permission').disabled = true;
-    }
-    //add to change tracker
-    else {
-        changeTracker.add(e.target.id);
-        document.getElementById('btn-save-dept-permission').disabled = false;
-    }
-}
+//        //if there are no changes in the change tracker disable save
+//        if (changeTracker.size === 0)
+//            document.getElementById('btn-save-dept-permission').disabled = true;
+//    }
+//    //add to change tracker
+//    else {
+//        changeTracker.add(e.target.id);
+//        document.getElementById('btn-save-dept-permission').disabled = false;
+//    }
+//}
 
 //async function saveDeptPermissions(e) {
 //    e.preventDefault();
@@ -96,4 +96,3 @@ function toggleSaveButton(e, changeTracker) {
 //    }
 
 
-}
