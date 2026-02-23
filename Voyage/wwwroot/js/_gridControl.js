@@ -119,7 +119,6 @@ function addNewRow(newId, changeTracker) {
 
 function addUserInput(e, newId, controlType, changeTracker, autocompleteState, currentVals) {
     const target = e.target;
-
     if (target.classList.contains(`add-${newId}-span`) && e.type === "click") {
         const row = e.target.parentElement.parentElement;
 
@@ -136,10 +135,18 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
         input.className = `add-${newId}-input`;
         input.value = "";
         input.dataset.uid = uid;
+        input.tabIndex = 0;
 
         // Replace span with wrapper, then add input
         target.replaceWith(wrapper);
         wrapper.appendChild(input);
+
+        //offcanvas steals focus when open - disable its focustrap then renable in blur handler
+        const sidenavEl = document.getElementById('sidenav');
+        const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidenavEl);
+        if (offcanvasInstance) {
+            offcanvasInstance._focustrap.deactivate();
+        }
 
         input.focus();
 
@@ -155,8 +162,16 @@ function addUserInput(e, newId, controlType, changeTracker, autocompleteState, c
             autocompleteState.set(input, { selectionMade: false });
 
             input.addEventListener("blur", () => {
+           
                 // Delay to allow autocomplete click to register
                 setTimeout(() => {
+                    // Re-enable Bootstrap focus trap
+                    const sidenavEl = document.getElementById('sidenav');
+                    const offcanvasInstance = bootstrap.Offcanvas.getInstance(sidenavEl);
+                    if (offcanvasInstance) {
+                        offcanvasInstance._focustrap.activate();
+                    }
+
                     const ul = document.querySelector(".autocomplete-list[data-for='" + input.dataset.uid + "']");
                     if (ul)
                         ul.classList.remove("show");
