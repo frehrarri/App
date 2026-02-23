@@ -2,6 +2,50 @@
 
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+export async function init(params) {
+    //load initial partial
+    let partial = await getAssignTeamPartial(params);
+    const container = document.querySelector(".main-content");
+
+    if (container && partial) {
+        container.innerHTML = partial;
+        container.addEventListener("click", handleEvents);
+    }
+
+    //load permissions partial
+    await loadModule("teamPermissions", params);
+
+    updateBreadCrumb();
+
+    //grid
+    let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
+    let teamMembers = [];
+
+    if (assignedTeams) {
+        teamMembers = assignedTeams.map(list => {
+            return {
+                teamName: list.teamName,
+                teamKey: list.teamKey,
+                employeeid: list.employeeId,
+                roleid: list.roleId,
+                firstname: list.firstName,
+                lastname: list.lastName,
+                username: list.username,
+                email: list.email
+            }
+        });
+    }
+
+
+    let assignTeam = {
+        newId: 'assign-team',
+        rows: teamMembers,
+        controlType: 5,
+        saveCallback: saveAssignTeamMembers
+    }
+    await loadModule("gridControl", assignTeam);
+}
+
 export async function getAssignTeamPartial(params) {
     params = {
         teamKey: params.datakey,
@@ -131,46 +175,39 @@ async function handleEvents(e) {
 
         await loadModule("teamPermissions", data);
     }
-        
+
+    handleTabs(e);        
 }
 
-export async function init(params) {
-    //load initial partial
-    let partial = await getAssignTeamPartial(params);
-    const container = document.querySelector(".main-content");
+function handleTabs(e) {
+    if (!e.target.classList.contains('tab'))
+        return;
 
-    if (container && partial) {
-        container.innerHTML = partial;
-        container.addEventListener("click", handleEvents);
+    const activeElements = document.querySelectorAll('.active-element:not(.tab)');
+
+    //update tabs
+    const activeTab = document.querySelector('#assign-team-tabs > .active-tab');
+    activeTab.classList.remove('active-tab');
+    e.target.classList.add('active-tab');
+
+    //hide previous elements
+    activeElements.forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('active-element')
+    });
+
+    //show current elements
+    let elements = null;
+    if (e.target.classList.contains('teams')) {
+        elements = document.querySelectorAll('.teams');
+    }
+    else if (e.target.classList.contains('permissions')) {
+        elements = document.querySelectorAll('.permissions');
     }
 
-    updateBreadCrumb();
-
-    //grid
-    let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
-    let teamMembers = [];
-
-    if (assignedTeams) {
-        teamMembers = assignedTeams.map(list => {
-            return {
-                teamName: list.teamName,
-                teamKey: list.teamKey,
-                employeeid: list.employeeId,
-                roleid: list.roleId,
-                firstname: list.firstName,
-                lastname: list.lastName,
-                username: list.username,
-                email: list.email
-            }
+    if (elements)
+        elements.forEach(el => {
+            el.classList.add('active-element');
+            el.classList.remove('hidden');
         });
-    }
-   
-
-    let assignTeam = {
-        newId: 'assign-team',
-        rows: teamMembers,
-        controlType: 5,
-        saveCallback: saveAssignTeamMembers
-    }
-    await loadModule("gridControl", assignTeam);
 }

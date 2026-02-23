@@ -11,6 +11,7 @@
 .assign-dept-header {
     display: flex;
     justify-content: flex-start;
+    position: relative;
 }
 
 h5 {
@@ -21,8 +22,11 @@ h6 {
     padding-bottom: 20px;
 }
 
-#assign-dept-tabs{
-    margin-left: 25%;
+#assign-dept-tabs {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
 }
 
 #assign-dept-tabs > a {

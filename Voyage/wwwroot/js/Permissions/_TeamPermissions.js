@@ -3,7 +3,7 @@ const token = document.querySelector('input[name="__RequestVerificationToken"]')
 
 export async function init(data) {
     const partial = await getTeamPermissionsPartial(data);
-    const container = document.querySelector(".main-content");
+    const container = document.querySelector("#dv-team-permissions");
 
     const changeTracker = new Set();
 

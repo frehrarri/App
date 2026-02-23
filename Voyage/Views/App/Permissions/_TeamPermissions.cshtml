@@ -4,11 +4,6 @@
 
     <form>
         @Html.AntiForgeryToken()
-        <div id="team-permissions-header">
-            <h5 id="header-title">Permissions</h5>
-            <h6 id="role-name">@ViewBag.TeamName</h6>
-        </div>
-
         <div id="dv-permissions">
 
             @foreach (var p in Model.Permissions)
