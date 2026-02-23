@@ -183,6 +183,7 @@ function handleTabs(e) {
     if (!e.target.classList.contains('tab'))
         return;
 
+    debugger;
     const activeElements = document.querySelectorAll('.active-element:not(.tab)');
 
     //update tabs
@@ -198,8 +199,8 @@ function handleTabs(e) {
 
     //show current elements
     let elements = null;
-    if (e.target.classList.contains('teams')) {
-        elements = document.querySelectorAll('.teams');
+    if (e.target.classList.contains('personnel')) {
+        elements = document.querySelectorAll('.personnel');
     }
     else if (e.target.classList.contains('permissions')) {
         elements = document.querySelectorAll('.permissions');

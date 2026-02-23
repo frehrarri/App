@@ -14,11 +14,11 @@
     position: relative;
 }
 
-h5 {
+#dv-allocate-team-personnel h5 {
     padding-bottom: 0px;
 }
 
-h6 {
+#dv-allocate-team-personnel h6 {
     padding-bottom: 20px;
 }
 
@@ -29,6 +29,23 @@ h6 {
     display: flex;
 }
 
-#assign-team-tabs > a {
-    padding: 10px;
+    #assign-team-tabs > a {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    #assign-team-tabs > a:hover {
+        text-decoration: underline;
+        color: cadetblue;
+    }
+
+.active-tab {
+    color: black !important;
+    text-decoration: none;
+}
+
+a.active-tab:hover {
+    color: black !important;
+    text-decoration: none !important;
+    cursor: default !important;
 }

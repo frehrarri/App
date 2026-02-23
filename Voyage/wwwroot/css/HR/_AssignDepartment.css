@@ -14,11 +14,11 @@
     position: relative;
 }
 
-h5 {
+#assign-department-container h5 {
     padding-bottom: 0px;
 }
 
-h6 {
+#assign-department-container h6 {
     padding-bottom: 20px;
 }
 
