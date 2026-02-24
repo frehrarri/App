@@ -2,16 +2,12 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    /*margin: 20px 0;*/
-    /*max-height: 500px;*/
-    /*min-height: 70vh;*/
     width: 1000px;
     overflow-y: auto;
-    border: 1px solid gray;
     box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    background-color: #e8f0fe;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    background-color: white;
     padding: 30px 20px;
 }
 
@@ -20,7 +16,6 @@ form {
 }
 
 label {
-    /*font-weight: bold;*/
     margin-bottom: 4px;
 }
 
@@ -37,13 +32,9 @@ label {
         position: relative;
     }
 
-    /* Make single-field rows full width */
-    /*.form-row.single > div {
-        flex: 0 0 100%;
-    }*/
 
 .form-field {
-    background-color: ghostwhite;
+    background-color: white;
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 6px 8px;
@@ -54,11 +45,11 @@ label {
     display: flex;
     gap: 6px;
     margin-top: 30px;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
 #ticketDesc {
-    background-color: ghostwhite;
+    background-color: white;
     width: 100%;
-    white-space: pre-wrap; /* preserves whitespace & line breaks */
+    white-space: pre-wrap;
 }

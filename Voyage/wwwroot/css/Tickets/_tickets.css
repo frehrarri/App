@@ -54,26 +54,32 @@
     background-color: inherit;
 }
 
-#header-center:has(> *) {
+#filter-container {
+    display: flex;
+    justify-content: center;
+    margin-top: -10px;
+}
+
+#section-filter:has(> *) {
     background-color: white;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     align-items: center;
     display: flex;
     height: 25px;
-    margin-top: 60px;
     width: fit-content;
     padding-right: 30px;
+    margin-bottom: 5px;
 }
 
-    #header-center > ul {
-        display: flex;
-        flex-direction: row;
-        gap: 20px;
-        justify-content: center;
-        margin-top:10px;
-    }
+#section-filter > ul {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 10px;
+}
 
-    #header-center > ul > li {
+    #section-filter > ul > li {
         list-style: none;
     }

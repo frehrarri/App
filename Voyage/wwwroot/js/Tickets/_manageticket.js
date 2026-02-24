@@ -1,6 +1,5 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
-
 export function init() {
 
     //set section dropdown based on which table the user clicks the add button for
@@ -15,7 +14,11 @@ export function init() {
     if (container) {
         container.addEventListener("click", handleEvents);
     }
-    
+
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
+    updateBreadcrumb();
 
     //debounced search
     //let input = document.getElementById("ticketAssignedTo");
@@ -23,19 +26,17 @@ export function init() {
 }
 
 async function handleEvents(e) {
+    if (e.target.type != "BUTTON")
+        return;
+
     if (e.target.id == "submitTicket")
         await saveTicket();
 
     if (e.target.id == "deleteTicket")
         await deleteTicket();
 
-    debugger;
-
     if (e.target.id == "undo-button")
         undo();
-
-    if (e.target.id == "btn-back")
-        await back();
 
     if (e.target.id == "ticketAssignedTo")
         assignedTo.value = "";
@@ -56,6 +57,37 @@ export async function getManageTicketPartial(ticketId, sectionTitle) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
+}
+
+function updateBreadcrumb() {
+    const ol = document.querySelector('.breadcrumb');
+
+    ol.innerHTML = '';
+
+    const li1 = document.createElement('li');
+    li1.classList.add('breadcrumb-item');
+    li1.classList.add('active')
+
+    const a1 = document.createElement('a');
+    a1.href = "#";
+    a1.textContent = 'Tickets'
+
+    a1.addEventListener("click", async () => {
+        await loadModule('tickets');
+    });
+
+    li1.appendChild(a1);
+    ol.appendChild(li1);
+
+    const li2 = document.createElement('li');
+    li2.classList.add('breadcrumb-item');
+    li2.classList.add('active');
+
+    const ticketId = document.getElementById('ticketId')?.textContent;
+
+    li2.textContent = ticketId ? 'Edit Ticket' : 'Add Ticket';
+
+    ol.appendChild(li2);
 }
 
 async function saveTicket() {
@@ -185,9 +217,5 @@ function handleUndoMap(e) {
     //}
 }
 
-
-async function back() {
-    await loadModule("ticketsControl")
-}
 
 

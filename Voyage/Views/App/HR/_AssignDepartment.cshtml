@@ -1,15 +1,17 @@
-﻿<div id="assign-department-container">
+﻿<div class="flex-just-center">
+    <div id="assign-dept-tabs">
+        <a href="#" class="teams tab active-tab" tabindex="0">Assign Teams</a>
+        <a href="#" class="personnel tab" tabindex=" 0">Assign Personnel</a>
+        <a href="#" class="permissions tab" tabindex="0">Manage Permissions</a>
+    </div>
+</div>
+
+<div id="assign-department-container">
 
     <div class="assign-dept-header">
         <h5 class="teams active-element">Assign Teams</h5>
         <h5 class="personnel hidden">Assign Personnel</h5>
         <h5 class="permissions hidden">Permissions</h5>
-
-        <div id="assign-dept-tabs">
-            <a href="#" class="teams tab active-tab" tabindex="0">Assign Teams</a>
-            <a href="#" class="personnel tab" tabindex=" 0">Assign Personnel</a>
-            <a href="#" class="permissions tab" tabindex="0">Manage Permissions</a>
-        </div>
     </div>
     <h6 class="dept-name">@ViewBag.DeptName</h6>
 

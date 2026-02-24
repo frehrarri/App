@@ -14,7 +14,8 @@ export async function init() {
     container.addEventListener("click", handleEvents);
     container.addEventListener("change", handleEvents);
 
-    appendTabsToMainHeader();
+    appendSectionFilters();
+    updateBreadcrumb();
 
 }
 
@@ -33,10 +34,22 @@ export async function init() {
 
     //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
 
+function updateBreadcrumb() {
+    const ol = document.querySelector('.breadcrumb');
+
+    ol.innerHTML = '';
+
+    const li1 = document.createElement('li');
+    li1.classList.add('breadcrumb-item');
+    li1.classList.add('active');
+    li1.textContent = 'Tickets';
+
+    ol.appendChild(li1);
+}
 
 
-function appendTabsToMainHeader() {
-    const header = document.getElementById('header-center');
+function appendSectionFilters() {
+    const header = document.getElementById('section-filter');
     const ul = document.createElement('ul');
     const headings = document.querySelectorAll('.heading');
 

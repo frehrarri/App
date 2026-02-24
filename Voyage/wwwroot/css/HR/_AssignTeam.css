@@ -8,12 +8,6 @@
     background-color: white;
 }
 
-#assign-team-header {
-    display: flex;
-    justify-content: flex-start;
-    position: relative;
-}
-
 #dv-allocate-team-personnel h5 {
     padding-bottom: 0px;
 }
@@ -22,11 +16,22 @@
     padding-bottom: 20px;
 }
 
-#assign-team-tabs {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+#assign-team-header{
     display: flex;
+    justify-content: center;
+    margin-top: -10px;
+}
+
+#assign-team-tabs:has(> *) {
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    height: 25px;
+    width: fit-content;
+    margin-bottom: 5px;
+    padding: 0 5px;
 }
 
     #assign-team-tabs > a {
