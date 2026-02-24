@@ -1,26 +1,45 @@
 ﻿#dv-sections-container,
-#dv-sprint-container {
+#dv-sprint-container,
+#section-names {
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid lightgray;
+}
+
+#dv-ticket-setup {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    padding: 20px 30px;
     background-color: white;
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 30px;
+    max-width: fit-content;
+    flex-wrap: wrap;
+    padding-left: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
 
 #dv-sections-container {
-    max-width: 35%;
-    height: fit-content;
+    max-width: 40%;
     max-height: 500px;
+    min-height: 175px;
+}
+
+#section-names{
+    min-width: 20%;
+}
+
+#dv-section-header {
+    display: flex;
+    justify-content: space-between;
 }
 
 #dv-sprint-container {
-    max-width: 35%;
-    height: fit-content;
+    max-width: 55%;
     max-height: 500px;
-}
-
-#sections-container {
-    margin-top: 20px;
+    min-height: 175px;
 }
 
 .delete-section {
@@ -52,23 +71,14 @@
 }
 
 #save-btn-container {
-    margin-top: 20px;
     display: flex;
     justify-content: flex-start;
+    width: 100%;
 }
 
 #btn-container{
     display:flex;
     justify-content:flex-start;
-}
-
-#sprint-dates-container {
-    display: flex;
-    margin-bottom: 15px;
-}
-
-#start-date, #end-date, label[for='end-date'] {
-    margin-left: 10px;
 }
 
 #start-date, #end-date{
@@ -79,6 +89,7 @@
 #undo-section-btn, #add-section-btn{
     border: none;
     background: inherit;
+    height: 0;
 }
 
     #undo-section-btn:first-child {
@@ -89,11 +100,30 @@
     color: green !important;
 }
 
-h6 {
-    margin-top: 20px;
-}
-
 label {
     padding-right: 5px;
 }
 
+#section-settings {
+    display:none;
+}
+
+    #section-settings:has(> *) {
+        display: block;
+    }
+
+#sprint-dates-container{
+    margin-top: 20px;
+}
+
+#dv-end-date{
+    padding-top: 10px;
+}
+
+#dv-end-date > label {
+    padding-right: 10px;
+}
+
+#sections-container{
+    margin-top: 20px;
+}

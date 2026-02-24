@@ -27,7 +27,6 @@ async function getTicketSettingsPartial() {
 }
 
 async function handleEvents(e, sectionHistory) {
-    debugger;
     const btn = e.target.closest("button");
 
     if (btn) {
