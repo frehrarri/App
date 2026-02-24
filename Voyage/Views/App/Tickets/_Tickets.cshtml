@@ -1,11 +1,13 @@
 ﻿@model TicketsVM
 
 @* controller renders setupticketsettings if settings have not been set up *@
-<div id="filter-container">
-    <div id="section-filter"></div>
-</div>
+
 
 <div id="tickets-container">
+
+    <div id="filter-container">
+        <div id="section-filter"></div>
+    </div>
 
     @if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Never)
     {
@@ -33,9 +35,7 @@
 
         <div id="@(s.Title)-container" class="section-container" tabindex="0">
 
-            <h5 id="heading-@(s.Title)" class="heading">
-                @s.Title
-            </h5>
+            <h5 id="heading-@(s.Title)" class="heading">@s.Title</h5>
 
             <table class="app-table">
                 <thead>
@@ -158,8 +158,6 @@
 
             </div>
         </div>
-        <br />
-        <br />
         <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
         }
 

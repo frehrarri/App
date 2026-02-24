@@ -26,7 +26,7 @@ export function init() {
 }
 
 async function handleEvents(e) {
-    if (e.target.type != "BUTTON")
+    if (e.target.type != "button")
         return;
 
     if (e.target.id == "submitTicket")
@@ -92,7 +92,7 @@ function updateBreadcrumb() {
 
 async function saveTicket() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    
+    debugger;
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').value,

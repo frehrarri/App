@@ -147,6 +147,12 @@ namespace Voyage.Controllers
             //ticketDTO.SprintId = sprint.SprintId;
             //ticketDTO.SprintEndDate = sprint.EndDate;
             //ticketDTO.SprintStartDate = sprint.StartDate;
+            if (ticketDTO.CompanyId <= 0)
+                ticketDTO.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+
+            if (string.IsNullOrEmpty(ticketDTO.CreatedBy)) 
+                ticketDTO.CreatedBy = HttpContext.Session.GetString("Username")!;
+
             return await _ticketsB.SaveTicket(ticketDTO);
         }
 

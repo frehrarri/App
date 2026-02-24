@@ -64,6 +64,9 @@ function appendSectionFilters() {
             let a = document.createElement('a');
             a.href = '#';
             a.textContent = h.textContent;
+            a.classList.add('tab');
+
+            a.addEventListener("click", handleTabs);
 
             li.appendChild(a);
             ul.appendChild(li);
@@ -75,6 +78,10 @@ function appendSectionFilters() {
         const a = document.createElement('a');
         a.href = '#';
         a.textContent = 'All';
+        a.classList.add('tab');
+        a.classList.add('active-tab');
+
+        a.addEventListener("click", handleTabs);
 
         li.appendChild(a);
         ul.prepend(li);
@@ -400,4 +407,68 @@ async function handleEvents(e) {
 
 }
 
+function handleTabs(e) {
+    if (!e.target.classList.contains('tab'))
+        return;
+
+    //set active tabs
+    const activeTab = document.querySelector('.active-tab');
+    activeTab.classList.remove('active-tab');
+    e.target.classList.add('active-tab');
+
+    //show all sections for all tab
+    const sectionToDisplay = e.target.innerText.toLowerCase().trim();
+    const sections = document.querySelectorAll('.section-container');
+
+    if (sectionToDisplay === "all") {
+        sections.forEach(s => s.classList.remove('hidden'));
+        return;
+    }
+
+    //toggle sections based on tab selection
+    const sectionHeaders = document.querySelectorAll('.section-container > h5');
+
+    sectionHeaders.forEach(s => {
+        const currentSection = s.innerText.toLowerCase().trim();
+        const container = s.closest(".section-container");
+
+        if (sectionToDisplay != currentSection) {
+            container.classList.add('hidden');
+        }
+        else {
+            container.classList.remove('hidden');
+        }
+    });
+
+    //const activeElements = document.querySelectorAll('.active-element:not(.tab)');
+
+    ////update tabs
+    //const activeTab = document.querySelector('#assign-dept-tabs > .active-tab');
+    //activeTab.classList.remove('active-tab');
+    //e.target.classList.add('active-tab');
+
+    ////hide previous elements
+    //activeElements.forEach(el => {
+    //    el.classList.add('hidden');
+    //    el.classList.remove('active-element')
+    //});
+
+    ////show current elements
+    //let elements = null;
+    //if (e.target.classList.contains('teams')) {
+    //    elements = document.querySelectorAll('.teams');
+    //}
+    //else if (e.target.classList.contains('personnel')) {
+    //    elements = document.querySelectorAll('.personnel');
+    //}
+    //else if (e.target.classList.contains('permissions')) {
+    //    elements = document.querySelectorAll('.permissions');
+    //}
+
+    //if (elements)
+    //    elements.forEach(el => {
+    //        el.classList.add('active-element');
+    //        el.classList.remove('hidden');
+    //    });
+}
 

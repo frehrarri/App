@@ -18,6 +18,7 @@
     /*border: 1px solid gray;*/
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
+    margin-bottom: 40px;
 }
 
 .goto-ticket primary-btn {
@@ -83,3 +84,18 @@
     #section-filter > ul > li {
         list-style: none;
     }
+
+.active-tab {
+    color: black !important;
+    text-decoration: none;
+}
+
+a.active-tab:hover {
+    color: black !important;
+    text-decoration: none !important;
+    cursor: default !important;
+}
+
+#tickets-container {
+    padding-bottom: 40px;
+}
