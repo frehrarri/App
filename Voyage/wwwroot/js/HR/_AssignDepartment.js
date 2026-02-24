@@ -148,6 +148,9 @@ export async function init(params) {
 
     await updateBreadCrumb();
 
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
     let assignedTeams = await getAssignedDepartmentTeams();
     let teamNames = [];
 

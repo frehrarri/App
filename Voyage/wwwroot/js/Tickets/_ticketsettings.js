@@ -85,7 +85,6 @@ async function updateBreadCrumb() {
 }
 
 function addSection(section, sectionHistory) {
-    debugger;
     let input = document.getElementById('section-title-input').value.trim();
     if (section != null)
         input = section;
@@ -183,10 +182,17 @@ async function save(e) {
             }
         });
 
-        showSuccess(true);
+        if (response && response.status === 200) {
+            alert("Success");
+            hyperlinkResponse(response, changeTracker, newId, currentVals);
+            changeTracker.clear();
+        }
+        else {
+            alert("Error");
+        }
+
         return true;
     } catch (error) {
-        showSuccess(false);
         console.error("error: /Tickets/SaveSettings", error);
         return false;
     }

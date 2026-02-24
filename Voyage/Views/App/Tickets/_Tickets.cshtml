@@ -9,8 +9,8 @@
         <hr />
 
         <div id="sprint-header">
-            <h4>Sprint @Model.Sprint.SprintId</h4>
-            <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+            <h5>Sprint @Model.Sprint.SprintId</h5>
+            <h5>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h5>
         </div>
 
         <hr />
@@ -30,14 +30,21 @@
 
         <div id="@(s.Title)-container" class="section-container" tabindex="0">
 
-            <h4 id="heading-@(s.Title)">
+            <h5 id="heading-@(s.Title)" class="heading">
                 @s.Title
-            </h4>
+            </h5>
 
             <table class="app-table">
                 <thead>
                     <tr class="app-table-row">
-                        <th class="app-table-header"></th>
+                        <th class="app-table-header">
+                            @if (s.Title != "Discontinued" && s.Title != "Completed")
+                            {
+                                <button class="btnAddTicket" data-section="@s.Title">
+                                    <i class="fa-solid fa-plus fa-xs"></i>
+                                </button>
+                            }
+                        </th>
                         <th class="app-table-header">ID</th>
                         <th class="app-table-header">@nameof(TicketVM.Title)</th>
                         <th class="app-table-header">@nameof(TicketVM.Status)</th>
@@ -48,13 +55,13 @@
                         <th class="app-table-header">Editor</th>
                         <th class="app-table-header">Created</th>
                         <th class="app-table-header">Author</th>
-
+@* 
                         @if (s.Title != "Discontinued" && s.Title != "Completed")
                         {
                             <th class="app-table-header">
                                 <button class="btnAddTicket primary-btn" data-section="@s.Title">Add</button>
                             </th>
-                        }
+                        } *@
 
                     </tr>
                 </thead>

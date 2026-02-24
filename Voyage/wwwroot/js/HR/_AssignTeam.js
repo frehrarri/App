@@ -17,6 +17,9 @@ export async function init(params) {
 
     await updateBreadCrumb();
 
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
     //grid
     let assignedTeams = await getAssignedTeamPersonnel(params.datakey);
     let teamMembers = [];

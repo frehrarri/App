@@ -43,10 +43,7 @@
       
 
             <div id="dv-sections-container">
-                <div id="dv-section-header">
-                    <h5>Section Setup</h5>
-                    <button id="undo-section-btn" type="button"><i class="fa-solid fa-rotate-left"></i></button>
-                </div>
+                <h5>Section Setup</h5>             
 
                 <span id="rdo-section-container">
                     <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
@@ -62,7 +59,11 @@
                 </div>
             </div>
             <div id="section-names">
-                <h5>Section Titles</h5>
+                <div id="dv-section-header">
+                    <h5>Section Titles</h5>
+                    <button id="undo-section-btn" type="button"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                
                 <div id="section-settings">
                     @foreach (var s in Model.Sections)
                     {

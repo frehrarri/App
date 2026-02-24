@@ -4,15 +4,19 @@ export async function init() {
 
     //load initial partial
     let partial = await getTicketsPartial();
-
     const container = document.querySelector('.main-content');
 
-    if (container && partial) {
-        container.innerHTML = partial;
-        container.addEventListener("click", handleEvents);
-        container.addEventListener("change", handleEvents);
-    }
+    if (!container || !partial)
+        return;
 
+    container.innerHTML = partial;
+
+    container.addEventListener("click", handleEvents);
+    container.addEventListener("change", handleEvents);
+
+    appendTabsToMainHeader();
+
+}
 
     //document.querySelectorAll(".paginate").forEach(el => {
     //    const sectionTitle = el.dataset.section;
@@ -29,6 +33,41 @@ export async function init() {
 
     //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
 
+
+
+function appendTabsToMainHeader() {
+    const header = document.getElementById('header-center');
+    const ul = document.createElement('ul');
+    const headings = document.querySelectorAll('.heading');
+
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
+    if (headings) {
+        //populate filter for each heading
+        headings.forEach(h => {
+            let li = document.createElement('li');
+
+            let a = document.createElement('a');
+            a.href = '#';
+            a.textContent = h.textContent;
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+
+        //add All filter
+        const li = document.createElement('li');
+
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = 'All';
+
+        li.appendChild(a);
+        ul.prepend(li);
+        header.appendChild(ul)
+    }
+        
 }
 
 export async function getTicketsPartial() {
@@ -261,43 +300,43 @@ async function updatePaginatedUI(e, sectionTitle) {
         }
     }
 
-    function styleTable(container = document) {
-        // Style primary buttons
-        container.querySelectorAll(".primary-btn").forEach(btn => {
-            btn.style.padding = "4px 12px";
-            btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-            btn.style.borderRadius = "6px";
-            btn.style.border = "none";
-            btn.style.color = "#fff";
-            btn.style.background = "#4B91F7";
-            btn.style.backgroundOrigin = "border-box";
-            btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
-            btn.style.webkitUserSelect = "none";
-            btn.style.touchAction = "manipulation";
-        });
+    //function styleTable(container = document) {
+    //    // Style primary buttons
+    //    container.querySelectorAll(".primary-btn").forEach(btn => {
+    //        btn.style.padding = "4px 12px";
+    //        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+    //        btn.style.borderRadius = "6px";
+    //        btn.style.border = "none";
+    //        btn.style.color = "#fff";
+    //        btn.style.background = "#4B91F7";
+    //        btn.style.backgroundOrigin = "border-box";
+    //        btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
+    //        btn.style.webkitUserSelect = "none";
+    //        btn.style.touchAction = "manipulation";
+    //    });
 
-        // Style secondary buttons
-        container.querySelectorAll(".secondary-btn").forEach(btn => {
-            btn.style.display = "flex";
-            btn.style.flexDirection = "column";
-            btn.style.alignItems = "center";
-            btn.style.padding = "4px 12px";
-            btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-            btn.style.borderRadius = "6px";
-            btn.style.color = "#3D3D3D";
-            btn.style.background = "#fff";
-            btn.style.border = "none";
-            btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
-            btn.style.userSelect = "none";
-            btn.style.webkitUserSelect = "none";
-            btn.style.touchAction = "manipulation";
-        });
+    //    // Style secondary buttons
+    //    container.querySelectorAll(".secondary-btn").forEach(btn => {
+    //        btn.style.display = "flex";
+    //        btn.style.flexDirection = "column";
+    //        btn.style.alignItems = "center";
+    //        btn.style.padding = "4px 12px";
+    //        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
+    //        btn.style.borderRadius = "6px";
+    //        btn.style.color = "#3D3D3D";
+    //        btn.style.background = "#fff";
+    //        btn.style.border = "none";
+    //        btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
+    //        btn.style.userSelect = "none";
+    //        btn.style.webkitUserSelect = "none";
+    //        btn.style.touchAction = "manipulation";
+    //    });
 
-        // Style table rows (zebra stripes)
-        container.querySelectorAll(".app-table-row").forEach((row, i) => {
-            row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
-        });
-    }
+    //    // Style table rows (zebra stripes)
+    //    container.querySelectorAll(".app-table-row").forEach((row, i) => {
+    //        row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
+    //    });
+    //}
 
 export async function getTicketSettings() {
     const response = await getPartial("Tickets", "SettingsPartial");
@@ -310,35 +349,40 @@ export async function getTicketSettings() {
 }
 
 async function handleEvents(e) {
-    let module, partial;
+    let module = null;
+    let partial = null;
 
-    if (e.target.matches('.btnAddTicket')) {
+    const btn = e.target.closest('button');
+
+    if (btn && btn.classList.contains('btnAddTicket')) {
         module = await loadModule("manageTicket");
         partial = await module.getManageTicketPartial(null, e.target.dataset.section);
-        document.getElementById('tickets-partial-container').innerHTML = partial;
     }
 
-    if (e.target.matches('.edit-btn')) {
+    else if (btn && btn.classList.contains('edit-btn')) {
         module = await loadModule("manageTicket");
         partial = await module.getManageTicketPartial(e.target.dataset.id, null);
-        document.getElementById('tickets-partial-container').innerHTML = partial;
     }
 
-    if (e.target.matches('.goto-ticket')) {
+    else if (btn && btn.classList.contains('goto-ticket')) {
         module = await loadModule("ticket");
         partial = await module.getTicketpartial(e.target.dataset.id);
-        document.getElementById('tickets-partial-container').innerHTML = partial;
+    }
+
+    if (module && partial) {
+        document.querySelector('.main-content').innerHTML = partial;
+        return;
     }
 
     if (e.target.matches('.paginate')) {
         const sectionTitle = e.dataset.section;
 
-        if (e.target.id.includes('sel-take-section') && e.type == "change"){
-            await updatePaginatedUI(e, sectionTitle);
-        }
-        else if (e.type == "click") {
-            await updatePaginatedUI(e, sectionTitle);
-        }
+        //if (e.target.id.includes('sel-take-section') && e.type == "change"){
+        //    await updatePaginatedUI(e, sectionTitle);
+        //}
+        //else if (e.type == "click") {
+        //    await updatePaginatedUI(e, sectionTitle);
+        //}
     }
 
 }

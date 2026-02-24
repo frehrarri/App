@@ -105,6 +105,9 @@ export async function init() {
 
     await updateBreadCrumb();
 
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
     //grid
     let teams = await getTeams();
     let teamNames = [];

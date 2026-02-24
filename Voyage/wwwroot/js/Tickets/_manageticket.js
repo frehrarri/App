@@ -10,12 +10,16 @@ export function init() {
     //        sectionDropdown.value = params.sectionTitle;
     //    }
     //}
-    const container = document.getElementById('tickets-partial-container');
-    container.addEventListener("click", handleEvents);
+    const container = document.querySelector('.main-content');
+
+    if (container) {
+        container.addEventListener("click", handleEvents);
+    }
+    
 
     //debounced search
-    let input = document.getElementById("ticketAssignedTo");
-    addUserSearchEventListener(input, "userResults");
+    //let input = document.getElementById("ticketAssignedTo");
+    //addUserSearchEventListener(input, "userResults");
 }
 
 async function handleEvents(e) {

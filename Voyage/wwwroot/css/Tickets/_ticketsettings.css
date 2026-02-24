@@ -49,7 +49,7 @@
     margin: 2px;
     position: relative;
     cursor: pointer;
-    background-color: #f8f9fa;
+    /*background-color: #f8f9fa;*/
     box-shadow: .5px .5px 1px .5px #120d0dba;
 }
 
@@ -63,9 +63,9 @@
         color: black;
     }
 
-#section-title-input{
-    border: 1px solid black;
-    border-radius:5px;
+#section-title-input {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
     background-color: white;
     margin-bottom: 5px;
 }
