@@ -4,16 +4,7 @@
     position: relative;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    padding: 20px 30px;
     background-color: white;
-}
-
-#dv-allocate-team-personnel h5 {
-    padding-bottom: 0px;
-}
-
-#dv-allocate-team-personnel h6 {
-    padding-bottom: 20px;
 }
 
 #assign-team-header{
@@ -57,4 +48,11 @@ a.active-tab:hover {
 
 #dv-allocate-team-personnel .app-table-header:not(:first-child) {
     width: 140px !important;
+}
+
+#team-name {
+    color: #6289af;
+    margin-bottom: 30px;
+    width: fit-content;
+    border-radius: 5px;
 }

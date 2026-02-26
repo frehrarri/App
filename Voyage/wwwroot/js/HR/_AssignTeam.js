@@ -182,6 +182,7 @@ async function handleEvents(e) {
 }
 
 function handleTabs(e) {
+    
     if (!e.target.classList.contains('tab'))
         return;
 
@@ -189,6 +190,7 @@ function handleTabs(e) {
 
     //update tabs
     const activeTab = document.querySelector('#assign-team-tabs > .active-tab');
+    debugger;
     activeTab.classList.remove('active-tab');
     e.target.classList.add('active-tab');
 

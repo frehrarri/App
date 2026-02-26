@@ -110,6 +110,10 @@ html, body {
     background-color: white;
 }
 
+.app-table-header{
+    font-weight: 400;
+}
+
 .app-table-header,
 .app-table-data {
     text-align: left;
@@ -177,17 +181,16 @@ html, body {
 }
 
     .primary-btn[disabled] {
-        /*border: 1px solid gray;*/
         background-color: lightgray;
         color: black;
     }
 
 .secondary-btn {
-    border: 2px solid #6289af;
-    color: #6289af;
+    border: none;
+    color: white;
     border-radius: 5px;
     font-size: 16px;
-    background-color: white;
+    background-color: #81b1df;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     padding: 2px 15px;
 }
@@ -265,7 +268,9 @@ select:has(option[value=""]:checked){
 .grid-btn-container{
     display: flex;
     justify-content: flex-start;
-    margin-top:30px;
+    margin-top: 10px;
+    margin-left: 20px;
+    gap: 2px;
 }
 
 .add-remove-grid-container{
@@ -295,8 +300,7 @@ a:hover{
 }
 
 .content-container {
-    padding-left: 20px;
     padding-bottom: 20px;
-    padding-top: 10px;
+    margin-top: -5px;
 }
 

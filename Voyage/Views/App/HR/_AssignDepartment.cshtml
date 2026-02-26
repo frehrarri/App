@@ -1,4 +1,6 @@
-﻿<div class="flex-just-center">
+﻿<h4 id="dept-name">Department: @ViewBag.DeptName</h4>
+
+<div class="flex-just-center">
     <div id="assign-dept-tabs">
         <a href="#" class="teams tab active-tab" tabindex="0">Assign Teams</a>
         <a href="#" class="personnel tab" tabindex=" 0">Assign Personnel</a>
@@ -7,20 +9,20 @@
 </div>
 
 <div id="assign-department-container">
-
-    <div class="assign-dept-header">
-        <h5 class="teams active-element">Assign Teams</h5>
-        <h5 class="personnel hidden">Assign Personnel</h5>
-        <h5 class="permissions hidden">Permissions</h5>
-    </div>
-    <h6 class="dept-name">@ViewBag.DeptName</h6>
+    <h5 class="teams active-element">Assign Teams</h5>
+    <h5 class="personnel hidden">Assign Personnel</h5>
+    <h5 class="permissions hidden">Permissions</h5>
 
     <div id="dv-dept-teams" class="teams active-element">
-        <div id="dept-team-grid-container"></div>
+        <div class="content-container">
+            <div id="dept-team-grid-container"></div>
+        </div>
     </div>
 
     <div id="dv-dept-personnel" class="personnel hidden">
-        <div id="dept-user-grid-container"></div>
+        <div class="content-container">
+            <div id="dept-user-grid-container"></div>
+        </div>
     </div>
 
     <div id="dv-dept-permissions" class="permissions hidden"></div>

@@ -1,4 +1,6 @@
 ﻿
+<h4 id="team-name">Team: @ViewBag.TeamName</h4>
+
 <div id="assign-team-header">
     <div id="assign-team-tabs">
         <a href="#" class="personnel tab active-tab" tabindex="0">Assign Personnel</a>
@@ -9,10 +11,11 @@
 <div id="dv-allocate-team-personnel">
     <h5 class="personnel active-element">Assign Personnel</h5>
     <h5 class="permissions hidden">Permissions</h5>
-    <h6 id="team-name">@ViewBag.TeamName</h6>
 
     <div id="dv-team-personnel" class="personnel active-element">
-        <div id="assign-team-grid-container"></div>
+        <div class="content-container">
+            <div id="assign-team-grid-container"></div>
+        </div>
     </div>
 
     <div id="dv-team-permissions" class="permissions hidden"></div>

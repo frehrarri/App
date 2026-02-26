@@ -1,8 +1,9 @@
 ﻿#dv-manage-teams {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    padding: 20px 30px;
     background-color: white;
+    padding-top: 0px;
+    padding-left: 0px;
 }
 
 #dv-team-btns {

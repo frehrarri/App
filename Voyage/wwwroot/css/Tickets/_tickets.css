@@ -14,11 +14,11 @@
 
 .section-container {
     background-color: white;
-    padding: 20px;
     /*border: 1px solid gray;*/
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     margin-bottom: 40px;
+    padding-bottom: 20px;
 }
 
 .goto-ticket primary-btn {
@@ -35,13 +35,19 @@
 }
 
 .pagination-container {
-    display: flex;/* activate flexbox */
-    justify-content: center; /* center horizontally */
-    gap: 8px; /* space between buttons */
+    display: flex;
+    justify-content: flex-start;
+    gap: 33%;
     margin-top: 10px;  /*spacing from table */
 }
 
-#heading-setting-container{
+.dv-btns-container{
+    margin-left: 20px;
+    display: flex;
+    gap: 2px;
+}
+
+#heading-setting-container {
     display: flex;
     justify-content: space-between;
 }
@@ -59,6 +65,7 @@
     display: flex;
     justify-content: center;
     margin-top: -10px;
+    margin-bottom: 10px;
 }
 
 #section-filter:has(> *) {
@@ -98,4 +105,8 @@ a.active-tab:hover {
 
 #tickets-container {
     padding-bottom: 40px;
+}
+
+#tickets-container .app-table {
+    margin-top: -5px;
 }

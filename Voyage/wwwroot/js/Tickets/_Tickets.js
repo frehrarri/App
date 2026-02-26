@@ -11,6 +11,9 @@ export async function init() {
 
     container.innerHTML = partial;
 
+    container.removeEventListener("click", handleEvents);
+    container.removeEventListener("change", handleEvents);
+
     container.addEventListener("click", handleEvents);
     container.addEventListener("change", handleEvents);
 
@@ -369,6 +372,7 @@ export async function getTicketSettings() {
 }
 
 async function handleEvents(e) {
+    debugger;
     let module = null;
     let partial = null;
 
@@ -394,9 +398,11 @@ async function handleEvents(e) {
         return;
     }
 
+    if (e.target.classList.contains('tab'))
+        handleTabs(e);
+
     if (e.target.matches('.paginate')) {
         const sectionTitle = e.dataset.section;
-
         //if (e.target.id.includes('sel-take-section') && e.type == "change"){
         //    await updatePaginatedUI(e, sectionTitle);
         //}
@@ -408,6 +414,8 @@ async function handleEvents(e) {
 }
 
 function handleTabs(e) {
+    debugger;
+
     if (!e.target.classList.contains('tab'))
         return;
 
@@ -426,7 +434,7 @@ function handleTabs(e) {
     }
 
     //toggle sections based on tab selection
-    const sectionHeaders = document.querySelectorAll('.section-container > h5');
+    const sectionHeaders = document.querySelectorAll('.section-container h5');
 
     sectionHeaders.forEach(s => {
         const currentSection = s.innerText.toLowerCase().trim();

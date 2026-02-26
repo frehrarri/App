@@ -4,7 +4,6 @@
     width: 100%;
     position: relative;
     border-radius: 10px;
-    padding: 20px 30px;
     background-color: white;
 }
 
@@ -12,14 +11,6 @@
     display: flex;
     justify-content: flex-start;
     position: relative;
-}
-
-#assign-department-container h5 {
-    padding-bottom: 0px;
-}
-
-#assign-department-container h6 {
-    padding-bottom: 20px;
 }
 
 .flex-just-center {
@@ -45,10 +36,10 @@
     cursor: pointer;
 }
 
-    #assign-dept-tabs > a:hover {
+/*    #assign-dept-tabs > a:hover {
         text-decoration: underline;
         color: cadetblue;
-    }
+    }*/
 
 .active-tab {
     color: black !important;
@@ -61,3 +52,13 @@
         cursor: default !important;
     }
 
+#dept-name {
+    color: #6289af;
+    margin-bottom: 30px;
+    width: fit-content;
+    border-radius: 5px;
+}
+
+#assign-department-container h5 {
+    padding-bottom: 5px;
+}

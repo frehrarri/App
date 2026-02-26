@@ -34,128 +34,131 @@
         .ToList();
 
         <div id="@(s.Title)-container" class="section-container" tabindex="0">
+            <div class="content-container">
+                <h5 id="heading-@(s.Title)" class="heading">@s.Title</h5>
 
-            <h5 id="heading-@(s.Title)" class="heading">@s.Title</h5>
-
-            <table class="app-table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header">
+                <table class="app-table">
+                    <thead>
+                        <tr class="app-table-row">
+                            <th class="app-table-header"></th>
+                            <th class="app-table-header">ID</th>
+                            <th class="app-table-header">@nameof(TicketVM.Title)</th>
+                            <th class="app-table-header">@nameof(TicketVM.Status)</th>
+                            <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
+                            <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
+                            <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
+                            <th class="app-table-header">Last Edit</th>
+                            <th class="app-table-header">Editor</th>
+                            <th class="app-table-header">Created</th>
+                            <th class="app-table-header">Author</th>
+    @* 
                             @if (s.Title != "Discontinued" && s.Title != "Completed")
                             {
-                                <button class="btnAddTicket" data-section="@s.Title">
-                                    <i class="fa-solid fa-plus fa-xs"></i>
-                                </button>
-                            }
-                        </th>
-                        <th class="app-table-header">ID</th>
-                        <th class="app-table-header">@nameof(TicketVM.Title)</th>
-                        <th class="app-table-header">@nameof(TicketVM.Status)</th>
-                        <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
-                        <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.DueDate))</th>
-                        <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.PriorityLevel))</th>
-                        <th class="app-table-header">Last Edit</th>
-                        <th class="app-table-header">Editor</th>
-                        <th class="app-table-header">Created</th>
-                        <th class="app-table-header">Author</th>
-@* 
+                                <th class="app-table-header">
+                                    <button class="btnAddTicket primary-btn" data-section="@s.Title">Add</button>
+                                </th>
+                            } *@
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    @foreach (TicketVM ticket in tickets)
+                    {
+                        <tr class="app-table-row">
+                            <td class="app-table-data">
+                                <input type="checkbox" />
+                            </td>
+                            <td class="app-table-data">
+                                <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
+                            </td>
+                            <td class="app-table-data">
+                                <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
+                            </td>
+                            <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
+                            <td class="app-table-data">@ticket.AssignedTo</td>
+                            <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
+                            <td class="app-table-data">@ticket.PriorityLevel</td>
+                            <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
+                            <td class="app-table-data">@ticket.ModifiedBy</td>
+                            <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
+                            <td class="app-table-data">@ticket.CreatedBy</td>
+
                         @if (s.Title != "Discontinued" && s.Title != "Completed")
                         {
-                            <th class="app-table-header">
-                                <button class="btnAddTicket primary-btn" data-section="@s.Title">Add</button>
-                            </th>
-                        } *@
+                            <td class="app-table-data">
+                                <button id="btnViewTicket" class="goto-ticket primary-btn" data-id="@ticket.TicketId">View</button>
+                                @if (ticket.CreatedBy == User.Identity?.Name)
+                                {
+                                    <span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
+                                }
 
-                    </tr>
-                </thead>
-                <tbody>
+                            </td>
+                        }
+                        </tr>
+                    }
 
-                @foreach (TicketVM ticket in tickets)
-                {
-                    <tr class="app-table-row">
-                        <td class="app-table-data">
-                            <input type="checkbox" />
-                        </td>
-                        <td class="app-table-data">
-                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
-                        </td>
-                        <td class="app-table-data">
-                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
-                        </td>
-                        <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
-                        <td class="app-table-data">@ticket.AssignedTo</td>
-                        <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
-                        <td class="app-table-data">@ticket.PriorityLevel</td>
-                        <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
-                        <td class="app-table-data">@ticket.ModifiedBy</td>
-                        <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
-                        <td class="app-table-data">@ticket.CreatedBy</td>
-
+                    </tbody>
+                </table> 
+            </div>
+       
+            <div class="pagination-container">
+                <div class="dv-btns-container">
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
-                        <td class="app-table-data">
-                            <button id="btnViewTicket" class="goto-ticket primary-btn" data-id="@ticket.TicketId">View</button>
-                            @if (ticket.CreatedBy == User.Identity?.Name)
-                            {
-                                <span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
-                            }
-
-                        </td>
+                        <button id="add-btn" class="primary-btn" type="button">Add</button>
+                        <button id="remove-btn" class="warning-btn" type="button">Delete</button>
                     }
-                    </tr>
-                }
+                </div>
 
-                </tbody>
-            </table>
+                <div class="pagination-buttons">
+                    <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
 
-            <div class="pagination-container">
-                <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
-                    <option value="5" selected>5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
+                    <button id="btn-left-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
 
-                <button id="btn-left-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+                    <span id="page-btn-container-@s.Title">
 
-                <span id="page-btn-container-@s.Title">
-
-                    @if (sectionTickets.Count() > 0)
-                    {
-                        for (int i = 1; i <= numOfPages; i++)
+                        @if (sectionTickets.Count() > 0)
                         {
-                            @if (i == 1)
+                            for (int i = 1; i <= numOfPages; i++)
                             {
-                                <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
-                            }
-                            else
-                            {
-                                <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+                                @if (i == 1)
+                                {
+                                    <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+                                }
+                                else
+                                {
+                                    <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+                                }
                             }
                         }
+                        else
+                        {
+                            <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
+                        }
+
+                    </span>
+
+                    @if (numOfPages < 2 || sectionTickets.Count() == 0)
+                    {
+                        <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     }
                     else
                     {
-                        <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
+                        <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
                     }
-
-                </span>
-
-                @if (numOfPages < 2 || sectionTickets.Count() == 0)
-                {
-                    <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                }
-                else
-                {
-                    <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                }
-
+                </div>
             </div>
         </div>
         <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
