@@ -1,11 +1,15 @@
 ﻿.breadcrumb {
-    margin-top: 50px;
-    margin-bottom: 40px;
+    margin-top: 20px;
+    margin-bottom: 30px;
     border-radius: 7px;
     padding: 10px;
     background-color: white;
     max-width:fit-content;
     font-style: italic;
+}
+
+.breadcrumb-item > a {
+    color: #007fff !important;
 }
 
 #main-content-header {
@@ -18,3 +22,6 @@
     background-color: inherit;
 }
 
+.main-content{
+    max-width:99%;
+}

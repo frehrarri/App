@@ -8,9 +8,15 @@
 <div id="dv-register-personnel">
     <div id="dv-send-registration-email">
         <h5>Register Employee</h5>
-        <input type="email" placeholder="jon.doe@gmail.com" />
-        <button id="register-email-button" class="secondary-btn" type="button">Send</button>
-        <a href="#" id="self-register-button">Register Manually</a>
+
+        <div class="content-container">
+            <label for="registration-email-label" id="send-email-txt">Registration Email</label>
+            <br />
+            <button id="register-email-button" class="primary-btn" type="button">Send</button>
+            <input id="registration-email-input" type="email" placeholder="jon.doe@gmail.com" />
+            <a href="#" id="self-register-button">Register Manually</a>
+        </div>
+        
     </div>
 
     @* <button id="self-register-button" class="primary-btn" type="button">Register</button> *@
@@ -21,101 +27,103 @@
         @Html.AntiForgeryToken()
         <div id="dv-personnel-grid">
 
-            <div id="header-flex">
-                <div id="dv-header-container">
-                    <h5>Manage Personnel</h5>
-                </div>
-               
+            <div id="dv-header-container">
+                <h5>Manage Personnel</h5>
             </div>
             
-            <table class="app-table">
-                <thead>
-                    <tr class="app-table-row">
-                        <th class="app-table-header"></th>
-                        <th id="th-role" class="app-table-header">Role</th>
-                        <th id="th-id" class="app-table-header">Id</th>
-                        <th id="th-first" class="app-table-header">First Name</th>
-                        <th id="th-last" class="app-table-header">Last Name</th>
-                        <th id="th-username" class="app-table-header">Username</th>
-                        <th class="app-table-header">Email</th>
-                        <th class="app-table-header">Phone</th>
-                        <th class="app-table-header">Active</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model.Personnel)
-                    {
-                        Guid guid = Guid.NewGuid();
+            <div class="content-container" id="personnel-grid">
 
-                        <tr class="app-table-row" data-key="@guid">
-                            <td class="app-table-data">
-                                <input type="checkbox" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
-                            </td>
-                            <td>
-                                <select class="sel-assign-role" data-key="@guid" data-userid="@user.EmployeeId" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "")>
+                <table class="app-table">
+                    <thead>
+                        <tr class="app-table-row">
+                            <th class="app-table-header"></th>
+                            <th id="th-role" class="app-table-header">Role</th>
+                            <th id="th-id" class="app-table-header">Id</th>
+                            <th id="th-first" class="app-table-header">First Name</th>
+                            <th id="th-last" class="app-table-header">Last Name</th>
+                            <th id="th-username" class="app-table-header">Username</th>
+                            <th class="app-table-header">Email</th>
+                            <th class="app-table-header">Phone</th>
+                            <th class="app-table-header">Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Personnel)
+                        {
+                            Guid guid = Guid.NewGuid();
 
-                                    @if (user.RoleId == (int)Constants.DefaultRoles.Unassigned){
-                                        <option value="@((int)Constants.DefaultRoles.Unassigned)" selected>Unassigned</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@((int)Constants.DefaultRoles.Unassigned)">Unassigned</option>
-                                    }
+                            <tr class="app-table-row" data-key="@guid">
+                                <td class="app-table-data">
+                                    <input type="checkbox" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
+                                </td>
+                                <td>
+                                    <select class="sel-assign-role" data-key="@guid" data-userid="@user.EmployeeId" @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "")>
 
-                                    @foreach (var role in Model.Roles)
-                                    {
-                                        //prevent duplicate unassigned, keep it as default value
-                                        if (role.Name == Constants.DefaultRoles.Unassigned.ToString())
-                                            continue;
-
-                                        //prevent assigning of principal role
-                                        if (user.RoleId != (int)Constants.DefaultRoles.Principal && role.RoleId == (int)Constants.DefaultRoles.Principal)
-                                            continue;
-
-                                        //default to assigned roles
-                                        if (role.RoleId == user.RoleId)
+                                        @if (user.RoleId == (int)Constants.DefaultRoles.Unassigned)
                                         {
-                                            <option value="@role.RoleId" selected>@role.Name</option>
+                                            <option value="@((int)Constants.DefaultRoles.Unassigned)" selected>Unassigned</option>
                                         }
                                         else
                                         {
-                                            <option value="@role.RoleId">@role.Name</option>
+                                            <option value="@((int)Constants.DefaultRoles.Unassigned)">Unassigned</option>
                                         }
-                                    }
-                                </select>
-                            </td>
-                            <td id="employeeid" class="app-table-data">
-                                @user.EmployeeId
-                            </td>
-                            <td class="app-table-data">
-                                @user.FirstName
-                            </td>
-                            <td class="app-table-data">
-                                @user.LastName
-                            </td>
-                            <td class="app-table-data">
-                                @user.Username
-                            </td>
-                            <td class="app-table-data">
-                                @user.Email
-                            </td>
-                            <td class="app-table-data">
-                                @* phone *@
-                            </td>
-                            <td class="app-table-data">
-                                <input class="cbx-active" type="checkbox" data-userid="@user.EmployeeId" data-key="@guid" 
-                                        @(user.IsUserActive ? "checked" : "") 
-                                        @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
-                            </td>
-                        </tr>
-                    }
 
-                </tbody>
-            </table>
-            <div id="btn-container">
-                <button type="button" id="save-btn" class="primary-btn">Save</button>
-                <button type="button" id="btn-delete" class="warning-btn">Delete</button>
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            //prevent duplicate unassigned, keep it as default value
+                                            if (role.Name == Constants.DefaultRoles.Unassigned.ToString())
+                                                continue;
+
+                                            //prevent assigning of principal role
+                                            if (user.RoleId != (int)Constants.DefaultRoles.Principal && role.RoleId == (int)Constants.DefaultRoles.Principal)
+                                                continue;
+
+                                            //default to assigned roles
+                                            if (role.RoleId == user.RoleId)
+                                            {
+                                                <option value="@role.RoleId" selected>@role.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@role.RoleId">@role.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td id="employeeid" class="app-table-data">
+                                    @user.EmployeeId
+                                </td>
+                                <td class="app-table-data">
+                                    @user.FirstName
+                                </td>
+                                <td class="app-table-data">
+                                    @user.LastName
+                                </td>
+                                <td class="app-table-data">
+                                    @user.Username
+                                </td>
+                                <td class="app-table-data">
+                                    @user.Email
+                                </td>
+                                <td class="app-table-data">
+                                    @* phone *@
+                                </td>
+                                <td class="app-table-data">
+                                    <input class="cbx-active" type="checkbox" data-userid="@user.EmployeeId" data-key="@guid"
+                                           @(user.IsUserActive ? "checked" : "")
+                                           @(user.RoleId == (int)Constants.DefaultRoles.Principal ? "disabled" : "") />
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+                <div id="btn-container">
+                    <button type="button" id="save-btn" class="primary-btn">Save</button>
+                    <button type="button" id="btn-delete" class="warning-btn">Delete</button>
+                </div>
             </div>
+
         </div>
 
     </form>
