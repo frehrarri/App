@@ -53,7 +53,7 @@
     }
 
 #dept-name {
-    color: #6289af;
+/*    border-bottom: 3px solid #6289af;*/
     margin-bottom: 30px;
     width: fit-content;
     border-radius: 5px;

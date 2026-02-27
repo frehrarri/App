@@ -11,9 +11,6 @@ export async function init() {
 
     container.innerHTML = partial;
 
-    container.removeEventListener("click", handleEvents);
-    container.removeEventListener("change", handleEvents);
-
     container.addEventListener("click", handleEvents);
     container.addEventListener("change", handleEvents);
 
@@ -298,8 +295,6 @@ async function updatePaginatedUI(e, sectionTitle) {
 
         toggleEditBtns();
 
-        styleTable();
-
         document.getElementById(`${sectionTitle}-container`).focus();
     }
 
@@ -323,44 +318,6 @@ async function updatePaginatedUI(e, sectionTitle) {
         }
     }
 
-    //function styleTable(container = document) {
-    //    // Style primary buttons
-    //    container.querySelectorAll(".primary-btn").forEach(btn => {
-    //        btn.style.padding = "4px 12px";
-    //        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-    //        btn.style.borderRadius = "6px";
-    //        btn.style.border = "none";
-    //        btn.style.color = "#fff";
-    //        btn.style.background = "#4B91F7";
-    //        btn.style.backgroundOrigin = "border-box";
-    //        btn.style.boxShadow = "0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2)";
-    //        btn.style.webkitUserSelect = "none";
-    //        btn.style.touchAction = "manipulation";
-    //    });
-
-    //    // Style secondary buttons
-    //    container.querySelectorAll(".secondary-btn").forEach(btn => {
-    //        btn.style.display = "flex";
-    //        btn.style.flexDirection = "column";
-    //        btn.style.alignItems = "center";
-    //        btn.style.padding = "4px 12px";
-    //        btn.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Roboto', sans-serif";
-    //        btn.style.borderRadius = "6px";
-    //        btn.style.color = "#3D3D3D";
-    //        btn.style.background = "#fff";
-    //        btn.style.border = "none";
-    //        btn.style.boxShadow = "0px 0.5px 1px rgba(0, 0, 0, 0.5)";
-    //        btn.style.userSelect = "none";
-    //        btn.style.webkitUserSelect = "none";
-    //        btn.style.touchAction = "manipulation";
-    //    });
-
-    //    // Style table rows (zebra stripes)
-    //    container.querySelectorAll(".app-table-row").forEach((row, i) => {
-    //        row.style.backgroundColor = i % 2 === 0 ? "#86b7fe17" : "#f8f9fa";
-    //    });
-    //}
-
 export async function getTicketSettings() {
     const response = await getPartial("Tickets", "SettingsPartial");
 
@@ -378,7 +335,7 @@ async function handleEvents(e) {
 
     const btn = e.target.closest('button');
 
-    if (btn && btn.classList.contains('btnAddTicket')) {
+    if (btn && btn.id === 'add-btn') {
         module = await loadModule("manageTicket");
         partial = await module.getManageTicketPartial(null, e.target.dataset.section);
     }

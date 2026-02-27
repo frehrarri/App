@@ -4,13 +4,9 @@
 }
 
 #sprint-header {
-    display: flex;
-    align-items: center;
+    margin-bottom: 30px;
+    width: fit-content;
 }
-
-    #sprint-header h4:last-child {
-        margin-left: auto;
-    }
 
 .section-container {
     background-color: white;

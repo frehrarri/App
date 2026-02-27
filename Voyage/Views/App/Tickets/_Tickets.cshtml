@@ -5,22 +5,17 @@
 
 <div id="tickets-container">
 
+    @if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Never)
+    {
+        <div id="sprint-header">
+            <h4>Sprint @Model.Sprint.SprintId</h4>
+            <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+        </div>
+    }
+
     <div id="filter-container">
         <div id="section-filter"></div>
     </div>
-
-    @if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Never)
-    {
-        <hr />
-
-        <div id="sprint-header">
-            <h5>Sprint @Model.Sprint.SprintId</h5>
-            <h5>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h5>
-        </div>
-
-        <hr />
-        <br />
-    }
 
         @foreach (var s in Model.Sections)
         {
@@ -107,7 +102,7 @@
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
                         <button id="add-btn" class="primary-btn" type="button">Add</button>
-                        <button id="remove-btn" class="warning-btn" type="button">Delete</button>
+                        <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button>
                     }
                 </div>
 

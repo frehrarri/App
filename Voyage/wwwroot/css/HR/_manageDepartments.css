@@ -3,6 +3,8 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     background-color: white;
+    max-width: 50%;
+    margin-left: 20%;
 }
 
 #dv-dept-btns {

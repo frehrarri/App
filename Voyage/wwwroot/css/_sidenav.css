@@ -136,7 +136,7 @@ body.sidenav-expanded #app-container {
 }
 
     #nav-items > li > i {
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 4px #6289af9e;
         border-radius: 20px;
         height: 27px;
         width: 27px;
@@ -170,7 +170,7 @@ body.sidenav-expanded #app-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 4px #6289af9e;
     cursor: pointer;
     border-radius: 5px;
     background-color: white;

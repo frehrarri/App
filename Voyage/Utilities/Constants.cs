@@ -163,11 +163,11 @@
         }
 
         public enum RepeatSprint { 
-            Never,
-            Weekly,
-            BiWeekly,
-            Monthly,
-            Custom
+            Never = 1,
+            Weekly = 2,
+            BiWeekly = 3,
+            Monthly = 4,
+            Custom = 5
         }
 
         public enum Feature

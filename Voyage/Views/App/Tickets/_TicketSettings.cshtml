@@ -8,70 +8,78 @@
         <div id="dv-ticket-setup">
             <div id="dv-sprint-container">
                 <h5>Sprint Setup</h5>
+                <div id="sprint-content" class="content-container">
+                    <b>Repeat:</b>
+                    <br />
 
-                <h6>Repeat:</h6>
+                    <span id="rdo-repeat-container">
+                        <input id="rdo-repeat-never" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Never)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never
+                                                                                                                                                                || Model.RepeatSprintOption == null ? "checked" : "") />
+                        <label for="rdo-repeat-never">Never</label>
 
-                <span id="rdo-repeat-container">
-                    <input id="rdo-repeat-never" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Never)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never
-                                                                                                                                                        || Model.RepeatSprintOption == null ? "checked" : "") />
-                    <label for="rdo-repeat-never">Never</label>
+                        <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Weekly ? "checked" : "") />
+                        <label for="rdo-repeat-weekly">Weekly</label>
 
-                    <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Weekly ? "checked" : "") />
-                    <label for="rdo-repeat-weekly">Weekly</label>
+                        <input id="rdo-repeat-biweekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.BiWeekly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.BiWeekly ? "checked" : "") />
+                        <label for="rdo-repeat-biweekly">Biweekly</label>
 
-                    <input id="rdo-repeat-biweekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.BiWeekly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.BiWeekly ? "checked" : "") />
-                    <label for="rdo-repeat-biweekly">Biweekly</label>
+                        <input id="rdo-repeat-monthly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Monthly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Monthly ? "checked" : "") />
+                        <label for="rdo-repeat-monthly">Monthly</label>
 
-                    <input id="rdo-repeat-monthly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Monthly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Monthly ? "checked" : "") />
-                    <label for="rdo-repeat-monthly">Monthly</label>
+                        <input id="rdo-repeat-custom" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Custom)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Custom ? "checked" : "") />
+                        <label for="rdo-repeat-custom">Custom</label>
+                    </span>
 
-                    <input id="rdo-repeat-custom" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Custom)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Custom ? "checked" : "") />
-                    <label for="rdo-repeat-custom">Custom</label>
-                </span>
+                    <div id="sprint-dates-container" class="@(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never || Model.RepeatSprintOption == null ? "hidden" : "")">
+                        <label for="start-date">Start Date</label>
+                        <input id="start-date" type="date" value="@FormatUtcDatePicker(Model.SprintStart)" />
 
-                <div id="sprint-dates-container" class="@(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never || Model.RepeatSprintOption == null ? "hidden" : "")">
-                    <label for="start-date">Start Date</label>
-                    <input id="start-date" type="date" value="@FormatUtcDatePicker(Model.SprintStart)" />
-
-                    <div id="dv-end-date">
-                        <label for="end-date">End Date</label>
-                        <input id="end-date" type="date" value="@FormatUtcDatePicker(Model.SprintEnd)" />
+                        <div id="dv-end-date">
+                            <label for="end-date">End Date</label>
+                            <input id="end-date" type="date" value="@FormatUtcDatePicker(Model.SprintEnd)" />
+                        </div>
                     </div>
                 </div>
+                
             </div>
 
       
 
             <div id="dv-sections-container">
                 <h5>Section Setup</h5>             
+                <div id="section-content" class="content-container">
+                    <span id="rdo-section-container">
+                        <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
+                        <label for="rdo-section-custom">Custom</label>
 
-                <span id="rdo-section-container">
-                    <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
-                    <label for="rdo-section-custom">Custom</label>
+                        <input id="rdo-section-development" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Development)" @(Model.SectionSetting == Constants.SectionSettings.Development ? "checked" : "") />
+                        <label for="rdo-section-development">Development</label>
+                    </span>
 
-                    <input id="rdo-section-development" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Development)" @(Model.SectionSetting == Constants.SectionSettings.Development ? "checked" : "") />
-                    <label for="rdo-section-development">Development</label>
-                </span>
-
-                <div id="sections-container" class="@(Model.SectionSetting != Constants.SectionSettings.Custom ? "hidden" : "")">
-                    <input id="section-title-input" type="text" placeholder="section name" />
-                    <button id="add-section-btn" type="button"><i class="fa-solid fa-plus"></i></button> 
+                    <div id="sections-container" class="@(Model.SectionSetting != Constants.SectionSettings.Custom ? "hidden" : "")">
+                        <input id="section-title-input" type="text" placeholder="section name" />
+                        <button id="add-section-btn" type="button"><i class="fa-solid fa-plus"></i></button>
+                    </div>
                 </div>
+                
             </div>
+            <div class="w-100"></div>
             <div id="section-names">
                 <div id="dv-section-header">
                     <h5>Section Titles</h5>
                     <button id="undo-section-btn" type="button"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
-                
-                <div id="section-settings">
-                    @foreach (var s in Model.Sections)
-                    {
-                        <span class="delete-section">
-                            @s.Title <span class='delete'>x</span>
-                        </span>
-                    }
+                <div id="section-title-content" class="content-container">
+                    <div id="section-settings">
+                        @foreach (var s in Model.Sections)
+                        {
+                            <span class="delete-section">
+                                @s.Title <span class='delete'>x</span>
+                            </span>
+                        }
+                    </div>
                 </div>
+              
             </div>
             
 

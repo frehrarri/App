@@ -2,6 +2,8 @@
 
 export function init() {
 
+    let preChangeValues = new Map();
+
     //set section dropdown based on which table the user clicks the add button for
     //if (params?.sectionTitle) {
     //    const sectionDropdown = document.getElementById('ticketSectionTitle');
@@ -12,7 +14,7 @@ export function init() {
     const container = document.querySelector('.main-content');
 
     if (container) {
-        container.addEventListener("click", handleEvents);
+        container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
     }
 
     const centerHead = document.getElementById('header-center');
@@ -25,26 +27,27 @@ export function init() {
     //addUserSearchEventListener(input, "userResults");
 }
 
-async function handleEvents(e) {
+async function handleEvents(e, preChangeValues) {
+    debugger;
     if (e.target.type != "button")
         return;
 
-    if (e.target.id == "submitTicket")
+    if (e.target.id == "submitTicket") 
         await saveTicket();
 
     if (e.target.id == "deleteTicket")
         await deleteTicket();
 
     if (e.target.id == "undo-button")
-        undo();
+        undo(preChangeValues);
 
-    if (e.target.id == "ticketAssignedTo")
-        assignedTo.value = "";
+    //if (e.target.id == "ticketAssignedTo")
+    //    assignedTo.value = "";
 
-    if (e.target.id == "ticketDesc")
-        handleEnter(e);
+    //if (e.target.id == "ticketDesc")
+    //    handleEnter(e);
 
-    handleUndoMap(e);
+    handleUndoMap(e, preChangeValues);
 }
 
 export async function getManageTicketPartial(ticketId, sectionTitle) {
@@ -176,9 +179,9 @@ async function deleteTicket() {
 }
 
 
-let preChangeValues = new Map();
 
-function undo() {
+
+function undo(preChangeValues) {
     for (const [input, value] of preChangeValues.entries()) {
         if (input.type === "checkbox" || input.type === "radio") {
             input.checked = value;
@@ -191,7 +194,7 @@ function undo() {
 }
 
 
-function handleUndoMap(e) {
+function handleUndoMap(e, preChangeValues) {
 
     if (e.target.tagName == "INPUT" || e.target.tagName == "TEXTAREA"
         || e.target.tagName == "SELECT" || e.target.matches("div[contenteditable='true']"))

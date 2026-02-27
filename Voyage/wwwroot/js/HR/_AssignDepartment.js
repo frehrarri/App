@@ -236,7 +236,7 @@ async function updateBreadCrumb() {
     const li3 = document.createElement('li');
     li3.classList.add('breadcrumb-item');
     li3.classList.add('active');
-    li3.textContent = 'Assign Department'
+    li3.textContent = 'Department'
 
     ol.appendChild(li3);
 }

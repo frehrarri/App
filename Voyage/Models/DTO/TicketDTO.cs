@@ -12,6 +12,7 @@ namespace Voyage.Models.DTO
         }
 
         public int CompanyId { get; set; }
+        public int EmployeeId { get; set; }
         public int TicketId { get; set; }            
         public decimal TicketVersion { get; set; }
         public string TicketChangeAction { get; set; } = string.Empty;

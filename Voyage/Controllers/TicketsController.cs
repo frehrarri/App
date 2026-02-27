@@ -147,11 +147,15 @@ namespace Voyage.Controllers
             //ticketDTO.SprintId = sprint.SprintId;
             //ticketDTO.SprintEndDate = sprint.EndDate;
             //ticketDTO.SprintStartDate = sprint.StartDate;
+            
+
             if (ticketDTO.CompanyId <= 0)
                 ticketDTO.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
 
             if (string.IsNullOrEmpty(ticketDTO.CreatedBy)) 
                 ticketDTO.CreatedBy = HttpContext.Session.GetString("Username")!;
+
+            //ticketDTO.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
 
             return await _ticketsB.SaveTicket(ticketDTO);
         }
@@ -220,6 +224,7 @@ namespace Voyage.Controllers
         public async Task<bool> SaveSettings([FromBody] TicketSettingsDTO dto)
         {
             dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
             return await _ticketsB.SaveSettings(dto);
         }
 

@@ -9,18 +9,19 @@
 
 <div id="messagePopup" class="message-popup hidden">Saved successfully!</div>
 
-<div style="display:flex;justify-content:center;">
-    <div id="manage-ticket-container">
+<div id="manage-ticket-container">
 
-        @if (Model.TicketId != 0)
-        {
-            <h4>@verb Ticket</h4>
-        }
-        else
-        {
-            verb = "Add";
-            <h5>@verb Ticket</h5>
-        }
+    @if (Model.TicketId != 0)
+    {
+        <h4>@verb Ticket</h4>
+    }
+    else
+    {
+        verb = "Add";
+        <h5>@verb Ticket</h5>
+    }
+
+    <div id="content-container" class="content-container">
 
         <form id="ticket-form">
             @Html.AntiForgeryToken()
@@ -74,12 +75,12 @@
             <!-- Row 4: Assigned To, Priority Level -->
             <!-- make this auto populate from list of users matching query as they type -->
             <div class="form-row">
-                <div >
+                <div>
                     <label for="ticketAssignedTo">Assigned To</label>
                     <input type="text" class="form-field" id="ticketAssignedTo" value="@Model?.AssignedTo" />
                     <ul id="userResults" class="autocomplete-list"></ul>
                 </div>
-                <div >
+                <div>
                     <label for="ticketPrioLvl">Priority Level</label>
                     <select id="ticketPrioLvl" class="form-field">
                         <option value="0" selected="@(Model?.PriorityLevel == Constants.PriorityLevel.Low)">Low</option>
@@ -95,14 +96,14 @@
                     <label for="ticketDueDate">Due Date</label>
                     <input type="date" class="form-field" id="ticketDueDate" value="@Model?.DueDate" />
                 </div>
-                <div >
+                <div>
                     <label for="ticketStatus">Status</label>
                     <select id="ticketStatus" class="form-field" name="Status">
                         <option value="NotStarted" selected="@(Model?.Status == "NotStarted")">Not Started</option>
                         <option value="InProgress" selected="@(Model?.Status == "InProgress")">In Progress</option>
                         <option value="Discontinued" selected="@(Model?.Status == "Discontinued")">Discontinue</option>
                         <option value="Completed" selected="@(Model?.Status == "Completed")">Completed</option>
-                
+
                     </select>
                 </div>
             </div>
@@ -114,4 +115,5 @@
             </div>
         </form>
     </div>
+        
 </div>

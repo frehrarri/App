@@ -15,6 +15,7 @@ namespace Voyage.Models.DTO
         }
 
         public int CompanyId { get; set; }
+        public int EmployeeId { get; set; }
         public Guid? DepartmentKey { get; set; }
         public Guid? TeamKey { get; set; }
         public int SettingsId { get; set; }
