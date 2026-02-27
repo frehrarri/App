@@ -2,6 +2,8 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(data) {
+    removeEventListeners();
+
     debugger;
     const partial = await getDepartmentPermissionsPartial(data);
     document.getElementById('dv-dept-permissions').innerHTML = partial;

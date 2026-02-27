@@ -96,6 +96,8 @@ async function updateBreadCrumb() {
 
 
 export async function init() {
+    removeEventListeners();
+
     //load partial
     let partial = await getManageTeamsPartial();
     const container = document.querySelector(".main-content");

@@ -64,6 +64,8 @@ async function getRoles() {
 }
 
 export async function init() {
+    removeEventListeners();
+
     //load initial partial
     const partial = await getManageRolesPartial();
     const container = document.querySelector(".main-content");

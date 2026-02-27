@@ -173,6 +173,8 @@ async function updateBreadCrumb() {
 }
 
 export async function init() {
+    removeEventListeners();
+
     //load initial partial
     let partial = await getManagePersonnelPartial();
     const container = document.querySelector(".main-content");
@@ -182,6 +184,9 @@ export async function init() {
 
         container.addEventListener("click", handlePersonnelEvents);
         container.addEventListener("change", handlePersonnelEvents);
+
+        trackEventListener(container, "click", handlePersonnelEvents);
+        trackEventListener(container, "change", handlePersonnelEvents);
     }
 
     await updateBreadCrumb();

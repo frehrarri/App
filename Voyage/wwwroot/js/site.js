@@ -1,4 +1,27 @@
 ﻿
+const moduleEventListeners = [];
+
+function trackEventListener(element, eventType,  handler) {
+    if (!element || !eventType || !handler) {
+        console.log('could not track event listener, missing params')
+        return;
+    }
+
+    const listener = {
+        element: element,
+        eventType: eventType,
+        handler: handler
+    }
+
+    moduleEventListeners.push(listener)
+}
+
+function removeEventListeners() {
+    moduleEventListeners.forEach(e => {
+        e.element.removeEventListener(e.eventType, e.handler)
+    });
+}
+
 //prevent submitting of form inputs by enter key
 document.addEventListener("keydown", (e) => {
     if (

@@ -2,6 +2,8 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(data) {
+    removeEventListeners();
+
     const partial = await getTeamPermissionsPartial(data);
     const container = document.querySelector("#dv-team-permissions");
 

@@ -3,6 +3,8 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(data) {
+    removeEventListeners();
+
     const partial = await getRolePermissionsPartial(data);
     let container = document.querySelector(".main-content");
 
@@ -13,6 +15,7 @@ export async function init(data) {
     const changeTracker = new Set();
 
     container?.addEventListener("click", (e) => handleEvents(e, changeTracker));
+    trackEventListener(container, "click", handleEvents);
 
     await updateBreadCrumb();
 }
@@ -130,7 +133,12 @@ async function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Roles'
 
-    a2.addEventListener("click", async () => await loadModule('manageRoles'));
+    const loadManageRoles = () => {
+        await loadModule('manageRoles');
+    };
+
+    a2.addEventListener("click", loadManageRoles);
+    trackEventListener(a2, "click", loadManageRoles);
 
     li2.appendChild(a2);
     ol.appendChild(li2);

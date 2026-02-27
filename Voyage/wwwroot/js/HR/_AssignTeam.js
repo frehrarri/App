@@ -3,6 +3,8 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(params) {
+    removeEventListeners();
+
     //load initial partial
     let partial = await getAssignTeamPartial(params);
     const container = document.querySelector(".main-content");
@@ -10,6 +12,7 @@ export async function init(params) {
     if (container && partial) {
         container.innerHTML = partial;
         container.addEventListener("click", handleEvents);
+        trackEventListener(container, "click", handleEvents);
     }
 
     //load permissions partial
@@ -150,7 +153,12 @@ async function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Teams'
 
-    a2.addEventListener("click", async () => await loadModule('manageTeams'));
+    const loadManageTeams = async () => {
+        await loadModule('manageTeams')
+    }
+
+    a2.addEventListener("click", loadManageTeams);
+    trackEventListener(a2, "click", loadManageTeams);
 
     li2.appendChild(a2);
     ol.appendChild(li2);

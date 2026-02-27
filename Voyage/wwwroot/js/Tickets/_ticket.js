@@ -1,6 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
+    removeEventListeners();
 
     //adjust container
     document.getElementById('ticket-view').style.width = '1200px';

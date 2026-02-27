@@ -1,6 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export function init() {
+    removeEventListeners();
 
     let preChangeValues = new Map();
 
@@ -15,6 +16,7 @@ export function init() {
 
     if (container) {
         container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
+        trackEventListener(container, "click", handleEvents);
     }
 
     const centerHead = document.getElementById('header-center');
@@ -75,9 +77,12 @@ function updateBreadcrumb() {
     a1.href = "#";
     a1.textContent = 'Tickets'
 
-    a1.addEventListener("click", async () => {
+    const loadTickets = () => {
         await loadModule('tickets');
-    });
+    };
+
+    a1.addEventListener("click", loadTickets);
+    trackEventListener(a1, "click", loadTickets);
 
     li1.appendChild(a1);
     ol.appendChild(li1);

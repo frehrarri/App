@@ -3,12 +3,18 @@ import { loadModule } from "/js/__moduleLoader.js";
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init() {
+    removeEventListeners();
+
     //load initial partial
     let partial = await getManageDepartmentsPartial();
     const container = document.querySelector(".main-content");
 
-    if (container) 
-        container.innerHTML = partial;
+    if (!container) {
+        console.log("could not load manageDepartments");
+        return;
+    } 
+
+    container.innerHTML = partial;
 
     await updateBreadCrumb();
 

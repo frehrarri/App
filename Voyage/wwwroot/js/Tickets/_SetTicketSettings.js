@@ -1,6 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export function init() {
+    removeEventListeners();
     updateBreadCrumb();
 }
 

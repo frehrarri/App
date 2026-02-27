@@ -2,6 +2,8 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
 export async function init(data) {
+    removeEventListeners();
+
     const partial = await getRolePermissionsPartial(data);
     document.getElementById('admin-settings-partial-container').innerHTML = partial;
 
@@ -9,6 +11,7 @@ export async function init(data) {
     const changeTracker = new Set();
 
     container?.addEventListener("click", (e) => handleEvents(e, changeTracker));
+    trackEventListener(container, "click", handleEvents);
 
     updateBreadCrumb();
 }

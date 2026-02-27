@@ -132,6 +132,8 @@ async function getAssignedDepartmentUsers(params) {
 
 
 export async function init(params) {
+    removeEventListeners();
+
     //load initial partial
     let partial = await getAssignDepartmentPartial(params);
     const container = document.querySelector(".main-content");
@@ -143,8 +145,11 @@ export async function init(params) {
     await loadModule("deptPermissions", params);
 
     const tabs = document.getElementById('assign-dept-tabs');
-    if (tabs)
+    if (tabs) {
         tabs.addEventListener("click", handleTabs);
+        trackEventListener(tabs, "click", handleTabs);
+    }
+        
 
     await updateBreadCrumb();
 
@@ -228,7 +233,12 @@ async function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Departments'
 
-    a2.addEventListener("click", async () => await loadModule('manageDepartments'));
+    const loadManageDepartments = async () => {
+        await loadModule('manageDepartments');
+    };
+
+    a2.addEventListener("click", loadManageDepartments);
+    trackEventListener(a2, "click", loadManageDepartments);
 
     li2.appendChild(a2);
     ol.appendChild(li2);
