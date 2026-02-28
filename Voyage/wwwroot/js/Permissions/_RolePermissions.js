@@ -121,6 +121,7 @@ async function updateBreadCrumb() {
 
     const module = await loadModule('sideNav');
     a1.addEventListener("click", module.expandSideNavItem);
+    trackEventListener(a1, "click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -133,7 +134,7 @@ async function updateBreadCrumb() {
     a2.href = "#";
     a2.textContent = 'Manage Roles'
 
-    const loadManageRoles = () => {
+    const loadManageRoles = async () => {
         await loadModule('manageRoles');
     };
 

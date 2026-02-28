@@ -9,14 +9,18 @@ export async function init(params) {
     let partial = await getAssignTeamPartial(params);
     const container = document.querySelector(".main-content");
 
-    if (container && partial) {
-        container.innerHTML = partial;
-        container.addEventListener("click", handleEvents);
-        trackEventListener(container, "click", handleEvents);
+    if (!container || !partial) {
+        console.log('could not load assign team partial');
+        return;
     }
+
+    container.innerHTML = partial;
 
     //load permissions partial
     await loadModule("teamPermissions", params);
+
+    container.addEventListener("click", handleEvents);
+    trackEventListener(container, "click", handleEvents);
 
     await updateBreadCrumb();
 
@@ -141,6 +145,7 @@ async function updateBreadCrumb() {
 
     const module = await loadModule('sideNav');
     a1.addEventListener("click", module.expandSideNavItem);
+    trackEventListener(a1, "click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);
@@ -190,7 +195,7 @@ async function handleEvents(e) {
 }
 
 function handleTabs(e) {
-    
+    debugger;
     if (!e.target.classList.contains('tab'))
         return;
 

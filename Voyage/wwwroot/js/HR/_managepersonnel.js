@@ -160,6 +160,7 @@ async function updateBreadCrumb() {
 
     const module = await loadModule('sideNav');
     a1.addEventListener("click", module.expandSideNavItem);
+    trackEventListener(a1, "click", module.expandSideNavItem);
 
     li1.appendChild(a1);
     ol.appendChild(li1);

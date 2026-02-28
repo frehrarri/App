@@ -1,6 +1,7 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
+    removeEventListeners();
 
     //load initial partial
     let partial = await getTicketsPartial();
@@ -13,6 +14,8 @@ export async function init() {
 
     container.addEventListener("click", handleEvents);
     container.addEventListener("change", handleEvents);
+    trackEventListener(container, "click", handleEvents);
+    trackEventListener(container, "change", handleEvents);
 
     appendSectionFilters();
     updateBreadcrumb();
@@ -67,6 +70,7 @@ function appendSectionFilters() {
             a.classList.add('tab');
 
             a.addEventListener("click", handleTabs);
+            trackEventListener(a, "click", handleTabs);
 
             li.appendChild(a);
             ul.appendChild(li);
@@ -82,6 +86,7 @@ function appendSectionFilters() {
         a.classList.add('active-tab');
 
         a.addEventListener("click", handleTabs);
+        trackEventListener(a, "click", handleTabs);
 
         li.appendChild(a);
         ul.prepend(li);

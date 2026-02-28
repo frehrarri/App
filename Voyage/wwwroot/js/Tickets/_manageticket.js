@@ -77,7 +77,7 @@ function updateBreadcrumb() {
     a1.href = "#";
     a1.textContent = 'Tickets'
 
-    const loadTickets = () => {
+    const loadTickets = async () => {
         await loadModule('tickets');
     };
 

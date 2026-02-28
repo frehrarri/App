@@ -1,7 +1,12 @@
-﻿#ticket-view{
-    width: 1400px;
-    margin-top: 30px;
+﻿#tickets-container {
+    padding-bottom: 40px;
+    overflow-y: auto;
+    height: 800px;
 }
+
+    #tickets-container .app-table {
+        margin-top: -5px;
+    }
 
 #sprint-header {
     margin-bottom: 30px;
@@ -99,10 +104,3 @@ a.active-tab:hover {
     cursor: default !important;
 }
 
-#tickets-container {
-    padding-bottom: 40px;
-}
-
-#tickets-container .app-table {
-    margin-top: -5px;
-}
