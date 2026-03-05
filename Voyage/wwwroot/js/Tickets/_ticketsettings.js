@@ -32,7 +32,7 @@ async function getTicketSettingsPartial() {
 
 async function handleClicks(e, sectionHistory) {
     const btn = e.target.closest("button");
-    debugger;
+    
     if (btn) {
         if (btn.id == "add-section-btn")
             addSection(null, sectionHistory);
@@ -263,8 +263,15 @@ function toggleSectionControls(e, sectionHistory) {
     {
         container.classList.add('hidden');
 
-        let sections = [];
+        //required sections
+        const required = getRequiredSections();
+
+        for (let r of required)
+            addRequiredSection(r);
+
         //custom sections
+        let sections = [];
+
         if (e.target.id == "rdo-section-development") {
             sections.push("Development");
             sections.push("Review");
@@ -277,11 +284,7 @@ function toggleSectionControls(e, sectionHistory) {
         for (let section of sections)
             addSection(section, sectionHistory);
 
-        //required sections
-        const required = getRequiredSections();
-
-        for (let r of required)
-            addRequiredSection(r);
+      
     }
 
 }

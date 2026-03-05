@@ -4,6 +4,10 @@
     height: 800px;
 }
 
+    #tickets-container > .section-container:first-child {
+        margin-top: 10px;
+    }
+
     #tickets-container .app-table {
         margin-top: -5px;
     }

@@ -2,6 +2,9 @@
 
 @* controller renders setupticketsettings if settings have not been set up *@
 
+<div id="filter-container">
+    <div id="section-filter"></div>
+</div>
 
 <div id="tickets-container">
 
@@ -12,10 +15,6 @@
             <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
         </div>
     }
-
-    <div id="filter-container">
-        <div id="section-filter"></div>
-    </div>
 
         @foreach (var s in Model.Sections)
         {

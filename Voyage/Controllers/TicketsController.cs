@@ -216,7 +216,13 @@ namespace Voyage.Controllers
         public async Task<TicketSettingsDTO?> GetSettings()
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            return await _ticketsB.GetSettings(companyId!.Value);
+            var settings = await _ticketsB.GetSettings(companyId!.Value);
+
+            if (settings != null)
+                settings.Sections = settings.Sections.Where(s => s.Title != RequiredTicketSections.Completed.ToString() 
+                                        && s.Title != RequiredTicketSections.Discontinued.ToString()).ToList();
+
+            return settings;
         }
 
         [HttpPost]

@@ -466,8 +466,8 @@ namespace Voyage.Data
                 dto = await _db.Settings.Include(s => s.Sections)
                     .Where(s => s.Feature == Constants.Feature.Tickets
                         && s.IsActive == true
-                        && s.IsLatest == true)
-                    //&& s.CompanyId == companyId)
+                        && s.IsLatest == true
+                        && s.CompanyId == companyId)
                     .Select(s => new TicketSettingsDTO()
                     {
                         SettingsId = s.SettingsId,
@@ -475,8 +475,9 @@ namespace Voyage.Data
                         SprintEnd = s.SprintEndDate,
                         SprintStart = s.SprintStartDate,
 
-                        Sections = s.Sections.Where(s => s.Title != Constants.RequiredTicketSections.Completed.ToString()
-                                                        && s.Title != Constants.RequiredTicketSections.Discontinued.ToString())
+                        //Sections = s.Sections.Where(s => s.Title != Constants.RequiredTicketSections.Completed.ToString()
+                        //                                && s.Title != Constants.RequiredTicketSections.Discontinued.ToString())
+                        Sections = s.Sections
                             .Select(s => new SectionDTO
                             {
                                 SectionId = s.SectionId,
