@@ -18,10 +18,11 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddHttpContextAccessor();
 
 //all pages secured automatically unless using AllowAnonymous attribute on controller
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = options.DefaultPolicy;
+//});
 
 // logging
 builder.Logging.ClearProviders();
@@ -40,16 +41,16 @@ builder.Services.AddSession(options =>
 });
 
 //CORS - used for Electron container
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowElectron", policy =>
-    {
-        policy.WithOrigins("app://-") // electron scheme
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowElectron", policy =>
+//    {
+//        policy.WithOrigins("app://-") // electron scheme
+//              .AllowAnyHeader()
+//              .AllowAnyMethod()
+//              .AllowCredentials();
+//    });
+//});
 
 //CORS - used for views to communicate with controllers
 builder.Services.AddAntiforgery(options =>
@@ -67,6 +68,16 @@ builder.Services.AddDbContext<_AppDbContext>(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<_AppDbContext>()
                 .AddDefaultTokenProviders();  // This is required for password reset tokens
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/User/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.SlidingExpiration = true;
+});
 
 //utilities
 
@@ -115,18 +126,21 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseHsts();
+
+//app.UseCookiePolicy(new CookiePolicyOptions
+//{
+//    Secure = CookieSecurePolicy.Always, // only over HTTPS
+//    HttpOnly = HttpOnlyPolicy.Always,
+//    MinimumSameSitePolicy = SameSiteMode.Strict
+//});
+
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    Secure = CookieSecurePolicy.Always, // only over HTTPS
-    HttpOnly = HttpOnlyPolicy.Always,
-    MinimumSameSitePolicy = SameSiteMode.Strict
-});
 
-app.UseCors("AllowElectron");
+
+//app.UseCors("AllowElectron");
 
 app.UseSession();
 app.UseAuthentication();
