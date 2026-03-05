@@ -11,32 +11,30 @@
     border: 1px solid lightgray;
 }
 
-#dv-ticket-setup {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    background-color: white;
-    display: flex;
-    justify-content: flex-start;
-    gap: 30px;
-    max-width: fit-content;
-    flex-wrap: wrap;
-    padding-left: 40px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    flex-wrap: wrap;
-    max-width: 50%;
-    margin: 0 auto;
-}
+    #section-names{
+        width: 25%;
+    }
+
+    #dv-ticket-setup {
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        background-color: white;
+        display: flex;
+        justify-content: flex-start;
+        gap: 20px;
+        max-width: fit-content;
+        flex-wrap: wrap;
+        padding-left: 40px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        flex-wrap: wrap;
+        margin: 0 auto;
+    }
 
 #dv-sections-container {
     max-width: 40%;
     max-height: 500px;
     min-height: 175px;
-}
-
-#section-names {
-    min-width: 20%;
-    margin-top: -20px;
 }
 
 #dv-section-header {
@@ -60,22 +58,43 @@
 .delete-section {
     display: inline-block;
     border-radius: 5px;
-    padding: 2px 10px 4px 8px;
-    margin: 2px;
+    padding: 2px 8px;
+    padding-right: 16px;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 2px;
     position: relative;
+    background-color: slategray;
+    color: white;
+    border: none;
     cursor: pointer;
-    /*background-color: #f8f9fa;*/
-    box-shadow: .5px .5px 1px .5px #120d0dba;
+    border: 1px solid white;
+    width: fit-content;
+    /*  box-shadow: .5px .5px 1px .5px #120d0dba;*/
 }
+
+    .delete-section[disabled] {
+        display: inline-block;
+        border-radius: 5px;
+        padding: 2px 8px;
+        font-size: 14px;
+        margin-right: 5px;
+        position: relative;
+        background-color: var(--background-grey);
+        color: slategray;
+        cursor: default;
+        border: 1px solid slategray;
+    }
+
 
     .delete-section .delete {
         position: absolute;
         bottom: -3px;
-        right: 1px;
+        right: 5px;
         cursor: pointer;
         font-weight: 400;
         font-size: 0.9rem;
-        color: black;
+        color: white;
     }
 
 #section-title-input {
@@ -121,11 +140,13 @@ label {
 
 #section-settings {
     display:none;
-    margin-top: 10px;
+    max-height: 25vh;
 }
 
     #section-settings:has(> *) {
-        display: block;
+        display: flex;
+        flex-direction:column; 
+        flex-wrap: wrap;
     }
 
 #sprint-dates-container{
@@ -153,4 +174,18 @@ label {
 #section-content{
     padding: 10px;
     padding-bottom: 20px;
+}
+
+#sprint-content {
+    margin-left: 10px;
+}
+
+#section-title-content{
+    padding-right: 100px;
+    margin-top: 20px;
+}
+
+#txt-repeat {
+    margin-top: 15px;
+    margin-left: 10px;
 }

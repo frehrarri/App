@@ -185,7 +185,6 @@
         {
             Completed,
             Discontinued,
-            Backlog
         }
 
 

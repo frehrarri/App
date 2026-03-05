@@ -1,3 +1,13 @@
+:root {
+    --main-blue: #6289af;
+    --main-lightblue: #81b1df;
+    --main-green: #55c792;
+    --main-white: white;
+    --background-grey: #f8f9fa;
+    --icon-color: slategrey;
+    --warning-red: #cb8d8d;
+}
+
 
 html {
     font-size: 14px;

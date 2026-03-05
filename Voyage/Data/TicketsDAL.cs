@@ -475,12 +475,14 @@ namespace Voyage.Data
                         SprintEnd = s.SprintEndDate,
                         SprintStart = s.SprintStartDate,
 
-                        Sections = s.Sections.Select(s => new SectionDTO
-                        {
-                            SectionId = s.SectionId,
-                            Title = s.Title,
-                            SectionOrder = s.SectionOrder,
-                        }).ToList()
+                        Sections = s.Sections.Where(s => s.Title != Constants.RequiredTicketSections.Completed.ToString()
+                                                        && s.Title != Constants.RequiredTicketSections.Discontinued.ToString())
+                            .Select(s => new SectionDTO
+                            {
+                                SectionId = s.SectionId,
+                                Title = s.Title,
+                                SectionOrder = s.SectionOrder,
+                            }).ToList()
                     })
                     .SingleOrDefaultAsync();
 

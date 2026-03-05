@@ -58,6 +58,14 @@ const moduleRegistry = {
         js: () => import(`./HR/_AssignTeam.js?v=${scriptVersion}`),
         css: `/css/HR/_AssignTeam.css?v=${scriptVersion}`
     },
+    teamDetails: {
+        js: () => import(`./HR/_TeamDetails.js?v=${scriptVersion}`),
+        css: `/css/HR/_TeamDetails.css?v=${scriptVersion}`
+    },
+    departmentDetails: {
+        js: () => import(`./HR/_DepartmentDetails.js?v=${scriptVersion}`),
+        css: `/css/HR/_DepartmentDetails.css?v=${scriptVersion}`
+    },
 
     //admin settings
     adminSettings: {

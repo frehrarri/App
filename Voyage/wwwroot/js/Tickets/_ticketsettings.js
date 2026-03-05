@@ -11,10 +11,10 @@ export async function init() {
     if (partial && container) {
         container.innerHTML = partial;
 
-        container.addEventListener("click", (e) => handleEvents(e, sectionHistory));
-        container.addEventListener("change", (e) => handleEvents(e, sectionHistory));
-        trackEventListener(container, "click", handleEvents);
-        trackEventListener(container, "change", handleEvents);
+        container.addEventListener("click", (e) => handleClicks(e, sectionHistory));
+        container.addEventListener("change", (e) => handleChange(e, sectionHistory));
+        trackEventListener(container, "click", handleClicks);
+        trackEventListener(container, "change", handleChange);
 
         updateBreadCrumb();
     }
@@ -30,9 +30,9 @@ async function getTicketSettingsPartial() {
     }
 }
 
-async function handleEvents(e, sectionHistory) {
+async function handleClicks(e, sectionHistory) {
     const btn = e.target.closest("button");
-
+    debugger;
     if (btn) {
         if (btn.id == "add-section-btn")
             addSection(null, sectionHistory);
@@ -43,17 +43,26 @@ async function handleEvents(e, sectionHistory) {
         else if (btn.id == "undo-section-btn")
             undoSection(sectionHistory);
     }
+    else
+    {
+        const sectionTag = e.target.closest(".delete-section");
+        if (!sectionTag || sectionTag.hasAttribute('disabled'))
+            return;
+        //else if (sectionTag.disabled == true)
+        //    return;
+        else if (sectionTag)
+            removeSection(e, sectionHistory);
+    }
+}
 
-    if (e.type == "change" && e.target.matches("[name='rdo-repeat']")) 
+async function handleChange(e, sectionHistory){
+    if (e.target.matches("[name='rdo-repeat']"))
         toggleSprintDateControls(e);
 
-    else if (e.type == "change" && e.target.matches("[name='rdo-section']"))
+    else if (e.target.matches("[name='rdo-section']"))
         toggleSectionControls(e, sectionHistory);
-
-    else if (e.target.classList.contains("delete-section")
-        || e.target.classList.contains("delete"))
-            removeSection(e, sectionHistory);
 }
+
 
 async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
@@ -242,22 +251,69 @@ function toggleSectionControls(e, sectionHistory) {
     //don't add sections that are required as they are added to everything via Business layer
     if (e.target.id == "rdo-section-custom") {
         container.classList.remove('hidden');
+
+        //required sections
+        const required = getRequiredSections();
+
+        for (let r of required)
+            addRequiredSection(r);
+
     }
-    else {
+    else if (e.target.id == "rdo-section-development")
+    {
         container.classList.add('hidden');
 
         let sections = [];
-
+        //custom sections
         if (e.target.id == "rdo-section-development") {
             sections.push("Development");
             sections.push("Review");
             sections.push("QA");
             sections.push("Staging");
             sections.push("UAT");
+            sections.push("Backlog");
         }
 
         for (let section of sections)
             addSection(section, sectionHistory);
+
+        //required sections
+        const required = getRequiredSections();
+
+        for (let r of required)
+            addRequiredSection(r);
     }
 
+}
+
+function addRequiredSection(section) {
+    let input = document.getElementById('section-title-input').value.trim();
+    if (section != null)
+        input = section;
+
+    if (!input) return;
+
+    //create tag and add to new container
+    let newSection = document.createElement("span")
+    newSection.className = "delete-section";
+    newSection.innerHTML = `${input}`;
+    newSection.setAttribute('disabled', 'true');
+
+    document.getElementById('section-settings')?.append(newSection);
+
+    //clear after adding to container
+    document.getElementById('section-title-input').value = "";
+
+    //sectionHistory.push({
+    //    type: "add",
+    //    element: newSection
+    //});
+
+}
+
+function getRequiredSections() {
+    const sections = [];
+    sections.push('Completed');
+    sections.push('Discontinued');
+    return sections;
 }

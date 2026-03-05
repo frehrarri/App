@@ -8,10 +8,8 @@
         <div id="dv-ticket-setup">
             <div id="dv-sprint-container">
                 <h5>Sprint Setup</h5>
-                <div id="sprint-content" class="content-container">
-                    <b>Repeat:</b>
-                    <br />
-
+                <div id="txt-repeat">Repeat:</div>
+                <div id="sprint-content">
                     <span id="rdo-repeat-container">
                         <input id="rdo-repeat-never" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Never)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never
                                                                                                                                                                 || Model.RepeatSprintOption == null ? "checked" : "") />
@@ -47,7 +45,7 @@
 
             <div id="dv-sections-container">
                 <h5>Section Setup</h5>             
-                <div id="section-content" class="content-container">
+                <div id="section-content">
                     <span id="rdo-section-container">
                         <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
                         <label for="rdo-section-custom">Custom</label>
@@ -63,14 +61,17 @@
                 </div>
                 
             </div>
-            <div class="w-100"></div>
+          @*   <div class="w-100"></div> *@
             <div id="section-names">
                 <div id="dv-section-header">
                     <h5>Section Titles</h5>
                     <button id="undo-section-btn" type="button"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
-                <div id="section-title-content" class="content-container">
+                <div id="section-title-content">
                     <div id="section-settings">
+                        <span class="delete-section" disabled>Completed</span>
+                        <span class="delete-section" disabled>Discontinued</span>
+
                         @foreach (var s in Model.Sections)
                         {
                             <span class="delete-section">

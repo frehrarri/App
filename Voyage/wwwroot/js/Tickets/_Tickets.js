@@ -53,6 +53,9 @@ function updateBreadcrumb() {
 
 function appendSectionFilters() {
     const header = document.getElementById('section-filter');
+    if (!header)
+        return;
+
     const ul = document.createElement('ul');
     const headings = document.querySelectorAll('.heading');
 

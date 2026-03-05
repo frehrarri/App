@@ -241,14 +241,15 @@ namespace Voyage.Business
             else
                 dto.CreatedBy = user.UserName ?? string.Empty;
 
-            AddRequiredSections(dto);
+            HandleRequiredSections(dto);
             HandleSprintDates(dto);
 
             return await _ticketsD.SaveSettings(dto);
         }
 
-        private void AddRequiredSections(TicketSettingsDTO dto)
+        private void HandleRequiredSections(TicketSettingsDTO dto)
         {
+            //prevent duplicate section name
             var requiredSections = Enum.GetNames(typeof(Constants.RequiredTicketSections));
 
             int i = 1;
