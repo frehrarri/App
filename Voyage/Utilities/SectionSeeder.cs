@@ -57,7 +57,7 @@ namespace Voyage.Utilities
 
 
             //create new sections
-            int i = 0;
+            int i = -1;
             int sectionOrder = 991;
             var requiredSections = Enum.GetValues<Constants.RequiredTicketSections>();
 
@@ -70,7 +70,7 @@ namespace Voyage.Utilities
                 {
                     var newSection = new Section
                     {
-                        SectionId = i--,
+                        SectionId = i,
                         Title = sectionName,
                         SectionOrder = sectionOrder++,
                         SettingsId = -1,
@@ -81,6 +81,7 @@ namespace Voyage.Utilities
                     };
 
                     await _db.Sections.AddAsync(newSection);
+                    i--;
                 }
             }
 
