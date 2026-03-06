@@ -9,7 +9,7 @@ namespace Voyage.Models.DTO
         {
             SprintStart = DateTime.Today.ToUniversalTime();
             SprintEnd = null;
-            RepeatSprintOption = RepeatSprint.Never;
+            RepeatSprintOption = (int)RepeatSprint.Never;
 
             Sections = new List<SectionDTO>();
         }
@@ -20,7 +20,7 @@ namespace Voyage.Models.DTO
         public Guid? TeamKey { get; set; }
         public int SettingsId { get; set; }
         public decimal SettingsVersion { get; set; }
-        public Constants.RepeatSprint RepeatSprintOption { get; set; }
+        public int RepeatSprintOption { get; set; }
         public int SprintId { get; set; }
         public DateTime? SprintStart { get; set; }
         public DateTime? SprintEnd { get; set; }

@@ -271,23 +271,23 @@ namespace Voyage.Business
 
             //dto defaults to None (Start = today, end = null)
 
-            if (dto.RepeatSprintOption == Constants.RepeatSprint.Weekly)
+            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.Weekly)
             {
                 dto.SprintEnd = dto.SprintStart!.Value.AddDays(7);
             }
 
-            if (dto.RepeatSprintOption == Constants.RepeatSprint.BiWeekly)
+            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.BiWeekly)
             {
                 dto.SprintEnd = dto.SprintStart!.Value.AddDays(14);
             }
 
-            if (dto.RepeatSprintOption == Constants.RepeatSprint.Monthly)
+            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.Monthly)
             {
                 dto.SprintEnd = dto.SprintStart!.Value.AddMonths(1);
             }
 
             //no end date for never repeat
-            if (dto.RepeatSprintOption != Constants.RepeatSprint.Never)
+            if (dto.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
             {
                 dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
             }

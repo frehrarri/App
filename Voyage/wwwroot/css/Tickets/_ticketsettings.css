@@ -1,6 +1,9 @@
-﻿#ticket-settings-container{
+﻿#ticket-settings-container {
     display: flex;
     justify-content: center;
+    width: 1300px;
+    min-width: 400px;
+    max-width: 100%;
 }
 
 #dv-sections-container,
@@ -80,7 +83,7 @@
         font-size: 14px;
         margin-right: 5px;
         position: relative;
-        background-color: var(--background-grey);
+        background-color: #e6e8e9;
         color: slategray;
         cursor: default;
         border: 1px solid slategray;

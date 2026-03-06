@@ -507,7 +507,7 @@ namespace Voyage.Data
                 var date = DateTime.UtcNow;
 
                 settings = await _db.Settings
-                    .Include(s => s.Sections)
+                   .Include(s => s.Sections)
                    .Where(s =>
                        s.SettingsId == dto.SettingsId
                        && s.CompanyId == dto.CompanyId
@@ -522,7 +522,7 @@ namespace Voyage.Data
                 if (settings == null) //create new
                 {
                     int settingsId = 1;
-                    decimal settingsVersion = 1.0M;
+                    //decimal settingsVersion = 1.0M;
                     //if there are no sprints we create a sprint for today up to the start date
                     //then create a second sprint starting from start date to end date
                     if (dto.SprintStart!.Value > DateTime.Today)
@@ -533,9 +533,9 @@ namespace Voyage.Data
                         preSprintStart.CreatedDate = date;
                         preSprintStart.SprintId = 1;
                         preSprintStart.SettingsId = settingsId;
-                        preSprintStart.SettingsVersion = settingsVersion;
+                        //preSprintStart.SettingsVersion = settingsVersion;
                         settingsId++;
-                        settingsVersion++;
+                        //settingsVersion++;
                         settingsList.Add(preSprintStart);
                     }
 
@@ -544,13 +544,13 @@ namespace Voyage.Data
                     settings.CreatedDate = date;
                     settings.SprintId = 1;
                     settings.SettingsId = settingsId;
-                    settings.SettingsVersion = settingsVersion;
+                    //settings.SettingsVersion = settingsVersion;
                     isUpdate = false;
                     settingsList.Add(settings);
                 }
                 else //empty previous sections to be replaced
                 {
-                    settings.SettingsVersion = settings.SettingsVersion + 1.0M;
+                    //settings.SettingsVersion = settings.SettingsVersion + 1.0M;
                     settings.ModifiedBy = dto.CreatedBy;
                     settings.ModifiedDate = date;
                     settings.Sections.Clear();
@@ -563,8 +563,8 @@ namespace Voyage.Data
                     setting.CompanyId = dto.CompanyId;
                     setting.DepartmentKey = dto.DepartmentKey;
                     setting.TeamKey = dto.TeamKey;
-                    setting.SectionSetting = dto.SectionSetting;
-                    setting.RepeatSprintOption = dto.RepeatSprintOption;
+                    setting.SectionSetting = (int)dto.SectionSetting;
+                    setting.RepeatSprintOption = (int)dto.RepeatSprintOption;
                     setting.SprintEndDate = dto.SprintEnd;
                     setting.SprintStartDate = dto.SprintStart!.Value;
 

@@ -85,6 +85,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 //services
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<RoleSeeder>();
+builder.Services.AddScoped<SectionSeeder>();
 
 //business layer
 builder.Services.AddScoped<TicketsBLL>();
@@ -109,11 +110,14 @@ var app = builder.Build();
 
 
 
-
+//seed default values on startup
 using (var scope = app.Services.CreateScope())
 {
     var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();
     await roleSeeder.CreateGlobalRoles();
+
+    var sectionSeeder = scope.ServiceProvider.GetRequiredService<SectionSeeder>();
+    await sectionSeeder.CreateGlobalSections();
 }
 
 // Configure the HTTP request pipeline.

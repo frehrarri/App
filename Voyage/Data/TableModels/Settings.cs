@@ -15,13 +15,13 @@ namespace Voyage.Data.TableModels
 
         public Guid SettingsKey { get; set; }
         public int SettingsId { get; set; }
-        public decimal SettingsVersion { get; set; }
+        //public decimal SettingsVersion { get; set; }
         public Feature Feature { get; set; }
-        public RepeatSprint RepeatSprintOption { get; set; }
-        public DateTime SprintStartDate { get; set; }
+        public int RepeatSprintOption { get; set; }
+        public DateTime? SprintStartDate { get; set; }
         public DateTime? SprintEndDate { get; set; }
         public int SprintId { get; set; }
-        public SectionSettings SectionSetting { get; set; }
+        public int SectionSetting { get; set; }
 
         #region FK
 
@@ -60,8 +60,8 @@ namespace Voyage.Data.TableModels
                 .ValueGeneratedOnAdd();
 
             //versioning
-            modelBuilder.Entity<Settings>()
-                .HasAlternateKey(t => new { t.SettingsId, t.SettingsVersion });
+            //modelBuilder.Entity<Settings>()
+            //    .HasAlternateKey(t => new { t.SettingsId, t.SettingsVersion });
 
             //Fk to team
             modelBuilder.Entity<Settings>()

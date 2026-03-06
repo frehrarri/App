@@ -66,6 +66,7 @@ html, body {
 #dv-header-right{
     display:flex;
     align-items: center;
+    gap: 10px;
 }
 
 #navbarNav > ul {
@@ -73,7 +74,7 @@ html, body {
     list-style: none;
     padding: 0;
     margin: 0;
-   
+    gap: 20px;
 }
 
     #navbarNav > ul > li {

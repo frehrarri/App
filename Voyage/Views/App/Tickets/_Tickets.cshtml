@@ -8,7 +8,7 @@
 
 <div id="tickets-container">
 
-    @if (Model.Settings.RepeatSprintOption != Constants.RepeatSprint.Never)
+    @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
     {
         <div id="sprint-header">
             <h4>Sprint @Model.Sprint.SprintId</h4>
@@ -28,7 +28,7 @@
         .ToList();
 
         <div id="@(s.Title)-container" class="section-container" tabindex="0">
-            <div class="content-container">
+            <div class="content-container" style="margin-top:0px;">
                 <h5 id="heading-@(s.Title)" class="heading">@s.Title</h5>
 
                 <table class="app-table">
