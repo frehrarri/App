@@ -457,17 +457,17 @@ namespace Voyage.Data
             }
         }
 
-        public async Task<TicketSettingsDTO?> GetSettings(int companyId)
+        public async Task<List<TicketSettingsDTO>> GetSettings(int companyId)
         {
             try
             {
-                TicketSettingsDTO? dto = new TicketSettingsDTO();
+                List<TicketSettingsDTO> dto = new List<TicketSettingsDTO>();
 
                 dto = await _db.Settings.Include(s => s.Sections)
                     .Where(s => s.Feature == Constants.Feature.Tickets
                         && s.IsActive == true
                         && s.IsLatest == true
-                        && s.CompanyId == companyId)
+                        && (s.CompanyId == companyId || s.SettingsId == -1)) //get company settings and global settings
                     .Select(s => new TicketSettingsDTO()
                     {
                         SettingsId = s.SettingsId,
@@ -475,8 +475,6 @@ namespace Voyage.Data
                         SprintEnd = s.SprintEndDate,
                         SprintStart = s.SprintStartDate,
 
-                        //Sections = s.Sections.Where(s => s.Title != Constants.RequiredTicketSections.Completed.ToString()
-                        //                                && s.Title != Constants.RequiredTicketSections.Discontinued.ToString())
                         Sections = s.Sections
                             .Select(s => new SectionDTO
                             {
@@ -485,7 +483,7 @@ namespace Voyage.Data
                                 SectionOrder = s.SectionOrder,
                             }).ToList()
                     })
-                    .SingleOrDefaultAsync();
+                    .ToListAsync();
 
                 return dto;
             }

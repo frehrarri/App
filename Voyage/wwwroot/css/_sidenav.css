@@ -1,8 +1,7 @@
 ﻿.offcanvas {
+    margin-left: 15px;
     border: none;
     background-color: white !important;
-    /*#f5f5f6*/
-    /*box-shadow: .5px .5px #0000004d;*/
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -12,11 +11,14 @@
         visibility: visible !important;
         transform: none !important;
         transition: width 0.3s ease-in-out;
-        top: 40px;
-        height: calc(100vh - 40px);
+        top: 30px;
+        height: calc(99vh - 38px);
         display: flex;
         flex-direction: column;
         background-color: white !important;
+        border: none;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
     }
 
     /*sidenav*/
@@ -37,14 +39,11 @@
 /*adjust content container when side nav expands*/
 body.sidenav-expanded #app-container {
     margin-left: 250px;
-    max-width: 84% !important;
+    max-width: 86% !important;
 }
 
 #app-container {
-    margin-left: 80px;
     transition: margin-left 0.3s ease-in-out;
-    padding: 0 20px;
-    max-width: 92% !important;
 }
 
 /* Submenu hidden by default */
@@ -62,16 +61,19 @@ body.sidenav-expanded #app-container {
 
 .submenu > li {
     border-left: 2px solid lightgrey;
-    padding: 6px 8px 6px 16px;
+    padding: 4px 8px 4px 10px;
     font-size: 0.9rem;
     display: block; /* submenu items don't need flex */
+}
+
+#nav-items {
+    min-width: 100%;
 }
 
 
 #nav-items > li {
     display: flex;
     align-items: center;
-    gap: 10px;
     padding: 10px 8px;
     cursor: pointer;
     overflow: hidden;
@@ -79,7 +81,12 @@ body.sidenav-expanded #app-container {
     border-radius: 6px;
     flex-wrap: wrap; /* allows submenu to drop below on its own row */
     justify-content: center;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 
+.navtext.leaf{
+    margin-left: 10px;
 }
 
 /* highlighting for main menu items*/
@@ -132,7 +139,8 @@ body.sidenav-expanded #app-container {
 #nav-items, #nav-items ul {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
     #nav-items > li > i {

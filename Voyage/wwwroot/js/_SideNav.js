@@ -74,19 +74,15 @@ async function handleSubmenuClicks(e) {
 
         if (target === "manage-personnel") {
             await loadModule("managePersonnel");
-            updateSettingsBtn('hr');
         }
         else if (target === "manage-teams") {
             await loadModule("manageTeams");
-            updateSettingsBtn('hr');
         }
         else if (target === "manage-depts") {
             await loadModule("manageDepartments");
-            updateSettingsBtn('hr');
         }
         else if (target === "manage-roles") {
             await loadModule("manageRoles");
-            //updateSettingsBtn('admin');
         }
 
         document.querySelector('#nav-items .active-page')?.classList.remove('active-page');
@@ -96,11 +92,6 @@ async function handleSubmenuClicks(e) {
     }
 
     return true;
-}
-
-function updateSettingsBtn(setting) {
-    const btn = document.querySelector('.btn-settings');
-    btn.dataset.settings = `${setting}`;
 }
 
 function expandSubmenu(e, rootItem, offcanvas, isExpanded) {
@@ -125,11 +116,9 @@ async function handleLeafNodeClicks(rootItem) {
     if (target === "main-dashboard")
     {
         await loadModule("mainDashboard");
-        updateSettingsBtn('dashboard');
     } 
     else if (target === "tickets") {
         await loadModule("tickets");
-        updateSettingsBtn('ticket');
         updateTicketsBreadCrumb();
     } 
 

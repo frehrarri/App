@@ -70,18 +70,18 @@ namespace Voyage.Business
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
         {
             //user
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+            //var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
 
-            if (user == null)
-                throw new InvalidOperationException("Authenticated user not found.");
-            else
-            {
-                ticketDTO.CreatedBy = user.UserName ?? string.Empty;
-                ticketDTO.CompanyId = user.CompanyId;
-            }
+            //if (user == null)
+            //    throw new InvalidOperationException("Authenticated user not found.");
+            //else
+            //{
+            //    ticketDTO.CreatedBy = user.UserName ?? string.Empty;
+            //    ticketDTO.CompanyId = user.CompanyId;
+            //}
 
             //sprint settings
-            TicketSettingsDTO? settings = await GetSettings(ticketDTO.CompanyId);
+            TicketSettingsDTO? settings = await GetCompanySettings(ticketDTO.CompanyId);
             if (settings != null)
             {
                 HandleSprintDates(settings);
@@ -227,9 +227,17 @@ namespace Voyage.Business
             return sb.ToString();
         }
 
-        public async Task<TicketSettingsDTO?> GetSettings(int companyId)
+        public async Task<List<TicketSettingsDTO>> GetSettings(int companyId)
         {
             return await _ticketsD.GetSettings(companyId);
+        }
+
+        public async Task<TicketSettingsDTO?> GetCompanySettings(int companyId)
+        {
+            var settings = await _ticketsD.GetSettings(companyId);
+            var setting = settings.Where(s => s.SettingsId != -1).SingleOrDefault();
+
+            return setting;
         }
 
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)
@@ -241,27 +249,17 @@ namespace Voyage.Business
             else
                 dto.CreatedBy = user.UserName ?? string.Empty;
 
-            HandleRequiredSections(dto);
+            HandleRequiredSections(ref dto);
             HandleSprintDates(dto);
 
             return await _ticketsD.SaveSettings(dto);
         }
 
-        private void HandleRequiredSections(TicketSettingsDTO dto)
+        //prevent duplicate section name
+        private void HandleRequiredSections(ref TicketSettingsDTO dto)
         {
-            //prevent duplicate section name
             var requiredSections = Enum.GetNames(typeof(Constants.RequiredTicketSections));
-
-            int i = 1;
-            foreach (string section in requiredSections)
-            {
-                //skip sections that already exist
-                if (dto.Sections.Any(s => s.Title == section))
-                    continue;
-
-                dto.Sections.Add(new SectionDTO { Title = section, SectionOrder = dto.Sections.Count() + i });
-                i++;
-            }
+            dto.Sections = dto.Sections.Where(s => !requiredSections.Contains(s.Title)).ToList();
         }
 
         public void HandleSprintDates(TicketSettingsDTO dto)

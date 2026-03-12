@@ -6,33 +6,14 @@
             App
             @* <img src="~/img/nonamelogo.svg" alt="Everest Logo Home Button" /> *@
         </a>
-       
+
         <!-- Navbar Links -->
-        <div id="dv-navbar-items">
-            <ul id="navbar-items">
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index", "Website")">Home</a>
-                </li>
-
-                @*               @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "App")">App</a>
-                    </li>
-                } *@
-
-                <li class="nav-item">
-                    <a class="nav-link" href="">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Contact</a>
-                </li>
-            </ul>
+        <div id="dv-navbar-page-title">
         </div>
 
 
-            <!-- Right side (Login & Register buttons) -->
-           
+        <!-- Right side (Login & Register buttons) -->
+
         <div id="dv-header-right">
             @if (User.Identity?.IsAuthenticated == true)
             {

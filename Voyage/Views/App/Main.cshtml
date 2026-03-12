@@ -17,19 +17,12 @@
             @* <li class="breadcrumb-item active"><a href="#">Home</a></li> *@
         </ol>
     </nav>
-
     <div id="header-center"></div>
-
-    @* replace button's data-settings on partial load to handle events *@
-    <button class="btn-settings" data-settings="dashboard" type="button">
-        <i class="fa-solid fa-gear"></i>
-    </button>
 </div>
 
-<div class="app-main">
-    @* load main content via js *@
-    <div class="main-content"></div> 
-</div>
+@* load main content via js *@
+<div class="main-content"></div> 
+
 <input type="hidden" id="hdnCompanyId" value="@companyId" />
 
 <script type="module" src="~/js/main.js" asp-append-version="true"></script>

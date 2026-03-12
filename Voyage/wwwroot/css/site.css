@@ -1,83 +1,44 @@
-:root {
-    --main-blue: #6289af;
-    --main-lightblue: #81b1df;
-    --main-green: #55c792;
-    --main-white: white;
-    --background-grey: #f8f9fa;
-    --icon-color: slategrey;
-    --warning-red: #cb8d8d;
-}
-
-
-html {
-    font-size: 14px;
-    position: relative;
-    min-height: 100%;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-body {
-    margin-bottom: 60px;
-    background: #f8f9fa;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-}
-
-#header-nav {
-    display: flex;
-    justify-content: space-around;
-    gap: 15rem;
-    /*box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);*/
-    background-color: #6289af;
-    position: relative; /* needed for absolute child positioning */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-.icon-circle {
-    width: 30px;
+﻿#header-nav {
     height: 30px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%; 
-    background-color: white;
-    color: darkslategray; 
-    font-size: 18px; 
-}
-
-.navbar-brand{
-    color:white;
-}
-
-#dv-header-right{
-    display:flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#navbarNav > ul {
     display: flex;
+    justify-content: flex-start;
+    background-color: #6289af;
+    align-items: center;
+    /*position: relative;*/ /* needed for absolute child positioning */
+}
+
+.navbar-brand {
+    color: white;
+    margin-left: 35px;
+    min-width: 45%;
+}
+
+#dv-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#dv-header-right > a {
+  color: white;
+}
+
+#dv-navbar-items {
+    display: flex;
+    flex-direction: row;
+    min-width: 45%;
+}
+
+#navbar-items {
+    display: flex;
+    flex-direction: row;
     list-style: none;
     padding: 0;
     margin: 0;
     gap: 20px;
 }
 
-    #navbarNav > ul > li {
+    #navbar-items > li {
         font-weight: 600;
         color: slategray;
     }
@@ -86,232 +47,3 @@ html, body {
     color: white !important;
     font-weight: 400;
 }
-
-
-#dv-nav-brand {
-    margin-left: -85px;
-}
-
-.border-error {
-    border: 1px solid red !important;
-}
-
-.text-error {
-    color: red !important;
-}
-
-.app-layout {
-    display: flex;
-    justify-content: center; /* horizontally center content */
-    padding: 20px;
-}
-
-.app-table {
-    width: 100%;
-    table-layout: fixed !important;
-    overflow: hidden;
-}
-
-    .app-table > thead > tr {
-        background-color: #6289af;
-        color: white;
-    }
-
-.app-table-row {
-    background-color: white;
-}
-
-.app-table-header{
-    font-weight: 400;
-}
-
-.app-table-header,
-.app-table-data {
-    text-align: left;
-}
-
-.app-table-data {
-    padding: 10px 0px;
-    padding-left: 10px;
-}
-
-.app-table-row:last-child .app-table-data {
-    border-bottom: none;
-}
-
-.app-table td input,
-.app-table td select {
-    margin-left: 2px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.app-table-header:first-child,
-.app-table-data:first-child {
-    width: 3% !important;
-    text-align: center !important;
-    
-}
-
-.app-table-row > td {
-    vertical-align: middle;
-}
-
-
-.app-table td:first-child input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-.message-popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #4caf50;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    opacity: 0;
-    transition: opacity .4s ease;
-    z-index: 9999;
-}
-
-    .message-popup.show {
-        opacity: 1;
-    }
-
-.primary-btn {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    background-color: #6289af;
-    border: none;
-    color: white;
-    font-size: 16px;
-    padding: 3px 15px;
-}
-
-    .primary-btn[disabled] {
-        background-color: lightgray;
-        color: black;
-    }
-
-.secondary-btn {
-    border: none;
-    color: white;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #81b1df;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    padding: 2px 15px;
-}
-
-.warning-btn {
-    border: none;
-    border-radius: 5px;
-    color: white;
-    background-color: #cb8d8d;
-    font-size: 16px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    padding: 3px 15px;
-}
-
-button:disabled,
-button.disabled,
-input[type="button"]:disabled,
-input[type="submit"]:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: #ccc;
-    color: #666;
-    pointer-events: none;
-}
-
-.autocomplete-list {
-    position: fixed;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    background: white;
-    border-radius: 4px;
-    z-index: 2147483647;
-    max-height: 220px;
-    overflow-y: auto;
-    display: none;
-    box-shadow: 0 3px 3px gray;
-    border: 1px solid black;
-    width: max-content;
-}
-
-    .autocomplete-list.show {
-        display: block;
-        position: fixed; /* overrides absolute */
-        z-index: 2147483647;
-    }
-
-    .autocomplete-list li {
-        padding: 6px 10px;
-        white-space: nowrap;
-    }
-
-.autocomplete-wrapper {
-    position: relative;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.heading-setting-container{
-    display: flex;
-}
-
-.settings-btn {
-    margin-top: 25px;
-    border: none;
-    background-color: inherit;
-}
-
-select:has(option[value=""]:checked){
-    color:gray;
-}
-
-.grid-btn-container{
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 10px;
-    margin-left: 20px;
-    gap: 2px;
-}
-
-.add-remove-grid-container{
-    margin-left: -10px;
-}
-
-/*i {
-    color: #555151;
-}*/
-
-h5 {
-    background-color: #55c792;
-    color: white;
-    padding: 5px 0;
-    padding-left: 10px;
-    border-radius: 5px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-a {
-    text-decoration: none;
-}
-
-a:hover{
-    text-decoration-line: underline;
-}
-
-.content-container {
-    padding-bottom: 20px;
-    margin-top: -5px;
-}
-

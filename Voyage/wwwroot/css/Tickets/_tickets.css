@@ -1,7 +1,7 @@
 ﻿#tickets-container {
     padding-bottom: 40px;
     overflow-y: auto;
-    height: 800px;
+    height: 83vh;
 }
 
     #tickets-container .app-table {
@@ -62,9 +62,9 @@
     background-color: inherit;
 }
 
+
 #filter-container {
-    display: flex;
-    justify-content: center;
+    margin-left: 32%;
 }
 
 #section-filter:has(> *) {

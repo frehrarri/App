@@ -28,7 +28,7 @@ function updateBreadCrumb() {
     const li1 = document.createElement('li');
     li1.classList.add('breadcrumb-item');
     li1.classList.add('active')
-    li1.textContent = 'Main Dashboard'
+    li1.textContent = 'Home'
 
     ol.appendChild(li1);
 }

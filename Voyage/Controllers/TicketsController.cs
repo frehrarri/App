@@ -39,7 +39,7 @@ namespace Voyage.Controllers
             TicketsVM vm = new TicketsVM();
 
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            TicketSettingsDTO? settings = await _ticketsB.GetSettings(companyId!.Value);
+            TicketSettingsDTO? settings = await _ticketsB.GetCompanySettings(companyId!.Value);
             //mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
 
             if (settings != null)
@@ -216,7 +216,7 @@ namespace Voyage.Controllers
         public async Task<TicketSettingsDTO?> GetSettings()
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var settings = await _ticketsB.GetSettings(companyId!.Value);
+            var settings = await _ticketsB.GetCompanySettings(companyId!.Value);
 
             if (settings != null)
                 settings.Sections = settings.Sections.Where(s => s.Title != RequiredTicketSections.Completed.ToString() 

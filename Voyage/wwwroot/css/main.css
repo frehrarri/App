@@ -1,8 +1,9 @@
 ﻿.breadcrumb {
+    margin-left: 30px;
     margin-top: 20px;
     margin-bottom: 30px;
     border-radius: 7px;
-    padding: 10px;
+    padding: 5px;
     background-color: white;
     max-width:fit-content;
     font-style: italic;
@@ -12,16 +13,21 @@
     color: #007fff !important;
 }
 
+
+.main-content {
+    max-width: 97%;
+    margin-left: 30px;
+}
+
+
 #main-content-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    height: 80px;
 }
 
-.btn-settings {
-    border: none;
-    background-color: inherit;
+#header-center {
+    margin-left: 50%;
 }
 
-.main-content{
-    max-width:99%;
-}
+    
