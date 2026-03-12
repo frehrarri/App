@@ -19,6 +19,7 @@ export async function init() {
 
     appendSectionFilters();
     updateBreadcrumb();
+    updateNavHeader();
 
 }
 
@@ -36,6 +37,11 @@ export async function init() {
     //});
 
     //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
+
+function updateNavHeader() {
+    const page = document.getElementById('dv-navbar-page-title');
+    page.innerText = 'Tickets';
+}
 
 function updateBreadcrumb() {
     const ol = document.querySelector('.breadcrumb');

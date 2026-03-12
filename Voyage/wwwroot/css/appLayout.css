@@ -97,6 +97,8 @@ html, body {
 
 #settings-icon, #user-icon {
     color: white;
+    background-color: transparent;
+    border: none;
 }
 
 .border-error {

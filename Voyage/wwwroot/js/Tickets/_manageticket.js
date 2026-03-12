@@ -23,6 +23,7 @@ export function init() {
     centerHead.innerHTML = "";
 
     updateBreadcrumb();
+    //updateNavHeader(); //need to get verb to implement
 
     //debounced search
     //let input = document.getElementById("ticketAssignedTo");
@@ -62,6 +63,12 @@ export async function getManageTicketPartial(ticketId, sectionTitle) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
+}
+
+function updateNavHeader() {
+    const page = document.getElementById('dv-navbar-page-title');
+    const title = document.querySelector('h5').innerText;
+    page.innerText = title;
 }
 
 function updateBreadcrumb() {

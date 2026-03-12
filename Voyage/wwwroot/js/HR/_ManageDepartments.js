@@ -17,6 +17,7 @@ export async function init() {
     container.innerHTML = partial;
 
     await updateBreadCrumb();
+    updateNavHeader();
 
     const centerHead = document.getElementById('header-center');
     centerHead.innerHTML = "";
@@ -112,6 +113,10 @@ async function redirect(data) {
     await loadModule("assignDepartment", data);
 }
 
+function updateNavHeader() {
+    const page = document.getElementById('dv-navbar-page-title');
+    page.innerText = "Manage Departments";
+}
 
 async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');

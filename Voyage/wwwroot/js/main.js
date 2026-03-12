@@ -35,24 +35,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const li = document.querySelector('li[data-target="main-dashboard"]');
     li.classList.add('active-page');
 
-    const dvPageTitle = document.querySelector('#dv-navbar-page-title');
-    dvPageTitle.innerText = "Home";
+    setNavPageTitle();
 
-    //const container = document.getElementById('app-container');
-    //container.addEventListener("click", handleEvents)
+    const container = document.getElementById('header-nav');
+    container.addEventListener("click", handleEvents)
 });
 
-//async function handleEvents(e) {
-//    const target = e.target.closest('.btn-settings');
-//    if (!target)
-//        return;
+function setNavPageTitle(){
+    const dvPageTitle = document.querySelector('#dv-navbar-page-title');
+    dvPageTitle.innerText = "Home";
+}
 
-//    const settings = target.dataset.settings;
+async function handleEvents(e) {
+    const targetId = e.target.closest("#settings-icon").id;
+    if (targetId && targetId == "settings-icon") {
 
-//    //if (settings === "dashboard") await loadModule('mainDashboard');
-//    if (settings === "ticket") await loadModule('ticketSettings');
-//    else if (settings === "hr") await loadModule('hrSettings');
-    
+    }
 
-//}
+    //if (settings === "ticket") await loadModule('ticketSettings');
+    //else if (settings === "hr") await loadModule('hrSettings');
+}
+
 

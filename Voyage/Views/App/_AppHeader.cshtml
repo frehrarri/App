@@ -17,9 +17,13 @@
         <div id="dv-header-right">
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <i id="settings-icon" class="fa-solid fa-gear"></i>
+                <button id="settings-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
 
-                <i id="user-icon" class="fa-solid fa-user"></i>
+                <button id="user-icon">
+                    <i class="fa-solid fa-user"></i>
+                </button>
 
                 <form asp-controller="User"
                       asp-action="Logout"

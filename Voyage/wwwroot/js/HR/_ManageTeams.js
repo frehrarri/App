@@ -2,6 +2,47 @@
 
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+export async function init() {
+    removeEventListeners();
+
+    //load partial
+    let partial = await getManageTeamsPartial();
+    const container = document.querySelector(".main-content");
+
+    if (container)
+        container.innerHTML = partial;
+
+    await updateBreadCrumb();
+    updateNavHeader();
+
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
+    //grid
+    let teams = await getTeams();
+    let teamNames = [];
+
+    if (teams) {
+        teamNames = teams.map(list => {
+            return {
+                name: list.name,
+                datakey: list.teamKey
+            }
+        });
+    }
+
+    let manageTeam = {
+        headers: ["Team"],
+        newId: 'manage-team',
+        rows: teamNames,
+        controlType: 0,
+        saveCallback: saveTeams,
+        redirectCallback: redirect
+    }
+    await loadModule("gridControl", manageTeam);
+}
+
+
 export async function getManageTeamsPartial() {
     try {
         const response = await getPartial("Hr", "ManageTeamsPartial");
@@ -67,6 +108,12 @@ async function getTeams() {
     }
 }
 
+function updateNavHeader() {
+    const page = document.getElementById('dv-navbar-page-title');
+    page.innerText = "Manage Teams";
+}
+
+
 async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
@@ -96,41 +143,3 @@ async function updateBreadCrumb() {
 }
 
 
-export async function init() {
-    removeEventListeners();
-
-    //load partial
-    let partial = await getManageTeamsPartial();
-    const container = document.querySelector(".main-content");
-
-    if (container)
-        container.innerHTML = partial;
-
-    await updateBreadCrumb();
-
-    const centerHead = document.getElementById('header-center');
-    centerHead.innerHTML = "";
-
-    //grid
-    let teams = await getTeams();
-    let teamNames = [];
-
-    if (teams) {
-        teamNames = teams.map(list => {
-            return {
-                name: list.name,
-                datakey: list.teamKey
-            }
-        });
-    }
-
-    let manageTeam = {
-        headers: ["Team"],
-        newId: 'manage-team',
-        rows: teamNames,
-        controlType: 0,
-        saveCallback: saveTeams,
-        redirectCallback: redirect
-    }
-    await loadModule("gridControl", manageTeam);
-}

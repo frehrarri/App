@@ -2,6 +2,31 @@
 
 const changeTracker = new Map();
 
+export async function init() {
+    removeEventListeners();
+
+    //load initial partial
+    let partial = await getManagePersonnelPartial();
+    const container = document.querySelector(".main-content");
+
+    if (container) {
+        container.innerHTML = partial;
+
+        container.addEventListener("click", handlePersonnelEvents);
+        container.addEventListener("change", handlePersonnelEvents);
+
+        trackEventListener(container, "click", handlePersonnelEvents);
+        trackEventListener(container, "change", handlePersonnelEvents);
+    }
+
+    await updateBreadCrumb();
+    updateNavHeader();
+
+    const centerHead = document.getElementById('header-center');
+    centerHead.innerHTML = "";
+
+}
+
 export async function getManagePersonnelPartial() {
     try {
         const companyId = parseInt(document.getElementById('hdnCompanyId').value);
@@ -145,6 +170,12 @@ async function handlePersonnelEvents(e) {
     }
 }
 
+function updateNavHeader() {
+    const page = document.getElementById('dv-navbar-page-title');
+    page.innerText = "Manage Personnel";
+}
+
+
 async function updateBreadCrumb() {
     const ol = document.querySelector('.breadcrumb');
 
@@ -173,27 +204,5 @@ async function updateBreadCrumb() {
     ol.appendChild(li2);
 }
 
-export async function init() {
-    removeEventListeners();
 
-    //load initial partial
-    let partial = await getManagePersonnelPartial();
-    const container = document.querySelector(".main-content");
-
-    if (container) {
-        container.innerHTML = partial;
-
-        container.addEventListener("click", handlePersonnelEvents);
-        container.addEventListener("change", handlePersonnelEvents);
-
-        trackEventListener(container, "click", handlePersonnelEvents);
-        trackEventListener(container, "change", handlePersonnelEvents);
-    }
-
-    await updateBreadCrumb();
-
-    const centerHead = document.getElementById('header-center');
-    centerHead.innerHTML = "";
-    
-}
 
