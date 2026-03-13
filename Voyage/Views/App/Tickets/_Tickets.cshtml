@@ -2,9 +2,23 @@
 
 @* controller renders setupticketsettings if settings have not been set up *@
 
-<div id="filter-container">
-    <div id="section-filter"></div>
-</div>
+@{
+    DateTime sprintEnd = DateTime.MinValue;
+    switch (Model.Settings.RepeatSprintOption)
+    {
+        case (int)Constants.RepeatSprint.Weekly:
+            sprintEnd = Model.Settings.SprintStart.Value.AddDays(7);
+            break;
+        case (int)Constants.RepeatSprint.BiWeekly:
+            sprintEnd = Model.Settings.SprintStart.Value.AddDays(14);
+            break;
+        case (int)Constants.RepeatSprint.Monthly:
+            sprintEnd = Model.Settings.SprintStart.Value.AddMonths(1);
+            break;
+        default:
+            break;
+    }
+}
 
 <div id="tickets-container">
 
@@ -12,9 +26,13 @@
     {
         <div id="sprint-header">
             <h4>Sprint @Model.Sprint.SprintId</h4>
-            <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @Model.Sprint?.EndDate!.Value.ToString("dd MMM yyyy")</h4>
+            <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
         </div>
     }
+
+    <div id="filter-container">
+        <div id="section-filter"></div>
+    </div>
 
 
         @foreach (var s in Model.Sections)

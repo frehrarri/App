@@ -84,7 +84,7 @@ namespace Voyage.Business
             TicketSettingsDTO? settings = await GetCompanySettings(ticketDTO.CompanyId);
             if (settings != null)
             {
-                HandleSprintDates(settings);
+                //HandleSprintDates(settings);
                 ticketDTO.SprintStartDate = settings.SprintStart;
                 ticketDTO.SprintEndDate = settings.SprintEnd;
                 ticketDTO.SprintId = settings.SprintId;
@@ -242,15 +242,8 @@ namespace Voyage.Business
 
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)
         {
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-
-            if (user == null)
-                throw new InvalidOperationException("Authenticated user not found.");
-            else
-                dto.CreatedBy = user.UserName ?? string.Empty;
-
             HandleRequiredSections(ref dto);
-            HandleSprintDates(dto);
+            //HandleSprintDates(dto);
 
             return await _ticketsD.SaveSettings(dto);
         }
@@ -290,6 +283,51 @@ namespace Voyage.Business
                 dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
             }
             
+        }
+
+        public async Task<TicketSettingsDTO> UpdateSprint(TicketSettingsDTO dto)
+        {
+            DateTime? newSprintDate = dto.SprintStart;
+            int daysBetween = 0;
+
+            switch (dto.RepeatSprintOption)
+            {
+                case (int)RepeatSprint.Weekly:
+                    daysBetween = 7;
+                    newSprintDate = newSprintDate!.Value.AddDays(7);
+                    break;
+                case (int)RepeatSprint.BiWeekly:
+                    daysBetween = 14;
+                    newSprintDate = newSprintDate!.Value.AddDays(14);
+                    break;
+                case (int)RepeatSprint.Monthly:
+                    newSprintDate = newSprintDate!.Value.AddMonths(1);
+                    daysBetween = (newSprintDate - dto.SprintStart)!.Value.Days;
+                    break;
+                case (int)RepeatSprint.Custom:
+                    daysBetween = (dto.SprintEnd - dto.SprintStart)!.Value.Days;
+                    newSprintDate = dto.SprintEnd;
+                    break;
+                case (int)RepeatSprint.Never:
+                default:
+                    break;
+            }
+
+            //todays date is prior to sprint 
+            if (DateTime.UtcNow >= dto.SprintStart)
+            {
+                dto.SprintStart = newSprintDate;
+                dto.SprintId++;
+
+                if (dto.RepeatSprintOption == (int)RepeatSprint.Custom)
+                {
+                    dto.SprintEnd = dto.SprintEnd!.Value.AddDays(daysBetween);
+                }
+
+                await _ticketsD.SaveSettings(dto);
+            }
+
+            return dto;
         }
 
         public List<SectionDTO> SetSectionsDevelopment()

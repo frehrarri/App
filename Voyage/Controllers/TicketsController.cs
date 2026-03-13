@@ -44,11 +44,13 @@ namespace Voyage.Controllers
 
             if (settings != null)
             {
-                vm.Settings = settings;
-                vm.Sections = settings.Sections;
-                vm.Sprint.StartDate = settings.SprintStart;
-                vm.Sprint.EndDate = settings.SprintEnd;
-                vm.Sprint.SprintId = settings.SprintId;
+                var dto = await _ticketsB.UpdateSprint(settings);
+
+                vm.Settings = dto;
+                vm.Sections = dto.Sections;
+                vm.Sprint.StartDate = dto.SprintStart;
+                vm.Sprint.EndDate = dto.SprintEnd;
+                vm.Sprint.SprintId = dto.SprintId;
 
                 return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
             }
@@ -231,6 +233,7 @@ namespace Voyage.Controllers
         {
             dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
+            dto.CreatedBy = HttpContext.Session.GetString("Username")!;
             return await _ticketsB.SaveSettings(dto);
         }
 

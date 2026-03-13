@@ -26,5 +26,6 @@ namespace Voyage.Models.DTO
         public DateTime? SprintEnd { get; set; }
         public List<SectionDTO> Sections { get; set; }
         public SectionSettings SectionSetting { get; set; }
+        public int DaysBetweenSprintStartEnd { get; set; }
     }
 }

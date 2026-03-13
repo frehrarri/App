@@ -2,7 +2,7 @@
 import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    //removeEventListeners();
+    removeEventListeners();
 
     const sectionHistory = [];
     const partial = await getTicketSettingsPartial();
@@ -145,6 +145,8 @@ function removeSection(e, sectionHistory) {
 }
 
 async function save(e) {
+    debugger;
+    e.stopPropagation();
     e.preventDefault();
 
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
@@ -184,8 +186,8 @@ async function save(e) {
 
         if (response && response.status === 200) {
             alert("Success");
-            hyperlinkResponse(response, changeTracker, newId, currentVals);
-            changeTracker.clear();
+            //hyperlinkResponse(response, changeTracker, newId, currentVals);
+            //changeTracker.clear();
         }
         else {
             alert("Error");
