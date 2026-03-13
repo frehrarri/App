@@ -3,11 +3,17 @@
 //when a partial view is rendered loadModule is called
 const moduleRegistry = {
 
-    //shared
-    header: {
-        js: () => import(`./_header.js?v=${scriptVersion}`),
-        css: `/css/_header.css?v=${scriptVersion}`
+    //settings
+    settings: {
+        js: () => import(`./_Settings.js?v=${scriptVersion}`),
+        css: `/css/_Settings.css?v=${scriptVersion}`
     },
+
+    //shared
+    //header: {
+    //    js: () => import(`./_header.js?v=${scriptVersion}`),
+    //    css: `/css/_header.css?v=${scriptVersion}`
+    //},
     sideNav: {
         js: () => import(`./_sidenav.js?v=${scriptVersion}`),
         css: `/css/_sidenav.css?v=${scriptVersion}`

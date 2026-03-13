@@ -2,11 +2,11 @@
 import { loadModule } from "/js/__moduleLoader.js";
 
 export async function init() {
-    removeEventListeners();
+    //removeEventListeners();
 
     const sectionHistory = [];
     const partial = await getTicketSettingsPartial();
-    const container = document.querySelector(".main-content");
+    const container = document.querySelector("#settings-content");
 
     if (partial && container) {
         container.innerHTML = partial;
@@ -71,31 +71,9 @@ async function updateBreadCrumb() {
 
     const li1 = document.createElement('li');
     li1.classList.add('breadcrumb-item');
-    li1.classList.add('active')
+    li1.classList.add('active');
+    li1.innerText = 'Settings';
 
-    const a1 = document.createElement('a');
-    a1.href = "#";
-    a1.textContent = 'Tickets'
-
-    
-
-    const loadTickets = async () => {
-        await loadModule("tickets");
-    };
-
-    a1.addEventListener("click", loadTickets);
-    trackEventListener(a1, "click", loadTickets);
-
-    //a1.addEventListener("click", async () => {
-    //    const partial = await getTicketsPartial();
-    //    const container = document.querySelector(".main-content");
-
-    //    if (container && partial) {
-    //        container.innerHTML = partial;
-    //    }
-    //});
-
-    li1.appendChild(a1);
     ol.appendChild(li1);
 
     const li2 = document.createElement('li');

@@ -49,7 +49,7 @@ function setNavPageTitle(){
 async function handleEvents(e) {
     const targetId = e.target.closest("#settings-icon").id;
     if (targetId && targetId == "settings-icon") {
-
+        await loadModule("settings");
     }
 
     //if (settings === "ticket") await loadModule('ticketSettings');

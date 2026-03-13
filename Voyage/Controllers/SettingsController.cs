@@ -4,9 +4,10 @@ namespace Voyage.Controllers
 {
     public class SettingsController : Controller
     {
-        public IActionResult AdminSettingsPartial()
+        [HttpGet]
+        public IActionResult SettingsPartial()
         {
-            return PartialView("~/Views/App/AdminSettings/_AdminSettings.cshtml");
+            return PartialView("~/Views/App/_Settings.cshtml");
         }
 
     }
