@@ -26,6 +26,7 @@
 
     @await Html.PartialAsync("~/Views/App/_AppHeader.cshtml")
     <div id="app-container" class="container">
+        <div id="quickbar" class="hidden"></div>
         @{
             await Html.RenderPartialAsync("~/Views/Shared/_SideNav.cshtml");
         }

@@ -172,19 +172,19 @@
 
         public enum Feature
         {
-            Tickets
+            Tickets = 1
         }
 
         public enum SectionSettings
         {
-            Custom,
-            Development
+            Custom = 1,
+            Development = 2
         }
 
         public enum RequiredTicketSections
         {
-            Completed,
-            Discontinued,
+            Completed = 1,
+            Discontinued = 2,
         }
 
 

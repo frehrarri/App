@@ -472,6 +472,7 @@ namespace Voyage.Data
                     {
                         SettingsId = s.SettingsId,
                         RepeatSprintOption = s.RepeatSprintOption,
+                        SectionSetting = (SectionSettings)s.SectionSetting,
                         SprintEnd = s.SprintEndDate,
                         SprintStart = s.SprintStartDate,
 
@@ -542,6 +543,8 @@ namespace Voyage.Data
                     settings.CreatedDate = date;
                     settings.SprintId = 1;
                     settings.SettingsId = settingsId;
+                    settings.SectionSetting = (int)dto.SectionSetting;
+
                     //settings.SettingsVersion = settingsVersion;
                     isUpdate = false;
                     settingsList.Add(settings);

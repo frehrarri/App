@@ -47,14 +47,14 @@
                 <h5>Section Setup</h5>             
                 <div id="section-content">
                     <span id="rdo-section-container">
-                        <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @(Model.SectionSetting == Constants.SectionSettings.Custom ? "checked" : "") />
+                        <input id="rdo-section-custom" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Custom)" @((Model.SectionSetting == Constants.SectionSettings.Custom || Model.SectionSetting == 0) ? "checked" : "") />
                         <label for="rdo-section-custom">Custom</label>
 
                         <input id="rdo-section-development" name="rdo-section" type="radio" value="@((int)Constants.SectionSettings.Development)" @(Model.SectionSetting == Constants.SectionSettings.Development ? "checked" : "") />
                         <label for="rdo-section-development">Development</label>
                     </span>
 
-                    <div id="sections-container" class="@(Model.SectionSetting != Constants.SectionSettings.Custom ? "hidden" : "")">
+                    <div id="sections-container" class="@((Model.SectionSetting == Constants.SectionSettings.Custom || Model.SectionSetting == 0) ? "" : "hidden")">
                         <input id="section-title-input" type="text" placeholder="section name" />
                         <button id="add-section-btn" type="button"><i class="fa-solid fa-plus"></i></button>
                     </div>
@@ -89,9 +89,11 @@
             </div>
         </div>
       
+        <hr />
         
     </form>
     
     
 </div>
+
 
