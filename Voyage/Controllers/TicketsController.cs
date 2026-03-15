@@ -40,7 +40,6 @@ namespace Voyage.Controllers
 
             var companyId = HttpContext.Session.GetInt32("CompanyId");
             TicketSettingsDTO? settings = await _ticketsB.GetCompanySettings(companyId!.Value);
-            //mainVM.TicketsVM.Tickets = await GetTickets(DateTime.UtcNow);
 
             if (settings != null)
             {
@@ -51,6 +50,8 @@ namespace Voyage.Controllers
                 vm.Sprint.StartDate = dto.SprintStart;
                 vm.Sprint.EndDate = dto.SprintEnd;
                 vm.Sprint.SprintId = dto.SprintId;
+
+                vm.Tickets = await GetTickets(dto.SprintId);
 
                 return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
             }
@@ -108,20 +109,6 @@ namespace Voyage.Controllers
 
 
         #endregion
-
-
-        [HttpGet]
-        public async Task<List<TicketVM>> GetTickets(DateTime date)
-        {
-            List<TicketVM> list = new List<TicketVM>();
-
-            var tickets = await _ticketsB.GetTickets(date);
-
-            if (tickets != null)
-                list = MapToVM(tickets);
-
-            return list;
-        }
 
         public async Task<List<TicketVM>> GetTickets(int sprintId)
         {

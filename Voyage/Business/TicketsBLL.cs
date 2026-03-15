@@ -21,14 +21,12 @@ namespace Voyage.Business
         private readonly ILogger<TicketsBLL> _logger;
         private readonly UserManager<AppUser> _userManager;
         private TicketsDAL _ticketsD;
-        private IHttpContextAccessor _httpContextAccessor;
 
 
-        public TicketsBLL(UserManager<AppUser> userManager, TicketsDAL ticketsD, IHttpContextAccessor httpContextAccessor, ILogger<TicketsBLL> logger)
+        public TicketsBLL(UserManager<AppUser> userManager, TicketsDAL ticketsD, ILogger<TicketsBLL> logger)
         {
             _userManager = userManager;
             _ticketsD = ticketsD;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
@@ -124,25 +122,20 @@ namespace Voyage.Business
         {
             details.Note = SanitizeHtmlForXSS(details.Note);
 
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-
-            if (user == null)
-                throw new InvalidOperationException("Authenticated user not found.");
-
-            if (details.TicketDetailsId != 0)
-            {
-                details.Author = user.UserName ?? string.Empty;
-                details.ModifiedBy = user.UserName ?? string.Empty;
-                details.ModifiedDate = DateTime.UtcNow;
-            }
-            else
-            {
-                details.Author = user.UserName ?? string.Empty;
-                details.CreatedBy = user.UserName ?? string.Empty;
-                details.CreatedDate = DateTime.UtcNow;
-                details.ModifiedBy = string.Empty;
-                details.ModifiedDate = null;
-            }
+            //if (details.TicketDetailsId != 0)
+            //{
+            //    details.Author = user.UserName ?? string.Empty;
+            //    details.ModifiedBy = user.UserName ?? string.Empty;
+            //    details.ModifiedDate = DateTime.UtcNow;
+            //}
+            //else
+            //{
+            //    details.Author = user.UserName ?? string.Empty;
+            //    details.CreatedBy = user.UserName ?? string.Empty;
+            //    details.CreatedDate = DateTime.UtcNow;
+            //    details.ModifiedBy = string.Empty;
+            //    details.ModifiedDate = null;
+            //}
 
             return await _ticketsD.SaveTicketDetails(details);
         }
@@ -313,7 +306,7 @@ namespace Voyage.Business
                     break;
             }
 
-            //todays date is prior to sprint 
+            //only update the sprintid and sprint time interal if the allotted time has passed
             if (DateTime.UtcNow >= dto.SprintStart)
             {
                 dto.SprintStart = newSprintDate;

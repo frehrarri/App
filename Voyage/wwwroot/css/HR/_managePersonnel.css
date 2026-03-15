@@ -74,8 +74,8 @@ label{
     width: 80px;
 }
 
-.sel-assign-role {
-    width: fit-content !important;
+#dv-personnel-grid .sel-assign-role {
+    width: fit-content;
     border: none;
     padding-right: -20px;
     background-color: transparent;

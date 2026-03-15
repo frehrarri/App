@@ -3,17 +3,20 @@
 @* controller renders setupticketsettings if settings have not been set up *@
 
 @{
+    Model.Sections.Add(new SectionDTO { Title = "Completed", SectionOrder = 991, SectionId = -1 });
+    Model.Sections.Add(new SectionDTO { Title = "Discontinued", SectionOrder = 992, SectionId = -2 });
+
     DateTime sprintEnd = DateTime.MinValue;
     switch (Model.Settings.RepeatSprintOption)
     {
         case (int)Constants.RepeatSprint.Weekly:
-            sprintEnd = Model.Settings.SprintStart.Value.AddDays(7);
+            sprintEnd = Model.Settings.SprintStart!.Value.AddDays(7);
             break;
         case (int)Constants.RepeatSprint.BiWeekly:
-            sprintEnd = Model.Settings.SprintStart.Value.AddDays(14);
+            sprintEnd = Model.Settings.SprintStart!.Value.AddDays(14);
             break;
         case (int)Constants.RepeatSprint.Monthly:
-            sprintEnd = Model.Settings.SprintStart.Value.AddMonths(1);
+            sprintEnd = Model.Settings.SprintStart!.Value.AddMonths(1);
             break;
         default:
             break;
@@ -25,15 +28,22 @@
     @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
     {
         <div id="sprint-header">
-            <h4>Sprint @Model.Sprint.SprintId</h4>
+            <h4>Sprint @Model.Sprint.SprintId: </h4>
             <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
         </div>
     }
 
     <div id="filter-container">
-        <div id="section-filter"></div>
+        <label for="section-filter">Filter Sections:</label>
+        <select id="section-filter">
+            <option value="0">All</option>
+            @foreach (var s in Model.Sections)
+            {
+                <option value="@s.SectionId">@s.Title</option>
+            }
+        </select>
     </div>
-
+    <br />
 
         @foreach (var s in Model.Sections)
         {
@@ -46,7 +56,7 @@
         var tickets = sectionTickets.Take(5)
         .ToList();
 
-        <div id="@(s.Title)-container" class="section-container" tabindex="0">
+        <div id="@(s.Title)-container" class="section-container" data-sectionid="@s.SectionId" tabindex="0">
             <div class="content-container" style="margin-top:0px;">
                 <h5 id="heading-@(s.Title)" class="heading">@s.Title</h5>
 
@@ -97,7 +107,7 @@
                             <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
                             <td class="app-table-data">@ticket.CreatedBy</td>
 
-                        @if (s.Title != "Discontinued" && s.Title != "Completed")
+@*                         @if (s.Title != "Discontinued" && s.Title != "Completed")
                         {
                             <td class="app-table-data">
                                 <button id="btnViewTicket" class="goto-ticket primary-btn" data-id="@ticket.TicketId">View</button>
@@ -107,7 +117,7 @@
                                 }
 
                             </td>
-                        }
+                        } *@
                         </tr>
                     }
 

@@ -12,12 +12,12 @@ export async function init() {
 
     container.innerHTML = partial;
 
-    container.addEventListener("click", handleEvents);
-    container.addEventListener("change", handleEvents);
-    trackEventListener(container, "click", handleEvents);
-    trackEventListener(container, "change", handleEvents);
+    container.addEventListener("click", handleClick);
+    container.addEventListener("change", handleChange);
+    trackEventListener(container, "click", handleClick);
+    trackEventListener(container, "change", handleChange);
 
-    appendSectionFilters();
+    //appendSectionFilters();
     updateBreadcrumb();
     updateNavHeader();
 
@@ -57,52 +57,52 @@ function updateBreadcrumb() {
 }
 
 
-function appendSectionFilters() {
-    const header = document.getElementById('section-filter');
-    if (!header)
-        return;
+//function appendSectionFilters() {
+//    const header = document.getElementById('section-filter');
+//    if (!header)
+//        return;
 
-    const ul = document.createElement('ul');
-    const headings = document.querySelectorAll('.heading');
+//    const ul = document.createElement('ul');
+//    const headings = document.querySelectorAll('.heading');
 
-    const centerHead = document.getElementById('header-center');
-    centerHead.innerHTML = "";
+//    const centerHead = document.getElementById('header-center');
+//    centerHead.innerHTML = "";
 
-    if (headings) {
-        //populate filter for each heading
-        headings.forEach(h => {
-            let li = document.createElement('li');
+//    if (headings) {
+//        //populate filter for each heading
+//        headings.forEach(h => {
+//            let li = document.createElement('li');
 
-            let a = document.createElement('a');
-            a.href = '#';
-            a.textContent = h.textContent;
-            a.classList.add('tab');
+//            let a = document.createElement('a');
+//            a.href = '#';
+//            a.textContent = h.textContent;
+//            a.classList.add('tab');
 
-            a.addEventListener("click", handleTabs);
-            trackEventListener(a, "click", handleTabs);
+//            a.addEventListener("click", handleTabs);
+//            trackEventListener(a, "click", handleTabs);
 
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
+//            li.appendChild(a);
+//            ul.appendChild(li);
+//        });
 
-        //add All filter
-        const li = document.createElement('li');
+//        //add All filter
+//        const li = document.createElement('li');
 
-        const a = document.createElement('a');
-        a.href = '#';
-        a.textContent = 'All';
-        a.classList.add('tab');
-        a.classList.add('active-tab');
+//        const a = document.createElement('a');
+//        a.href = '#';
+//        a.textContent = 'All';
+//        a.classList.add('tab');
+//        a.classList.add('active-tab');
 
-        a.addEventListener("click", handleTabs);
-        trackEventListener(a, "click", handleTabs);
+//        a.addEventListener("click", handleTabs);
+//        trackEventListener(a, "click", handleTabs);
 
-        li.appendChild(a);
-        ul.prepend(li);
-        header.appendChild(ul)
-    }
+//        li.appendChild(a);
+//        ul.prepend(li);
+//        header.appendChild(ul)
+//    }
         
-}
+//}
 
 export async function getTicketsPartial() {
     try {
@@ -342,8 +342,7 @@ export async function getTicketSettings() {
     await loadModule("setTicketSettings");
 }
 
-async function handleEvents(e) {
-    debugger;
+async function handleClick(e) {
     let module = null;
     let partial = null;
 
@@ -369,9 +368,6 @@ async function handleEvents(e) {
         return;
     }
 
-    if (e.target.classList.contains('tab'))
-        handleTabs(e);
-
     if (e.target.matches('.paginate')) {
         const sectionTitle = e.dataset.section;
         //if (e.target.id.includes('sel-take-section') && e.type == "change"){
@@ -384,70 +380,30 @@ async function handleEvents(e) {
 
 }
 
-function handleTabs(e) {
-    debugger;
-
-    if (!e.target.classList.contains('tab'))
+function handleChange(e) {
+    const selectList = e.target.closest('#section-filter');
+    
+    if (!selectList)
         return;
 
-    //set active tabs
-    const activeTab = document.querySelector('.active-tab');
-    activeTab.classList.remove('active-tab');
-    e.target.classList.add('active-tab');
+    //const sectionToDisplay = e.target.innerText.toLowerCase().trim();
+    const sections = document.querySelectorAll('.section-container');
+    const selectedOption = e.target.value;
 
     //show all sections for all tab
-    const sectionToDisplay = e.target.innerText.toLowerCase().trim();
-    const sections = document.querySelectorAll('.section-container');
-
-    if (sectionToDisplay === "all") {
+    if (selectedOption == 0) {
         sections.forEach(s => s.classList.remove('hidden'));
-        return;
     }
-
-    //toggle sections based on tab selection
-    const sectionHeaders = document.querySelectorAll('.section-container h5');
-
-    sectionHeaders.forEach(s => {
-        const currentSection = s.innerText.toLowerCase().trim();
-        const container = s.closest(".section-container");
-
-        if (sectionToDisplay != currentSection) {
-            container.classList.add('hidden');
-        }
-        else {
-            container.classList.remove('hidden');
-        }
-    });
-
-    //const activeElements = document.querySelectorAll('.active-element:not(.tab)');
-
-    ////update tabs
-    //const activeTab = document.querySelector('#assign-dept-tabs > .active-tab');
-    //activeTab.classList.remove('active-tab');
-    //e.target.classList.add('active-tab');
-
-    ////hide previous elements
-    //activeElements.forEach(el => {
-    //    el.classList.add('hidden');
-    //    el.classList.remove('active-element')
-    //});
-
-    ////show current elements
-    //let elements = null;
-    //if (e.target.classList.contains('teams')) {
-    //    elements = document.querySelectorAll('.teams');
-    //}
-    //else if (e.target.classList.contains('personnel')) {
-    //    elements = document.querySelectorAll('.personnel');
-    //}
-    //else if (e.target.classList.contains('permissions')) {
-    //    elements = document.querySelectorAll('.permissions');
-    //}
-
-    //if (elements)
-    //    elements.forEach(el => {
-    //        el.classList.add('active-element');
-    //        el.classList.remove('hidden');
-    //    });
+    //show individual section
+    else {
+        sections.forEach(s => {
+            if (selectedOption != s.dataset.sectionid) {
+                s.classList.add('hidden');
+            }
+            else {
+                s.classList.remove('hidden');
+            }
+        });
+    }
 }
 

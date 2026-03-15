@@ -11,11 +11,15 @@
 #sprint-header {
     margin-bottom: 30px;
     width: fit-content;
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    border: 1px solid #6289af;
+    padding: 20px;
 }
 
 .section-container {
     background-color: white;
-    /*border: 1px solid gray;*/
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     margin-bottom: 40px;
@@ -38,11 +42,18 @@
 .pagination-container {
     display: flex;
     justify-content: flex-start;
-    gap: 33%;
-    margin-top: 10px;  /*spacing from table */
+    align-items: center;
+    position: relative;
+    margin-top: 10px; 
 }
 
-.dv-btns-container{
+.pagination-buttons{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dv-btns-container {
     margin-left: 20px;
     display: flex;
     gap: 2px;
@@ -62,35 +73,6 @@
     background-color: inherit;
 }
 
-
-#filter-container {
-    margin-left: 32%;
-}
-
-#section-filter:has(> *) {
-    background-color: white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    align-items: center;
-    display: flex;
-    height: 25px;
-    width: fit-content;
-    padding-right: 30px;
-    margin-bottom: 5px;
-}
-
-#section-filter > ul {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-    #section-filter > ul > li {
-        list-style: none;
-    }
-
 .active-tab {
     color: black !important;
     text-decoration: none;
@@ -102,6 +84,12 @@ a.active-tab:hover {
     cursor: default !important;
 }
 
-.content-container {
-    /*margin-top: 10px;*/
+#filter-container{
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#section-filter {
+    margin-left: 10px;
+    border-radius: 5px;
 }
