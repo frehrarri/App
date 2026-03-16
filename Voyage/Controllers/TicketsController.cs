@@ -63,6 +63,8 @@ namespace Voyage.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> TicketPartial(int ticketId, decimal? ticketVersion = null)
         {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
             TicketVM? vm = await GetTicket(ticketId, ticketVersion);
             try
             {

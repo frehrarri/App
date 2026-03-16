@@ -396,10 +396,10 @@ async function handleClick(e) {
     //}
 
     else if (anchor && anchor.classList.contains('goto-ticket')) {
-
         //find the real ID from the anonymized one
         const realId = getRealId(ticketMap, anchor.dataset.id);
-        partial = await getTicketPartial(realId);
+        loadModule("ticket", realId);
+        //partial = await getTicketPartial(realId);
     }
 
     if (partial) {

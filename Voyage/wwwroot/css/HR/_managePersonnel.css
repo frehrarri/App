@@ -4,7 +4,11 @@
     border-radius:5px;
 }
 
-#personnel-grid th:first-child{
+    #dv-personnel-grid label, #manage-personnel-container label {
+        padding-bottom: 10px;
+    }
+
+#personnel-grid th:first-child {
     width: 3% !important;
     padding-left: 20px;
 }
@@ -45,11 +49,6 @@ input {
 
 input[type='email'] {
     min-width: 220px;
-}
-
-
-label{
-    padding-bottom: 10px;
 }
 
 .app-table-header:last-child {

@@ -126,7 +126,7 @@ const moduleRegistry = {
 };
 
 // Dynamically load CSS if not already loaded
-function loadCss(href) {
+export function loadCss(href) {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`link[href="${href}"]`)) {
             resolve(); // already loaded

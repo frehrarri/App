@@ -1,84 +1,102 @@
 ﻿@model TicketVM
-<link href="@(Url.Content("~/css/Tickets/_ticket.css"))" rel="stylesheet" asp-append-version="true" />
 
-<div id="ticket-container">
-    <br>
-    <h1>Ticket</h1>
-    <br />
+<div id="ticket-container" class="content-container">
+    <h5>Ticket</h5>
 
     <div id="ticket-header">
-
-        <div id="titleContainer" class="dataContainer">
-            <label id="lblTicketIdTitle" class="title">Ticket #: </label>
-            <label id="lblTicketId">@Model.TicketId</label>
-        </div>
-        <div id="versionContainer" class="dataContainer">
-            <label id="lblTicketVersionTitle" class="title">Version:</label>
-            <label id="lblTicketVersion">@(Model.TicketVersion)</label>
-        </div>
-        <div id="parentContainer" class="dataContainer">
-            <label id="lblParentTicketIdTitle" class="title">Parent Ticket: </label>
-            <label id="lblTicketParentId">@Model.ParentTicketId</label>
-        </div>
-        
-        <div id="sectionContainer" class="dataContainer">
-            <label id="lblSectionTitle" class="title">Section: </label>
-            <label id="lblSection">@Model.SectionTitle</label>
-        </div>
-
-        <br />
-
-        <div id="titleContainer" class="dataContainer">
-            <label id="lblTicketTitle" class="title">Title:</label>
+        <div id="dvTicketTitle">
+            <label id="lblTicketTitle" class="data-title">Title:</label>
             <label id="lblTicketTitleData"> @Model.Title</label>
         </div>
 
-        <br />
-        
-        <div id="DescContainer" class="dataContainer">
-            <label id="lblDescTitle" class="title">Description:</label>
+        <div id="ticket-header-grid">
+            <label id="lblTicketIdTitle" class="data-title">ID: </label>
+            <label id="lblTicketId">@Model.TicketId</label>
+
+            <label id="lblTicketVersionTitle" class="data-title">Version:</label>
+            <label id="lblTicketVersion">@(Model.TicketVersion)</label>
+
+            <label id="lblParentTicketIdTitle" class="data-title">Parent ID: </label>
+            <label id="lblTicketParentId">@Model.ParentTicketId</label>
+
+            <label id="lblSectionTitle" class="data-title">Section: </label>
+            <label id="lblSection">@Model.SectionTitle</label>
+            
+            @* row 2 *@
+            <label id="lblPriorityLvlTitle" class="data-title">Priority:</label>
+            <label id="lblPriorityLvl">@Model.PriorityLevel</label>
+
+            <label id="lblStatusTitle" class="data-title">Status:</label>
+            <label id="lblStatus">@AddSpacesToSentence(Model.Status)</label>
+
+            <label id="lblTicketType" class="data-title">Type:</label>
+            <label id="lblTicketTypeData"></label>
+
+            <div></div>
+            <div></div>
+               
+            @* row 3 *@
+            <label id="lblAssignedTitle" class="data-title">Assigned To:</label>
+            <label id="lblAssigned">@Model.AssignedTo</label>
+
+            <label id="lblDueDateTitle" class="data-title">Due Date:</label>
+            <label id="lblDueDate">@FormatUtcDate(Model.DueDate)</label>
+
+            <label id="lblAuthorTitle" class="data-title">Author:</label>
+            <label id="lblAuthor">@Model.CreatedBy</label>
+
+            <label id="lblCreatedDateTitle" class="data-title">Created:</label>
+            <label id="lblCreatedDate">@FormatUtcDateTime(Model.CreatedDate)</label>
+        </div>
+            
+
+
+
+        <div id="dvDescription">
+            <label id="lblDescTitle" class="data-title">Description:</label>
             <div id="lblDescription">@Html.Raw(Model.Description)</div>
         </div>
 
-        <br />
-
-        <div id="prioContainer" class="dataContainer">
-            <label id="lblPriorityLvlTitle" class="title">Priority Level:</label>
-            <label id="lblPriorityLvl">@Model.PriorityLevel</label>
-        </div>
-
-        <div id="statusContainer" class="dataContainer">
-            <label id="lblStatusTitle" class="title">Status:</label>
-            <label id="lblStatus">@AddSpacesToSentence(Model.Status)</label>
-        </div>
-
-        <div id="assignContainer" class="dataContainer">
-            <label id="lblAssignedTitle" class="title">Assigned To:</label>
-            <label id="lblAssigned">@Model.AssignedTo</label>
-        </div>
-
-        <br />
-
-        <div id="dueDateContainer" class="dataContainer">
-            <label id="lblDueDateTitle" class="title">Due Date:</label>
-            <label id="lblDueDate">@FormatUtcDate(Model.DueDate)</label>
-        </div>
-
-        <div id="authorContainer" class="dataContainer">
-            <label id="lblAuthorTitle" class="title">Author:</label>
-            <label id="lblAuthor">@Model.CreatedBy</label>
-        </div>
-
-        <div id="createdDateContainer" class="dataContainer">
-            <label id="lblCreatedDateTitle" class="title">Created:</label>
-            <label id="lblCreatedDate">@FormatUtcDateTime(Model.CreatedDate)</label>
-        </div>
-
-        <br />
-
     </div>
+    <div id="divider">
+    </div>
+    <form>
+        @Html.AntiForgeryToken()
+        <div id="ticket-notes-container">
+            @if (Model.TicketDetails.Any())
+            {
+                @foreach (var detail in Model.TicketDetails)
+                {
+                    <div class="note" data-ticketdetailsid="@detail.TicketDetailsId">
+                        <div class="note-header">
+                            <span class="note-created">Added @detail.CreatedDate by @detail.CreatedBy</span>
+                            <span class="note-edited">Edited @detail.ModifiedDate by @detail.ModifiedBy</span>
+                            <button class="edit-note-btn" type="button">Edit</button>
+                        </div>
+                        <div class="note-content">
+                            @detail.Note
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </form>
+    <div id="dv-center-wrapper">
+        <div id="note-input-control">
+            <div id="note-input" contenteditable="true">
+            </div>
+            <div id="ticket-btn-container">
+                <button type="button" id="add-note-button" class="primary-btn">Add</button>
+                <button type="button" id="edit-ticket-button" class="secondary-btn">Edit</button>
+                <button type="button" id="delete-ticket-button" class="warning-btn">Delete</button>
+            </div>
+        </div>
+    </div>
+    
 
-    <br />
+</div>
+
+@* 
 
     <div id="ticket-btn-container">
         <button type="button" id="btnGoToTickets" class="primary-btn">Back</button>
@@ -120,7 +138,9 @@
         </tbody>
     </table>
 </div>
+ *@
 
+<input id="hdnUsername" value="@ViewBag.Username" type="hidden" />
 <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />
 <input id="hdnIsLatest" value="@(Model.IsLatest?.ToString().ToLower() ?? "")" type="hidden" />
 
