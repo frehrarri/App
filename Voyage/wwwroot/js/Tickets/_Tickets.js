@@ -1,4 +1,8 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
+import { getTicketPartial } from "/js/Tickets/_ticket.js";
+
+const sectionMap = new Map();
+const ticketMap = new Map();
 
 export async function init() {
     removeEventListeners();
@@ -21,7 +25,39 @@ export async function init() {
     updateBreadcrumb();
     updateNavHeader();
 
+    anonymizeDataAttributes();
+
 }
+
+function getRealId(map, anonId) {
+    return [...map.entries()].find(([, uuid]) => uuid === anonId)?.[0];
+}
+
+function getAnonymousId(map, realId) {
+    if (!map.has(realId)) {
+        map.set(realId, crypto.randomUUID());
+    }
+    return map.get(realId);
+}
+
+function anonymizeDataAttributes() {
+    // anonymize sections
+    document.querySelectorAll('[data-sectionid]').forEach(el => {
+        const realId = el.dataset.sectionid;
+        const anonId = getAnonymousId(sectionMap, realId);
+        el.dataset.sectionid = anonId;
+    });
+
+    // anonymize tickets
+    document.querySelectorAll('[data-id]').forEach(el => {
+        const realId = el.dataset.id;
+        const anonId = getAnonymousId(ticketMap, realId);
+        el.dataset.id = anonId;
+    });
+}
+
+
+
 
     //document.querySelectorAll(".paginate").forEach(el => {
     //    const sectionTitle = el.dataset.section;
@@ -347,23 +383,26 @@ async function handleClick(e) {
     let partial = null;
 
     const btn = e.target.closest('button');
+    const anchor = e.target.closest('a')
 
     if (btn && btn.id === 'add-btn') {
         module = await loadModule("manageTicket");
         partial = await module.getManageTicketPartial(null, e.target.dataset.section);
     }
 
-    else if (btn && btn.classList.contains('edit-btn')) {
-        module = await loadModule("manageTicket");
-        partial = await module.getManageTicketPartial(e.target.dataset.id, null);
+    //else if (btn && btn.classList.contains('edit-btn')) {
+    //    module = await loadModule("manageTicket");
+    //    partial = await module.getManageTicketPartial(e.target.dataset.id, null);
+    //}
+
+    else if (anchor && anchor.classList.contains('goto-ticket')) {
+
+        //find the real ID from the anonymized one
+        const realId = getRealId(ticketMap, anchor.dataset.id);
+        partial = await getTicketPartial(realId);
     }
 
-    else if (btn && btn.classList.contains('goto-ticket')) {
-        module = await loadModule("ticket");
-        partial = await module.getTicketpartial(e.target.dataset.id);
-    }
-
-    if (module && partial) {
+    if (partial) {
         document.querySelector('.main-content').innerHTML = partial;
         return;
     }
@@ -397,7 +436,10 @@ function handleChange(e) {
     //show individual section
     else {
         sections.forEach(s => {
-            if (selectedOption != s.dataset.sectionid) {
+
+            const realId = getRealId(sectionMap, s.dataset.sectionid);
+
+            if (selectedOption != realId) {
                 s.classList.add('hidden');
             }
             else {

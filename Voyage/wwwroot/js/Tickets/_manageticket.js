@@ -1,4 +1,5 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
+/*import { getTicketPartial, getTicketsPartial } from "/js/Tickets/__moduleLoader.js";*/
 
 export function init() {
     removeEventListeners();
@@ -107,7 +108,7 @@ function updateBreadcrumb() {
 
 async function saveTicket() {
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-    debugger;
+
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').value,
@@ -129,30 +130,27 @@ async function saveTicket() {
             }
         });
 
-        let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");
+        if (response && response.status === 200)
+            alert("success");
+        else
+            alert("error");
 
-        showSuccess(true);
+        /*let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");*/
+
+        const isEdit = document.getElementById('ticketId').innerText.trim();
+
         // Go back to tickets list after successful save
-        setTimeout(async () => {
+        if (isEdit) {
+            let ticketId = parseInt(document.getElementById('ticketId').value);
 
-            const module = await loadModule("tickets");
+            await loadModule("ticket", ticketId);
+        }
+        else {
+            await loadModule("tickets");
+        }
 
-            if (isEdit) {
-                let ticketId = parseInt(document.getElementById('ticketId').value);
-
-                await module.getTicketPartial(ticketId);
-            }
-            else {
-                await module.getTicketsPartial();
-            }
-            
-        }, 1500);
-
-        return response.data;
     } catch (error) {
-        showSuccess(false);
-        console.error("error", error);
-        return false;
+        alert(`error: saveTicket`);
     }
 
     return response.data; // bool

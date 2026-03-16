@@ -171,6 +171,10 @@ html, body {
     vertical-align: middle;
 }
 
+.app-table-row:last-child {
+    border-bottom: 1px solid #f8f9fa;
+}
+
 
 .app-table td:first-child input[type="checkbox"] {
     width: auto;
@@ -325,7 +329,7 @@ a:hover{
 }
 
 .content-container {
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     margin-top: -5px;
 }
 

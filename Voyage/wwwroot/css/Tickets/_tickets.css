@@ -26,10 +26,14 @@
     padding-bottom: 20px;
 }
 
-.goto-ticket primary-btn {
-    margin-bottom: 2px;
-    margin-top: 2px;
-}
+    .section-container .app-table .app-table-header:first-child{
+        max-width: 4%;
+    }
+
+    .goto-ticket primary-btn {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
 
 .paginate {
     border: none;
@@ -86,7 +90,7 @@ a.active-tab:hover {
 
 #filter-container{
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #section-filter {

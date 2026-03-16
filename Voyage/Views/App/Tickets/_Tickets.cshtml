@@ -43,10 +43,9 @@
             }
         </select>
     </div>
-    <br />
 
-        @foreach (var s in Model.Sections)
-        {
+    @foreach (var s in Model.Sections.OrderBy(s => s.SectionOrder))
+    {
 
         var sectionTickets = Model.Tickets.Where(t => t.SectionTitle == s.Title).OrderByDescending(t => t.PriorityLevel);
 
@@ -185,7 +184,7 @@
             </div>
         </div>
         <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
-        }
+    }
 
 </div>
 
