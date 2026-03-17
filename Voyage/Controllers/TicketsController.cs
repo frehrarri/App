@@ -199,6 +199,11 @@ namespace Voyage.Controllers
         [ValidateHeaderAntiForgeryToken]
         public async Task<TicketDetailsDTO?> SaveTicketDetails([FromBody] TicketDetailsDTO details)
         {
+            var companyId = HttpContext.Session.GetInt32("CompanyId");
+            var username = HttpContext.Session.GetString("Username");
+
+            details.CreatedBy = username;
+
             return await _ticketsB.SaveTicketDetails(details);
         }
 

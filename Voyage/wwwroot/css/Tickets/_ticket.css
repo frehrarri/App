@@ -7,6 +7,8 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    background-color: white;
+    padding-bottom: 0px;
 }
 
     #ticket-container > h5 {
@@ -19,6 +21,7 @@
     gap: 8px 12px;
     align-items: center;
     margin-left: 25px;
+    flex-shrink: 0;
 }
 
 #dvTicketTitle, #ticket-header-grid, #dvDescription {
@@ -56,34 +59,38 @@
     display: inline-block;
 }
 
-#divider {
+.divider {
     width: 100%;
     height: 1px;
     margin-top: 10px;
     background-color: #6289af52;
+    flex-shrink: 0;
+    margin-top: 25px;
+    margin-bottom: 5px;
 }
 
 #dv-center-wrapper {
-    position: sticky;
-    bottom: 3%;
     display: flex;
     justify-content: center;
-    margin-top: auto;
+    background-color: #6289af24;
+    padding-bottom: 10px;
 }
 
 
 #note-input-control {
-    min-width: 95%;
+    padding-bottom: 10px;
+    min-width: 97%;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff33;
 }
 
 #note-input {
+    margin-top: 25px;
     width: 100%;
     height: 100px;
     border-radius: 5px;
     border: 2px solid #6289af52;
+    background-color: white;
 }
 
 #ticket-btn-container{
@@ -95,7 +102,7 @@
     border: 1px solid #6289af52;
     border-radius: 5px;
     width: 97%;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .note-header {
@@ -132,6 +139,11 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    min-height: 42vh;
+}
+
+#ticket-notes-container > .note:last-child{
+    margin-bottom: 25px;
 }
 
 .note-created {

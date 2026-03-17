@@ -237,7 +237,7 @@ function handleFileDrop(e) {
     }
 }
 
-function formatUtc(dateString, includeYear = true) {
+function formatUtc(dateString, includeYear = true, includeTime = false) {
 
     let date = new Date(dateString);
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -246,12 +246,19 @@ function formatUtc(dateString, includeYear = true) {
     const month = months[date.getUTCMonth()];
     const hours = String(date.getUTCHours()).padStart(2, "0");
     const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+
+    let format = `${day} ${month}`;
 
     if (includeYear) {
-        return `${day} ${month} ${date.getUTCFullYear()}`;
+        format = `${format} ${date.getUTCFullYear()}`;
     }
 
-    return `${day} ${month}`;
+    if (includeTime) {
+        format = `${format} ${hours}:${minutes}:${seconds}`;
+    }
+
+     return format;
 }
 
 function addSpacesToSentence(sentence, spaces = 1) {

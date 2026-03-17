@@ -121,21 +121,18 @@ namespace Voyage.Business
         public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
         {
             details.Note = SanitizeHtmlForXSS(details.Note);
+            details.Author = details.CreatedBy;
 
-            //if (details.TicketDetailsId != 0)
-            //{
-            //    details.Author = user.UserName ?? string.Empty;
-            //    details.ModifiedBy = user.UserName ?? string.Empty;
-            //    details.ModifiedDate = DateTime.UtcNow;
-            //}
-            //else
-            //{
-            //    details.Author = user.UserName ?? string.Empty;
-            //    details.CreatedBy = user.UserName ?? string.Empty;
-            //    details.CreatedDate = DateTime.UtcNow;
-            //    details.ModifiedBy = string.Empty;
-            //    details.ModifiedDate = null;
-            //}
+            if (details.TicketDetailsId != 0)
+            {
+                details.ModifiedBy = details.CreatedBy;
+                details.ModifiedDate = DateTime.UtcNow;
+            }
+            else
+            {
+                details.CreatedBy = details.CreatedBy;
+                details.CreatedDate = DateTime.UtcNow;
+            }
 
             return await _ticketsD.SaveTicketDetails(details);
         }

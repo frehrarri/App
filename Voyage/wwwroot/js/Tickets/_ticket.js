@@ -159,7 +159,7 @@ async function addNote() {
     noteCreated.className = 'note-created';
 
     const username = document.getElementById('hdnUsername').value;
-    noteCreated.innerText = 'Added ' + `${formatUtc(new Date().toUTCString())} ` + 'by ' + username;
+    noteCreated.innerText = 'Added ' + `${formatUtc(new Date().toUTCString(), true, true)} ` + 'by ' + username;
 
     noteHeader.appendChild(noteCreated);
 
@@ -254,10 +254,11 @@ async function saveNote(noteDiv) {
     //const ticketVersion = document.getElementById('lblTicketVersion').textContent;
     
     const details = {
-        TicketId: parseInt(ticketId),
+        ticketId: parseInt(ticketId),
         //TicketVersion: parseInt(ticketVersion),
-        TicketDetailsId: ticketDetailsId,
-        Note: content
+        ticketDetailsId: ticketDetailsId,
+        note: content,
+        author: document.getElementById('hdnUsername').value
     };
 
     const response = await axios.post('/Tickets/SaveTicketDetails', details, {
@@ -268,8 +269,6 @@ async function saveNote(noteDiv) {
     });
 
     if (response && response.status === 200) {
-        alert("success");
-
         const newKey = crypto.randomUUID();
 
         noteDiv.dataset.ticketdetailsid = newKey;
