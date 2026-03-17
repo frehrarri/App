@@ -173,7 +173,7 @@ async function editNote(e) {
 
     //copy content
     const content = contentContainer.textContent;
-    debugger;
+  
     //create input
     const editDiv = document.createElement('div');
     editDiv.contentEditable = 'true';

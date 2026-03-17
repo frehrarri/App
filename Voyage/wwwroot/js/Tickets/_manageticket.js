@@ -94,16 +94,43 @@ function updateBreadcrumb() {
 
     li1.appendChild(a1);
     ol.appendChild(li1);
+    
+    const isEdit = document.getElementById('hdnTicketId')?.value > 0 ?? false;
 
-    const li2 = document.createElement('li');
-    li2.classList.add('breadcrumb-item');
-    li2.classList.add('active');
+    if (isEdit) {
+        const li2 = document.createElement('li');
+        li2.classList.add('breadcrumb-item');
+        li2.classList.add('active');
 
-    const ticketId = document.getElementById('ticketId')?.textContent;
+        const a2 = document.createElement('a');
+        a2.innerText = 'Ticket';
 
-    li2.textContent = ticketId ? 'Edit Ticket' : 'Add Ticket';
+        const gotoTicket = async () => {
+            const ticketId = document.getElementById('hdnTicketId').value;
+            await loadModule('ticket', parseInt(ticketId));
+        };
 
-    ol.appendChild(li2);
+        a2.addEventListener("click", gotoTicket);
+        trackEventListener(a2, "click", gotoTicket);
+
+        li2.appendChild(a2);
+        ol.appendChild(li2);
+
+        const li3 = document.createElement('li');
+        li3.classList.add('breadcrumb-item');
+        li3.classList.add('active');
+        li3.textContent = 'Edit Ticket';
+
+        ol.appendChild(li3);
+    }
+    else {
+        const li2 = document.createElement('li');
+        li2.classList.add('breadcrumb-item');
+        li2.classList.add('active');
+        li2.textContent = 'Add Ticket';
+
+        ol.appendChild(li2);
+    }
 }
 
 async function saveTicket() {

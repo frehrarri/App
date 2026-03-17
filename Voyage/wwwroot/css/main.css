@@ -11,6 +11,11 @@
 
 .breadcrumb-item > a {
     color: #007fff !important;
+    cursor: pointer;
+}
+
+.breadcrumb-item > a:hover {
+    text-decoration: underline !important;
 }
 
 
