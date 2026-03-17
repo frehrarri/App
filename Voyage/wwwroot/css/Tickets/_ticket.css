@@ -65,7 +65,7 @@
     margin-top: 10px;
     background-color: #6289af52;
     flex-shrink: 0;
-    margin-top: 25px;
+/*    margin-top: 25px;*/
     margin-bottom: 5px;
 }
 
@@ -108,14 +108,14 @@
 .note-header {
     background-color: #6289af;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     color: white;
     font-style: italic;
     font-size: 14px;
     align-items:center;
 }
 
-.edit-note-btn {
+.edit-note-btn, .save-edit-note-btn {
     border-radius: 3px;
     box-shadow: 1px 1px 1px slategray;
     border: none;
@@ -129,9 +129,7 @@
     display: flex;
     align-items: center;
     font-size: 12px;
-    position: absolute;
-    left: 100%;
-    transform: translateX(-200%);
+    margin-left: 10px;
 }
 
 #ticket-notes-container {
@@ -139,7 +137,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    min-height: 42vh;
+    min-height: 38.5vh;
 }
 
 #ticket-notes-container > .note:last-child{
@@ -147,179 +145,26 @@
 }
 
 .note-created {
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
-.note-edited {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
 
 .note-content {
     padding-top: 10px;
     padding-bottom: 10px;
     margin-left: 10px;
-    white-space: pre-wrap;
-    word-break: break-word;
 }
 
-
-/*#ticket-container {
-    min-height: 100vh;
-}*/
-
-/*header*/
-
-/*#ticket-header {
-    border: 1px solid gray;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    display: block;
-    background-color: ghostwhite;
-    padding: 5px;
+.editable {
+    border: 1px solid #ddb4396e;
 }
 
-.title{
-    font-weight: bold;
+.editable-header {
+    background-color: #ffc10738;
+    color: black;
 }
 
-#titleContainer, #versionContainer,
-#parentContainer, #sectionContainer,
-#DescContainer, #prioContainer,
-#statusContainer, #assignContainer,
-#dueDateContainer, #authorContainer,
-#createdDateContainer {
-    display: inline-block;
+#ticket-container div[contenteditable='true'] {
+    outline: none;
 }
 
-#versionContainer, #parentContainer,
-#sectionContainer, #authorContainer {
-    margin-left: 7rem;
-}
-
-#statusContainer {
-    margin-left: 55px;
-}
-
-#assignContainer{
-    margin-left: 70px;
-}
-
-#createdDateContainer{
-    margin-left: 85px;
-}
-
-.dataContainer {
-    padding:3px;
-}
-
-#ticket-btn-container{
-    display: flex;
-    gap: 2px;
-}*/
-
-/*notes*/
-/*#ticket-notes-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
-    max-height: 500px;
-    overflow-y: auto;
-    border: 1px solid gray;
-    box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    padding: 15px;
-    background-color: #e8f0fe;
-    min-height: 70vh;
-}
-
-.ticket-note {
-    border: 1px solid gray;
-    border-radius: 5px;
-    padding: 15px;
-    background-color: ghostwhite;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-}
-
-
-.note-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-size: 0.9em;
-    color: #666;
-}
-
-.note-author {
-    font-weight: bold;
-}
-
-.note-date {
-    font-style: italic;
-}
-
-.note-content {
-    width: 100%;
-    min-height: 80px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-family: inherit;
-    resize: vertical;
-    background-color:white;
-}
-
-.note-content-display {
-    padding: 8px;
-}
-
-    .note-content, .note-content-display {
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-
-.note-actions {
-    display: flex;
-    gap: 2px;
-    margin-top: 10px;
-}
-
-.btn-save-note, .btn-cancel-note {
-    cursor: pointer;
-}
-
-textarea{
-    width: 100%;
-}
-
-.modified-date {
-
-}*/
-
-/*version history*/
-/*.versionHistoryLink {
-    background: none;
-    border: none;
-    padding: 0;
-    color: #0066cc;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-table {
-    border: 1px solid gray;
-    border-radius: 5px;*/
-   /* box-shadow: gray 2px 2px;*/
-/*}
-
-#version-history-container {
-    background-color: #e8f0fe;
-    border-radius: 5px;
-    border: 1px solid gray;
-    box-shadow: 1px 0.5px 5px rgba(0, 0, 0, 0.5);
-    padding: 15px;*/
-    /*margin: 20px 0;*/
-/*}*/

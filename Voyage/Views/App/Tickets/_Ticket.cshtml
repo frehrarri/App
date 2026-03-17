@@ -48,13 +48,15 @@
             <label id="lblCreatedDateTitle" class="data-title">Created:</label>
             <label id="lblCreatedDate">@FormatUtcDateTime(Model.CreatedDate)</label>
         </div>
-            
-
-
 
         <div id="dvDescription">
             <label id="lblDescTitle" class="data-title">Description:</label>
             <div id="lblDescription">@Html.Raw(Model.Description)</div>
+        </div>
+
+        <div id="ticket-btn-container">
+            <button type="button" id="edit-ticket-button" class="secondary-btn">Edit</button>
+            <button type="button" id="delete-ticket-button" class="warning-btn">Delete</button>
         </div>
 
     </div>
@@ -68,9 +70,14 @@
                 {
                     <div class="note" data-ticketdetailsid="@detail.TicketDetailsId">
                         <div class="note-header">
-                            <span class="note-created">Added @detail.CreatedDate by @detail.CreatedBy</span>
-                            <span class="note-edited">Edited @detail.ModifiedDate by @detail.ModifiedBy</span>
                             <button class="edit-note-btn" type="button">Edit</button>
+
+                            @if (detail.ModifiedDate != null && !string.IsNullOrEmpty(detail.ModifiedBy))
+                            {
+                                <span class="note-edited">Edited @detail.ModifiedDate by @detail.ModifiedBy</span>
+                            }
+                            
+                            <span class="note-created">Added @detail.CreatedDate by @detail.CreatedBy</span>
                         </div>
                         <div class="note-content">
                             @detail.Note
@@ -87,58 +94,14 @@
             </div>
             <div id="ticket-btn-container">
                 <button type="button" id="add-note-button" class="primary-btn">Add</button>
-                <button type="button" id="edit-ticket-button" class="secondary-btn">Edit</button>
-                <button type="button" id="delete-ticket-button" class="warning-btn">Delete</button>
+@*                 <button type="button" id="edit-ticket-button" class="secondary-btn">Edit</button>
+                <button type="button" id="delete-ticket-button" class="warning-btn">Delete</button> *@
             </div>
         </div>
     </div>
     
 
 </div>
-
-@* 
-
-    <div id="ticket-btn-container">
-        <button type="button" id="btnGoToTickets" class="primary-btn">Back</button>
-        <button type="button" id="btnEditTicket" class="secondary-btn">Edit</button>
-    </div>
-    
-
-    @if (!Model.IsLatest!.Value)
-    {
-        <span id="oldTicketVersion">
-            ! To make changes please visit the latest version: <a class="versionHistoryLink">@Model.VersionHistory.Max(v => v.TicketVersion)</a>
-        </span>
-    }
-
-
-    <form>
-        @Html.AntiForgeryToken()
-        <div id="ticket-notes-container"></div>
-    </form>
-</div>
-
-<div id="version-history-container">
-    <table class="app-table">
-        <thead>
-            <tr>
-                <th class="app-table-header">Version</th>
-                <th class="app-table-header">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var v in Model.VersionHistory.OrderByDescending(v => v.TicketVersion))
-            {
-                <tr class="app-table-row">
-                    <td class="app-table-data"><a class="versionHistoryLink">@v.TicketVersion</a></td>
-                    <td class="app-table-data">@Html.Raw(v.TicketChangeAction)</td>
-                </tr>
-            }
-
-        </tbody>
-    </table>
-</div>
- *@
 
 <input id="hdnUsername" value="@ViewBag.Username" type="hidden" />
 <input id="hdnTicketId" value="@Model.TicketId" type="hidden" />

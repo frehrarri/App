@@ -19,61 +19,32 @@ export async function init(ticketid) {
 
     updateBreadcrumb();
     anonymizeTicketDetails();
-
-    //go to ticket
-    //document.getElementById("btnGoToTickets")?.addEventListener("click", async () => {
-    //    //adjust container
-    //    document.getElementById('ticket-view').style.width = '1400px';
-
-    //    const module = await loadModule("tickets");
-    //    await module.getTicketsPartial();
-    //});
-
-    //edit
-    //document.getElementById("btnEditTicket")?.addEventListener("click", async () => {
-    //    const ticketId = document.getElementById('lblTicketId').textContent;
-    //    const module = await loadModule("tickets");
-    //    await module.getManageTicketPartial(ticketId, null);
-    //}); 
-
-    ////versioning
-    //const links = document.getElementsByClassName("versionHistoryLink");
-    //for (const link of links) {
-    //    link.addEventListener("click", async (e) => {
-    //        e.preventDefault();
-
-    //        const version = parseInt(e.target.textContent);
-    //        const ticketId = parseInt(
-    //            document.getElementById("lblTicketId").textContent
-    //        );
-
-    //        const module = await loadModule("tickets");
-    //        await module.getTicketPartial(ticketId, version);
-    //    });
-    //}
-
-    //handle events for content editable div
-    //const noteDiv = document.getElementById('noteContent');
-    //if (noteDiv) {
-    //    noteDiv.addEventListener('paste', handlePaste);
-    //    noteDiv.addEventListener('keydown', handleEnter);
-    //}
-
-    //await loadTicketNotes();
 }
 
 async function handleClicks(e) {
-
+    
     const btn = e.target.closest('button');
     if (!btn)
         return;
 
     if (btn.id == 'add-note-button')
         await addNote(e);
-    //else if (btn.id == 'edit-ticket-button')
-    //    editTicket();
-    //if (btn.id == 'delete-ticket-button')
-    //    deleteTicket();
+    else if (btn.classList.contains('edit-note-btn'))
+        await editNote(e);
+    else if (btn.classList.contains('save-edit-note-btn'))
+        await saveEditNote(e);
+    else if (btn.id == 'edit-ticket-button') {
+        const ticketId = document.getElementById('hdnTicketId').value;
+
+        const module = await loadModule("manageTicket");
+        const partial = await module.getManageTicketPartial(ticketId, null);
+
+        if (partial) {
+            document.querySelector('.main-content').innerHTML = partial;
+        }
+    }
+    else if (btn.id == 'delete-ticket-button')
+        await deleteTicket();
     
 }
 
@@ -193,48 +164,68 @@ async function addNote() {
     await saveNote(noteDiv);
 }
 
+async function editNote(e) {
+    const note = e.target.closest('.note');
+    const noteHeader = note.querySelector('.note-header');
+    const contentContainer = note.querySelector('.note-content');
+    const editBtn = note.querySelector('.edit-note-btn');
+    
 
-//async function loadTicketNotes() {
-//    try {
-//        const ticketId = document.getElementById('lblTicketId').textContent;
-//        if (!ticketId) return;
+    //copy content
+    const content = contentContainer.textContent;
+    debugger;
+    //create input
+    const editDiv = document.createElement('div');
+    editDiv.contentEditable = 'true';
+    editDiv.className = 'note-content';
+    editDiv.textContent = content;
 
-//        const ticketVersion = document.getElementById('lblTicketVersion').textContent;
+    //create save button
+    const saveBtn = document.createElement('button');
+    saveBtn.innerText = 'Save';
+    saveBtn.type = 'button';
+    saveBtn.classList.add('save-edit-note-btn');
 
-//        const response = await axios.get('/Tickets/GetTicket', {
-//            params: { ticketId: ticketId, ticketVersion: ticketVersion }
-//        });
+    //replace edit with save btn
+    editBtn.replaceWith(saveBtn);
 
-//        const container = document.getElementById("ticket-notes-container");
-//        container.innerHTML = ''; // Clear existing
+    //replace content container with editable input
+    contentContainer.replaceWith(editDiv);
 
-//        if (response.data.ticketDetails.length > 0) {
-//            response.data.ticketDetails.forEach(note => {
-//                renderNote(note);
-//            });
-//        }
+    //add yellow color to notify that the current note is in an editable state
+    noteHeader.classList.add('editable-header');
+    note.classList.add('editable');
+    editDiv.focus();
+}
 
-//        //default to open add note
-//        const isLatest = document.getElementById('hdnIsLatest').value;
-//        const section = document.getElementById('lblSection').innerText;
-//        const isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
+async function saveEditNote(e) {
+    const note = e.target.closest('.note');
+    const noteHeader = note.querySelector('.note-header');
+    const contentContainer = note.querySelector('.note-content');
+    const saveBtn = note.querySelector('.save-edit-note-btn');
 
-//        if (isEditable) {
-//            addNote();
-//        }
+    //add edited details to header
+    const editedHeader = document.createElement('span');
+    editedHeader.className = 'note-edited';
+    editedHeader.innerText = 'Edited ' + formatUtc(new Date().toUTCString(), true, true) + ' by ' + document.getElementById('hdnUsername').value;
+    saveBtn.after(editedHeader);
 
-//        hideEditBtns();
+    //revert styling back to saved note style
+    noteHeader.classList.remove('editable-header');
+    note.classList.remove('editable');
 
-//    } catch (error) {
-//        console.error("Error loading notes:", error);
-//    }
-//}
+    //revert input back to non-editable div
+    const content = contentContainer.textContent;
+    const updatedDiv = document.createElement('div');
+    updatedDiv.className = 'note-content';
+    updatedDiv.textContent = content;
 
-
+    contentContainer.replaceWith(updatedDiv);
+    
+    await saveNote(note);
+}
 
 async function saveNote(noteDiv) {
-    debugger;
-
     const content = noteDiv.querySelector('.note-content').innerHTML.trim()
         .replace(/&ZeroWidthSpace;/g, '')    // remove zero-width spaces
         .replace(/<\/div><div>/g, '<br>')    // convert divs to line breaks
@@ -250,9 +241,9 @@ async function saveNote(noteDiv) {
     let ticketDetailsId = getRealId(noteDiv.dataset.ticketdetailsid);
     if (!ticketDetailsId)
         ticketDetailsId = 0;
-    
+
     //const ticketVersion = document.getElementById('lblTicketVersion').textContent;
-    
+
     const details = {
         ticketId: parseInt(ticketId),
         //TicketVersion: parseInt(ticketVersion),
@@ -278,131 +269,34 @@ async function saveNote(noteDiv) {
         alert("error");
         noteDiv.remove();
     }
-        
-
-
-
-
-//    //insert note to container after save
-//    noteDiv.dataset.detailsid = response.data.ticketDetailsId;
-//    noteDiv.innerHTML = `<div class="note-header" data-id="${response.data.id}" data-ticketId="${response.data.ticketId}" data-detailsId="${response.data.ticketDetailsId}">
-//<span class="note-author">${response.data.author}</span>
-//${response.data.modifiedDate ? `<span class='modified-date'><i>edited ${formatUtc(response.data.modifiedDate)}</i></span>` : ''}
-//<span class="note-date">${formatUtc(response.data.createdDate)}</span>
-//</div><div class="note-content-display">${response.data.note}</div><br><button type="button" class="note-edit primary-btn">Edit</button>`;
-
-//    noteDiv.querySelector('.note-edit').addEventListener('click', () =>
-//    {
-//        enableEdit(noteDiv)
-//    });
-
-//    //open new add note after saving
-//    const isLatest = document.getElementById('hdnIsLatest').value;
-//    const section = document.getElementById('lblSection').innerText;
-//    const isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
-
-//    if (isEditable) {
-//        addNote();
-//    }
-
-//    hideEditBtns();
 }
 
 
-//function renderNote(note) {
-//    const container = document.getElementById("ticket-notes-container");
+async function deleteTicket() {
 
-//    let edited = "";
-//    if (note.modifiedDate != null && note.modifiedDate != 0) {
-//        edited = `<div class='modified-date'><i>edited ${formatUtc(note.modifiedDate)}</i></div>`;
-//    }
+    if (!confirm("Are you sure you?")) {
+        return;
+    }
 
-//    const noteDiv = document.createElement('div');
-//    noteDiv.className = 'ticket-note saved';
+    const ticketId = document.getElementById('hdnTicketId').value;
 
-//    // Put everything on one line, no indentation around note.note
-//    noteDiv.innerHTML = `<div class="note-header" data-ticketId="${note.ticketId}" data-detailsId="${note.ticketDetailsId}"><span class="note-author">${note.author}</span>${edited}<span class="note-date">${formatUtc(note.createdDate)}</span></div><div class="note-content-display">${note.note}</div><br><button type="button" class="note-edit primary-btn">Edit</button>`;
+    const response = await axios.delete('/Tickets/DeleteTicket', {
+        params: {
+            ticketId: parseInt(ticketId)
+        },
+        headers: {
+            'X-CSRF-TOKEN': token,
+            'Content-Type': 'application/json'
+        }
+    });
 
-//    noteDiv.querySelector('.note-edit').addEventListener('click', function () {
-//        enableEdit(noteDiv);
-//    });
+    if (response && response.status === 200) {
+        setTimeout(500, alert('Success'));
 
-//    container.appendChild(noteDiv);
-//}
-
-
-//function enableEdit(noteDiv) {
-//    //remove add note when editing
-//    removeAddNote();
-
-//    const contentText = noteDiv.querySelector('.note-content-display').innerHTML;
-//    const ticketid = document.getElementById('hdnTicketId').value;
-//    const detailsid = noteDiv.querySelector('.note-header').dataset.detailsid;
-
-//    noteDiv.innerHTML = `
-//        <div class="note-header" data-ticketId="${ticketid}" data-detailsId="${detailsid}">
-//            <span class="note-author">Editing</span>
-//            <span class="note-date">${formatUtc(new Date().toUTCString())}</span>
-//        </div>
-//        <div class="note-content" contenteditable="true">${contentText}</div>
-//        <div class="note-actions">
-//            <button type="button" class="btn-save-note primary-btn">Save</button>
-//            <button type="button" class="btn-cancel-note secondary-btn">Cancel</button>
-//        </div>
-//    `;
-
-//    const saveBtn = noteDiv.querySelector('.btn-save-note');
-//    saveBtn.addEventListener('click', () => saveNote(noteDiv));
-
-//    const cancelBtn = noteDiv.querySelector('.btn-cancel-note');
-//    cancelBtn.addEventListener('click', () => {
-//        loadTicketNotes();
-//    });
-//}
-
-//function removeAddNote() {
-//    const unsavedNote = document.querySelectorAll('.ticket-note:not(.saved)');
-//    if (unsavedNote[0]) {
-//        unsavedNote[0].remove();
-//    }
-//}
-
-//function clearNote(noteDiv) {
-//    noteDiv.querySelector('.note-content').innerHTML = "";
-//}
-
-//function hideEditBtns() {
-//    let user = document.getElementById('hdnUser').value;
-//    let isLatest = document.getElementById('hdnIsLatest').value;
-//    const section = document.getElementById('lblSection').innerText;
-
-//    //disable header edit button
-//    let editBtn = document.getElementById('btnEditTicket');
-//    let author = document.getElementById("lblAuthor")?.textContent.trim();
-
-//    let isEditable = isLatest === 'true' && (section !== 'Completed' || section !== 'Discontinued');
-
-//    if (isEditable == false || (author && author !== user)) {
-//        if (editBtn) {
-//            editBtn.style.display = 'none';
-//        }
-//    }
-
-//    //disable edit buttons for notes
-//    let notes = document.querySelectorAll('.ticket-note.saved');
-
-//    for (let i = 0; i < notes.length; i++){
-//        author = notes[i].getElementsByClassName('note-author')[0];
-
-//        if (isEditable == false || (author && author.textContent.trim() !== user)) {
-
-//            editBtn = notes[i].getElementsByClassName('note-edit')[0];
-
-//            if (editBtn) {
-//                editBtn.style.display = 'none';
-//            }
-//        }
-     
-//    }
-//}
-
+        await loadModule('tickets');
+    }
+    else {
+        alert("error");
+        noteDiv.remove();
+    }
+}
