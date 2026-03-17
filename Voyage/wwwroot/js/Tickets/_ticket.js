@@ -125,19 +125,6 @@ async function addNote() {
     const noteHeader = document.createElement('div');
     noteHeader.className = 'note-header';
 
-    //header - initial creation date + author
-    const noteCreated = document.createElement('span');
-    noteCreated.className = 'note-created';
-
-    const username = document.getElementById('hdnUsername').value;
-    noteCreated.innerText = 'Added ' + `${formatUtc(new Date().toUTCString(), true, true)} ` + 'by ' + username;
-
-    noteHeader.appendChild(noteCreated);
-
-    //header - placeholder for layout modified date + editor
-    const noteEdited = document.createElement('span');
-    noteHeader.appendChild(noteEdited);
-
     //header - edit note btn
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edit';
@@ -147,6 +134,19 @@ async function addNote() {
     noteHeader.appendChild(editBtn);
 
     noteDiv.appendChild(noteHeader);
+
+    //header - placeholder for layout modified date + editor
+    const noteEdited = document.createElement('span');
+    noteHeader.appendChild(noteEdited);
+
+    //header - initial creation date + author
+    const noteCreated = document.createElement('span');
+    noteCreated.className = 'note-created';
+    
+    const username = document.getElementById('hdnUsername').value;
+    noteCreated.innerText = 'Added ' + `${formatUtc(new Date().toUTCString(), true, true)} ` + 'by ' + username;
+
+    noteHeader.appendChild(noteCreated);
 
     //note body main content
     const noteContent = document.createElement('div');

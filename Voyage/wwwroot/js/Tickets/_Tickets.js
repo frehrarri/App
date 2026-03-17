@@ -1,5 +1,6 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
-import { getTicketPartial } from "/js/Tickets/_ticket.js";
+import { getManageTicketPartial } from "/js/Tickets/_manageticket.js"
+/*import { getTicketPartial } from "/js/Tickets/_ticket.js";*/
 
 const sectionMap = new Map();
 const ticketMap = new Map();
@@ -379,15 +380,20 @@ export async function getTicketSettings() {
 }
 
 async function handleClick(e) {
-    let module = null;
     let partial = null;
 
     const btn = e.target.closest('button');
     const anchor = e.target.closest('a')
 
     if (btn && btn.id === 'add-btn') {
-        module = await loadModule("manageTicket");
-        partial = await module.getManageTicketPartial(null, e.target.dataset.section);
+        const anonID = e.target.closest('.section-container').dataset.sectionid;
+        const sectionID = getRealId(sectionMap, anonID);
+        
+        const params = {
+            sectionId: sectionID,
+            ticketId : null
+        }
+        await loadModule("manageTicket", params);
     }
 
     //else if (btn && btn.classList.contains('edit-btn')) {
@@ -396,10 +402,8 @@ async function handleClick(e) {
     //}
 
     else if (anchor && anchor.classList.contains('goto-ticket')) {
-        //find the real ID from the anonymized one
         const realId = getRealId(ticketMap, anchor.dataset.id);
         loadModule("ticket", realId);
-        //partial = await getTicketPartial(realId);
     }
 
     if (partial) {

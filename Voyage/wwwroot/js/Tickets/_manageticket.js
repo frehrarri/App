@@ -1,23 +1,27 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
-/*import { getTicketPartial, getTicketsPartial } from "/js/Tickets/__moduleLoader.js";*/
 
-export function init() {
+export async function init(params) {
     removeEventListeners();
 
     let preChangeValues = new Map();
 
-    //set section dropdown based on which table the user clicks the add button for
-    //if (params?.sectionTitle) {
-    //    const sectionDropdown = document.getElementById('ticketSectionTitle');
-    //    if (sectionDropdown) {
-    //        sectionDropdown.value = params.sectionTitle;
-    //    }
-    //}
     const container = document.querySelector('.main-content');
+    const partial = await getManageTicketPartial(params.ticketId);
 
-    if (container) {
-        container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
-        trackEventListener(container, "click", handleEvents);
+    if (!container || !partial)
+        return;
+
+    container.innerHTML = partial;
+
+    container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
+    trackEventListener(container, "click", handleEvents);
+
+    debugger;
+    if (params?.sectionId) {
+        const sectionDropdown = document.getElementById('ticketSectionTitle');
+        if (sectionDropdown) {
+            sectionDropdown.value = params.sectionId;
+        }
     }
 
     const centerHead = document.getElementById('header-center');
@@ -54,7 +58,7 @@ async function handleEvents(e, preChangeValues) {
     handleUndoMap(e, preChangeValues);
 }
 
-export async function getManageTicketPartial(ticketId, sectionTitle) {
+export async function getManageTicketPartial(ticketId) {
     try {
         const response = await axios.get('/Tickets/ManageTicketPartial', {
             params: { ticketId: ticketId }

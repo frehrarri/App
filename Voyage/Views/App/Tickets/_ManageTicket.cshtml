@@ -47,7 +47,7 @@
                                 if (s.Title == "Discontinued")
                                     continue;
 
-                                <option value="@s.Title" selected="@(Model?.SectionTitle == s.Title)">
+                                <option value="@s.SectionId" selected="@(Model.SectionId == s.SectionId)">
                                     @s.Title
                                 </option>
                             }
