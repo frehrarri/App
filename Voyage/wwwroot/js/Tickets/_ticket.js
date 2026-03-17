@@ -34,14 +34,10 @@ async function handleClicks(e) {
     else if (btn.classList.contains('save-edit-note-btn'))
         await saveEditNote(e);
     else if (btn.id == 'edit-ticket-button') {
-        const ticketId = document.getElementById('hdnTicketId').value;
+        const ticketId = parseInt(document.getElementById('hdnTicketId').value);
+        const params = { ticketId: ticketId };
 
-        const module = await loadModule("manageTicket");
-        const partial = await module.getManageTicketPartial(ticketId, null);
-
-        if (partial) {
-            document.querySelector('.main-content').innerHTML = partial;
-        }
+        await loadModule("manageTicket", params);
     }
     else if (btn.id == 'delete-ticket-button')
         await deleteTicket();

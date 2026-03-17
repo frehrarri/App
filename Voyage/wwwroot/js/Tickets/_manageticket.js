@@ -1,9 +1,10 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
 
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+const preChangeValues = new Map();
+
 export async function init(params) {
     removeEventListeners();
-
-    let preChangeValues = new Map();
 
     const container = document.querySelector('.main-content');
     const partial = await getManageTicketPartial(params.ticketId);
@@ -13,8 +14,11 @@ export async function init(params) {
 
     container.innerHTML = partial;
 
-    container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
+    container.addEventListener("click", (e) => handleEvents(e));
     trackEventListener(container, "click", handleEvents);
+
+    container.addEventListener("focusin", (e) => handlePreChange(e));
+    trackEventListener(container, "focusin", handlePreChange);
 
     if (params?.sectionId) {
         const sectionDropdown = document.getElementById('ticketSectionTitle');
@@ -38,7 +42,7 @@ export async function init(params) {
     //addUserSearchEventListener(input, "userResults");
 }
 
-async function handleEvents(e, preChangeValues) {
+async function handleEvents(e) {
     
     if (e.target.type != "button")
         return;
@@ -49,8 +53,10 @@ async function handleEvents(e, preChangeValues) {
     if (e.target.id == "deleteTicket")
         await deleteTicket(e);
 
-    if (e.target.id == "undo-button")
-        undo(preChangeValues);
+    if (e.target.id == "undo-button") {
+        undo();
+    }
+        
 
     //if (e.target.id == "ticketAssignedTo")
     //    assignedTo.value = "";
@@ -58,7 +64,6 @@ async function handleEvents(e, preChangeValues) {
     //if (e.target.id == "ticketDesc")
     //    handleEnter(e);
 
-    handleUndoMap(e, preChangeValues);
 }
 
 export async function getManageTicketPartial(ticketId) {
@@ -140,8 +145,6 @@ async function saveTicket(e) {
     const saveBtn = document.getElementById('submitTicket');
     saveBtn.classList.add('disabled');
 
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').selectedOptions[0].text,
@@ -193,8 +196,6 @@ async function deleteTicket(e) {
     const deleteBtn = document.getElementById('deleteTicket');
     deleteBtn.classList.add('disabled');
 
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
     let response;
     const ticketId = parseInt(document.getElementById('hdnTicketId').value);
 
@@ -224,44 +225,35 @@ async function deleteTicket(e) {
 }
 
 
-function undo(preChangeValues) {
+function undo() {
     for (const [input, value] of preChangeValues.entries()) {
-        if (input.type === "checkbox" || input.type === "radio") {
+        if (input.type === "checkbox") {
             input.checked = value;
         } else if (input.isContentEditable) {
-            input.innerText = value;
+            input.innerHTML = value;
         } else {
             input.value = value;
         }
     }
+    preChangeValues.clear(); //prevent dupes
 }
 
-
-function handleUndoMap(e, preChangeValues) {
-
-    if (e.target.tagName == "INPUT" || e.target.tagName == "TEXTAREA"
-        || e.target.tagName == "SELECT" || e.target.matches("div[contenteditable='true']"))
+function handlePreChange(e) {
+    const el = e.target;
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA"
+        || el.tagName === "SELECT" || e.target.matches("div[contenteditable='true']"))
     {
-        if (e.target.type === "checkbox" /*|| input.target.type === "radio"*/) {
-            preChangeValues.set(e.target, e.target.checked);
-        } else if (e.target.matches("div[contenteditable='true']")) {
-            preChangeValues.set(e.target, e.target.innerText);
-        } else {
-            preChangeValues.set(e.target, e.target.value);
+
+        if (el.type === "checkbox") {
+            preChangeValues.set(el, el.checked);
         }
+        else {
+            preChangeValues.set(el, el.value);
+        }
+
     }
-
-    //for (const input of form.querySelectorAll("input, textarea, select, div[contenteditable='true']")) {
-
-    //    if (input.type === "checkbox" || input.type === "radio") {
-    //        preChangeValues.set(input, input.checked);
-    //    } else if (input.isContentEditable) {
-    //        preChangeValues.set(input, input.innerText);
-    //    } else {
-    //        preChangeValues.set(input, input.value);
-    //    }
-    //}
+    else if (el.isContentEditable) {
+        preChangeValues.set(el, el.innerHTML);
+    }
 }
-
-
 
