@@ -16,7 +16,6 @@ export async function init(params) {
     container.addEventListener("click", (e) => handleEvents(e, preChangeValues));
     trackEventListener(container, "click", handleEvents);
 
-    debugger;
     if (params?.sectionId) {
         const sectionDropdown = document.getElementById('ticketSectionTitle');
         if (sectionDropdown) {
@@ -28,7 +27,11 @@ export async function init(params) {
     centerHead.innerHTML = "";
 
     updateBreadcrumb();
-    //updateNavHeader(); //need to get verb to implement
+
+    const deleteBtn = document.getElementById('deleteTicket');
+    const ticketId = parseInt(document.getElementById('hdnTicketId').value);
+    if (ticketId == 0)
+        deleteBtn.classList.add('hidden');
 
     //debounced search
     //let input = document.getElementById("ticketAssignedTo");
@@ -36,15 +39,15 @@ export async function init(params) {
 }
 
 async function handleEvents(e, preChangeValues) {
-    debugger;
+    
     if (e.target.type != "button")
         return;
 
     if (e.target.id == "submitTicket") 
-        await saveTicket();
+        await saveTicket(e);
 
     if (e.target.id == "deleteTicket")
-        await deleteTicket();
+        await deleteTicket(e);
 
     if (e.target.id == "undo-button")
         undo(preChangeValues);
@@ -68,12 +71,6 @@ export async function getManageTicketPartial(ticketId) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
-}
-
-function updateNavHeader() {
-    const page = document.getElementById('dv-navbar-page-title');
-    const title = document.querySelector('h5').innerText;
-    page.innerText = title;
 }
 
 function updateBreadcrumb() {
@@ -137,12 +134,18 @@ function updateBreadcrumb() {
     }
 }
 
-async function saveTicket() {
+async function saveTicket(e) {
+    e.preventDefault();
+
+    const saveBtn = document.getElementById('submitTicket');
+    saveBtn.classList.add('disabled');
+
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
-        SectionTitle: document.getElementById('ticketSectionTitle').value,
+        SectionTitle: document.getElementById('ticketSectionTitle').selectedOptions[0].text,
+        sectionId: document.getElementById('ticketSectionTitle').value,
         Title: document.getElementById('ticketTitle').value,
         Description: document.getElementById('ticketDesc').innerHTML,
         Status: document.getElementById('ticketStatus').value,
@@ -166,16 +169,15 @@ async function saveTicket() {
         else
             alert("error");
 
-        /*let isEdit = document.getElementsByTagName('h1')[0].textContent.toLowerCase().includes("edit");*/
+        saveBtn.classList.remove('disabled');
 
-        const isEdit = document.getElementById('ticketId').innerText.trim();
+        const ticketId = parseInt(document.getElementById('hdnTicketId').value);
 
-        // Go back to tickets list after successful save
-        if (isEdit) {
-            let ticketId = parseInt(document.getElementById('ticketId').value);
-
+        //edit
+        if (ticketId > 0) {
             await loadModule("ticket", ticketId);
         }
+        //add new
         else {
             await loadModule("tickets");
         }
@@ -183,15 +185,18 @@ async function saveTicket() {
     } catch (error) {
         alert(`error: saveTicket`);
     }
-
-    return response.data; // bool
 }
 
-async function deleteTicket() {
+async function deleteTicket(e) {
+    e.preventDefault();
+
+    const deleteBtn = document.getElementById('deleteTicket');
+    deleteBtn.classList.add('disabled');
+
     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     let response;
-    const ticketId = document.getElementById('ticketId').value;
+    const ticketId = parseInt(document.getElementById('hdnTicketId').value);
 
     if (!confirm('Are you sure you want to delete this ticket?')) {
         return;
@@ -203,23 +208,20 @@ async function deleteTicket() {
             headers: { 'X-CSRF-TOKEN': token }
         });
 
-        showSuccess(true);
+        if (response && response.status === 200) {
+            alert("success");
+            await loadModule("tickets");
+        }
+        else
+            alert("error");
 
-        const module = await loadModule("tickets");
-        await module.getTicketsPartial();
-
-        return response.data;
+        deleteBtn.classList.remove('disabled');
 
     } catch (error) {
-        showSuccess(false);
-        console.error("error", error);
-        return false;
+        alert("error: deleteTicket");
     }
 
-    return response.data; // bool
 }
-
-
 
 
 function undo(preChangeValues) {
