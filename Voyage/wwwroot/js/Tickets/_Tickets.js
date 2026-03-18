@@ -45,6 +45,11 @@ function anonymizeDataAttributes() {
     // anonymize sections
     document.querySelectorAll('[data-sectionid]').forEach(el => {
         const realId = el.dataset.sectionid;
+
+        //skip encryption for already encrypted values
+        if ([...sectionMap.values()].includes(realId))
+            return;
+
         const anonId = getAnonymousId(sectionMap, realId);
         el.dataset.sectionid = anonId;
     });
@@ -52,6 +57,11 @@ function anonymizeDataAttributes() {
     // anonymize tickets
     document.querySelectorAll('[data-id]').forEach(el => {
         const realId = el.dataset.id;
+
+        //skip encryption for already encrypted values
+        if ([...ticketMap.values()].includes(realId))
+            return;
+
         const anonId = getAnonymousId(ticketMap, realId);
         el.dataset.id = anonId;
     });
@@ -180,9 +190,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 }
 
 
-async function updatePaginatedUI(e) {
-
-    const sectionTitle = select.dataset.section;
+async function updatePaginatedUI(e, sectionTitle) {
 
     let sprintId = parseInt(document.getElementById('hdnSprint').dataset.sprintid);
     
@@ -356,8 +364,10 @@ async function handleClick(e) {
 async function handleChange(e) {
     debugger;
     const select = e.target.closest('select.paginate');
+    const sectionTitle = select?.dataset.section;
+
     if (select)
-        await updatePaginatedUI(e);
+        await updatePaginatedUI(e, sectionTitle);
 
     toggleSections(e);
 }
@@ -381,6 +391,7 @@ function toggleSections(e) {
         sections.forEach(s => {
 
             const realId = getRealId(sectionMap, s.dataset.sectionid);
+            debugger
 
             if (selectedOption != realId) {
                 s.classList.add('hidden');
