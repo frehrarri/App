@@ -20,6 +20,7 @@ function removeEventListeners() {
     moduleEventListeners.forEach(e => {
         e.element.removeEventListener(e.eventType, e.handler)
     });
+    moduleEventListeners.length = 0;
 }
 
 ///////////////// Debounced search ////////////////////////

@@ -332,6 +332,7 @@ export async function getTicketSettings() {
 }
 
 async function handleClick(e) {
+    debugger;
     let partial = null;
 
     const btn = e.target.closest('button');
@@ -340,13 +341,16 @@ async function handleClick(e) {
     if (btn && btn.id === 'add-btn') {
         const anonID = e.target.closest('.section-container').dataset.sectionid;
         const sectionID = getRealId(sectionMap, anonID);
-        
+
         const params = {
             sectionId: sectionID,
-            ticketId : null
+            ticketId: null
         }
         await loadModule("manageTicket", params);
     }
+
+    //else if (btn && btn.id === 'remove-btn')
+    //    await deleteTicket(e);
 
     //else if (btn && btn.classList.contains('edit-btn')) {
     //    module = await loadModule("manageTicket");
@@ -361,7 +365,7 @@ async function handleClick(e) {
 
         const params = {
             ticketId: ticketId,
-            sectionId : sectionId
+            sectionId: sectionId
         }
 
         loadModule("ticket", params);
@@ -414,3 +418,34 @@ function handleChange(e) {
     }
 }
 
+//async function deleteTickets(e) {
+//    e.preventDefault();
+
+//    if (!confirm("Are you sure you?")) {
+//        return;
+//    }
+
+//    const = e.target.closest('.section-container');
+//    const ticketId = document.getElementById('hdnTicketId').value;
+//    debugger;
+
+//    const response = await axios.delete('/Tickets/DeleteTicket', {
+//        params: {
+//            ticketId: parseInt(ticketId)
+//        },
+//        headers: {
+//            'X-CSRF-TOKEN': token,
+//            'Content-Type': 'application/json'
+//        }
+//    });
+
+//    if (response && response.status === 200) {
+//        setTimeout(500, alert('Success'));
+
+//        await loadModule('tickets');
+//    }
+//    else {
+//        alert("error");
+//        noteDiv.remove();
+//    }
+//}

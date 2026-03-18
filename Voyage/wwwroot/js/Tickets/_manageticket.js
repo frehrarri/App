@@ -14,14 +14,14 @@ export async function init(params) {
 
     container.innerHTML = partial;
 
-    container.addEventListener("click", (e) => handleClicks(e));
+    container.addEventListener("click", handleClicks);
     trackEventListener(container, "click", handleClicks);
 
-    container.addEventListener("focusin", (e) => handlePreChange(e));
+    container.addEventListener("focusin", handlePreChange);
     trackEventListener(container, "focusin", handlePreChange);
 
     //hide errors
-    container.addEventListener("change", (e) => document.querySelectorAll('.text-error').forEach(err => err.classList.add('hidden')));
+    container.addEventListener("change", hideErrors);
 
     if (params?.sectionId) {
         const sectionDropdown = document.getElementById('ticketSectionTitle');
@@ -44,6 +44,7 @@ export async function init(params) {
 }
 
 async function handleClicks(e) {
+    debugger;
     const btn = e.target.closest('button');
 
     if (btn?.id == "submitTicket") 
@@ -75,6 +76,10 @@ export async function getManageTicketPartial(ticketId) {
         console.error("error: getManageTicketPartial", error);
         return false;
     }
+}
+
+function hideErrors() {
+    document.querySelectorAll('.text-error').forEach(err => err.classList.add('hidden'));
 }
 
 function updateBreadcrumb() {
@@ -143,10 +148,13 @@ async function saveTicket(e) {
 
     const saveBtn = document.getElementById('submitTicket');
     saveBtn.classList.add('disabled');
+    saveBtn.disabled = true;
 
     const isValid = validate();
-    if (!isValid)
-        return
+    if (!isValid) {
+        saveBtn.disabled = false;
+        return;
+    }
 
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
@@ -189,6 +197,7 @@ async function saveTicket(e) {
         }
 
     } catch (error) {
+        saveBtn.disabled = false;
         alert(`error: saveTicket`);
     }
 }
@@ -288,6 +297,8 @@ function attachSearchHandler() {
             wrapper.insertBefore(btn, results);
         });
     });
+
+    trackEventListener(input, 'input', handleSearch);
 }
 
 function validate() {
