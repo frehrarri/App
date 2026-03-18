@@ -129,7 +129,7 @@
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
                         <button id="add-btn" class="primary-btn" type="button">Add</button>
-                        <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button>
+                     @*    <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button> *@
                     }
                 </div>
 
@@ -141,7 +141,7 @@
                         <option value="20">20</option>
                     </select>
 
-                    <button id="btn-left-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                    <button id="btn-left-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
 
@@ -170,13 +170,13 @@
 
                     @if (numOfPages < 2 || sectionTickets.Count() == 0)
                     {
-                        <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                        <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     }
                     else
                     {
-                        <button id="btn-right-section@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
+                        <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     }

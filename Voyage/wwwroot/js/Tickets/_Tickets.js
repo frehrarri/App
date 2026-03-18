@@ -57,24 +57,6 @@ function anonymizeDataAttributes() {
     });
 }
 
-
-
-
-    //document.querySelectorAll(".paginate").forEach(el => {
-    //    const sectionTitle = el.dataset.section;
-
-    //    //add change event for select list
-    //    if (el.id.includes(`sel-take-section`)) {
-    //        el.addEventListener("change", (e) => updatePaginatedUI(e, sectionTitle));
-    //    }
-    //    //click events for buttons
-    //    else {
-    //        el.addEventListener("click", (e) => updatePaginatedUI(e, sectionTitle))
-    //    }
-    //});
-
-    //document.querySelector(".settings-btn")?.addEventListener("click", async (e) => getTicketSettings());
-
 function updateNavHeader() {
     const page = document.getElementById('dv-navbar-page-title');
     page.innerText = 'Tickets';
@@ -104,7 +86,7 @@ export async function getTicketsPartial() {
 }
 
 async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults) {
-
+   
     try {
         const response = await axios.get('/Tickets/GetPaginatedTickets', {
             params: {
@@ -115,10 +97,11 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
             }
         });
 
-        var tableBody = document.querySelector(`#${sectionTitle}-container > table > tbody`);
+        const container = document.querySelector(`#heading-${sectionTitle}`).closest('.section-container');
+        const tableBody = container.querySelector('tbody');
 
         tableBody.innerHTML = ""; //empty current table body
-
+        
         response.data.tickets.forEach(ticket => {
             //create new row
             const row = document.createElement('tr');
@@ -180,11 +163,6 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
             td11.innerText = `${ticket.createdBy}`;
             row.appendChild(td11);
 
-            const td12 = document.createElement('td');
-            td12.className = 'app-table-data';
-            td12.innerHTML = `<button id="btnViewTicket" class="goto-ticket primary-btn" data-id="${ticket.ticketId}">View</button><span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="${ticket.ticketId}" data-author="${ticket.createdBy}">Edit</button></span>`;
-            row.appendChild(td12);
-
             //append the row to the table body
             tableBody.appendChild(row);
         });
@@ -203,103 +181,105 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 
 
 async function updatePaginatedUI(e, sectionTitle) {
-        let sprintId = document.getElementById('hdnSprint').dataset.sprintid;
-        if (sprintId) {
-            sprintId = null
-        }
+    let sprintId = parseInt(document.getElementById('hdnSprint').dataset.sprintid);
+    
+    if (!sprintId)
+        return;
 
-        const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
-        const numResults = parseInt(selectList.value);
+    debugger;
 
-        const pageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`)
-        const currentPage = parseInt(pageBtn.innerText);
-        let targetPage = currentPage;
+    const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
+    const numResults = parseInt(selectList.value);
 
-        const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
-        let numPages = Math.ceil(totalTicketCount / numResults);
+    const pageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`)
+    const currentPage = parseInt(pageBtn.innerText);
+    let targetPage = currentPage;
 
-        const selectedBtn = e.target.closest(".paginate");
+    const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
+    let numPages = Math.ceil(totalTicketCount / numResults);
 
-        //left arrow button
-        if (selectedBtn.id == `btn-left-section${sectionTitle}`) {
+    const selectedBtn = e.target.closest(".paginate");
 
-            targetPage = currentPage - 1;
-            pageBtn.classList.remove("selected");
-            pageBtn.disabled = false;
+    //left arrow button
+    if (selectedBtn.id == `btn-left-section-${sectionTitle}`) {
 
-            const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
-            selectedPageButton.classList.add("selected");
-            selectedPageButton.disabled = true;
-        }
-        //right arrow button
-        if (selectedBtn.id == `btn-right-section${sectionTitle}`) {
-            targetPage = currentPage + 1;
-            pageBtn.classList.remove("selected");
-            pageBtn.disabled = false;
+        targetPage = currentPage - 1;
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
 
-            const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
-            selectedPageButton.classList.add("selected");
-            selectedPageButton.disabled = true;
-        }
-
-        //specific page button
-        if (selectedBtn.classList.contains('page')) {
-            targetPage = parseInt(e.target.dataset.page);
-
-            //remove selected/disabled from previous page button
-            pageBtn.classList.remove("selected");
-            pageBtn.disabled = false;
-
-            //update selected/disabled to the target page button
-            e.target.classList.add("selected");
-            e.target.disabled = true;
-        }
-
-        //update num of pages when using result count drop down
-        if (e.target.id.includes(`sel-take-section`)) {
-
-            //start at first page on update
-            targetPage = 1;
-
-            //update number of pages
-            numPages = Math.ceil(totalTicketCount / numResults);
-
-            //empty container of old button layout
-            const container = document.getElementById(`page-btn-container-${sectionTitle}`);
-            container.innerHTML = "";
-
-            //create new buttons
-            for (let i = 1; i <= numPages; i++) {
-                const btn = document.createElement("button");
-                btn.classList.add("paginate", "page");
-                btn.dataset.section = sectionTitle;
-                btn.dataset.page = i;
-                btn.innerText = i;
-
-                if (i === targetPage) {
-                    btn.classList.add("selected");
-                    btn.disabled = true;
-                }
-
-                /*btn.addEventListener("click", (e) => await updatePaginatedUI(e, sectionTitle));*/
-
-                container.appendChild(btn);
-            }
-        }
-
-        await getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
-
-        //disable/enable left/right arrows 
-        const leftBtn = document.getElementById(`btn-left-section${sectionTitle}`);
-        const rightBtn = document.getElementById(`btn-right-section${sectionTitle}`);
-
-        leftBtn.disabled = targetPage === 1;
-        rightBtn.disabled = targetPage === numPages;
-
-        toggleEditBtns();
-
-        document.getElementById(`${sectionTitle}-container`).focus();
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        selectedPageButton.classList.add("selected");
+        selectedPageButton.disabled = true;
     }
+    //right arrow button
+    if (selectedBtn.id == `btn-right-section-${sectionTitle}`) {
+        targetPage = currentPage + 1;
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
+
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        selectedPageButton.classList.add("selected");
+        selectedPageButton.disabled = true;
+    }
+
+    //specific page button
+    if (selectedBtn.classList.contains('page')) {
+        targetPage = parseInt(e.target.dataset.page);
+
+        //remove selected/disabled from previous page button
+        pageBtn.classList.remove("selected");
+        pageBtn.disabled = false;
+
+        //update selected/disabled to the target page button
+        e.target.classList.add("selected");
+        e.target.disabled = true;
+    }
+
+    //update num of pages when using result count drop down
+    if (e.target.id.includes(`sel-take-section`)) {
+
+        //start at first page on update
+        targetPage = 1;
+
+        //update number of pages
+        numPages = Math.ceil(totalTicketCount / numResults);
+
+        //empty container of old button layout
+        const container = document.getElementById(`page-btn-container-${sectionTitle}`);
+        container.innerHTML = "";
+
+        //create new buttons
+        for (let i = 1; i <= numPages; i++) {
+            const btn = document.createElement("button");
+            btn.classList.add("paginate", "page");
+            btn.dataset.section = sectionTitle;
+            btn.dataset.page = i;
+            btn.innerText = i;
+
+            if (i === targetPage) {
+                btn.classList.add("selected");
+                btn.disabled = true;
+            }
+
+            /*btn.addEventListener("click", (e) => await updatePaginatedUI(e, sectionTitle));*/
+
+            container.appendChild(btn);
+        }
+    }
+
+    await getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
+
+    //disable/enable left/right arrows 
+    const leftBtn = document.getElementById(`btn-left-section-${sectionTitle}`);
+    const rightBtn = document.getElementById(`btn-right-section-${sectionTitle}`);
+
+    leftBtn.disabled = targetPage === 1;
+    rightBtn.disabled = targetPage === numPages;
+
+    toggleEditBtns();
+
+    document.getElementById(`${sectionTitle}-container`).focus();
+}
 
     function handlePriorityLevel(priorityLevel) {
         switch (priorityLevel) {
@@ -331,8 +311,9 @@ export async function getTicketSettings() {
     await loadModule("setTicketSettings");
 }
 
+
 async function handleClick(e) {
-    debugger;
+
     let partial = null;
 
     const btn = e.target.closest('button');
@@ -349,14 +330,6 @@ async function handleClick(e) {
         await loadModule("manageTicket", params);
     }
 
-    //else if (btn && btn.id === 'remove-btn')
-    //    await deleteTicket(e);
-
-    //else if (btn && btn.classList.contains('edit-btn')) {
-    //    module = await loadModule("manageTicket");
-    //    partial = await module.getManageTicketPartial(e.target.dataset.id, null);
-    //}
-
     else if (anchor && anchor.classList.contains('goto-ticket')) {
         const container = e.target.closest('.section-container');
         const sectionId = getRealId(sectionMap, container.dataset.sectionid);
@@ -371,26 +344,27 @@ async function handleClick(e) {
         loadModule("ticket", params);
     }
 
-    if (partial) {
-        document.querySelector('.main-content').innerHTML = partial;
-        return;
-    }
+    
+    const sectionTitle = btn?.dataset.section;
 
-    if (e.target.matches('.paginate')) {
-        const sectionTitle = e.dataset.section;
-        //if (e.target.id.includes('sel-take-section') && e.type == "change"){
-        //    await updatePaginatedUI(e, sectionTitle);
-        //}
-        //else if (e.type == "click") {
-        //    await updatePaginatedUI(e, sectionTitle);
-        //}
-    }
-
+    if (btn && btn.matches('.paginate'))
+        await updatePaginatedUI(e, sectionTitle);
 }
 
-function handleChange(e) {
+async function handleChange(e) {
+    debugger;
+    const select = e.target.closest('select.paginate');
+    const sectionTitle = select.dataset.section;
+
+    if (select)
+        await updatePaginatedUI(e, sectionTitle);
+
+    toggleSections(e);
+}
+
+function toggleSections(e) {
     const selectList = e.target.closest('#section-filter');
-    
+
     if (!selectList)
         return;
 
@@ -417,35 +391,3 @@ function handleChange(e) {
         });
     }
 }
-
-//async function deleteTickets(e) {
-//    e.preventDefault();
-
-//    if (!confirm("Are you sure you?")) {
-//        return;
-//    }
-
-//    const = e.target.closest('.section-container');
-//    const ticketId = document.getElementById('hdnTicketId').value;
-//    debugger;
-
-//    const response = await axios.delete('/Tickets/DeleteTicket', {
-//        params: {
-//            ticketId: parseInt(ticketId)
-//        },
-//        headers: {
-//            'X-CSRF-TOKEN': token,
-//            'Content-Type': 'application/json'
-//        }
-//    });
-
-//    if (response && response.status === 200) {
-//        setTimeout(500, alert('Success'));
-
-//        await loadModule('tickets');
-//    }
-//    else {
-//        alert("error");
-//        noteDiv.remove();
-//    }
-//}
