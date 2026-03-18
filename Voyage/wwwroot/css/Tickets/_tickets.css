@@ -8,7 +8,22 @@
         margin-top: -5px;
     }
 
+#card-header-container{
+    display: flex;
+    /*max-height:*/
+}
+
 #sprint-header {
+    margin-bottom: 30px;
+    width: fit-content;
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    border: 1px solid #6289af;
+    padding: 20px;
+}
+
+.card-header {
     margin-bottom: 30px;
     width: fit-content;
     background-color: white;

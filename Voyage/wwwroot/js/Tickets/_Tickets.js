@@ -327,8 +327,12 @@ export async function getTicketSettings() {
 
 async function handleClick(e) {
     const btn = e.target.closest('button');
-    const anchor = e.target.closest('a')
+    const sectionTitle = btn?.dataset.section;
 
+    const anchor = e.target.closest('a')
+    const input = e.target.closest('input');
+
+    //redirect to add ticket (manage ticket)
     if (btn && btn.id === 'add-btn') {
         const anonID = e.target.closest('.section-container').dataset.sectionid;
         const sectionID = getRealId(sectionMap, anonID);
@@ -340,6 +344,7 @@ async function handleClick(e) {
         await loadModule("manageTicket", params);
     }
 
+    //redirect to ticket
     else if (anchor && anchor.classList.contains('goto-ticket')) {
         const container = e.target.closest('.section-container');
         const sectionId = getRealId(sectionMap, container.dataset.sectionid);
@@ -354,11 +359,38 @@ async function handleClick(e) {
         loadModule("ticket", params);
     }
 
-    
-    const sectionTitle = btn?.dataset.section;
-
     if (btn && btn.matches('.paginate'))
         await updatePaginatedUI(e, sectionTitle);
+
+    if (input && input.type == "checkbox")
+        toggleCompletedDiscontinuedBtns(input);
+
+}
+
+function toggleCompletedDiscontinuedBtns(input) {
+
+    const container = input.closest('.section-container');
+    const checkedBoxes = container.querySelectorAll('input[type="checkbox"]:checked');
+
+    const completedBtn = container.querySelector('.completed-btn');
+    const discontinueBtn = container.querySelector('.discontinue-btn');
+
+    //there are no checked boxes - disable the input
+    if (checkedBoxes.length == 0) {
+        completedBtn.disabled = true;
+        completedBtn.classList.add('disabled');
+
+        discontinueBtn.disabled = true;
+        discontinueBtn.classList.add('disabled');
+        return;
+    }
+
+    //display input because there is 1 or more checked boxes
+    completedBtn.disabled = false;
+    completedBtn.classList.remove('disabled');
+    
+    discontinueBtn.disabled = false;
+    discontinueBtn.classList.remove('disabled');
 }
 
 async function handleChange(e) {

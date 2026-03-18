@@ -25,14 +25,28 @@
 
 <div id="tickets-container">
 
-    @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
-    {
-        <div id="sprint-header">
-            <h4>Sprint @Model.Sprint.SprintId: </h4>
-            <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
-        </div>
-    }
+    <div id="card-header-container">
 
+        @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
+        {
+            <div id="sprint-header" class="card-header">
+                <h4>Sprint @Model.Sprint.SprintId: </h4>
+                <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
+            </div>
+
+        @*     <div class="card-header">
+                @foreach (var s in Model.Sections)
+                {
+                        <label>@s.Title:</label>
+                        <span>@Model.Tickets.Count(x => x.SectionId == s.SectionId)</span>
+                        <br />
+                }
+                
+            </div> *@
+        }
+
+    </div>
+    
     <div id="filter-container">
         <label for="section-filter">Filter Sections:</label>
         <select id="section-filter">
@@ -116,9 +130,9 @@
                 <div class="dv-btns-container">
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
-                        <button id="add-btn" class="primary-btn" type="button">Add Ticket</button>
-                        <button id="completed-btn" class="secondary-btn disabled" type="button" disabled>Mark Completed</button>
-                        <button id="discontinue-btn" class="warning-btn disabled" type="button" disabled>Discontinue</button>
+                        <button class="add-btn primary-btn" type="button">Add Ticket</button>
+                        <button class="completed-btn secondary-btn disabled" type="button" disabled>Mark Completed</button>
+                        <button class="discontinue-btn warning-btn disabled" type="button" disabled>Discontinue</button>
                      @*    <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button> *@
                     }
                 </div>
