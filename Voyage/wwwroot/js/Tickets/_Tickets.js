@@ -180,7 +180,10 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
 }
 
 
-async function updatePaginatedUI(e, sectionTitle) {
+async function updatePaginatedUI(e) {
+
+    const sectionTitle = select.dataset.section;
+
     let sprintId = parseInt(document.getElementById('hdnSprint').dataset.sprintid);
     
     if (!sprintId)
@@ -351,12 +354,10 @@ async function handleClick(e) {
 }
 
 async function handleChange(e) {
-   
+    debugger;
     const select = e.target.closest('select.paginate');
-    const sectionTitle = select.dataset.section;
-
     if (select)
-        await updatePaginatedUI(e, sectionTitle);
+        await updatePaginatedUI(e);
 
     toggleSections(e);
 }

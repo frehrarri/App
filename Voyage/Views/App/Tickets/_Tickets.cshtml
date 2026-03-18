@@ -37,7 +37,7 @@
         <label for="section-filter">Filter Sections:</label>
         <select id="section-filter">
             <option value="0">All</option>
-            @foreach (var s in Model.Sections)
+            @foreach (var s in Model.Sections.OrderBy(s => s.SectionOrder))
             {
                 <option value="@s.SectionId">@s.Title</option>
             }
