@@ -35,16 +35,15 @@ export async function init(params) {
 
     updateBreadcrumb();
 
-    const deleteBtn = document.getElementById('deleteTicket');
+    const discontinueBtn = document.getElementById('discontinue-button');
     const ticketId = parseInt(document.getElementById('hdnTicketId').value);
     if (ticketId == 0)
-        deleteBtn.classList.add('hidden');
+        discontinueBtn.classList.add('hidden');
 
     attachSearchHandler();//attach debounced search
 }
 
 async function handleClicks(e) {
-    debugger;
     const btn = e.target.closest('button');
 
     if (btn?.id == "submitTicket") 
@@ -209,8 +208,8 @@ async function saveTicket(e) {
 async function deleteTicket(e) {
     e.preventDefault();
 
-    const deleteBtn = document.getElementById('deleteTicket');
-    deleteBtn.classList.add('disabled');
+    const discontinueBtn = document.getElementById('discontinue-button');
+    discontinueBtn.classList.add('disabled');
 
     let response;
     const ticketId = parseInt(document.getElementById('hdnTicketId').value);
@@ -232,7 +231,7 @@ async function deleteTicket(e) {
         else
             alert("error");
 
-        deleteBtn.classList.remove('disabled');
+        discontinueBtn.classList.remove('disabled');
 
     } catch (error) {
         alert("error: deleteTicket");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using Microsoft.VisualBasic;
 using System.Threading.Tasks;
 using Voyage.Business;
@@ -176,7 +177,36 @@ namespace Voyage.Controllers
 
             return await _ticketsB.SaveTicketDetails(details);
         }
+        
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task MarkCompleted([FromBody] List<TicketDTO> dto)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            var username = HttpContext.Session.GetString("Username")!;
 
+            dto.ForEach(t => {
+                t.CompanyId = companyId;
+                t.CreatedBy = username;
+            });
+
+            await _ticketsB.MarkCompleted(dto);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public async Task Discontinue([FromBody] List<TicketDTO> dto)
+        {
+            var companyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            var username = HttpContext.Session.GetString("Username")!;
+
+            dto.ForEach(t => {
+                t.CompanyId = companyId;
+                t.ModifiedBy = username;
+            });
+
+            await _ticketsB.Discontinue(dto);
+        }
 
         [HttpGet]
         public async Task<TicketSettingsDTO?> GetSettings()

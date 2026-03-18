@@ -1,7 +1,6 @@
 ﻿import { loadModule } from "/js/__moduleLoader.js";
-import { getManageTicketPartial } from "/js/Tickets/_manageticket.js"
-/*import { getTicketPartial } from "/js/Tickets/_ticket.js";*/
 
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 const sectionMap = new Map();
 const ticketMap = new Map();
 
@@ -113,68 +112,7 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
         tableBody.innerHTML = ""; //empty current table body
         
         response.data.tickets.forEach(ticket => {
-            //create new row
-            const row = document.createElement('tr');
-            row.className = 'app-table-row';
-
-            //create new cells
-            const td1 = document.createElement('td');
-            td1.className = 'app-table-data';
-            td1.innerHTML = "<input type='checkbox'>";
-            row.appendChild(td1);
-
-            const td2 = document.createElement('td');
-            td2.className = 'app-table-data';
-            td2.innerHTML = `<a href='#' class='goto-ticket' data-id='${ticket.ticketId}'>${ticket.ticketId}</a>`;
-            row.appendChild(td2);
-
-            const td3 = document.createElement('td');
-            td3.className = 'app-table-data';
-            td3.innerHTML = `<a href="#" class="goto-ticket" data-id="${ticket.ticketId}">${ticket.title}</a>`;
-            row.appendChild(td3);
-
-            const td4 = document.createElement('td');
-            td4.className = 'app-table-data';
-            td4.innerText = `${addSpacesToSentence(ticket.status)}`;
-            row.appendChild(td4);
-
-            const td5 = document.createElement('td');
-            td5.className = 'app-table-data';
-            td5.innerText = `${ticket.assignedTo}`;
-            row.appendChild(td5);
-
-            const td6 = document.createElement('td');
-            td6.className = 'app-table-data';
-            td6.innerText = `${formatUtc(ticket.dueDate, false)}`;
-            row.appendChild(td6);
-
-            const td7 = document.createElement('td');
-            td7.className = 'app-table-data';
-            td7.innerText = `${handlePriorityLevel(ticket.priorityLevel)}`;
-            row.appendChild(td7);
-
-            const td8 = document.createElement('td');
-            td8.className = 'app-table-data';
-            td8.innerText = `${formatUtc(ticket.modifiedDate, false)}`;
-            row.appendChild(td8);
-
-            const td9 = document.createElement('td');
-            td9.className = 'app-table-data';
-            td9.innerText = `${ticket.modifiedBy}`;
-            row.appendChild(td9);
-
-            const td10 = document.createElement('td');
-            td10.className = 'app-table-data';
-            td10.innerText = `${formatUtc(ticket.createdDate, false)}`;
-            row.appendChild(td10);
-
-            const td11 = document.createElement('td');
-            td11.className = 'app-table-data';
-            td11.innerText = `${ticket.createdBy}`;
-            row.appendChild(td11);
-
-            //append the row to the table body
-            tableBody.appendChild(row);
+            buildTableRow(tableBody, ticket);
         });
 
         toggleEditBtns();
@@ -189,12 +127,89 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
      
 }
 
+function buildTableRow(tableBody, ticket) {
+    //create new row
+    const row = document.createElement('tr');
+    row.className = 'app-table-row';
+
+    //create new cells
+    const td1 = document.createElement('td');
+    td1.className = 'app-table-data';
+    td1.innerHTML = "<input type='checkbox'>";
+    row.appendChild(td1);
+
+    const td2 = document.createElement('td');
+    td2.className = 'app-table-data';
+    td2.innerHTML = `<a href='#' class='goto-ticket' data-id='${ticket.ticketId}'>${ticket.ticketId}</a>`;
+    row.appendChild(td2);
+
+    const td3 = document.createElement('td');
+    td3.className = 'app-table-data';
+    td3.innerHTML = `<a href="#" class="goto-ticket" data-id="${ticket.ticketId}">${ticket.title}</a>`;
+    row.appendChild(td3);
+
+    const td4 = document.createElement('td');
+    td4.className = 'app-table-data';
+    td4.innerText = `${addSpacesToSentence(ticket.status)}`;
+    row.appendChild(td4);
+
+    const td5 = document.createElement('td');
+    td5.className = 'app-table-data';
+    td5.innerText = `${ticket.assignedTo}`;
+    row.appendChild(td5);
+
+    const td6 = document.createElement('td');
+    td6.className = 'app-table-data';
+    td6.innerText = `${formatUtc(ticket.dueDate, false)}`;
+    row.appendChild(td6);
+
+    const td7 = document.createElement('td');
+    td7.className = 'app-table-data';
+    td7.innerText = `${handlePriorityLevel(ticket.priorityLevel)}`;
+    row.appendChild(td7);
+
+    const td8 = document.createElement('td');
+    td8.className = 'app-table-data';
+    td8.innerText = `${formatUtc(ticket.modifiedDate, false)}`;
+    row.appendChild(td8);
+
+    const td9 = document.createElement('td');
+    td9.className = 'app-table-data';
+    td9.innerText = `${ticket.modifiedBy}`;
+    row.appendChild(td9);
+
+    const td10 = document.createElement('td');
+    td10.className = 'app-table-data';
+    td10.innerText = `${formatUtc(ticket.createdDate, false)}`;
+    row.appendChild(td10);
+
+    const td11 = document.createElement('td');
+    td11.className = 'app-table-data';
+    td11.innerText = `${ticket.createdBy}`;
+    row.appendChild(td11);
+
+    //append the row to the table body
+    tableBody.appendChild(row);
+}
+
+function deleteTableRow(e) {
+    
+    var rows = getCheckedRows(e)
+    if (rows) {
+        decreaseRecordCount(e, rows);
+        rows.forEach(r => {
+            r.remove();
+        });
+    }
+}
+
 function updateRecordCount(e, pageNumber, pageSize) {
     const container = e.target.closest('.section-container');
 
     const low = container.querySelector('.record-low');
     const high = container.querySelector('.record-high');
     const total = container.querySelector('.record-total');
+
 
     const start = (pageNumber - 1) * pageSize + 1;
     low.innerText = start;
@@ -213,8 +228,6 @@ async function updatePaginatedUI(e, sectionTitle) {
     
     if (!sprintId)
         return;
-
-    debugger;
 
     const selectList = document.querySelector(`select.paginate[data-section="${sectionTitle}"]`);
     const numResults = parseInt(selectList.value);
@@ -306,7 +319,7 @@ async function updatePaginatedUI(e, sectionTitle) {
 
     toggleEditBtns();
 
-    updateRecordCount(e, targetPage, numResults);
+    updateRecordCount(e, targetPage, numResults, true);
 
     document.getElementById(`heading-${sectionTitle}`).focus();
 
@@ -352,7 +365,7 @@ async function handleClick(e) {
     const input = e.target.closest('input');
 
     //redirect to add ticket (manage ticket)
-    if (btn && btn.id === 'add-btn') {
+    if (btn && btn.classList.contains('add-btn')) {
         const anonID = e.target.closest('.section-container').dataset.sectionid;
         const sectionID = getRealId(sectionMap, anonID);
 
@@ -384,6 +397,13 @@ async function handleClick(e) {
     if (input && input.type == "checkbox")
         toggleCompletedDiscontinuedBtns(input);
 
+    if (btn && btn.classList.contains('completed-btn'))
+        await markCompleted(e);
+
+    if (btn && btn.classList.contains('discontinue-btn'))    
+        await discontinue(e);
+    
+        
 }
 
 function toggleCompletedDiscontinuedBtns(input) {
@@ -442,7 +462,6 @@ function toggleSections(e) {
         sections.forEach(s => {
 
             const realId = getRealId(sectionMap, s.dataset.sectionid);
-            debugger
 
             if (selectedOption != realId) {
                 s.classList.add('hidden');
@@ -452,4 +471,191 @@ function toggleSections(e) {
             }
         });
     }
+}
+
+function getCheckedBoxesTicketIds(e){
+    const list = [];
+
+    const container = e.target.closest('.section-container');
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+
+            const checkbox = checkboxes[i];
+            const row = checkbox.closest('.app-table-row');
+            const anonId = row.children[1].querySelector('.goto-ticket').dataset.id;
+
+            const id = getRealId(ticketMap, anonId);
+
+            const dto = {
+                ticketId: parseInt(id),
+            }
+
+            list.push(dto);
+        }
+    }
+
+    return list;
+}
+
+function getCheckedRows(e) {
+    const rows = [];
+    const container = e.target.closest('.section-container');
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+
+            const checkbox = checkboxes[i];
+            const row = checkbox.closest('.app-table-row');
+
+            rows.push(row);
+        }
+    }
+
+    return rows;
+}
+
+
+
+function getCheckedRowData(e) {
+    const tickets = [];
+    
+    const rows = [];
+    const container = e.target.closest('.section-container');
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+
+            const checkbox = checkboxes[i];
+            const row = checkbox.closest('.app-table-row');
+
+            rows.push(row);
+        }
+    }
+
+    const tds = rows[0].children;
+
+    let id = tds[1].querySelector('.goto-ticket').dataset.id;
+    id = getRealId(ticketMap, id);
+
+    const ticket = {
+        ticketId: parseInt(id),
+        title: tds[2].innerText.trim(),
+        status: tds[3].innerText.trim(),
+        assignedTo: tds[4].innerText.trim(),
+        dueDate: tds[5].innerText.trim(),
+        priorityLevel: tds[6].innerText.trim(),
+        modifiedDate: tds[7].innerText.trim(),
+        modifiedBy: tds[8].innerText.trim(),
+        createdDate: tds[9].innerText.trim(),
+        createdBy: tds[10].innerText.trim()
+    }
+
+    tickets.push(ticket);
+
+    return tickets;
+}
+
+async function markCompleted(e) {
+    try {
+        const tickets = getCheckedRowData(e);
+        const list = getCheckedBoxesTicketIds(e);
+
+        const response = await axios.post('/Tickets/MarkCompleted', list, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response && response.status === 200) {
+            alert('Success');
+
+            deleteTableRow(e);
+
+            //add rows to new container
+            const container = document.querySelector('#Completed-container');
+            const tbody = container.querySelector('tbody');
+
+            increaseRecordCount(container, tickets);
+
+            tickets.forEach(ticket => {
+                buildTableRow(tbody, ticket);
+            });
+
+        }
+    } catch (error) {
+        console.error("error: markCompleted", error);
+        return false;
+    }
+}
+
+async function discontinue(e) {
+    try {
+        const tickets = getCheckedRowData(e);
+        const list = getCheckedBoxesTicketIds(e);
+        
+        const response = await axios.post('/Tickets/Discontinue', list, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        
+        if (response && response.status === 200) {
+            alert('Success');
+
+            deleteTableRow(e);
+
+            //add rows to new container
+            const container = document.querySelector('#Discontinued-container');
+            const tbody = container.querySelector('tbody');
+
+            increaseRecordCount(container, tickets);
+
+            tickets.forEach(ticket => {
+                buildTableRow(tbody, ticket);
+            });
+        }
+    }
+    catch (error) {
+        console.error("error: discontinue", error);
+        return false;
+    }
+}
+
+function decreaseRecordCount(e, rows) {
+    const container = e.target.closest('.section-container');
+    const numOfRowsRemoved = rows.length;
+
+    const high = container.querySelector('.record-high');
+    let value = parseInt(high.innerText) - numOfRowsRemoved;
+    high.innerText = `${value}`;
+
+    const total = container.querySelector('.record-total');
+    value = parseInt(total.innerText) - numOfRowsRemoved;
+    total.innerText = `${value}`;
+}
+
+function increaseRecordCount(container, rows) {
+    const recordLimit = container.querySelector('select').value;
+    const numExistingRecords = container.querySelectorAll('tr').length;
+
+    //if the number of records is under our limit we may increment
+    rows.forEach(r => {
+        if (numExistingRecords <= recordLimit) {
+            const high = container.querySelector('.record-high');
+            let value = parseInt(high.innerText) + 1;
+            high.innerText = `${value}`;
+        }
+    });
+    
+    //always increment the total
+    const total = container.querySelector('.record-total');
+    let value = parseInt(total.innerText) + rows.length;
+    total.innerText = `${value}`;
 }

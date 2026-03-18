@@ -596,5 +596,51 @@ namespace Voyage.Data
             }
         }
 
+        public async Task MarkCompleted(List<TicketDTO> dto)
+        {
+            try
+            {
+                var ticketIds = dto.Select(t => t.TicketId).ToList();
+
+                var tickets = await _db.Tickets.Where(t => ticketIds.Contains(t.TicketId)).ToListAsync();
+                foreach(var t in tickets)
+                {
+                    t.Status = Constants.TicketStatus.Completed.ToString();
+                    t.SectionTitle = Constants.TicketStatus.Completed.ToString();
+                    t.ModifiedDate = DateTime.UtcNow;
+                    t.ModifiedBy = dto[0].ModifiedBy;
+                }
+
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving ticket settings.");
+            }
+        }
+
+        public async Task Discontinue(List<TicketDTO> dto)
+        {
+            try
+            {
+                var ticketIds = dto.Select(t => t.TicketId).ToList();
+
+                var tickets = await _db.Tickets.Where(t => ticketIds.Contains(t.TicketId)).ToListAsync();
+                foreach (var t in tickets)
+                {
+                    t.Status = Constants.TicketStatus.Discontinued.ToString();
+                    t.SectionTitle = Constants.TicketStatus.Discontinued.ToString();
+                    t.ModifiedDate = DateTime.UtcNow;
+                    t.ModifiedBy = dto[0].ModifiedBy;
+                }
+
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving ticket settings.");
+            }
+        }
+
     }
 }

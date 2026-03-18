@@ -67,17 +67,6 @@ namespace Voyage.Business
 
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
         {
-            //user
-            //var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
-
-            //if (user == null)
-            //    throw new InvalidOperationException("Authenticated user not found.");
-            //else
-            //{
-            //    ticketDTO.CreatedBy = user.UserName ?? string.Empty;
-            //    ticketDTO.CompanyId = user.CompanyId;
-            //}
-
             //sprint settings
             TicketSettingsDTO? settings = await GetCompanySettings(ticketDTO.CompanyId);
             if (settings != null)
@@ -348,7 +337,16 @@ namespace Voyage.Business
 
             return sections;
         }
+        
 
+        public async Task MarkCompleted(List<TicketDTO> dto)
+        {
+            await _ticketsD.MarkCompleted(dto);
+        }
 
+        public async Task Discontinue(List<TicketDTO> dto)
+        {
+            await _ticketsD.Discontinue(dto);
+        }
     }
 }
