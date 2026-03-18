@@ -278,7 +278,9 @@ async function updatePaginatedUI(e, sectionTitle) {
 
     toggleEditBtns();
 
-    document.getElementById(`${sectionTitle}-container`).focus();
+    document.getElementById(`heading-${sectionTitle}`).focus();
+
+    anonymizeDataAttributes();
 }
 
     function handlePriorityLevel(priorityLevel) {
@@ -313,9 +315,6 @@ export async function getTicketSettings() {
 
 
 async function handleClick(e) {
-
-    let partial = null;
-
     const btn = e.target.closest('button');
     const anchor = e.target.closest('a')
 
@@ -352,7 +351,7 @@ async function handleClick(e) {
 }
 
 async function handleChange(e) {
-    debugger;
+   
     const select = e.target.closest('select.paginate');
     const sectionTitle = select.dataset.section;
 

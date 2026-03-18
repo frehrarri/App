@@ -334,6 +334,9 @@ function handleFileDrop(e) {
 
 function formatUtc(dateString, includeYear = true, includeTime = false) {
 
+    if (!dateString)
+        return "";
+
     let date = new Date(dateString);
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
