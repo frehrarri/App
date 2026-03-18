@@ -20,6 +20,9 @@ export async function init(params) {
     container.addEventListener("focusin", (e) => handlePreChange(e));
     trackEventListener(container, "focusin", handlePreChange);
 
+    //hide errors
+    container.addEventListener("change", (e) => document.querySelectorAll('.text-error').forEach(err => err.classList.add('hidden')));
+
     if (params?.sectionId) {
         const sectionDropdown = document.getElementById('ticketSectionTitle');
         if (sectionDropdown) {
@@ -141,7 +144,9 @@ async function saveTicket(e) {
     const saveBtn = document.getElementById('submitTicket');
     saveBtn.classList.add('disabled');
 
-    debugger;
+    const isValid = validate();
+    if (!isValid)
+        return
 
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
@@ -285,11 +290,21 @@ function attachSearchHandler() {
     });
 }
 
-//function validate() {
-//    const title = document.getElementById('ticketTitle').value;
-//    const description = document.getElementById('ticketDesc').textContent;
+function validate() {
+    let isValid = true;
 
-//    if (!title)
+    const title = document.getElementById('ticketTitle').value.trim();
+    const description = document.getElementById('ticketDesc').textContent;
 
-//    if (!description)
-//}
+    if (!title) {
+        document.getElementById('title-error').classList.remove('hidden');
+        isValid = false;
+    }
+
+    if (!description) {
+        document.getElementById('desc-error').classList.remove('hidden');
+        isValid = false;
+    }
+
+    return isValid;
+}

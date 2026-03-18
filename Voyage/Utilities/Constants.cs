@@ -55,6 +55,10 @@
         public const string TooManyLoginAttempts = "Account is locked.";
         public const string InvalidLoginAttempt = "Invalid login attempt.";
 
+        //ManageTicket
+        public const string InvalidTitle = "Invalid title.";
+        public const string InvalidDescription = "Invalid description.";
+
         #endregion
 
         #region Success Messages

@@ -29,11 +29,11 @@
             <!-- Row 1: Ticket #, Parent Ticket #, Section -->
             <div class="form-row">
                 <div>
-                    <label for="ticketId">Ticket #</label>
+                    <label for="ticketId">ID</label>
                     <input type="text" id="ticketId" class="form-field" value="@(Model?.TicketId == 0 ? null : Model?.TicketId)" readonly />
                 </div>
                 <div>
-                    <label for="ticketParent">Parent Ticket #</label>
+                    <label for="ticketParent">Parent ID</label>
                     <input type="text" id="ticketParent" class="form-field" value="@Model?.ParentTicketId" />
                 </div>
                 <!-- need to make section titles load dynamically from db  -->
@@ -59,7 +59,8 @@
             <!-- Row 2: Title -->
             <div class="form-row">
                 <div>
-                    <label for="ticketTitle">Title</label>
+                    <div id="title-error" class="text-error hidden">@Constants.InvalidTitle</div>
+                    <label for="ticketTitle">Title *</label>
                     <input type="text" class="form-field" id="ticketTitle" value="@Model?.Title" />
                 </div>
             </div>
@@ -67,7 +68,8 @@
             <!-- Row 3: Description -->
             <div class="form-row">
                 <div>
-                    <label for="ticketDesc">Description</label>
+                    <div id="desc-error" class="text-error hidden">@Constants.InvalidDescription</div>
+                    <label for="ticketDesc">Description *</label>
                     <div id="ticketDesc" class="form-field" contenteditable="true">@Html.Raw(Model?.Description)</div>
                 </div>
             </div>
