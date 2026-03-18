@@ -105,18 +105,6 @@
                             <td class="app-table-data">@ticket.ModifiedBy</td>
                             <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
                             <td class="app-table-data">@ticket.CreatedBy</td>
-
-@*                         @if (s.Title != "Discontinued" && s.Title != "Completed")
-                        {
-                            <td class="app-table-data">
-                                <button id="btnViewTicket" class="goto-ticket primary-btn" data-id="@ticket.TicketId">View</button>
-                                @if (ticket.CreatedBy == User.Identity?.Name)
-                                {
-                                    <span><button id="btnEditTicket" class="edit-btn secondary-btn" data-id="@ticket.TicketId" data-author="@ticket.CreatedBy">Edit</button></span>
-                                }
-
-                            </td>
-                        } *@
                         </tr>
                     }
 
@@ -128,7 +116,9 @@
                 <div class="dv-btns-container">
                     @if (s.Title != "Discontinued" && s.Title != "Completed")
                     {
-                        <button id="add-btn" class="primary-btn" type="button">Add</button>
+                        <button id="add-btn" class="primary-btn" type="button">Add Ticket</button>
+                        <button id="completed-btn" class="secondary-btn disabled" type="button" disabled>Mark Completed</button>
+                        <button id="discontinue-btn" class="warning-btn disabled" type="button" disabled>Discontinue</button>
                      @*    <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button> *@
                     }
                 </div>
