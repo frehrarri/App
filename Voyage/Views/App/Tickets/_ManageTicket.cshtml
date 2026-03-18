@@ -77,8 +77,18 @@
             <div class="form-row">
                 <div>
                     <label for="ticketAssignedTo">Assigned To</label>
-                    <input type="text" class="form-field" id="ticketAssignedTo" value="@Model?.AssignedTo" />
-                    <ul id="userResults" class="autocomplete-list"></ul>
+                    <div id="search-wrapper">
+                        <input type="text" class="form-field" id="ticketAssignedTo" value="@Model?.AssignedTo" />
+
+                        @if (!String.IsNullOrEmpty(Model?.AssignedTo))
+                        {
+                            <button class="btn-delete-circle"><i class="fa-regular fa-circle-xmark"></i></button>
+                        }
+
+                        <div id="search-results"></div>
+                    </div>
+
+                    
                 </div>
                 <div>
                     <label for="ticketPrioLvl">Priority Level</label>

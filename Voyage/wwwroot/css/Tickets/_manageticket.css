@@ -55,3 +55,22 @@ label {
     white-space: pre-wrap;
 }
 
+#search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+    #search-wrapper input {
+        width: 100%;
+        box-sizing: border-box;
+        padding-right: 32px; 
+    }
+
+.btn-delete-circle {
+    position: absolute;
+    right: 21px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+
+}

@@ -35,7 +35,7 @@ namespace Voyage.Services
                     || (u.LastName.ToLower() ?? "").Contains(query)
                 ))
                 .OrderBy(u => u.UserName)
-                .Take(10)
+                .Take(7)
                 .Select(u => new {
                     id = u.Id,
                     username = u.UserName,

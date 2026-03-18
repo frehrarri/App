@@ -22,6 +22,100 @@ function removeEventListeners() {
     });
 }
 
+///////////////// Debounced search ////////////////////////
+
+//example usage:
+
+//const input = document.getElementById('ticketAssignedTo');
+//const results = document.getElementById('search-results');
+
+//input.addEventListener('input', (e) => {
+//    handleSearch(e.target.value, 'users', (insert) => {
+//        input.value = insert;
+//    });
+//});
+
+const handleSearch = debounce(async (query, searchName, onSelect) => {
+    if (!query.trim()) return;
+
+    let url = null;
+
+    switch (searchName) {
+        case 'users':
+            url = "/SearchService/Users";
+            break;
+        case 'teams':
+            url = "/SearchService/Teams";
+            break;
+        default:
+            break;
+    }
+
+    const response = await axios.get(url, { params: { query } });
+
+    renderResults(response.data, searchName, onSelect);
+
+}, 300);
+
+function renderResults(results, searchName, onSelect) {
+    const container = document.getElementById('search-results');
+
+    if (!results.length) {
+        container.style.display = 'none';
+        return;
+    }
+
+    //display popup with list of results
+    container.innerHTML = results.map(r => {
+        let display = null;
+        let insert = null
+
+        switch (searchName) {
+            case 'users':
+                display = `${r.username} ${r.lastname}, ${r.firstname} - ${r.email}`;
+                insert = r.username;
+                break;
+            case 'teams':
+                break;
+            default:
+                break;
+        }
+
+        return `<div class="search-result-item" data-id="${r.id}" data-insert="${insert}">${display}</div>`
+    }).join('');
+
+    container.style.display = 'block';
+
+    //on select insert data
+    container.querySelectorAll('.search-result-item').forEach(item => {
+        item.addEventListener('click', () => {
+            onSelect?.(item.dataset.insert, item.dataset.id);
+            container.style.display = 'none';
+        });
+    });
+}
+
+//click outside wrapper closes the auto populate popup
+document.addEventListener('click', (e) => {
+    const container = document.getElementById('search-results');
+    if (!container) return;
+    if (!e.target.closest('#search-wrapper')) {
+        container.style.display = 'none';
+    }
+});
+
+function debounce(fn, delay = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
+//////////////////////////////////////////////////
+
+
+
 //prevent submitting of form inputs by enter key
 document.addEventListener("keydown", (e) => {
     if (

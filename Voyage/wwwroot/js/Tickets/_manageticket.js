@@ -14,8 +14,8 @@ export async function init(params) {
 
     container.innerHTML = partial;
 
-    container.addEventListener("click", (e) => handleEvents(e));
-    trackEventListener(container, "click", handleEvents);
+    container.addEventListener("click", (e) => handleClicks(e));
+    trackEventListener(container, "click", handleClicks);
 
     container.addEventListener("focusin", (e) => handlePreChange(e));
     trackEventListener(container, "focusin", handlePreChange);
@@ -37,33 +37,29 @@ export async function init(params) {
     if (ticketId == 0)
         deleteBtn.classList.add('hidden');
 
-    //debounced search
-    //let input = document.getElementById("ticketAssignedTo");
-    //addUserSearchEventListener(input, "userResults");
+    attachSearchHandler();//attach debounced search
 }
 
-async function handleEvents(e) {
-    
-    if (e.target.type != "button")
-        return;
+async function handleClicks(e) {
+    const btn = e.target.closest('button');
 
-    if (e.target.id == "submitTicket") 
+    if (btn?.id == "submitTicket") 
         await saveTicket(e);
 
-    if (e.target.id == "deleteTicket")
+    if (btn?.id == "deleteTicket")
         await deleteTicket(e);
 
-    if (e.target.id == "undo-button") {
+    if (btn?.id == "undo-button") 
         undo();
+    
+    //clear autocomplete field on click
+    if (btn?.className == "btn-delete-circle") {
+
+        document.getElementById('ticketAssignedTo').value = ''; //reset to blank value
+        btn.remove();
+        e.stopPropagation(); //prevent event from triggering search handler
     }
         
-
-    //if (e.target.id == "ticketAssignedTo")
-    //    assignedTo.value = "";
-
-    //if (e.target.id == "ticketDesc")
-    //    handleEnter(e);
-
 }
 
 export async function getManageTicketPartial(ticketId) {
@@ -224,7 +220,6 @@ async function deleteTicket(e) {
 
 }
 
-
 function undo() {
     for (const [input, value] of preChangeValues.entries()) {
         if (input.type === "checkbox") {
@@ -255,5 +250,36 @@ function handlePreChange(e) {
     else if (el.isContentEditable) {
         preChangeValues.set(el, el.innerHTML);
     }
+}
+
+function attachSearchHandler() {
+    const input = document.getElementById('ticketAssignedTo');
+
+    input.addEventListener('input', (e) => {
+        handleSearch(e.target.value, 'users', (insert) => {
+
+            //insert value
+            input.value = insert; 
+
+            //hide search list
+            const resultList = document.getElementById('search-results'); 
+            resultList.style = 'display:none';
+
+            //apply delete button to input
+            const btn = document.createElement('button');
+            btn.className = 'btn-delete-circle';
+
+            const icon = document.createElement('i');
+            icon.classList.add('fa-regular');
+            icon.classList.add('fa-circle-xmark');
+
+            btn.appendChild(icon);
+
+            const wrapper = document.getElementById('search-wrapper');
+            const results = document.getElementById('search-results');
+
+            wrapper.insertBefore(btn, results);
+        });
+    });
 }
 
