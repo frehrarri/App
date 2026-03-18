@@ -639,6 +639,17 @@ function decreaseRecordCount(e, rows) {
     const total = container.querySelector('.record-total');
     value = parseInt(total.innerText) - numOfRowsRemoved;
     total.innerText = `${value}`;
+
+    const low = container.querySelector('record-low')
+    value = parseInt(low.innerText) - numOfRowsRemoved;
+
+    //must have at least 1 record
+    //must only remove 1 or 0 records
+    if (low.innerText < 1
+        && (value == 0 || value == 1))
+    {
+        low.innerText = `${value}`;
+    }
 }
 
 function increaseRecordCount(container, rows) {

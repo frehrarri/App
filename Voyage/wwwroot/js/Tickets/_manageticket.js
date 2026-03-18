@@ -35,10 +35,10 @@ export async function init(params) {
 
     updateBreadcrumb();
 
-    const discontinueBtn = document.getElementById('discontinue-button');
-    const ticketId = parseInt(document.getElementById('hdnTicketId').value);
-    if (ticketId == 0)
-        discontinueBtn.classList.add('hidden');
+    //const discontinueBtn = document.getElementById('discontinue-button');
+    //const ticketId = parseInt(document.getElementById('hdnTicketId').value);
+    //if (ticketId == 0)
+    //    discontinueBtn.classList.add('hidden');
 
     attachSearchHandler();//attach debounced search
 }
@@ -192,7 +192,12 @@ async function saveTicket(e) {
 
         //edit
         if (ticketId > 0) {
-            await loadModule("ticket", ticketId);
+
+            const params = {
+                ticketId: ticketId
+            }   
+
+            await loadModule("ticket", params);
         }
         //add new
         else {

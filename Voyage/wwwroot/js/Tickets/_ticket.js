@@ -29,12 +29,12 @@ async function handleClicks(e) {
     if (!btn)
         return;
 
-    if (btn.id == 'add-note-button')
-        await addNote(e);
-    else if (btn.classList.contains('edit-note-btn'))
-        await editNote(e);
-    else if (btn.classList.contains('save-edit-note-btn'))
-        await saveEditNote(e);
+    if (btn.id == 'add-note-button') await addNote(e);
+    else if (btn.classList.contains('edit-note-btn')) await editNote(e);
+    else if (btn.classList.contains('save-edit-note-btn')) await saveEditNote(e);
+    else if (btn.id == 'mark-complete-button') await markCompleted(e);
+    else if (btn.id == 'discontinue-button') await discontinue(e);
+    else if (btn.id == 'delete-ticket-button') await deleteTicket();
     else if (btn.id == 'edit-ticket-button') {
         const sectionId = parseInt(document.getElementById('hdnSectionId').value);
         const ticketId = parseInt(document.getElementById('hdnTicketId').value);
@@ -46,8 +46,7 @@ async function handleClicks(e) {
 
         await loadModule("manageTicket", params);
     }
-    else if (btn.id == 'delete-ticket-button')
-        await deleteTicket();
+    
     
 }
 
@@ -301,5 +300,65 @@ async function deleteTicket() {
     else {
         alert("error");
         noteDiv.remove();
+    }
+}
+
+async function markCompleted(e) {
+    try {
+        const list = [];
+        const ticketId = document.getElementById('hdnTicketId').value;
+
+        const dto = {
+            ticketId: ticketId
+        };
+
+        list.push(dto);
+
+        const response = await axios.post('/Tickets/MarkCompleted', list, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response && response.status === 200) {
+            await loadModule('tickets');
+            alert('Success');
+        }
+        else
+            alert('error');
+    } catch (error) {
+        console.error("error: markCompleted", error);
+        return false;
+    }
+}
+
+async function discontinue(e) {
+    try {
+        const list = [];
+        const ticketId = document.getElementById('hdnTicketId').value;
+
+        const dto = {
+            ticketId: ticketId
+        };
+
+        list.push(dto);
+        const response = await axios.post('/Tickets/Discontinue', list, {
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response && response.status === 200) {
+            await loadModule('tickets');
+            alert('Success');
+        }
+        else
+            alert('error');
+    }
+    catch (error) {
+        console.error("error: discontinue", error);
+        return false;
     }
 }
