@@ -185,13 +185,28 @@
                         </button>
                     }
                 </div>
+                <div>
+                    @if (ticketCount == 0)
+                    {
+                        <span class="record-count"><span class="record-low">0</span> to <span class="record-high">0</span> of <span class="record-total">0</span> Total Records</span>
+                    }
+                    else if (ticketCount <= 4)
+                    {
+                        <span class="record-count"><span class="record-low">1</span> to <span class="record-high">@ticketCount</span> of <span class="record-total">@ticketCount</span> Total Records</span>
+                    }
+                    else
+                    {
+                        <span class="record-count"><span class="record-low">1</span> to <span class="record-high">5</span> of <span class="record-total">@ticketCount</span> Total Records</span>
+                    }
+
+                </div>
             </div>
         </div>
-        <input id="hdnTotalTicketCount@(s.Title)" type="hidden" value="@sectionTickets.Count()" />
+        <input id="hdnTotalTicketCount-@(s.Title)" type="hidden" value="@ticketCount" />
     }
 
 </div>
 
-
+<input type="hidden" id="hdnTotalTicketCount" value="@Model.Tickets.Count()" />
 <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintEnd="@Model.Sprint?.EndDate" />
 

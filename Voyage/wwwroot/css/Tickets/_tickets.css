@@ -61,23 +61,26 @@
 }
 
 .pagination-container {
+    padding-top: 10px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    position: relative;
-    margin-top: 10px; 
 }
 
-.pagination-buttons{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.pagination-buttons {
+    width: 46%;
 }
+
 
 .dv-btns-container {
     margin-left: 20px;
     display: flex;
     gap: 2px;
+    width: 42%;
+}
+
+.record-count{
+    
 }
 
 #heading-setting-container {

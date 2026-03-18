@@ -189,6 +189,23 @@ async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResult
      
 }
 
+function updateRecordCount(e, pageNumber, pageSize) {
+    const container = e.target.closest('.section-container');
+
+    const low = container.querySelector('.record-low');
+    const high = container.querySelector('.record-high');
+    const total = container.querySelector('.record-total');
+
+    const start = (pageNumber - 1) * pageSize + 1;
+    low.innerText = start;
+
+    const totalTicketCount = document.getElementById('hdnTotalTicketCount').value;
+    total.innerText = totalTicketCount;
+
+    const end = Math.min(pageNumber * pageSize, totalTicketCount);
+    high.innerText = end;
+}
+
 
 async function updatePaginatedUI(e, sectionTitle) {
 
@@ -206,7 +223,7 @@ async function updatePaginatedUI(e, sectionTitle) {
     const currentPage = parseInt(pageBtn.innerText);
     let targetPage = currentPage;
 
-    const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount${sectionTitle}`).value);
+    const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount-${sectionTitle}`).value);
     let numPages = Math.ceil(totalTicketCount / numResults);
 
     const selectedBtn = e.target.closest(".paginate");
@@ -288,6 +305,8 @@ async function updatePaginatedUI(e, sectionTitle) {
     rightBtn.disabled = targetPage === numPages;
 
     toggleEditBtns();
+
+    updateRecordCount(e, targetPage, numResults);
 
     document.getElementById(`heading-${sectionTitle}`).focus();
 
@@ -394,7 +413,7 @@ function toggleCompletedDiscontinuedBtns(input) {
 }
 
 async function handleChange(e) {
-    debugger;
+    
     const select = e.target.closest('select.paginate');
     const sectionTitle = select?.dataset.section;
 
