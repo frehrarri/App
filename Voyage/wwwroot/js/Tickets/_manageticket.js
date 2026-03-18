@@ -117,7 +117,11 @@ function updateBreadcrumb() {
 
         const gotoTicket = async () => {
             const ticketId = document.getElementById('hdnTicketId').value;
-            await loadModule('ticket', parseInt(ticketId));
+
+            const params = {
+                ticketId: parseInt(ticketId)
+            }
+            await loadModule('ticket', params);
         };
 
         a2.addEventListener("click", gotoTicket);

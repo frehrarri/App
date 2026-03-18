@@ -44,8 +44,6 @@ async function handleClicks(e) {
             sectionId: sectionId
         };
 
-        debugger;
-
         await loadModule("manageTicket", params);
     }
     else if (btn.id == 'delete-ticket-button')
