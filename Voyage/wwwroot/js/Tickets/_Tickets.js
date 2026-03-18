@@ -93,54 +93,6 @@ function updateBreadcrumb() {
     ol.appendChild(li1);
 }
 
-
-//function appendSectionFilters() {
-//    const header = document.getElementById('section-filter');
-//    if (!header)
-//        return;
-
-//    const ul = document.createElement('ul');
-//    const headings = document.querySelectorAll('.heading');
-
-//    const centerHead = document.getElementById('header-center');
-//    centerHead.innerHTML = "";
-
-//    if (headings) {
-//        //populate filter for each heading
-//        headings.forEach(h => {
-//            let li = document.createElement('li');
-
-//            let a = document.createElement('a');
-//            a.href = '#';
-//            a.textContent = h.textContent;
-//            a.classList.add('tab');
-
-//            a.addEventListener("click", handleTabs);
-//            trackEventListener(a, "click", handleTabs);
-
-//            li.appendChild(a);
-//            ul.appendChild(li);
-//        });
-
-//        //add All filter
-//        const li = document.createElement('li');
-
-//        const a = document.createElement('a');
-//        a.href = '#';
-//        a.textContent = 'All';
-//        a.classList.add('tab');
-//        a.classList.add('active-tab');
-
-//        a.addEventListener("click", handleTabs);
-//        trackEventListener(a, "click", handleTabs);
-
-//        li.appendChild(a);
-//        ul.prepend(li);
-//        header.appendChild(ul)
-//    }
-        
-//}
-
 export async function getTicketsPartial() {
     try {
         const response = await axios.get('/Tickets/TicketsPartial');
@@ -402,8 +354,17 @@ async function handleClick(e) {
     //}
 
     else if (anchor && anchor.classList.contains('goto-ticket')) {
-        const realId = getRealId(ticketMap, anchor.dataset.id);
-        loadModule("ticket", realId);
+        const container = e.target.closest('.section-container');
+        const sectionId = getRealId(sectionMap, container.dataset.sectionid);
+
+        const ticketId = getRealId(ticketMap, anchor.dataset.id);
+
+        const params = {
+            ticketId: ticketId,
+            sectionId : sectionId
+        }
+
+        loadModule("ticket", params);
     }
 
     if (partial) {

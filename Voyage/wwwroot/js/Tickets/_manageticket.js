@@ -141,6 +141,8 @@ async function saveTicket(e) {
     const saveBtn = document.getElementById('submitTicket');
     saveBtn.classList.add('disabled');
 
+    debugger;
+
     const ticketDTO = {
         TicketId: parseInt(document.getElementById('ticketId').value) || 0,
         SectionTitle: document.getElementById('ticketSectionTitle').selectedOptions[0].text,
@@ -283,3 +285,11 @@ function attachSearchHandler() {
     });
 }
 
+//function validate() {
+//    const title = document.getElementById('ticketTitle').value;
+//    const description = document.getElementById('ticketDesc').textContent;
+
+//    if (!title)
+
+//    if (!description)
+//}

@@ -26,6 +26,7 @@ namespace Voyage.Models.DTO
         public DateTime? DueDate { get; set; }
         public int? ParentTicketId { get; set; }
         public string SectionTitle { get; set; } = string.Empty;
+        public int SectionId { get; set; }
 
         public int SprintId { get; set; }
         public DateTime? SprintStartDate { get; set; }

@@ -3,16 +3,18 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 const ticketDetailsMap = new Map();
 
-export async function init(ticketid) {
+export async function init(params) {
     removeEventListeners();
 
-    let partial = await getTicketPartial(ticketid);
+    let partial = await getTicketPartial(params.ticketId);
     const container = document.querySelector('.main-content');
 
     if (!container || !partial)
         return;
 
     container.innerHTML = partial;
+
+    document.getElementById('hdnSectionId').value = params.sectionId;
 
     container.addEventListener("click", handleClicks);
     trackEventListener(container, "click", handleClicks);
@@ -34,8 +36,15 @@ async function handleClicks(e) {
     else if (btn.classList.contains('save-edit-note-btn'))
         await saveEditNote(e);
     else if (btn.id == 'edit-ticket-button') {
+        const sectionId = parseInt(document.getElementById('hdnSectionId').value);
         const ticketId = parseInt(document.getElementById('hdnTicketId').value);
-        const params = { ticketId: ticketId };
+
+        const params = {
+            ticketId: ticketId,
+            sectionId: sectionId
+        };
+
+        debugger;
 
         await loadModule("manageTicket", params);
     }

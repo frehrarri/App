@@ -31,6 +31,7 @@ namespace Voyage.Data.TableModels
         public DateTime? DueDate { get; set; }
         public int? ParentTicketId { get; set; }
         public string SectionTitle { get; set; } 
+        public int SectionId { get; set; }
 
         public int SprintId { get; set; }
         public DateTime? SprintStartDate { get; set; }
