@@ -154,7 +154,7 @@
 
                         <div class="record-count-selector">
                             <span>Results per page: </span>
-                            <select id="sel-take-section-@(s.Title)" class="paginate" data-section="@s.Title">
+                            <select id="sel-take-section-@(s.Title)" class="paginate select-list" data-section="@s.Title">
                                 <option value="5" selected>5</option>
                                 <option value="10">10</option>
                                 <option value="15">15</option>
@@ -233,9 +233,10 @@
                     }
                     
                 </div>
+                <input class="hdn-total-tickets" type="hidden" value="@ticketCount" />@* id="hdnTotalTicketCount-@(s.Title)" *@
             </div>
         </form>
-        <input id="hdnTotalTicketCount-@(s.Title)" type="hidden" value="@ticketCount" />
+        
     }
 
 </div>
