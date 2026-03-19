@@ -78,7 +78,7 @@
                         <thead>
                             <tr class="app-table-row">
                                 <th class="app-table-header"></th>
-                                <th class="app-table-header">ID</th>
+                                <th class="app-table-header" style="width:75px;">ID</th>
                                 <th class="app-table-header">@nameof(TicketVM.Title)</th>
                                 <th class="app-table-header">@nameof(TicketVM.Status)</th>
                                 <th class="app-table-header">@AddSpacesToSentence(nameof(TicketVM.AssignedTo))</th>
@@ -129,7 +129,9 @@
                             else
                             {
                                 <tr class="app-table-row">
-                                    <td class="no-results app-table-data" colspan="11">No Results</td>
+                                    <td class="no-results app-table-data" colspan="11">
+                                        <span>No Results</span>
+                                    </td>
                                 </tr>
                             }
 
@@ -148,25 +150,23 @@
                         }
                     </div>
 
-                    <div>
-
-                    </div>
-                    <div class="record-count-selector">
-                        <span>Results per page: </span>
-                        <select id="sel-take-section-@(s.Title)" class="paginate" data-section="@s.Title">
-                            <option value="5" selected>5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                        </select>
-                    </div>
-
                     <div class="pagination-buttons">
+
+                        <div class="record-count-selector">
+                            <span>Results per page: </span>
+                            <select id="sel-take-section-@(s.Title)" class="paginate" data-section="@s.Title">
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>
+
                         <button id="btn-left-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
 
-                        <span id="page-btn-container-@s.Title">
+                        <span class="page-btn-container">
 
                             @if (sectionTickets.Count() > 0)
                             {

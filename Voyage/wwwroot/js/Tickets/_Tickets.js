@@ -223,6 +223,7 @@ function updateRecordCount(e, pageNumber, pageSize) {
 
 
 async function updatePaginatedUI(e, sectionTitle) {
+    e.preventDefault();
 
     let sprintId = parseInt(document.getElementById('hdnSprint').dataset.sprintid);
     
@@ -233,54 +234,55 @@ async function updatePaginatedUI(e, sectionTitle) {
     const numResults = parseInt(selectList.value);
 
     const pageBtn = document.querySelector(`.paginate.page.selected[data-section="${sectionTitle}"]`)
-    const currentPage = parseInt(pageBtn.innerText);
-    let targetPage = currentPage;
+    let currentPage = parseInt(pageBtn.innerText);
 
     const totalTicketCount = parseInt(document.getElementById(`hdnTotalTicketCount-${sectionTitle}`).value);
     let numPages = Math.ceil(totalTicketCount / numResults);
 
     const selectedBtn = e.target.closest(".paginate");
+    let selectedPage = parseInt(e.target.dataset.page);
 
     //left arrow button
     if (selectedBtn.id == `btn-left-section-${sectionTitle}`) {
-
-        targetPage = currentPage - 1;
+        currentPage = currentPage - 1;
         pageBtn.classList.remove("selected");
         pageBtn.disabled = false;
 
-        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${currentPage}"]`);
         selectedPageButton.classList.add("selected");
         selectedPageButton.disabled = true;
+
+        //update manual page selector
+        const btnContainer = e.target.closest('.pagination-buttons');
+        const input = btnContainer.querySelector('.page-input');
+        input.value = currentPage;
     }
     //right arrow button
     if (selectedBtn.id == `btn-right-section-${sectionTitle}`) {
-        targetPage = currentPage + 1;
+        currentPage = currentPage + 1;
         pageBtn.classList.remove("selected");
         pageBtn.disabled = false;
 
-        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${targetPage}"]`);
+        const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${currentPage}"]`);
         selectedPageButton.classList.add("selected");
         selectedPageButton.disabled = true;
+
+        //update manual page selector
+        const btnContainer = e.target.closest('.pagination-buttons');
+        const input = btnContainer.querySelector('.page-input');
+        input.value = currentPage 
     }
 
     //specific page button
     if (selectedBtn.classList.contains('page')) {
-        targetPage = parseInt(e.target.dataset.page);
-
-        //remove selected/disabled from previous page button
-        pageBtn.classList.remove("selected");
-        pageBtn.disabled = false;
-
-        //update selected/disabled to the target page button
-        e.target.classList.add("selected");
-        e.target.disabled = true;
+        handlePageBtns(e, currentPage, pageBtn, numPages);
     }
 
     //update num of pages when using result count drop down
     if (e.target.id.includes(`sel-take-section`)) {
 
         //start at first page on update
-        targetPage = 1;
+        currentPage = 1;
 
         //update number of pages
         numPages = Math.ceil(totalTicketCount / numResults);
@@ -297,33 +299,84 @@ async function updatePaginatedUI(e, sectionTitle) {
             btn.dataset.page = i;
             btn.innerText = i;
 
-            if (i === targetPage) {
+            if (i === currentPage) {
                 btn.classList.add("selected");
                 btn.disabled = true;
             }
-
-            /*btn.addEventListener("click", (e) => await updatePaginatedUI(e, sectionTitle));*/
 
             container.appendChild(btn);
         }
     }
 
-    await getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults);
+    //update manual page selector
+    if (selectedPage) {
+        const btnContainer = e.target.closest('.pagination-buttons');
+        const input = btnContainer.querySelector('.page-input');
+        input.value = selectedPage;
+    }
+
+    await getPaginatedTickets(sprintId, sectionTitle, currentPage, numResults);
 
     //disable/enable left/right arrows 
     const leftBtn = document.getElementById(`btn-left-section-${sectionTitle}`);
     const rightBtn = document.getElementById(`btn-right-section-${sectionTitle}`);
-
-    leftBtn.disabled = targetPage === 1;
-    rightBtn.disabled = targetPage === numPages;
+    debugger;
+    leftBtn.disabled = selectedPage === 1;
+    rightBtn.disabled = selectedPage === numPages;
 
     toggleEditBtns();
 
-    updateRecordCount(e, targetPage, numResults, true);
+    updateRecordCount(e, currentPage, numResults, true);
 
-    document.getElementById(`heading-${sectionTitle}`).focus();
+    e.target.closest('.section-container').focus();
 
     anonymizeDataAttributes();
+}
+
+function handlePageBtns(e, currentPage, pageBtn, numPages) {
+    currentPage = parseInt(e.target.dataset.page);
+
+    //remove selected/disabled from previous page button
+    pageBtn.classList.remove("selected");
+    pageBtn.disabled = false;
+
+    //update selected/disabled to the target page button
+    e.target.classList.add("selected");
+    e.target.disabled = true;
+
+    //only center if there are 2 pages on each side and at least 5 pages total
+    if (numPages >= 5 && currentPage - 2 >= 1 && currentPage + 2 <= numPages) {
+        formatPageButtons(e);
+    }
+    //handle starting pages
+    const startDiff = currentPage - 1;
+    if (startDiff == 1 || startDiff == 0) {
+        formatPageButtons(e, 3);
+    }
+    //handle final pages
+    const finalDiff = numPages - currentPage;
+    if (finalDiff == 1 || finalDiff == 0) {
+        formatPageButtons(e, numPages - 2)
+    }
+}
+
+function formatPageButtons(e, anchor) {
+    const clickedPage = parseInt(e.target.dataset.page);
+    const selectedPage = anchor ?? clickedPage;
+    const pageBtns = Array.from(e.target.closest('.page-btn-container').children);
+
+    for (let i = 0; i < pageBtns.length - 1; i++) {
+        const pageNum = selectedPage - 2 + i;
+        pageBtns[i].dataset.page = pageNum;
+        pageBtns[i].innerText = pageNum;
+        pageBtns[i].disabled = false;
+        pageBtns[i].classList.remove('selected');
+
+        if (pageNum === clickedPage) {
+            pageBtns[i].disabled = true;
+            pageBtns[i].classList.add('selected');
+        }
+    }
 }
 
     function handlePriorityLevel(priorityLevel) {

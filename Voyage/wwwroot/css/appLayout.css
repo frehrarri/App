@@ -169,6 +169,9 @@ html, body {
 
 .app-table-row > td {
     vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .app-table td:first-child input[type="checkbox"] {
