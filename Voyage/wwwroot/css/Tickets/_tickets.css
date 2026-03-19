@@ -80,6 +80,12 @@
     gap: 5px;
 }
 
+.page-btn-container {
+    display: flex;
+    gap: 5px;
+    align-items:center;
+}
+
 .record-count {
     margin-right: 20px;
 }
@@ -143,3 +149,4 @@ a.active-tab:hover {
     color: #666;
     font-style: italic;
 }
+

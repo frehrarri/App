@@ -402,3 +402,4 @@ function collapse(li) {
     icon.classList.remove('fa-angle-down');
     icon.classList.add('fa-angle-right');
 }
+
