@@ -95,7 +95,7 @@ export async function getTicketsPartial() {
 }
 
 async function getPaginatedTickets(sprintId, sectionTitle, targetPage, numResults) {
-   
+    debugger;
     try {
         const response = await axios.get('/Tickets/GetPaginatedTickets', {
             params: {
@@ -230,8 +230,6 @@ async function updatePaginatedUI(e, sectionTitle) {
         return;
 
     let container = e.target.closest('.section-container');
-    
-
     const selectList = container.querySelector('.select-list');
     const numResults = parseInt(selectList.value);
 
@@ -245,17 +243,11 @@ async function updatePaginatedUI(e, sectionTitle) {
 
     //left arrow button
     if (selectedBtn.id == `btn-left-section-${sectionTitle}`) {
-        //currentPage = currentPage - 1;
-
         selectedBtn.classList.remove("selected");
         selectedBtn.disabled = false;
 
         currentPage = currentPage - 1;
         handleArrowButtons(e, currentPage, selectedBtn, numPages);
-
-        //const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${currentPage}"]`);
-        //selectedPageButton.classList.add("selected");
-        //selectedPageButton.disabled = true;
 
         //update manual page selector
         const btnContainer = e.target.closest('.pagination-buttons');
@@ -264,17 +256,11 @@ async function updatePaginatedUI(e, sectionTitle) {
     }
     //right arrow button
     if (selectedBtn.id == `btn-right-section-${sectionTitle}`) {
-        //currentPage = currentPage + 1;
-
         selectedBtn.classList.remove("selected");
         selectedBtn.disabled = false;
 
         currentPage = currentPage + 1;
         handleArrowButtons(e, currentPage, selectedBtn, numPages);
-
-        //const selectedPageButton = document.querySelector(`.paginate.page[data-section="${sectionTitle}"][data-page="${currentPage}"]`);
-        //selectedPageButton.classList.add("selected");
-        //selectedPageButton.disabled = true;
 
         //update manual page selector
         const btnContainer = e.target.closest('.pagination-buttons');
@@ -288,7 +274,7 @@ async function updatePaginatedUI(e, sectionTitle) {
     }
 
     //update num of pages when using result count drop down
-    if (e.target.id.includes(`sel-take-section`)) {
+    if (e.target.classList.contains('.select-list')) {
 
         //start at first page on update
         currentPage = 1;
@@ -297,8 +283,9 @@ async function updatePaginatedUI(e, sectionTitle) {
         numPages = Math.ceil(totalTicketCount / numResults);
 
         //empty container of old button layout
-        container = document.getElementById(`page-btn-container-${sectionTitle}`);
-        container.innerHTML = "";
+        const pageBtnContainer = container.querySelector('.page-btn-container');
+        //container = document.getElementById(`page-btn-container-${sectionTitle}`);
+        pageBtnContainer.innerHTML = "";
 
         //create new buttons
         for (let i = 1; i <= numPages; i++) {
@@ -320,14 +307,14 @@ async function updatePaginatedUI(e, sectionTitle) {
     //update manual page selector
     const btnContainer = container.querySelector('.pagination-buttons');
     const input = btnContainer.querySelector('.page-input');
-    debugger;
+
     if (!selectedPage) {
         selectedPage = currentPage;
     }
 
     input.value = selectedPage;
 
-    await getPaginatedTickets(sprintId, sectionTitle, currentPage, numResults);
+    await getPaginatedTickets(sprintId, sectionTitle, selectedPage, numResults);
 
     //disable/enable left/right arrows 
     const leftBtn = document.getElementById(`btn-left-section-${sectionTitle}`);
