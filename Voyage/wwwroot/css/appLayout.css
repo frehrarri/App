@@ -171,11 +171,6 @@ html, body {
     vertical-align: middle;
 }
 
-.app-table-row:last-child {
-    border-bottom: 1px solid #6289af52;
-}
-
-
 .app-table td:first-child input[type="checkbox"] {
     width: auto;
     margin: 0;

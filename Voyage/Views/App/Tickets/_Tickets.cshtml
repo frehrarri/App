@@ -99,29 +99,39 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if (tickets.Any())
+                            {
+                                foreach (TicketVM ticket in tickets)
+                                {
 
-                        @foreach (TicketVM ticket in tickets)
-                        {
-                            <tr class="app-table-row">
-                                <td class="app-table-data">
-                                    <input type="checkbox" />
-                                </td>
-                                <td class="app-table-data">
-                                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
-                                </td>
-                                <td class="app-table-data">
-                                    <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
-                                </td>
-                                <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
-                                <td class="app-table-data">@ticket.AssignedTo</td>
-                                <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
-                                <td class="app-table-data">@ticket.PriorityLevel</td>
-                                <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
-                                <td class="app-table-data">@ticket.ModifiedBy</td>
-                                <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
-                                <td class="app-table-data">@ticket.CreatedBy</td>
-                            </tr>
-                        }
+                                    <tr class="app-table-row">
+                                        <td class="app-table-data">
+                                            <input type="checkbox" />
+                                        </td>
+                                        <td class="app-table-data">
+                                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.TicketId</a>
+                                        </td>
+                                        <td class="app-table-data">
+                                            <a href="#" class="goto-ticket" data-id="@ticket.TicketId">@ticket.Title</a>
+                                        </td>
+                                        <td class="app-table-data">@AddSpacesToSentence(ticket.Status)</td>
+                                        <td class="app-table-data">@ticket.AssignedTo</td>
+                                        <td class="app-table-data">@FormatUtcDate(ticket.DueDate, false)</td>
+                                        <td class="app-table-data">@ticket.PriorityLevel</td>
+                                        <td class="app-table-data">@FormatUtcDate(ticket.ModifiedDate, false)</td>
+                                        <td class="app-table-data">@ticket.ModifiedBy</td>
+                                        <td class="app-table-data">@FormatUtcDate(ticket.CreatedDate, false)</td>
+                                        <td class="app-table-data">@ticket.CreatedBy</td>
+                                    </tr>
+
+                                }
+                            }
+                            else
+                            {
+                                <tr class="app-table-row">
+                                    <td class="no-results app-table-data" colspan="11">No Results</td>
+                                </tr>
+                            }
 
                         </tbody>
                     </table> 
@@ -138,14 +148,20 @@
                         }
                     </div>
 
-                    <div class="pagination-buttons">
-                        <select id="sel-take-section@(s.Title)" class="paginate" data-section="@s.Title">
+                    <div>
+
+                    </div>
+                    <div class="record-count-selector">
+                        <span>Results per page: </span>
+                        <select id="sel-take-section-@(s.Title)" class="paginate" data-section="@s.Title">
                             <option value="5" selected>5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>
                             <option value="20">20</option>
                         </select>
+                    </div>
 
+                    <div class="pagination-buttons">
                         <button id="btn-left-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
@@ -158,17 +174,27 @@
                                 {
                                     @if (i == 1)
                                     {
-                                        <button id="btn-page@(i)section@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+                                        <button id="btn-page@(i)-section-@(s.Title)" class="paginate page selected" data-page="@i" data-section="@s.Title" disabled>@i</button>
+                                    }
+                                    //prevent more than 7 shown page icons at a time
+                                    else if (i == 6)
+                                    {
+                                        break;
                                     }
                                     else
                                     {
-                                        <button id="btn-page@(i)section@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
+                                        <button id="btn-page@(i)-section-@(s.Title)" class="paginate page" data-page="@i" data-section="@s.Title">@i</button>
                                     }
+                                }
+                                //indicate there are more pages
+                                if (numOfPages > 6)
+                                {
+                                    <label>...</label>
                                 }
                             }
                             else
                             {
-                                <button id="btn-page1section@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
+                                <button id="btn-page1-section-@(s.Title)" class="paginate page selected" data-page="1" data-section="@s.Title" disabled>1</button>
                             }
 
                         </span>
@@ -185,22 +211,27 @@
                                 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         }
-                    </div>
-                    <div>
-                        @if (ticketCount == 0)
-                        {
-                            <span class="record-count"><span class="record-low">0</span> to <span class="record-high">0</span> of <span class="record-total">0</span> Total Records</span>
-                        }
-                        else if (ticketCount <= 4)
-                        {
-                            <span class="record-count"><span class="record-low">1</span> to <span class="record-high">@ticketCount</span> of <span class="record-total">@ticketCount</span> Total Records</span>
-                        }
-                        else
-                        {
-                            <span class="record-count"><span class="record-low">1</span> to <span class="record-high">5</span> of <span class="record-total">@ticketCount</span> Total Records</span>
-                        }
 
+                        @* manual page input *@
+                        <div class="page-details">
+                            <input type="number" class="paginate page-input" value="1" />
+                            <span> of @((sectionTickets.Count() / 5) + 1) Pages</span>
+                        </div>
                     </div>
+
+                    @if (ticketCount == 0)
+                    {
+                        <span class="record-count"><span class="record-low">0</span> to <span class="record-high">0</span> of <span class="record-total">0</span> Records</span>
+                    }
+                    else if (ticketCount <= 4)
+                    {
+                        <span class="record-count"><span class="record-low">1</span> to <span class="record-high">@ticketCount</span> of <span class="record-total">@ticketCount</span> Records</span>
+                    }
+                    else
+                    {
+                        <span class="record-count"><span class="record-low">1</span> to <span class="record-high">5</span> of <span class="record-total">@ticketCount</span> Records</span>
+                    }
+                    
                 </div>
             </div>
         </form>
