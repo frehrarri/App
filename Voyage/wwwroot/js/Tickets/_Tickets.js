@@ -18,8 +18,10 @@ export async function init() {
 
     container.addEventListener("click", handleClick);
     container.addEventListener("change", handleChange);
+    container.addEventListener("keydown", handleEnter);
     trackEventListener(container, "click", handleClick);
     trackEventListener(container, "change", handleChange);
+    trackEventListener(container, "keydown", handleEnter);
 
     //appendSectionFilters();
     updateBreadcrumb();
@@ -27,6 +29,77 @@ export async function init() {
 
     anonymizeDataAttributes();
 
+}
+
+async function handleClick(e) {
+    const btn = e.target.closest('button');
+    const sectionTitle = btn?.dataset.section;
+
+    const anchor = e.target.closest('a')
+    const input = e.target.closest('input');
+
+    //redirect to add ticket (manage ticket)
+    if (btn && btn.classList.contains('add-btn')) {
+        const anonID = e.target.closest('.section-container').dataset.sectionid;
+        const sectionID = getRealId(sectionMap, anonID);
+
+        const params = {
+            sectionId: sectionID,
+            ticketId: null
+        }
+        await loadModule("manageTicket", params);
+    }
+
+    //redirect to ticket
+    else if (anchor && anchor.classList.contains('goto-ticket')) {
+        const container = e.target.closest('.section-container');
+        const sectionId = getRealId(sectionMap, container.dataset.sectionid);
+
+        const ticketId = getRealId(ticketMap, anchor.dataset.id);
+
+        const params = {
+            ticketId: ticketId,
+            sectionId: sectionId
+        }
+
+        loadModule("ticket", params);
+    }
+
+    if (btn && btn.matches('.paginate'))
+        await updatePaginatedUI(e, sectionTitle);
+
+    if (input && input.type == "checkbox")
+        toggleCompletedDiscontinuedBtns(input);
+
+    if (btn && btn.classList.contains('completed-btn'))
+        await markCompleted(e);
+
+    if (btn && btn.classList.contains('discontinue-btn'))
+        await discontinue(e);
+}
+
+async function handleChange(e) {
+
+    const select = e.target.closest('select.paginate');
+    const sectionTitle = select?.dataset.section;
+
+    if (select)
+        await updatePaginatedUI(e, sectionTitle);
+
+    toggleSections(e);
+}
+
+async function handleEnter(e) {
+    if (e.key != 'Enter')
+        return;
+
+    const container = e.target.closest('.section-container');
+    const input = container.querySelector('.paginate.page-input')
+    const sectionTitle = container.id.split('-')[0].trim();
+
+    if (input) {
+        updatePaginatedUI(e, sectionTitle);
+    }
 }
 
 function getRealId(map, anonId) {
@@ -223,10 +296,12 @@ function updateRecordCount(e, pageNumber, pageSize) {
 
 async function updatePaginatedUI(e, sectionTitle) {
     e.preventDefault();
-    debugger;
+
     let sprintId = parseInt(document.getElementById('hdnSprint').dataset.sprintid);
     if (!sprintId)
         return;
+
+    let isManualInput = false;
 
     const container = e.target.closest('.section-container');
     const selectList = container.querySelector('.select-list');
@@ -262,6 +337,20 @@ async function updatePaginatedUI(e, sectionTitle) {
         handlePageBtns(e, currentPage, selectedBtn, numPages);
     }
 
+    //manual page input
+    if (e.target.classList.contains('page-input')) {
+        isManualInput = true;
+
+        selectedPage = parseInt(e.target.value);
+
+        if (selectedPage > numPages)
+            selectedPage = numPages;
+        else if (selectedPage < 1)
+            selectedPage = 1;
+        
+        handleManualPageInput(container, selectedPage, numPages);
+    }
+
     //update num of pages when using result count drop down
     if (e.target.classList.contains('select-list')) {
         handleResultAmountDropDown(container, numResults, totalTicketCount);
@@ -274,9 +363,12 @@ async function updatePaginatedUI(e, sectionTitle) {
     //disable/enable left/right arrows 
     const leftBtn = document.getElementById(`btn-left-section-${sectionTitle}`);
     const rightBtn = document.getElementById(`btn-right-section-${sectionTitle}`);
-    
-    leftBtn.disabled = selectedPage === 1;
-    rightBtn.disabled = selectedPage === numPages;
+
+    //set arrows for non manual input
+    if (!isManualInput) {
+        leftBtn.disabled = selectedPage === 1;
+        rightBtn.disabled = selectedPage === numPages;
+    }
 
     toggleEditBtns();
 
@@ -286,6 +378,7 @@ async function updatePaginatedUI(e, sectionTitle) {
 }
 
 function handlePageBtns(e, currentPage, pageBtn, numPages) {
+    debugger;
     currentPage = parseInt(e.target.dataset.page);
 
     //remove selected/disabled from previous page button
@@ -384,6 +477,50 @@ function handleArrowButtons(e, currentPage, pageBtn, numPages) {
     }
 }
 
+function handleManualPageInput(container, selectedPage, numPages) {
+
+    //enable arrows
+    container.querySelector('.paginate.paginate-arrow.left').disabled = false;
+    container.querySelector('.paginate.paginate-arrow.right').disabled = false;
+
+    const pageBtns = container.querySelectorAll('.paginate.page');
+    let anchor = selectedPage;
+
+    // clamp anchor so buttons don't go below 1 or above numPages
+    if (selectedPage - 2 < 1) {
+        anchor = 3;
+    } else if (selectedPage + 2 > numPages) {
+        anchor = Math.max(3, numPages - 2);
+    }
+
+    for (let i = 0; i < pageBtns.length; i++) {
+        const pageNum = anchor - 2 + i;
+        pageBtns[i].dataset.page = pageNum;
+        pageBtns[i].innerText = pageNum;
+        pageBtns[i].disabled = false;
+        pageBtns[i].classList.remove('selected');
+
+        //disable selected button page
+        if (pageNum === selectedPage) {
+            pageBtns[i].disabled = true;
+            pageBtns[i].classList.add('selected');
+        }
+        debugger;
+        //disable arrows
+        if (i == 0 && selectedPage <= 1) {
+            container.querySelector('.paginate.paginate-arrow.left').disabled = true;
+        }
+        else if (i == 4 && selectedPage >= numPages) {
+            container.querySelector('.paginate.paginate-arrow.right').disabled = true;
+        }
+    }
+
+    applyEllipsis(container, selectedPage, numPages)
+    debugger;
+    container.querySelector('.paginate.page-input').value = selectedPage;
+}
+
+
 function applyEllipsis(container, clickedPage, numPages) {
     //hide ellipsis by default
     container.querySelector('.ellipsis-high').classList.add('hidden');
@@ -445,54 +582,7 @@ export async function getTicketSettings() {
 }
 
 
-async function handleClick(e) {
-    const btn = e.target.closest('button');
-    const sectionTitle = btn?.dataset.section;
 
-    const anchor = e.target.closest('a')
-    const input = e.target.closest('input');
-
-    //redirect to add ticket (manage ticket)
-    if (btn && btn.classList.contains('add-btn')) {
-        const anonID = e.target.closest('.section-container').dataset.sectionid;
-        const sectionID = getRealId(sectionMap, anonID);
-
-        const params = {
-            sectionId: sectionID,
-            ticketId: null
-        }
-        await loadModule("manageTicket", params);
-    }
-
-    //redirect to ticket
-    else if (anchor && anchor.classList.contains('goto-ticket')) {
-        const container = e.target.closest('.section-container');
-        const sectionId = getRealId(sectionMap, container.dataset.sectionid);
-
-        const ticketId = getRealId(ticketMap, anchor.dataset.id);
-
-        const params = {
-            ticketId: ticketId,
-            sectionId: sectionId
-        }
-
-        loadModule("ticket", params);
-    }
-
-    if (btn && btn.matches('.paginate'))
-        await updatePaginatedUI(e, sectionTitle);
-
-    if (input && input.type == "checkbox")
-        toggleCompletedDiscontinuedBtns(input);
-
-    if (btn && btn.classList.contains('completed-btn'))
-        await markCompleted(e);
-
-    if (btn && btn.classList.contains('discontinue-btn'))    
-        await discontinue(e);
-    
-        
-}
 
 function toggleCompletedDiscontinuedBtns(input) {
 
@@ -520,16 +610,7 @@ function toggleCompletedDiscontinuedBtns(input) {
     discontinueBtn.classList.remove('disabled');
 }
 
-async function handleChange(e) {
-    
-    const select = e.target.closest('select.paginate');
-    const sectionTitle = select?.dataset.section;
 
-    if (select)
-        await updatePaginatedUI(e, sectionTitle);
-
-    toggleSections(e);
-}
 
 function handleResultAmountDropDown(container, numResults, totalTicketCount) {
     debugger;

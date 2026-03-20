@@ -162,7 +162,7 @@
                             </select>
                         </div>
 
-                        <button id="btn-left-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                        <button id="btn-left-section-@(s.Title)" class="paginate paginate-arrow left" data-section="@s.Title" type="button" disabled>
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
 
@@ -202,13 +202,13 @@
 
                         @if (numOfPages < 2 || sectionTickets.Count() == 0)
                         {
-                            <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button" disabled>
+                            <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow right" data-section="@s.Title" type="button" disabled>
                                 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         }
                         else
                         {
-                            <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow" data-section="@s.Title" type="button">
+                            <button id="btn-right-section-@(s.Title)" class="paginate paginate-arrow right" data-section="@s.Title" type="button">
                                 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         }
