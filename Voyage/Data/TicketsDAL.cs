@@ -357,19 +357,20 @@ namespace Voyage.Data
                     return null;
 
                 var ticket = await _db.Tickets
-                    .Where(t => t.TicketId == details.TicketId.Value
+                    .Include(t => t.TicketDetails)
+                    .Where(t => t.CompanyId == details.CompanyId
+                        && t.TicketId == details.TicketId.Value
                         && t.IsActive == true
                         && t.IsLatest == true)
                     .FirstOrDefaultAsync();
 
                 if (ticket == null)
-                    throw new Exception("Ticket not found");
+                    return null;
 
                 // Update existing note (on current version only)
                 if (details.TicketDetailsId > 0)
                 {
-                    var existing = await _db.TicketDetails
-                        .FirstOrDefaultAsync(td => td.TicketDetailsId == details.TicketDetailsId);
+                    var existing = ticket.TicketDetails.FirstOrDefault(td => td.TicketDetailsId == details.TicketDetailsId);
 
                     if (existing == null)
                         return null;

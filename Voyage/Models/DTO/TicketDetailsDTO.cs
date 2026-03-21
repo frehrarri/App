@@ -4,6 +4,7 @@ namespace Voyage.Models.DTO
 {
     public class TicketDetailsDTO : BaseClass
     {
+        public int CompanyId { get; set; }
         public int? TicketDetailsId { get; set; }
         public int? TicketId { get; set; }
         public decimal? TicketVersion { get; set; }
