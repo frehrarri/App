@@ -169,3 +169,8 @@
     outline: none;
 }
 
+.note-edited {
+    position: absolute;
+    left: 47%;
+    transform: translateX(-50%);
+}
