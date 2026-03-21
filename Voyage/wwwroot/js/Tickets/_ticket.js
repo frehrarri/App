@@ -175,13 +175,13 @@ async function editNote(e) {
     const editBtn = note.querySelector('.edit-note-btn');
 
     //copy content
-    const content = contentContainer.textContent;
+    const content = contentContainer.innerHTML;
   
     //create input
     const editDiv = document.createElement('div');
     editDiv.contentEditable = 'true';
     editDiv.className = 'note-content';
-    editDiv.textContent = content;
+    editDiv.innerHTML = content;
 
     noteChanges = content;
 
@@ -207,7 +207,7 @@ async function saveEditNote(e) {
     const note = e.target.closest('.note');
     const noteHeader = note.querySelector('.note-header');
     const contentContainer = note.querySelector('.note-content');
-    const content = contentContainer.textContent;
+    const content = contentContainer.innerHTML;
 
     const saveBtn = note.querySelector('.save-edit-note-btn');
     saveBtn.classList.remove('save-edit-note-btn');
@@ -236,7 +236,7 @@ async function saveEditNote(e) {
     //revert input back to non-editable div
     const updatedDiv = document.createElement('div');
     updatedDiv.className = 'note-content';
-    updatedDiv.textContent = content;
+    updatedDiv.innerHTML = content;
 
     contentContainer.replaceWith(updatedDiv);
 

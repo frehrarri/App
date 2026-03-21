@@ -82,7 +82,7 @@
                             <span class="note-created">Added @detail.CreatedDate by @detail.CreatedBy</span>
                         </div>
                         <div class="note-content">
-                            @detail.Note
+                            @Html.Raw(detail.Note)
                         </div>
                     </div>
                 }
