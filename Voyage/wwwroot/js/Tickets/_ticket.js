@@ -24,7 +24,7 @@ export async function init(params) {
 }
 
 async function handleClicks(e) {
-    
+    debugger;
     const btn = e.target.closest('button');
     if (!btn)
         return;
@@ -166,12 +166,13 @@ async function addNote() {
     await saveNote(noteDiv);
 }
 
+var noteChanges = null;
+
 async function editNote(e) {
     const note = e.target.closest('.note');
     const noteHeader = note.querySelector('.note-header');
     const contentContainer = note.querySelector('.note-content');
     const editBtn = note.querySelector('.edit-note-btn');
-    
 
     //copy content
     const content = contentContainer.textContent;
@@ -181,6 +182,8 @@ async function editNote(e) {
     editDiv.contentEditable = 'true';
     editDiv.className = 'note-content';
     editDiv.textContent = content;
+
+    noteChanges = content;
 
     //create save button
     const saveBtn = document.createElement('button');
@@ -204,27 +207,41 @@ async function saveEditNote(e) {
     const note = e.target.closest('.note');
     const noteHeader = note.querySelector('.note-header');
     const contentContainer = note.querySelector('.note-content');
-    const saveBtn = note.querySelector('.save-edit-note-btn');
+    const content = contentContainer.textContent;
 
-    //add edited details to header
-    const editedHeader = document.createElement('span');
-    editedHeader.className = 'note-edited';
-    editedHeader.innerText = 'Edited ' + formatUtc(new Date().toUTCString(), true, true) + ' by ' + document.getElementById('hdnUsername').value;
-    saveBtn.after(editedHeader);
+    const saveBtn = note.querySelector('.save-edit-note-btn');
+    saveBtn.classList.remove('save-edit-note-btn');
+    saveBtn.classList.add('edit-note-btn');
+    saveBtn.innerText = "Edit";
+
+    if (noteChanges != content) {
+        //add edited details to header
+        const existingEdit = noteHeader.querySelector('.note-edited');
+        if (existingEdit) {
+            existingEdit.innerText = 'Edited ' + formatUtc(new Date().toUTCString(), true, true) + ' by ' + document.getElementById('hdnUsername').value;
+        }
+        else {
+            const editedHeader = document.createElement('span');
+            editedHeader.className = 'note-edited';
+            editedHeader.innerText = 'Edited ' + formatUtc(new Date().toUTCString(), true, true) + ' by ' + document.getElementById('hdnUsername').value;
+            saveBtn.after(editedHeader);
+        }
+    }
+    
 
     //revert styling back to saved note style
     noteHeader.classList.remove('editable-header');
     note.classList.remove('editable');
 
     //revert input back to non-editable div
-    const content = contentContainer.textContent;
     const updatedDiv = document.createElement('div');
     updatedDiv.className = 'note-content';
     updatedDiv.textContent = content;
 
     contentContainer.replaceWith(updatedDiv);
-    
-    await saveNote(note);
+
+    if (noteChanges != content)
+        await saveNote(note);
 }
 
 async function saveNote(noteDiv) {
