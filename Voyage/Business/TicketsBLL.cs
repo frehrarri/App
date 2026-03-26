@@ -236,36 +236,23 @@ namespace Voyage.Business
         public async Task<TicketSettingsDTO> UpdateSprint(TicketSettingsDTO dto)
         {
             bool updated = false;
+
+            //set sprint length based off radio
+            HandleSprintLength(ref dto);
+
+            //get end date for comparison
+            DateTime endDate = dto.SprintStart!.Value.Date.AddDays(dto.SprintLength);
             var today = DateTime.UtcNow.Date;
 
             //only update the sprintid and sprint time interal if the allotted time has passed
-            while (dto.SprintStart < today && dto.RepeatSprintOption != (int)RepeatSprint.Never)
+            while (endDate < today && dto.RepeatSprintOption != (int)RepeatSprint.Never)
             {
                 dto.SprintId++;
-
-                //update sprint start date
-                switch (dto.RepeatSprintOption)
-                {
-                    case (int)RepeatSprint.Weekly:
-                        dto.SprintStart = dto.SprintStart!.Value.AddDays(7);
-                        break;
-                    case (int)RepeatSprint.BiWeekly:
-                        dto.SprintStart = dto.SprintStart!.Value.AddDays(14);
-                        break;
-                    case (int)RepeatSprint.Monthly:
-                        dto.SprintStart = dto.SprintStart!.Value.AddMonths(1);
-                        break;
-                    case (int)RepeatSprint.Custom:
-                        dto.SprintStart = dto.SprintStart!.Value.AddDays(dto.SprintLength);
-                        break;
-                    default:
-                        break;
-                }
-
+                dto.SprintStart = endDate;
                 updated = true;
             }
 
-            if(updated)
+            if (updated)
                 await _ticketsD.SaveSettings(dto);
 
             return dto;
@@ -282,10 +269,10 @@ namespace Voyage.Business
                     dto.SprintLength = 14;
                     break;
                 case (int)RepeatSprint.Monthly:
-                    dto.SprintLength = 30;
+                    dto.SprintLength = DateTime.DaysInMonth(dto.SprintStart!.Value.Year, dto.SprintStart!.Value.Month);
                     break;
                 case (int)RepeatSprint.Never:
-                    dto.SprintLength = 10;
+                    dto.SprintLength = 0;
                     break;
                 case (int)RepeatSprint.Custom:
                 default:
