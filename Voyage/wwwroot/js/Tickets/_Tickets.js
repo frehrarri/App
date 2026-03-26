@@ -265,14 +265,37 @@ function buildTableRow(tableBody, ticket) {
 }
 
 function deleteTableRow(e) {
-    
+    const container = e.target.closest('.section-container');
+    debugger;
     var rows = getCheckedRows(e)
     if (rows) {
-        decreaseRecordCount(e, rows);
+        //decreaseRecordCount(e, rows);
         rows.forEach(r => {
             r.remove();
         });
+
+        //if there are no remaining rows display no results message
+        const remaining = container.querySelectorAll('.app-table-data').length;
+        if (remaining == 0) {
+            const tbody = container.querySelector('tbody');
+
+            const tr = document.createElement('tr');
+            tr.classList.add('app-table-row');
+
+            const td = document.createElement('td');
+            td.classList.add('no-results', 'app-table-data');
+            td.setAttribute('colspan', '11');
+
+            const span = document.createElement('span');
+            span.innerText = 'No Results';
+
+            td.append(span);
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        }
+     
     }
+
 }
 
 function updateRecordCount(e, pageNumber, pageSize) {

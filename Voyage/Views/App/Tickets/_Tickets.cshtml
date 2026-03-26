@@ -33,16 +33,6 @@
                 <h4>Sprint @Model.Sprint.SprintId: </h4>
                 <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
             </div>
-
-        @*     <div class="card-header">
-                @foreach (var s in Model.Sections)
-                {
-                        <label>@s.Title:</label>
-                        <span>@Model.Tickets.Count(x => x.SectionId == s.SectionId)</span>
-                        <br />
-                }
-                
-            </div> *@
         }
 
     </div>
@@ -88,14 +78,6 @@
                                 <th class="app-table-header">Editor</th>
                                 <th class="app-table-header">Created</th>
                                 <th class="app-table-header">Author</th>
-        @* 
-                                @if (s.Title != "Discontinued" && s.Title != "Completed")
-                                {
-                                    <th class="app-table-header">
-                                        <button class="btnAddTicket primary-btn" data-section="@s.Title">Add</button>
-                                    </th>
-                                } *@
-
                             </tr>
                         </thead>
                         <tbody>
@@ -146,7 +128,6 @@
                             <button class="add-btn primary-btn" type="button">Add Ticket</button>
                             <button class="completed-btn secondary-btn disabled" type="button" disabled>Mark Completed</button>
                             <button class="discontinue-btn warning-btn disabled" type="button" disabled>Discontinue</button>
-                         @*    <button id="remove-btn" class="warning-btn @(tickets.Any() ? "" : "hidden") type="button">Delete</button> *@
                         }
                     </div>
 
@@ -243,5 +224,5 @@
 </div>
 
 <input type="hidden" id="hdnTotalTicketCount" value="@Model.Tickets.Count()" />
-<input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintLength="@Model.Sprint?.SprintLength" @* data-sprintEnd="@Model.Sprint?.EndDate *@" />
+<input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintLength="@Model.Sprint?.SprintLength" />
 
