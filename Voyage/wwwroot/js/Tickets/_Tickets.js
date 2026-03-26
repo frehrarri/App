@@ -378,7 +378,7 @@ async function updatePaginatedUI(e, sectionTitle) {
 }
 
 function handlePageBtns(e, currentPage, pageBtn, numPages) {
-    debugger;
+    
     currentPage = parseInt(e.target.dataset.page);
 
     //remove selected/disabled from previous page button
@@ -389,20 +389,60 @@ function handlePageBtns(e, currentPage, pageBtn, numPages) {
     e.target.classList.add("selected");
     e.target.disabled = true;
 
+    //handle less than 5 pages - no centering needed for selection
+    if (numPages < 5)
+        handlePageButtons(e, numPages, pageBtn);
+
     //only center if there are 2 pages on each side and at least 5 pages total
-    if (numPages >= 5 && currentPage - 2 >= 1 && currentPage + 2 <= numPages) {
+    if (numPages >= 5 && currentPage - 2 >= 1 && currentPage + 2 <= numPages)
         formatPageButtons(e, currentPage, numPages);
-    }
-    //handle starting pages
+
+    //handle starting 5 pages
     const startDiff = currentPage - 1;
-    if (startDiff == 1 || startDiff == 0) {
+    if (startDiff == 1 || startDiff == 0) 
         formatPageButtons(e, 3, numPages);
-    }
-    //handle final pages
+    
+    //handle final 5 pages
     const finalDiff = numPages - currentPage;
-    if (finalDiff == 1 || finalDiff == 0) {
+    if (finalDiff == 1 || finalDiff == 0) 
         formatPageButtons(e, Math.max(3, numPages - 2), numPages)
+}
+
+function handlePageButtons(e, numPages, pageBtn) {
+    const container = e.target.closest('.section-container');
+    let selectedPage = null;
+
+    debugger;
+    if (!pageBtn || numPages >=5)
+        return;
+
+    if (pageBtn.classList.contains('.page')) {
+        selectedPage = parseInt(pageBtn.dataset.page);
     }
+    else {
+        //selectedPage = parseInt()
+    }
+
+    //set button and right arrow to selected disabled
+    if (selectedPage >= numPages) {
+        //const rightArrow = container.querySelector('.paginate.paginate-arrow.right');
+        //rightArrow.disabled = true;
+
+        //pageBtn.
+    }
+    //set button and left arrow to selected disabled
+    else if (selectedPage <= 1) {
+        //const leftArrow = container.querySelector('.paginate.paginate-arrow.left');
+        //leftArrow.disabled = true;
+
+
+    }
+    //set selected only
+    else {
+
+    }
+
+    
 }
 
 function formatPageButtons(e, anchor, numPages) {
@@ -434,6 +474,7 @@ function formatPageButtons(e, anchor, numPages) {
 function handleArrowButtons(e, currentPage, pageBtn, numPages) {
     const sectionContainer = e.target.closest('.section-container');
     const pageBtnContainer = sectionContainer.querySelector('.page-btn-container');
+    debugger;
 
     const pageBtns = Array.from(pageBtnContainer.closest('.page-btn-container').children)
         .filter(el => el.tagName === 'BUTTON');
@@ -446,35 +487,43 @@ function handleArrowButtons(e, currentPage, pageBtn, numPages) {
     const finalDiff = numPages - currentPage;
     let selectedPage = null;
 
-    //handle starting pages
-    if (startDiff <= 1) 
-        selectedPage = 3;
-
-    //handle final pages
-    else if (finalDiff <= 1) 
-        selectedPage = numPages - 2;
-
-    //only center if there are 2 pages on each side and at least 5 pages total
+    //handle less than 5 pages - no centering needed for selection
+    if (numPages < 5)
+        handlePageButtons(e, numPages, pageBtn);
     else
-        selectedPage = currentPage;
-    
-    // reformat buttons
-    for (let i = 0; i < pageBtns.length; i++) {
-        const pageNum = selectedPage - 2 + i;
-        pageBtns[i].dataset.page = pageNum;
-        pageBtns[i].innerText = pageNum;
-        pageBtns[i].disabled = false;
-        pageBtns[i].classList.remove('selected');
+    {
+        //handle starting pages
+        if (startDiff <= 1)
+            selectedPage = 3;
 
-        //disable selected page button
-        if (pageNum === currentPage) {
-            pageBtns[i].disabled = true;
-            pageBtns[i].classList.add('selected');
+        //handle final pages
+        else if (finalDiff <= 1)
+            selectedPage = numPages - 2;
+
+        //only center if there are 2 pages on each side and at least 5 pages total
+        else
+            selectedPage = currentPage;
+
+        // reformat buttons
+        for (let i = 0; i < pageBtns.length; i++) {
+            const pageNum = selectedPage - 2 + i;
+            pageBtns[i].dataset.page = pageNum;
+            pageBtns[i].innerText = pageNum;
+            pageBtns[i].disabled = false;
+            pageBtns[i].classList.remove('selected');
+
+            //disable selected page button
+            if (pageNum === currentPage) {
+                pageBtns[i].disabled = true;
+                pageBtns[i].classList.add('selected');
+            }
+
+            applyEllipsis(sectionContainer, selectedPage, numPages);
+
         }
-
-        applyEllipsis(sectionContainer, selectedPage, numPages);
-       
     }
+
+    
 }
 
 function handleManualPageInput(container, selectedPage, numPages) {
@@ -505,7 +554,7 @@ function handleManualPageInput(container, selectedPage, numPages) {
             pageBtns[i].disabled = true;
             pageBtns[i].classList.add('selected');
         }
-        debugger;
+
         //disable arrows
         if (i == 0 && selectedPage <= 1) {
             container.querySelector('.paginate.paginate-arrow.left').disabled = true;

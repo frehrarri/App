@@ -7,6 +7,10 @@
     /*position: relative;*/ /* needed for absolute child positioning */
 }
 
+#logo {
+    max-height: 15px;
+}
+
 .navbar-brand {
     color: white;
     margin-left: 35px;

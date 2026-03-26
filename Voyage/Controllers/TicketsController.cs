@@ -49,7 +49,7 @@ namespace Voyage.Controllers
                 vm.Settings = dto;
                 vm.Sections = dto.Sections;
                 vm.Sprint.StartDate = dto.SprintStart;
-                vm.Sprint.EndDate = dto.SprintEnd;
+                vm.Sprint.SprintLength = dto.SprintLength;
                 vm.Sprint.SprintId = dto.SprintId;
 
                 vm.Tickets = await GetTickets(dto.SprintId);
@@ -226,8 +226,8 @@ namespace Voyage.Controllers
         [ValidateAntiForgeryToken]
         public async Task<bool> SaveSettings([FromBody] TicketSettingsDTO dto)
         {
-            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
-            dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
+            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId").Value;
+            dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId").Value;
             dto.CreatedBy = HttpContext.Session.GetString("Username")!;
             return await _ticketsB.SaveSettings(dto);
         }
@@ -257,7 +257,7 @@ namespace Voyage.Controllers
                 IsActive = t.IsActive,
                 IsLatest = t.IsLatest,
                 SprintStartDate = t.SprintStartDate.GetValueOrDefault(),
-                SprintEndDate = t.SprintEndDate.GetValueOrDefault(),
+                SprintLength = t.SprintLength,
                 TicketChangeAction = t.TicketChangeAction
             }).ToList();
         }
@@ -294,7 +294,7 @@ namespace Voyage.Controllers
             TicketSettingsVM vm = new TicketSettingsVM();
             vm.SettingsId = dto.SettingsId;
             vm.SprintStart = dto.SprintStart!.Value.Date;
-            vm.SprintEnd = dto.SprintEnd;
+            vm.SprintLength = dto.SprintLength;
             vm.RepeatSprintOption = (int?)dto.RepeatSprintOption;
             vm.Sections = dto.Sections;
             vm.SectionSetting = dto.SectionSetting;

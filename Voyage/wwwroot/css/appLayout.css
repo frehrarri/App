@@ -75,6 +75,10 @@ html, body {
     font-size: 18px; 
 }*/
 
+#logo {
+    max-height: 15px;
+}
+
 #header-nav {
     height: 30px;
     display: flex;

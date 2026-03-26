@@ -27,7 +27,7 @@ namespace Voyage.Utilities
                     Feature = Constants.Feature.Tickets,
                     RepeatSprintOption = -1,
                     SprintStartDate = null,
-                    SprintEndDate = null,
+                    SprintLength = 0,
                     SprintId = -1,
                     SectionSetting = -1,
                     CreatedBy = "SYSTEM",

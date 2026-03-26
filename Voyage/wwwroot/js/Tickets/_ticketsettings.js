@@ -1,6 +1,8 @@
 ﻿import { getTicketsPartial } from "/js/Tickets/_Tickets.js";
 import { loadModule } from "/js/__moduleLoader.js";
 
+const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
 export async function init() {
     removeEventListeners();
 
@@ -145,39 +147,36 @@ function removeSection(e, sectionHistory) {
 }
 
 async function save(e) {
-    debugger;
-    e.stopPropagation();
-    e.preventDefault();
-
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
-    const repeatOption = document.querySelector("[name='rdo-repeat']:checked").value;
-    const sprintStart = document.getElementById('start-date')?.value;
-    const sprintEnd = document.getElementById('end-date')?.value;
-
-    const sectionSetting = document.querySelector("[name='rdo-section']:checked")?.value;
-
-    const sections = Array.from(document.querySelectorAll('.delete-section')).map((s, i) => {
-        const clone = s.cloneNode(true);
-        clone.querySelector('.delete')?.remove();
-        return {
-            Title: clone.textContent.trim(),
-            SectionOrder: i
-        };
-    });
-
-    const dto = {
-        RepeatSprintOption: parseInt(repeatOption),
-        SprintStart: sprintStart,
-        SprintEnd: sprintEnd || null,
-        SectionSetting: parseInt(sectionSetting),
-        Sections: sections ?? []
-    }
-
-    let response;
-
     try {
-        response = await axios.post('/Tickets/SaveSettings', dto, {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const repeatOption = document.querySelector("[name='rdo-repeat']:checked").value;
+        const sprintStart = document.getElementById('start-date')?.value;
+        const sprintLength = document.getElementById('sprint-length')?.value;
+        debugger;
+        /*const sprintEnd = document.getElementById('end-date')?.value;*/
+
+        const sectionSetting = document.querySelector("[name='rdo-section']:checked")?.value;
+
+        const sections = Array.from(document.querySelectorAll('.delete-section')).map((s, i) => {
+            const clone = s.cloneNode(true);
+            clone.querySelector('.delete')?.remove();
+            return {
+                Title: clone.textContent.trim(),
+                SectionOrder: i
+            };
+        });
+
+        const dto = {
+            RepeatSprintOption: parseInt(repeatOption),
+            SprintStart: sprintStart ? new Date(sprintStart).toISOString() : null,
+            SprintLength: parseInt(sprintLength) || 0,
+            SectionSetting: parseInt(sectionSetting),
+            Sections: sections ?? []
+        }
+    
+        const response = await axios.post('/Tickets/SaveSettings', dto, {
             headers: {
                 'X-CSRF-TOKEN': token,
                 'Content-Type': 'application/json'
@@ -194,7 +193,8 @@ async function save(e) {
         }
 
         return true;
-    } catch (error) {
+    }
+    catch (error) {
         console.error("error: /Tickets/SaveSettings", error);
         return false;
     }
@@ -212,12 +212,12 @@ function toggleSprintDateControls(e) {
 
     container.classList.remove('hidden');
 
-    let endDate = document.getElementById('dv-end-date');
+    let sprintLength = document.getElementById('dv-sprint-length');
     if (e.target.id == "rdo-repeat-custom") {
-        endDate.classList.remove('hidden');
+        sprintLength.classList.remove('hidden');
     }
     else {
-        endDate.classList.add('hidden');
+        sprintLength.classList.add('hidden');
     }
 }
 

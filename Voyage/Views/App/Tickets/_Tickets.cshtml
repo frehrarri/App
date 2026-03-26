@@ -243,5 +243,5 @@
 </div>
 
 <input type="hidden" id="hdnTotalTicketCount" value="@Model.Tickets.Count()" />
-<input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintEnd="@Model.Sprint?.EndDate" />
+<input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintLength="@Model.Sprint?.SprintLength" @* data-sprintEnd="@Model.Sprint?.EndDate *@" />
 

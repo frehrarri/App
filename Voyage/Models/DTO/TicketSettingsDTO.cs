@@ -8,9 +8,7 @@ namespace Voyage.Models.DTO
         public TicketSettingsDTO()
         {
             SprintStart = DateTime.Today.ToUniversalTime();
-            SprintEnd = null;
             RepeatSprintOption = (int)RepeatSprint.Never;
-
             Sections = new List<SectionDTO>();
         }
 
@@ -23,7 +21,7 @@ namespace Voyage.Models.DTO
         public int RepeatSprintOption { get; set; }
         public int SprintId { get; set; }
         public DateTime? SprintStart { get; set; }
-        public DateTime? SprintEnd { get; set; }
+        public int SprintLength { get; set; }
         public List<SectionDTO> Sections { get; set; }
         public SectionSettings SectionSetting { get; set; }
         public int DaysBetweenSprintStartEnd { get; set; }

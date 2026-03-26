@@ -31,8 +31,7 @@ namespace Voyage.Data
                             .Where(t =>
                                 t.IsActive == true
                                 && t.IsLatest == true
-                                && t.SprintStartDate <= date 
-                                && t.SprintEndDate >= date)
+                                && t.SprintStartDate <= date) 
                             .Select(t => new TicketDTO
                             {
                                 TicketId = t.TicketId,
@@ -47,7 +46,7 @@ namespace Voyage.Data
                                 SectionTitle = t.SectionTitle,
                                 SprintId = t.SprintId,
                                 SprintStartDate = t.SprintStartDate,
-                                SprintEndDate = t.SprintEndDate,
+                                SprintLength = t.SprintLength,
                                 CreatedBy = t.CreatedBy,
                                 CreatedDate = t.CreatedDate,
                                 ModifiedBy = t.ModifiedBy,
@@ -89,7 +88,7 @@ namespace Voyage.Data
                         SectionTitle = t.SectionTitle,
                         SprintId = t.SprintId,
                         SprintStartDate = t.SprintStartDate,
-                        SprintEndDate = t.SprintEndDate,
+                        SprintLength = t.SprintLength,
                         CreatedBy = t.CreatedBy,
                         CreatedDate = t.CreatedDate,
                         ModifiedBy = t.ModifiedBy,
@@ -129,7 +128,7 @@ namespace Voyage.Data
                     SectionTitle = t.SectionTitle,
                     SprintId = t.SprintId,
                     SprintStartDate = t.SprintStartDate,
-                    SprintEndDate = t.SprintEndDate,
+                    SprintLength = t.SprintLength,
                     CreatedBy = t.CreatedBy,
                     CreatedDate = t.CreatedDate,
                     ModifiedBy = t.ModifiedBy,
@@ -186,7 +185,7 @@ namespace Voyage.Data
                         Status = ticketDTO.Status ?? existingTicket.Status,
                         SprintId = ticketDTO.SprintId != 0 ? ticketDTO.SprintId : existingTicket.SprintId,
                         SprintStartDate = ticketDTO.SprintStartDate ?? existingTicket.SprintStartDate,
-                        SprintEndDate = ticketDTO.SprintEndDate ?? existingTicket.SprintEndDate,
+                        SprintLength = ticketDTO.SprintLength,
                         CreatedBy = existingTicket.CreatedBy,
                         CreatedDate = existingTicket.CreatedDate,
                         ModifiedBy = ticketDTO.CreatedBy,
@@ -227,7 +226,7 @@ namespace Voyage.Data
                         Status = ticketDTO.Status,
                         SprintId = ticketDTO.SprintId == 0 ? newSprintId : ticketDTO.SprintId,
                         SprintStartDate = ticketDTO.SprintStartDate,
-                        SprintEndDate = ticketDTO.SprintEndDate,
+                        SprintLength = ticketDTO.SprintLength,
                         CreatedBy = ticketDTO.CreatedBy,
                         CreatedDate = DateTime.UtcNow,
                         TicketChangeAction = ticketDTO.TicketChangeAction
@@ -296,7 +295,7 @@ namespace Voyage.Data
                     SectionId = t.SectionId,
                     SprintId = t.SprintId,
                     SprintStartDate = t.SprintStartDate,
-                    SprintEndDate = t.SprintEndDate,
+                    SprintLength = t.SprintLength,
                     CreatedBy = t.CreatedBy,
                     CreatedDate = t.CreatedDate,
                     ModifiedBy = t.ModifiedBy,
@@ -479,7 +478,7 @@ namespace Voyage.Data
                         SettingsId = s.SettingsId,
                         RepeatSprintOption = s.RepeatSprintOption,
                         SectionSetting = (SectionSettings)s.SectionSetting,
-                        SprintEnd = s.SprintEndDate,
+                        SprintLength = s.SprintLength,
                         SprintStart = s.SprintStartDate,
                         SprintId = s.SprintId,
                         CreatedBy = s.CreatedBy,
@@ -559,11 +558,10 @@ namespace Voyage.Data
                 settings.SectionSetting = (int)dto.SectionSetting;
                 settings.RepeatSprintOption = (int)dto.RepeatSprintOption;
 
-                if (dto.SprintEnd != null)
-                    settings.SprintEndDate = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
-
                 if (dto.SprintStart != null)
                     settings.SprintStartDate = DateTime.SpecifyKind(dto.SprintStart!.Value, DateTimeKind.Utc);
+
+                settings.SprintLength = dto.SprintLength;
 
                 settings.Feature = Constants.Feature.Tickets;
                 settings!.IsLatest = true;

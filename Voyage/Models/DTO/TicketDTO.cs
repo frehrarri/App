@@ -30,7 +30,7 @@ namespace Voyage.Models.DTO
 
         public int SprintId { get; set; }
         public DateTime? SprintStartDate { get; set; }
-        public DateTime? SprintEndDate { get; set; }
+        public int SprintLength { get; set; }
 
         public List<TicketVersionDTO> TicketVersionHistory { get; set; }
 

@@ -143,15 +143,31 @@ label {
     margin-top: 20px;
 }
 
-#dv-end-date{
+/*#dv-end-date{
     padding-top: 10px;
 }
 
 #dv-end-date > label {
     padding-right: 10px;
+}*/
+
+#dv-sprint-length {
+    padding-top: 10px;
 }
 
-#sections-container{
+    #dv-sprint-length > label {
+        padding-right: 10px;
+    }
+
+    #dv-sprint-length > input {
+        width: 50px;
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        background-color: white;
+        margin-bottom: 5px;
+    }
+
+#sections-container {
     margin-top: 20px;
 }
 

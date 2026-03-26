@@ -71,9 +71,8 @@ namespace Voyage.Business
             TicketSettingsDTO? settings = await GetCompanySettings(ticketDTO.CompanyId);
             if (settings != null)
             {
-                //HandleSprintDates(settings);
                 ticketDTO.SprintStartDate = settings.SprintStart;
-                ticketDTO.SprintEndDate = settings.SprintEnd;
+                ticketDTO.SprintLength = settings.SprintLength;
                 ticketDTO.SprintId = settings.SprintId;
             }
 
@@ -222,7 +221,7 @@ namespace Voyage.Business
         public async Task<bool> SaveSettings(TicketSettingsDTO dto)
         {
             HandleRequiredSections(ref dto);
-            //HandleSprintDates(dto);
+            HandleSprintLength(ref dto);
 
             return await _ticketsD.SaveSettings(dto);
         }
@@ -234,79 +233,64 @@ namespace Voyage.Business
             dto.Sections = dto.Sections.Where(s => !requiredSections.Contains(s.Title)).ToList();
         }
 
-        public void HandleSprintDates(TicketSettingsDTO dto)
-        {
-            
-            dto.SprintStart = DateTime.SpecifyKind(dto.SprintStart!.Value.Date, DateTimeKind.Utc);
-
-            //dto defaults to None (Start = today, end = null)
-
-            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.Weekly)
-            {
-                dto.SprintEnd = dto.SprintStart!.Value.AddDays(7);
-            }
-
-            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.BiWeekly)
-            {
-                dto.SprintEnd = dto.SprintStart!.Value.AddDays(14);
-            }
-
-            if (dto.RepeatSprintOption == (int)Constants.RepeatSprint.Monthly)
-            {
-                dto.SprintEnd = dto.SprintStart!.Value.AddMonths(1);
-            }
-
-            //no end date for never repeat
-            if (dto.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
-            {
-                dto.SprintEnd = DateTime.SpecifyKind(dto.SprintEnd!.Value, DateTimeKind.Utc);
-            }
-            
-        }
-
         public async Task<TicketSettingsDTO> UpdateSprint(TicketSettingsDTO dto)
         {
-            DateTime? newSprintDate = dto.SprintStart;
-            int daysBetween = 0;
+            bool updated = false;
+            var today = DateTime.UtcNow.Date;
 
+            //only update the sprintid and sprint time interal if the allotted time has passed
+            while (dto.SprintStart < today && dto.RepeatSprintOption != (int)RepeatSprint.Never)
+            {
+                dto.SprintId++;
+
+                //update sprint start date
+                switch (dto.RepeatSprintOption)
+                {
+                    case (int)RepeatSprint.Weekly:
+                        dto.SprintStart = dto.SprintStart!.Value.AddDays(7);
+                        break;
+                    case (int)RepeatSprint.BiWeekly:
+                        dto.SprintStart = dto.SprintStart!.Value.AddDays(14);
+                        break;
+                    case (int)RepeatSprint.Monthly:
+                        dto.SprintStart = dto.SprintStart!.Value.AddMonths(1);
+                        break;
+                    case (int)RepeatSprint.Custom:
+                        dto.SprintStart = dto.SprintStart!.Value.AddDays(dto.SprintLength);
+                        break;
+                    default:
+                        break;
+                }
+
+                updated = true;
+            }
+
+            if(updated)
+                await _ticketsD.SaveSettings(dto);
+
+            return dto;
+        }
+
+        public void HandleSprintLength(ref TicketSettingsDTO dto)
+        {
             switch (dto.RepeatSprintOption)
             {
                 case (int)RepeatSprint.Weekly:
-                    daysBetween = 7;
-                    newSprintDate = newSprintDate!.Value.AddDays(7);
+                    dto.SprintLength = 7;
                     break;
                 case (int)RepeatSprint.BiWeekly:
-                    daysBetween = 14;
-                    newSprintDate = newSprintDate!.Value.AddDays(14);
+                    dto.SprintLength = 14;
                     break;
                 case (int)RepeatSprint.Monthly:
-                    newSprintDate = newSprintDate!.Value.AddMonths(1);
-                    daysBetween = (newSprintDate - dto.SprintStart)!.Value.Days;
-                    break;
-                case (int)RepeatSprint.Custom:
-                    daysBetween = (dto.SprintEnd - dto.SprintStart)!.Value.Days;
-                    newSprintDate = dto.SprintEnd;
+                    dto.SprintLength = 30;
                     break;
                 case (int)RepeatSprint.Never:
+                    dto.SprintLength = 10;
+                    break;
+                case (int)RepeatSprint.Custom:
                 default:
                     break;
             }
-
-            //only update the sprintid and sprint time interal if the allotted time has passed
-            if (DateTime.UtcNow >= dto.SprintStart)
-            {
-                dto.SprintStart = newSprintDate;
-                dto.SprintId++;
-
-                if (dto.RepeatSprintOption == (int)RepeatSprint.Custom)
-                {
-                    dto.SprintEnd = dto.SprintEnd!.Value.AddDays(daysBetween);
-                }
-
-                await _ticketsD.SaveSettings(dto);
-            }
-
-            return dto;
         }
 
         public List<SectionDTO> SetSectionsDevelopment()

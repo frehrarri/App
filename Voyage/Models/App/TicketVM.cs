@@ -28,7 +28,7 @@ namespace Voyage.Models.App
         public int SectionId { get; set; }
         public int SprintId { get; set; }
         public DateTime SprintStartDate { get; set; }
-        public DateTime SprintEndDate { get; set; }
+        public int SprintLength { get; set; }
         public List<TicketVersionDTO> VersionHistory { get; set; }
         public List<TicketDetailsDTO> TicketDetails { get; set; }
         public TicketSettingsVM TicketSettings { get; set; }
