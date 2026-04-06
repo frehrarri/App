@@ -134,9 +134,24 @@ a.active-tab:hover {
     cursor: default !important;
 }
 
-#filter-container{
-    align-items: center;
+#filter-container {
+    border: 1px solid #6289af;
+    border-radius: 10px;
+    padding: 20px;
     margin-bottom: 20px;
+    width: fit-content;
+}
+
+#filter-container p {
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+#filters {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
 }
 
 #section-filter {

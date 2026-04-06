@@ -11,11 +11,12 @@ namespace Voyage.Data.TableModels
         public Settings()
         {
             Sections = new List<Section>();
+            SettingsHistory = new List<SettingsHistory>();
         }
 
         public Guid SettingsKey { get; set; }
         public int SettingsId { get; set; }
-        //public decimal SettingsVersion { get; set; }
+        public decimal SettingsVersion { get; set; }
         public Feature Feature { get; set; }
         public int RepeatSprintOption { get; set; }
         public DateTime? SprintStartDate { get; set; }
@@ -44,6 +45,8 @@ namespace Voyage.Data.TableModels
         public string? UserId { get; set; }//AppUser
         public AppUser? User { get; set; }
 
+        public ICollection<SettingsHistory> SettingsHistory { get; set; }
+
 
         #endregion
 
@@ -58,10 +61,6 @@ namespace Voyage.Data.TableModels
             modelBuilder.Entity<Settings>()
                 .Property(t => t.SettingsKey)
                 .ValueGeneratedOnAdd();
-
-            //versioning
-            //modelBuilder.Entity<Settings>()
-            //    .HasAlternateKey(t => new { t.SettingsId, t.SettingsVersion });
 
             //Fk to team
             modelBuilder.Entity<Settings>()
@@ -83,6 +82,14 @@ namespace Voyage.Data.TableModels
                 .WithOne(u => u.Settings)
                 .HasForeignKey<Settings>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //FK to History
+            modelBuilder.Entity<Settings>()
+                .HasMany(s => s.SettingsHistory)
+                .WithOne(v => v.Settings)
+                .HasForeignKey(v => v.SettingsId)
+                .HasPrincipalKey(s => s.SettingsId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
