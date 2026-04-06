@@ -9,6 +9,7 @@ using Voyage.Data;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
+using Voyage.Services;
 using static Voyage.Utilities.Constants;
 using static Voyage.Utilities.CustomAttributes;
 
@@ -18,96 +19,160 @@ namespace Voyage.Controllers
     {
         private TicketsBLL _ticketsB;
         private UserManager<AppUser> _userManager;
+        private LoggerService _log;
         
 
-        public TicketsController(TicketsBLL ticketsB, UserManager<AppUser> userManager)
+        public TicketsController(TicketsBLL ticketsB, UserManager<AppUser> userManager, LoggerService log)
         {
             _ticketsB = ticketsB;
             _userManager = userManager;
+            _log = log;
         }
 
         #region Partials
 
-        [HttpGet]
-        public IActionResult TicketsControlPartial()
-        {
-            return PartialView("~/Views/App/Tickets/_TicketsControl.cshtml");
-        }
+        //[HttpGet]
+        //public IActionResult TicketsControlPartial()
+        //{
+        //    return PartialView("~/Views/App/Tickets/_TicketsControl.cshtml");
+        //}
 
         [HttpGet]
         public async Task<IActionResult> TicketsPartial()
         {
-            TicketsVM vm = new TicketsVM();
-
-            var companyId = HttpContext.Session.GetInt32("CompanyId");
-            TicketSettingsDTO? settings = await _ticketsB.GetCompanySettings(companyId!.Value);
-
-            if (settings != null)
+            try
             {
-                var dto = await _ticketsB.UpdateSprint(settings);
+                TicketsVM vm = new TicketsVM();
 
-                vm.Settings = dto;
-                vm.Sections = dto.Sections;
-                vm.Sprint.StartDate = dto.SprintStart;
-                vm.Sprint.SprintLength = dto.SprintLength;
-                vm.Sprint.SprintId = dto.SprintId;
+                var companyId = HttpContext.Session.GetInt32("CompanyId");
+                TicketSettingsDTO? settings = await _ticketsB.GetCompanySettings(companyId!.Value);
 
-                vm.Tickets = await GetTickets(dto.SprintId);
+                if (settings != null)
+                {
+                    var dto = await _ticketsB.UpdateSprint(settings);
 
-                return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
+                    vm.Settings = dto;
+                    vm.Sections = dto.Sections;
+                    vm.Sprint.StartDate = dto.SprintStart;
+                    vm.Sprint.SprintLength = dto.SprintLength;
+                    vm.Sprint.SprintId = dto.SprintId;
+
+                    vm.Tickets = await GetTickets(dto.SprintId);
+
+                    return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
+                }
+
+                return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
             }
+            catch (Exception ex)
+            {
+                string message = "Could not retrieve Tickets page";
 
-            return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
+                await _log.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return Json(message);
+            }
         }
 
         [HttpGet]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> TicketPartial(int ticketId, decimal? ticketVersion = null)
         {
-            ViewBag.Username = HttpContext.Session.GetString("Username");
-
-            TicketVM? vm = await GetTicket(ticketId, ticketVersion);
             try
             {
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+
+                TicketVM? vm = await GetTicket(ticketId, ticketVersion);
+
                 return PartialView("~/Views/App/Tickets/_Ticket.cshtml", vm);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.ToString());
+                string message = "Could not retrieve Ticket page";
+
+                await _log.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return Json(message);
             }
-            //return PartialView("~/Views/Tickets/_Ticket.cshtml", vm);
         }
 
         [HttpGet]
         public async Task<IActionResult> ManageTicketPartial(int? ticketId = null)
         {
-            TicketVM vm = new TicketVM();
-
-            if (ticketId != null)
+            try
             {
-                vm = await GetTicket(ticketId.Value);
-            }
+                TicketVM vm = new TicketVM();
 
-            TicketSettingsDTO? dto = await GetSettings();
-            if (dto != null)
+                if (ticketId != null)
+                {
+                    vm = await GetTicket(ticketId.Value);
+                }
+
+                TicketSettingsDTO? dto = await GetSettings();
+                if (dto != null)
+                {
+                    vm.TicketSettings = MapToVM(dto);
+                }
+
+                return PartialView("~/Views/App/Tickets/_ManageTicket.cshtml", vm);
+
+            }
+            catch (Exception ex)
             {
-                vm.TicketSettings = MapToVM(dto);
-            }
+                string message = "Could not retrieve Manage Ticket page";
 
-            return PartialView("~/Views/App/Tickets/_ManageTicket.cshtml", vm);
+                await _log.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return Json(message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> SettingsPartial(int companyId)
         {
-            TicketSettingsVM vm = new TicketSettingsVM();
+            try
+            {
+                TicketSettingsVM vm = new TicketSettingsVM();
 
-            TicketSettingsDTO? dto = await GetSettings();
+                TicketSettingsDTO? dto = await GetSettings();
 
-            if (dto != null)
-                vm = MapToVM(dto);
+                if (dto != null)
+                    vm = MapToVM(dto);
 
-            return PartialView("~/Views/App/Tickets/_TicketSettings.cshtml", vm);
+                return PartialView("~/Views/App/Tickets/_TicketSettings.cshtml", vm);
+            }
+            catch (Exception ex)
+            {
+                string message = "Could not retrieve Ticket Settings page";
+
+                await _log.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return Json(message);
+            }
         }
 
 

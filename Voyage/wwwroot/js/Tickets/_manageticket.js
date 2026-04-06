@@ -172,6 +172,7 @@ async function saveTicket(e) {
         ParentTicketId: document.getElementById('ticketParent').value ? parseInt(document.getElementById('ticketParent').value) : null
     }
     let response;
+    debugger;
     
     try {
         response = await axios.post('/Tickets/SaveTicket', ticketDTO, {

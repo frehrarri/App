@@ -86,6 +86,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<RoleSeeder>();
 builder.Services.AddScoped<SectionSeeder>();
+builder.Services.AddScoped<LoggerService>();
 
 //business layer
 builder.Services.AddScoped<TicketsBLL>();

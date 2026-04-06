@@ -249,6 +249,7 @@ namespace Voyage.Business
             {
                 dto.SprintId++;
                 dto.SprintStart = endDate;
+                endDate = endDate.AddDays(dto.SprintLength);
                 updated = true;
             }
 

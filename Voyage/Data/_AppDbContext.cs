@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using Voyage.Data.TableModels;
+using Voyage.Services;
 
 namespace Voyage.Data
 {
@@ -10,6 +11,7 @@ namespace Voyage.Data
         public _AppDbContext(DbContextOptions<_AppDbContext> options): base(options) { }
 
         public DbSet<_MasterEF> _Master { get; set; }
+        public DbSet<Log> Logs { get; set; }
         public DbSet<Settings> Settings { get; set; }
 
         public DbSet<Company> Companies { get; set; }

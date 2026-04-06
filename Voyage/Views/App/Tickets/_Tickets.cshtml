@@ -37,6 +37,18 @@
 
     </div>
     
+    @{
+        var endDate = Model?.Sprint?.StartDate.Value.Date.AddDays(Model.Sprint.SprintLength);
+    }
+
+@*     <div id="sprint-pagination-container">
+        <label for="sprint-selector">Sprint:</label>
+        <input id="sprint-input" type="number" />
+        <select id="sprint-selector">
+            <option value="@Model?.Sprint?.SprintId">@Model?.Sprint?.SprintId (@Model?.Sprint?.StartDate!.Value.ToString("dd MMM")-@endDate!.Value.ToString("dd MMM"))</option>
+        </select>
+    </div> *@
+
     <div id="filter-container">
         <label for="section-filter">Filter Sections:</label>
         <select id="section-filter">

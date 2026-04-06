@@ -144,6 +144,20 @@ a.active-tab:hover {
     border-radius: 5px;
 }
 
+#sprint-selector {
+    margin-left: 5px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+#sprint-input {
+    border-radius: 5px;
+    border: 1px solid gray;
+    margin-left: 10px;
+    height: 25px;
+    width: 30px;
+}
+
 .no-results {
     padding: 20px;
     color: #666;

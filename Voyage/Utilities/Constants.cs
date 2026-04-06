@@ -15,6 +15,7 @@
         public static string? DbConnString { get; private set; }
 
         public const string SystemEmail = "mitchellfrehr@gmail.com";
+        public const string SystemUser = "System";
 
         #endregion
 
