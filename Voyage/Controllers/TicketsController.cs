@@ -291,8 +291,8 @@ namespace Voyage.Controllers
         [ValidateAntiForgeryToken]
         public async Task<bool> SaveSettings([FromBody] TicketSettingsDTO dto)
         {
-            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId").Value;
-            dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId").Value;
+            dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
+            dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
             dto.CreatedBy = HttpContext.Session.GetString("Username")!;
             return await _ticketsB.SaveSettings(dto);
         }

@@ -34,7 +34,7 @@ namespace Voyage.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Logger Failed");
+                Console.WriteLine($"Logger Failed: StackTrace: {ex.StackTrace}");
             }
 
         }

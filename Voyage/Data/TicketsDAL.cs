@@ -7,6 +7,7 @@ using Voyage.Business;
 using Voyage.Data.TableModels;
 using Voyage.Models.App;
 using Voyage.Models.DTO;
+using Voyage.Services;
 using Voyage.Utilities;
 using static Voyage.Utilities.Constants;
 
@@ -15,51 +16,60 @@ namespace Voyage.Data
     public class TicketsDAL
     {
         private _AppDbContext _db;
-        private ILogger<TicketsDAL> _logger;
+        private LoggerService _logger;
 
-        public TicketsDAL(_AppDbContext db, ILogger<TicketsDAL> logger)
+        public TicketsDAL(_AppDbContext db, LoggerService logger)
         {
             _db = db;
             _logger = logger;
         }
 
-        public async Task<List<TicketDTO>> GetTickets(DateTime date)
-        {
-            try
-            {
-                return await _db.Tickets
-                            .Where(t =>
-                                t.IsActive == true
-                                && t.IsLatest == true
-                                && t.SprintStartDate <= date) 
-                            .Select(t => new TicketDTO
-                            {
-                                TicketId = t.TicketId,
-                                TicketVersion = t.TicketVersion,
-                                Title = t.Title,
-                                Status = t.Status,
-                                Description = t.Description,
-                                AssignedTo = t.AssignedTo,
-                                PriorityLevel = t.PriorityLevel,
-                                DueDate = t.DueDate,
-                                ParentTicketId = t.ParentTicketId,
-                                SectionTitle = t.SectionTitle,
-                                SprintId = t.SprintId,
-                                SprintStartDate = t.SprintStartDate,
-                                SprintLength = t.SprintLength,
-                                CreatedBy = t.CreatedBy,
-                                CreatedDate = t.CreatedDate,
-                                ModifiedBy = t.ModifiedBy,
-                                ModifiedDate = t.ModifiedDate
-                            })
-                            .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex.ToString());
-                throw;
-            }   
-        }
+        //public async Task<List<TicketDTO>> GetTickets(DateTime date)
+        //{
+        //    try
+        //    {
+        //        return await _db.Tickets
+        //                    .Where(t =>
+        //                        t.IsActive == true
+        //                        && t.IsLatest == true
+        //                        && t.SprintStartDate <= date) 
+        //                    .Select(t => new TicketDTO
+        //                    {
+        //                        TicketId = t.TicketId,
+        //                        TicketVersion = t.TicketVersion,
+        //                        Title = t.Title,
+        //                        Status = t.Status,
+        //                        Description = t.Description,
+        //                        AssignedTo = t.AssignedTo,
+        //                        PriorityLevel = t.PriorityLevel,
+        //                        DueDate = t.DueDate,
+        //                        ParentTicketId = t.ParentTicketId,
+        //                        SectionTitle = t.SectionTitle,
+        //                        SprintId = t.SprintId,
+        //                        SprintStartDate = t.SprintStartDate,
+        //                        SprintLength = t.SprintLength,
+        //                        CreatedBy = t.CreatedBy,
+        //                        CreatedDate = t.CreatedDate,
+        //                        ModifiedBy = t.ModifiedBy,
+        //                        ModifiedDate = t.ModifiedDate
+        //                    })
+        //                    .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string message = "Could not retrieve tickets";
+
+        //        await _logger.Log(new LogDTO
+        //        {
+        //            LogType = LogType.Error,
+        //            Severity = LogSeverity.High,
+        //            StackTrace = ex.StackTrace,
+        //            ClientMessage = message
+        //        });
+
+        //        return null!;
+        //    }   
+        //}
 
         public async Task<List<TicketDTO>> GetTickets(int? sprintId)
         {
@@ -98,47 +108,73 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex.ToString());
-                throw;
+                string message = "Could not retrieve tickets";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return null!;
             }
         }
 
         public async Task<TicketsDTO> GetPaginatedTickets(int sprintId, string sectionTitle, int pageNumber, int pageSize)
         {
-            TicketsDTO ticketsDTO = new TicketsDTO();
+            try
+            {
+                TicketsDTO ticketsDTO = new TicketsDTO();
 
-            List<TicketDTO> tickets = await GetTickets(sprintId);
+                List<TicketDTO> tickets = await GetTickets(sprintId);
 
-            ticketsDTO.Tickets = tickets
-                .Where(t => t.SectionTitle == sectionTitle)
-                .OrderByDescending(t => t.PriorityLevel)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Select(t => new TicketDTO
+                ticketsDTO.Tickets = tickets
+                    .Where(t => t.SectionTitle == sectionTitle)
+                    .OrderByDescending(t => t.PriorityLevel)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(t => new TicketDTO
+                    {
+                        TicketId = t.TicketId,
+                        TicketVersion = t.TicketVersion,
+                        Title = t.Title,
+                        Status = t.Status,
+                        Description = t.Description,
+                        AssignedTo = t.AssignedTo,
+                        PriorityLevel = t.PriorityLevel,
+                        DueDate = t.DueDate,
+                        ParentTicketId = t.ParentTicketId,
+                        SectionTitle = t.SectionTitle,
+                        SprintId = t.SprintId,
+                        SprintStartDate = t.SprintStartDate,
+                        SprintLength = t.SprintLength,
+                        CreatedBy = t.CreatedBy,
+                        CreatedDate = t.CreatedDate,
+                        ModifiedBy = t.ModifiedBy,
+                        ModifiedDate = t.ModifiedDate
+                    })
+                    .ToList();
+
+                ticketsDTO.ResultCount = ticketsDTO.Tickets.Count();
+
+                return ticketsDTO;
+            }
+            catch (Exception ex)
+            {
+                string message = "Could not retrieve tickets";
+
+                await _logger.Log(new LogDTO
                 {
-                    TicketId = t.TicketId,
-                    TicketVersion = t.TicketVersion,
-                    Title = t.Title,
-                    Status = t.Status,
-                    Description = t.Description,
-                    AssignedTo = t.AssignedTo,
-                    PriorityLevel = t.PriorityLevel,
-                    DueDate = t.DueDate,
-                    ParentTicketId = t.ParentTicketId,
-                    SectionTitle = t.SectionTitle,
-                    SprintId = t.SprintId,
-                    SprintStartDate = t.SprintStartDate,
-                    SprintLength = t.SprintLength,
-                    CreatedBy = t.CreatedBy,
-                    CreatedDate = t.CreatedDate,
-                    ModifiedBy = t.ModifiedBy,
-                    ModifiedDate = t.ModifiedDate
-                })
-                .ToList();
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
 
-            ticketsDTO.ResultCount = ticketsDTO.Tickets.Count();
-
-            return ticketsDTO;
+                return null!;
+            }
         }
 
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
@@ -241,9 +277,18 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex.ToString());
+                string message = "Could not save ticket";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
                 await transaction.RollbackAsync();
-                throw;
+                return false;
             }
         }
 
@@ -323,30 +368,48 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting ticket {TicketId}, version {TicketVersion}", ticketId, ticketVersion);
-                throw;
+                string message = "Could not retrieve ticket";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return null!;
             }
         }
 
-        public async Task<List<TicketVersionDTO>> GetAllTicketVersions(int ticketId)
-        {
-            try
-            {
-                return await _db.Tickets
-                    .Where(t => t.TicketId == ticketId)
-                    .Select(t => new TicketVersionDTO
-                    { 
-                        TicketVersion = t.TicketVersion,
-                        TicketChangeAction = t.TicketChangeAction
-                    })
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex.ToString());
-                throw;
-            }
-        }
+        //public async Task<List<TicketVersionDTO>> GetAllTicketVersions(int ticketId)
+        //{
+        //    try
+        //    {
+        //        return await _db.Tickets
+        //            .Where(t => t.TicketId == ticketId)
+        //            .Select(t => new TicketVersionDTO
+        //            { 
+        //                TicketVersion = t.TicketVersion,
+        //                TicketChangeAction = t.TicketChangeAction
+        //            })
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string message = "Could not retrieve ticket history";
+
+        //        await _logger.Log(new LogDTO
+        //        {
+        //            LogType = LogType.Error,
+        //            Severity = LogSeverity.High,
+        //            StackTrace = ex.StackTrace,
+        //            ClientMessage = message
+        //        });
+
+        //        return null!;
+        //    }
+        //}
 
         public async Task<TicketDetailsDTO?> SaveTicketDetails(TicketDetailsDTO details)
         {
@@ -426,8 +489,17 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving ticket details");
-                throw;
+                string message = "Could not save ticket";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return null!;
             }
         }
         public async Task<bool> DeleteTicket(int ticketId)
@@ -454,7 +526,16 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting ticket");
+                string message = "Could not delete ticket";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
                 return false;
             }
         }
@@ -500,8 +581,17 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving ticket settings.");
-                throw;
+                string message = "Could not retrieve ticket settings";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+                return null!;
             }
             
         }
@@ -590,8 +680,38 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving ticket settings.");
+                string message = "Could not save ticket settings";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
                 return false;
+            }
+        }
+
+        public async Task SaveSettingsHistory(TicketSettingsDTO dto)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                string message = "Could not save ticket settings history";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
             }
         }
 
@@ -614,7 +734,15 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving ticket settings.");
+                string message = "Could not mark ticket completed";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
             }
         }
 
@@ -637,7 +765,17 @@ namespace Voyage.Data
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving ticket settings.");
+                string message = "Could not mark ticket discontinued";
+
+                await _logger.Log(new LogDTO
+                {
+                    LogType = LogType.Error,
+                    Severity = LogSeverity.High,
+                    StackTrace = ex.StackTrace,
+                    ClientMessage = message
+                });
+
+      
             }
         }
 

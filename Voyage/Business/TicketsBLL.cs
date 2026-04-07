@@ -30,10 +30,10 @@ namespace Voyage.Business
             _logger = logger;
         }
 
-        public async Task<List<TicketDTO>> GetTickets(DateTime date)
-        {
-            return await _ticketsD.GetTickets(date);
-        }
+        //public async Task<List<TicketDTO>> GetTickets(DateTime date)
+        //{
+        //    return await _ticketsD.GetTickets(date);
+        //}
 
         public async Task<List<TicketDTO>> GetTickets(int sprintId)
         {
@@ -51,16 +51,16 @@ namespace Voyage.Business
 
             if (ticket != null)
             {
-                var history = await _ticketsD.GetAllTicketVersions(ticketId);
-                foreach (var h in history)
-                {
-                    if (!string.IsNullOrEmpty(h.TicketChangeAction))
-                    {
-                        h.TicketChangeAction = h.TicketChangeAction.Replace("\n", "<br />");
-                    }
+                //var history = await _ticketsD.GetAllTicketVersions(ticketId);
+                //foreach (var h in history)
+                //{
+                //    if (!string.IsNullOrEmpty(h.TicketChangeAction))
+                //    {
+                //        h.TicketChangeAction = h.TicketChangeAction.Replace("\n", "<br />");
+                //    }
 
-                    ticket.TicketVersionHistory = history;
-                }
+                //    ticket.TicketVersionHistory = history;
+                //}
             }
             return ticket;
         }
@@ -247,6 +247,8 @@ namespace Voyage.Business
             //only update the sprintid and sprint time interal if the allotted time has passed
             while (endDate < today && dto.RepeatSprintOption != (int)RepeatSprint.Never)
             {
+                await _ticketsD.SaveSettingsHistory(dto);
+
                 dto.SprintId++;
                 dto.SprintStart = endDate;
                 endDate = endDate.AddDays(dto.SprintLength);
