@@ -68,7 +68,7 @@ namespace Voyage.Business
         public async Task<bool> SaveTicket(TicketDTO ticketDTO)
         {
             //sprint settings
-            TicketSettingsDTO? settings = await GetCompanySettings(ticketDTO.CompanyId);
+            TicketSettingsDTO? settings = await GetSettings(ticketDTO.CompanyId);
             if (settings != null)
             {
                 ticketDTO.SprintStartDate = settings.SprintStart;
@@ -205,25 +205,18 @@ namespace Voyage.Business
             return sb.ToString();
         }
 
-        public async Task<List<TicketSettingsDTO>> GetSettings(int companyId)
+        public async Task<TicketSettingsDTO> GetSettings(int companyId)
         {
             return await _ticketsD.GetSettings(companyId);
         }
 
-        public async Task<TicketSettingsDTO?> GetCompanySettings(int companyId)
-        {
-            var settings = await _ticketsD.GetSettings(companyId);
-            var setting = settings.Where(s => s.SettingsId != -1).SingleOrDefault();
-
-            return setting;
-        }
-
-        public async Task<bool> SaveSettings(TicketSettingsDTO dto)
+        public async Task SaveSettings(TicketSettingsDTO dto)
         {
             HandleRequiredSections(ref dto);
             HandleSprintLength(ref dto);
 
-            return await _ticketsD.SaveSettings(dto);
+            await _ticketsD.SaveSettingsHistory(new List<TicketSettingsDTO> { dto });
+            await _ticketsD.SaveSettings(dto);
         }
 
         //prevent duplicate section name
@@ -237,18 +230,40 @@ namespace Voyage.Business
         {
             bool updated = false;
 
+            if (dto.SprintStart == null)
+                return dto;
+
+            List<TicketSettingsDTO> settingsHistory = new List<TicketSettingsDTO>();
+
             //set sprint length based off radio
             HandleSprintLength(ref dto);
 
             //get end date for comparison
+ 
             DateTime endDate = dto.SprintStart!.Value.Date.AddDays(dto.SprintLength);
             var today = DateTime.UtcNow.Date;
 
             //only update the sprintid and sprint time interal if the allotted time has passed
             while (endDate < today && dto.RepeatSprintOption != (int)RepeatSprint.Never)
             {
-                await _ticketsD.SaveSettingsHistory(dto);
+                //add non current to history
+                settingsHistory.Add(new TicketSettingsDTO
+                {
+                    SprintId = dto.SprintId,
+                    SprintStart = dto.SprintStart,
+                    CompanyId = dto.CompanyId,
+                    EmployeeId = dto.EmployeeId,
+                    DepartmentKey = dto.DepartmentKey,
+                    TeamKey = dto.TeamKey,
+                    SettingsId = dto.SettingsId,
+                    SettingsVersion = dto.SettingsVersion,
+                    RepeatSprintOption = dto.RepeatSprintOption,
+                    SprintLength = dto.SprintLength,
+                    Sections = dto.Sections,
+                    SectionSetting = dto.SectionSetting
+                });
 
+                dto.IsEndDatePassed = true; //skip increment in save settings
                 dto.SprintId++;
                 dto.SprintStart = endDate;
                 endDate = endDate.AddDays(dto.SprintLength);
@@ -256,10 +271,14 @@ namespace Voyage.Business
             }
 
             if (updated)
+            {
+                await _ticketsD.SaveSettingsHistory(settingsHistory);
                 await _ticketsD.SaveSettings(dto);
+            }
 
             return dto;
         }
+
 
         public void HandleSprintLength(ref TicketSettingsDTO dto)
         {

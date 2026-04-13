@@ -16,6 +16,7 @@ namespace Voyage.Data.TableModels
         public Feature Feature { get; set; }
         public int RepeatSprintOption { get; set; }
         public DateTime? SprintStartDate { get; set; }
+        public DateTime? SprintEndDate { get; set; }
         public int SprintLength { get; set; }
         public int SprintId { get; set; }
         public int SectionSetting { get; set; }

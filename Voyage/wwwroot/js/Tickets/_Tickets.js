@@ -3,12 +3,13 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 const sectionMap = new Map();
 const ticketMap = new Map();
+const allSettings = new Map();
 
-export async function init() {
+export async function init(sprintId) {
     removeEventListeners();
-
+    
     //load initial partial
-    let partial = await getTicketsPartial();
+    let partial = await getTicketsPartial(sprintId);
     const container = document.querySelector('.main-content');
 
     if (!container || !partial)
@@ -22,6 +23,8 @@ export async function init() {
     trackEventListener(container, "click", handleClick);
     trackEventListener(container, "change", handleChange);
     trackEventListener(container, "keydown", handleEnter);
+
+    loadSprintHistoryDropdown(sprintId);
 
     //appendSectionFilters();
     updateBreadcrumb();
@@ -79,12 +82,17 @@ async function handleClick(e) {
 }
 
 async function handleChange(e) {
-
-    const select = e.target.closest('select.paginate');
+    let select = e.target.closest('select');
     const sectionTitle = select?.dataset.section;
 
-    if (select)
+    if (select.classList.contains('paginate'))
         await updatePaginatedUI(e, sectionTitle);
+
+    if (select.id == "sprint-selector") {
+        debugger;
+        await loadModule("tickets", parseInt(select.value));
+    }
+        
 
     toggleSections(e);
 }
@@ -101,6 +109,32 @@ async function handleEnter(e) {
         updatePaginatedUI(e, sectionTitle);
     }
 }
+
+function loadSprintHistoryDropdown(sprintId) {
+    const el = document.getElementById('hdn-settings-history');
+    const latestSettings = JSON.parse(el.dataset.latestsettings);
+    const settingsHistory = JSON.parse(el.dataset.settingshistory);
+
+    //combine latest and historical settings and sort in descending order
+    settingsHistory.push(latestSettings);
+    const sorted = settingsHistory.sort((a, b) => b.sprintId - a.sprintId);
+
+    //add to dropdown
+    const select = document.getElementById('sprint-selector');
+    sorted.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s.sprintId;
+        option.selected = s.sprintId == sprintId;
+
+        const endDate = s.sprintEnd ? formatUtc(s.sprintEnd, false) : 'Kanban';
+        option.text = `${s.sprintId} ... ${formatUtc(s.sprintStart, false)} - ${endDate}`;
+        
+        select.appendChild(option);
+    });
+    debugger;
+}
+    
+    
 
 function getRealId(map, anonId) {
     return [...map.entries()].find(([, uuid]) => uuid === anonId)?.[0];
@@ -157,9 +191,12 @@ function updateBreadcrumb() {
     ol.appendChild(li1);
 }
 
-export async function getTicketsPartial() {
+export async function getTicketsPartial(sprintId) {
     try {
-        const response = await axios.get('/Tickets/TicketsPartial');
+        const response = await axios.get('/Tickets/TicketsPartial', {
+            params: { sprintId: sprintId }
+        });
+
         return response.data;
     } catch (error) {
         console.error("error: getTicketsPartial", error);

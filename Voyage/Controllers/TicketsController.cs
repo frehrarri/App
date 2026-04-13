@@ -31,37 +31,44 @@ namespace Voyage.Controllers
 
         #region Partials
 
-        //[HttpGet]
-        //public IActionResult TicketsControlPartial()
-        //{
-        //    return PartialView("~/Views/App/Tickets/_TicketsControl.cshtml");
-        //}
-
         [HttpGet]
-        public async Task<IActionResult> TicketsPartial()
+        public async Task<IActionResult> TicketsPartial(int? sprintId = null)
         {
             try
             {
                 TicketsVM vm = new TicketsVM();
-
                 var companyId = HttpContext.Session.GetInt32("CompanyId");
-                TicketSettingsDTO? settings = await _ticketsB.GetCompanySettings(companyId!.Value);
 
-                if (settings != null)
+                TicketSettingsDTO? settings = await _ticketsB.GetSettings(companyId!.Value);
+
+                if (sprintId.HasValue && settings != null)
+                {
+                    vm.Tickets = await GetTickets(sprintId.Value);
+
+                    vm.Settings = settings;
+                    vm.Sections = vm.Settings.Sections;
+                    vm.Sprint.StartDate = vm.Settings.SprintStart;
+                    vm.Sprint.SprintLength = vm.Settings.SprintLength;
+                    vm.Sprint.SprintId = sprintId.Value;
+                    vm.SettingsHistory = settings.SettingsHistory;
+
+                    return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
+                }
+                else if (settings != null)
                 {
                     var dto = await _ticketsB.UpdateSprint(settings);
+                    vm.Tickets = await GetTickets(dto.SprintId);
 
                     vm.Settings = dto;
                     vm.Sections = dto.Sections;
                     vm.Sprint.StartDate = dto.SprintStart;
                     vm.Sprint.SprintLength = dto.SprintLength;
                     vm.Sprint.SprintId = dto.SprintId;
-
-                    vm.Tickets = await GetTickets(dto.SprintId);
+                    vm.SettingsHistory = settings.SettingsHistory;
 
                     return PartialView("~/Views/App/Tickets/_Tickets.cshtml", vm);
                 }
-
+                
                 return PartialView("~/Views/App/Tickets/_SetTicketSettings.cshtml");
             }
             catch (Exception ex)
@@ -278,7 +285,7 @@ namespace Voyage.Controllers
         public async Task<TicketSettingsDTO?> GetSettings()
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var settings = await _ticketsB.GetCompanySettings(companyId!.Value);
+            var settings = await _ticketsB.GetSettings(companyId!.Value);
 
             if (settings != null)
                 settings.Sections = settings.Sections.Where(s => s.Title != RequiredTicketSections.Completed.ToString() 
@@ -289,12 +296,12 @@ namespace Voyage.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<bool> SaveSettings([FromBody] TicketSettingsDTO dto)
+        public async Task SaveSettings([FromBody] TicketSettingsDTO dto)
         {
             dto.CompanyId = HttpContext.Session.GetInt32("CompanyId")!.Value;
             dto.EmployeeId = HttpContext.Session.GetInt32("EmployeeId")!.Value;
             dto.CreatedBy = HttpContext.Session.GetString("Username")!;
-            return await _ticketsB.SaveSettings(dto);
+            await _ticketsB.SaveSettings(dto);
         }
 
 
@@ -358,7 +365,7 @@ namespace Voyage.Controllers
         {
             TicketSettingsVM vm = new TicketSettingsVM();
             vm.SettingsId = dto.SettingsId;
-            vm.SprintStart = dto.SprintStart!.Value.Date;
+            vm.SprintStart = dto.SprintStart.HasValue ? dto.SprintStart.Value.Date : null;
             vm.SprintLength = dto.SprintLength;
             vm.RepeatSprintOption = (int?)dto.RepeatSprintOption;
             vm.Sections = dto.Sections;

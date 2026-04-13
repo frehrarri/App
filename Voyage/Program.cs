@@ -117,8 +117,8 @@ using (var scope = app.Services.CreateScope())
     var roleSeeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();
     await roleSeeder.CreateGlobalRoles();
 
-    var sectionSeeder = scope.ServiceProvider.GetRequiredService<SectionSeeder>();
-    await sectionSeeder.CreateGlobalSections();
+    //var sectionSeeder = scope.ServiceProvider.GetRequiredService<SectionSeeder>();
+    //await sectionSeeder.CreateGlobalSections();
 }
 
 // Configure the HTTP request pipeline.

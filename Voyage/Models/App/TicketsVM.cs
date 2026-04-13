@@ -11,6 +11,7 @@ namespace Voyage.Models.App
             Tickets = new List<TicketVM>(); 
             Sprint = new SprintVM();
             Settings = new TicketSettingsDTO();
+            SettingsHistory = new List<TicketSettingsDTO>();
         }
 
         public TicketsVM(List<TicketVM> tickets, List<SectionDTO> sections) 
@@ -25,6 +26,7 @@ namespace Voyage.Models.App
         public List<TicketVM> Tickets { get; set; }
         public List<SectionDTO> Sections { get; set; }
         public TicketSettingsDTO Settings { get; set; }
+        public List<TicketSettingsDTO> SettingsHistory { get; set; }
    
 
     }

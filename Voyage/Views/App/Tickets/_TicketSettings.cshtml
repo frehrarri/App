@@ -7,13 +7,13 @@
 
         <div id="dv-ticket-setup">
             <div id="dv-sprint-container">
-                <h5>Sprint Setup</h5>
+                <h5>Sprint Interval Setup</h5>
                 <div id="txt-repeat">Repeat:</div>
                 <div id="sprint-content">
                     <span id="rdo-repeat-container">
                         <input id="rdo-repeat-never" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Never)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never
                                                                                                                                                                 || Model.RepeatSprintOption == null ? "checked" : "") />
-                        <label for="rdo-repeat-never">Never</label>
+                        <label for="rdo-repeat-never">Never (Kanban)</label>
 
                         <input id="rdo-repeat-weekly" name="rdo-repeat" type="radio" value="@((int)Constants.RepeatSprint.Weekly)" @(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Weekly ? "checked" : "") />
                         <label for="rdo-repeat-weekly">Weekly</label>
@@ -30,16 +30,12 @@
 
                     <div id="sprint-dates-container" class="@(Model.RepeatSprintOption == (int)Constants.RepeatSprint.Never || Model.RepeatSprintOption == null ? "hidden" : "")">
                         <label for="start-date">Start Date</label>
-                        <input id="start-date" type="date" value="@FormatUtcDatePicker(Model.SprintStart)" />
+                        <input id="start-date" type="date" value="@FormatUtcDatePicker(Model.SprintStart.HasValue ? Model.SprintStart.Value : DateTime.UtcNow)" />
 
-                        @if (Model.RepeatSprintOption == (int)Constants.RepeatSprint.Custom)
-                        {
-                            <div id="dv-sprint-length">
-                                <label for="sprint-length">Sprint Length</label>
-                                <input id="sprint-length" type="number" />
-                            </div>
-                        }
-
+                        <div id="dv-sprint-length" class="@(Model.RepeatSprintOption != (int)Constants.RepeatSprint.Custom ? "hidden" : "")">
+                            <label for="sprint-length">Sprint Length</label>
+                            <input id="sprint-length" type="number" value="@Model.SprintLength" />
+                        </div>
 
                     </div>
                 </div>
@@ -66,7 +62,7 @@
                 </div>
                 
             </div>
-          @*   <div class="w-100"></div> *@
+
             <div id="section-names">
                 <div id="dv-section-header">
                     <h5>Section Titles</h5>

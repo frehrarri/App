@@ -151,11 +151,14 @@ async function save(e) {
         e.stopPropagation();
         e.preventDefault();
 
-        const repeatOption = document.querySelector("[name='rdo-repeat']:checked").value;
-        const sprintStart = document.getElementById('start-date')?.value;
         const sprintLength = document.getElementById('sprint-length')?.value;
-        debugger;
-        /*const sprintEnd = document.getElementById('end-date')?.value;*/
+
+        const repeatOption = document.querySelector("[name='rdo-repeat']:checked").value;
+        let sprintStart = document.getElementById('start-date')?.value;
+
+        //even though we don't have intervals for kanban we need the start date for historical reference
+        if (repeatOption == 1)
+            sprintStart = new Date().toISOString();
 
         const sectionSetting = document.querySelector("[name='rdo-section']:checked")?.value;
 
@@ -175,7 +178,9 @@ async function save(e) {
             SectionSetting: parseInt(sectionSetting),
             Sections: sections ?? []
         }
-    
+
+        debugger;
+
         const response = await axios.post('/Tickets/SaveSettings', dto, {
             headers: {
                 'X-CSRF-TOKEN': token,
@@ -204,6 +209,8 @@ async function save(e) {
 }
 
 function toggleSprintDateControls(e) {
+    debugger;
+
     let container = document.getElementById('sprint-dates-container');
     if (e.target.id == "rdo-repeat-never") {
         container.classList.add('hidden');

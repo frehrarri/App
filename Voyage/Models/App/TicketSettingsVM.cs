@@ -14,7 +14,7 @@ namespace Voyage.Models.App
 
         public int SettingsId { get; set; }
         public int? RepeatSprintOption { get; set; }
-        public DateTime SprintStart { get; set; }
+        public DateTime? SprintStart { get; set; }
         public int SprintLength { get; set; }
         public List<SectionDTO> Sections { get; set; }
         public SectionSettings SectionSetting { get; set; }

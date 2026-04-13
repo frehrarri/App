@@ -6,50 +6,50 @@
     Model.Sections.Add(new SectionDTO { Title = "Completed", SectionOrder = 991, SectionId = -1 });
     Model.Sections.Add(new SectionDTO { Title = "Discontinued", SectionOrder = 992, SectionId = -2 });
 
-    DateTime sprintEnd = DateTime.MinValue;
-    switch (Model.Settings.RepeatSprintOption)
+    DateTime? endDate = null;
+    if (Model.Sprint.StartDate.HasValue)
     {
-        case (int)Constants.RepeatSprint.Weekly:
-            sprintEnd = Model.Settings.SprintStart!.Value.AddDays(7);
-            break;
-        case (int)Constants.RepeatSprint.BiWeekly:
-            sprintEnd = Model.Settings.SprintStart!.Value.AddDays(14);
-            break;
-        case (int)Constants.RepeatSprint.Monthly:
-            sprintEnd = Model.Settings.SprintStart!.Value.AddMonths(1);
-            break;
-        default:
-            break;
+        endDate = Model.Sprint.StartDate.Value.Date.AddDays(Model.Sprint.SprintLength);
     }
 }
 
 <div id="tickets-container">
 
     <div id="card-header-container">
-
-        @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never)
-        {
-            <div id="sprint-header" class="card-header">
-                <h4>Sprint @Model.Sprint.SprintId: </h4>
-                <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @sprintEnd.ToString("dd MMM yyyy")</h4>
-            </div>
-        }
-
+        <div id="sprint-header" class="card-header">
+            <h4>Sprint @Model.Sprint.SprintId: </h4>
+            @if (Model.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never && endDate.HasValue)
+            {
+                <h4>@Model.Sprint?.StartDate!.Value.ToString("dd MMM yyyy") - @endDate.Value.ToString("dd MMM yyyy")</h4>
+            }
+        </div>
     </div>
     
-    @{
-        var endDate = Model?.Sprint?.StartDate.Value.Date.AddDays(Model.Sprint.SprintLength);
-    }
+
 
     <div id="filter-container">
 @*         <p>Filters</p> *@
         <div id="filters">
-            <div>
-                <label for="sprint-selector">Sprint:</label>
-                <select id="sprint-selector">
-                    <option value="@Model?.Sprint?.SprintId">@Model?.Sprint?.SprintId &nbsp; (@Model?.Sprint?.StartDate!.Value.ToString("dd MMM")-@endDate!.Value.ToString("dd MMM"))</option>
-                </select>
-            </div>
+            @if (endDate.HasValue)
+            {
+                <div>
+                    <label for="sprint-selector">Sprint:</label>
+                    <select id="sprint-selector">
+@*                         <option value="@Model?.Sprint?.SprintId">@Model?.Sprint?.SprintId ... (@(Model?.Settings.RepeatSprintOption != (int)Constants.RepeatSprint.Never
+                                                ? Model?.Sprint?.StartDate!.Value.ToString("dd MMM") + "-" + endDate.Value.ToString("dd MMM")
+                                                :  Model?.Sprint?.StartDate!.Value.ToString("dd MMM") + "- Kanban"))
+                        </option>
+                        @foreach (var h in Model!.Settings.SettingsHistory.OrderByDescending(sh => sh.CreatedDate))
+                        {
+                            var sprintEndDate = h.SprintEnd.HasValue ? h.SprintEnd.Value.ToString("dd MMM") : "Kanban";
+
+                            <option value="@h.SprintId">
+                                @h.SprintId ... (@Model?.Sprint?.StartDate!.Value.ToString("dd MMM")-@sprintEndDate)
+                            </option>
+                        } *@
+                    </select>
+                </div>
+            }
 
             <div>
                 <label for="section-filter">Sections:</label>
@@ -242,4 +242,5 @@
 
 <input type="hidden" id="hdnTotalTicketCount" value="@Model.Tickets.Count()" />
 <input type="hidden" id="hdnSprint" data-sprintId="@Model.Sprint?.SprintId" data-sprintStart="@Model.Sprint?.StartDate" data-sprintLength="@Model.Sprint?.SprintLength" />
+<input type="hidden" id="hdn-settings-history" data-latestsettings='@Html.Raw(Json.Serialize(Model?.Settings))' data-settingshistory='@Html.Raw(Json.Serialize(Model?.Settings?.SettingsHistory))' />
 
