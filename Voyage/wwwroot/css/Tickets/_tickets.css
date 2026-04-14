@@ -10,21 +10,20 @@
 
 #card-header-container{
     display: flex;
-    /*max-height:*/
 }
 
 #sprint-header {
-    margin-bottom: 30px;
-    width: fit-content;
+    min-width: 340px;
     background-color: white;
     color: black;
     border-radius: 10px;
     border: 1px solid #6289af;
     padding: 20px;
+    height: 110px;
 }
 
 .card-header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     width: fit-content;
     background-color: white;
     color: black;
@@ -135,11 +134,19 @@ a.active-tab:hover {
 }
 
 #filter-container {
+    display: flex;
+    flex-direction: column;
     border: 1px solid #6289af;
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
     width: fit-content;
+    height: min-content;
+    height: 110px;
+}
+
+#filter-container h6{
+    font-size: 18px;
 }
 
 #filter-container p {
@@ -154,10 +161,14 @@ a.active-tab:hover {
     gap: 20px;
 }
 
-#section-filter {
-    margin-left: 10px;
-    border-radius: 5px;
-}
+    #filters label{
+        font-weight: 500;
+    }
+
+    #section-filter {
+        margin-left: 10px;
+        border-radius: 5px;
+    }
 
 #sprint-selector {
     margin-left: 5px;
@@ -179,3 +190,18 @@ a.active-tab:hover {
     font-style: italic;
 }
 
+#container-top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+#right-card {
+    min-width: 340px;
+    margin-bottom: 20px;
+    border: 1px solid #6289af;
+    border-radius: 10px;
+    padding: 20px;
+    height: 110px;
+}

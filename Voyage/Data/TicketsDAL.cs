@@ -25,53 +25,6 @@ namespace Voyage.Data
             _logger = logger;
         }
 
-        //public async Task<List<TicketDTO>> GetTickets(DateTime date)
-        //{
-        //    try
-        //    {
-        //        return await _db.Tickets
-        //                    .Where(t =>
-        //                        t.IsActive == true
-        //                        && t.IsLatest == true
-        //                        && t.SprintStartDate <= date) 
-        //                    .Select(t => new TicketDTO
-        //                    {
-        //                        TicketId = t.TicketId,
-        //                        TicketVersion = t.TicketVersion,
-        //                        Title = t.Title,
-        //                        Status = t.Status,
-        //                        Description = t.Description,
-        //                        AssignedTo = t.AssignedTo,
-        //                        PriorityLevel = t.PriorityLevel,
-        //                        DueDate = t.DueDate,
-        //                        ParentTicketId = t.ParentTicketId,
-        //                        SectionTitle = t.SectionTitle,
-        //                        SprintId = t.SprintId,
-        //                        SprintStartDate = t.SprintStartDate,
-        //                        SprintLength = t.SprintLength,
-        //                        CreatedBy = t.CreatedBy,
-        //                        CreatedDate = t.CreatedDate,
-        //                        ModifiedBy = t.ModifiedBy,
-        //                        ModifiedDate = t.ModifiedDate
-        //                    })
-        //                    .ToListAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string message = "Could not retrieve tickets";
-
-        //        await _logger.Log(new LogDTO
-        //        {
-        //            LogType = LogType.Error,
-        //            Severity = LogSeverity.High,
-        //            StackTrace = ex.StackTrace,
-        //            ClientMessage = message
-        //        });
-
-        //        return null!;
-        //    }   
-        //}
-
         public async Task<List<TicketDTO>> GetTickets(int? sprintId)
         {
             try
@@ -549,7 +502,7 @@ namespace Voyage.Data
                     .Include(s => s.SettingsHistory)
                     .Where(s => s.Feature == Constants.Feature.Tickets
                         && s.IsActive == true
-                        && s.CompanyId == companyId) //get company settings and global settings
+                        && s.CompanyId == companyId)
                     .Select(s => new TicketSettingsDTO()
                     {
                         DepartmentKey = s.DepartmentKey,

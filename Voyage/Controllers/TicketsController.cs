@@ -44,9 +44,8 @@ namespace Voyage.Controllers
                 if (sprintId.HasValue && settings != null)
                 {
                     vm.Tickets = await GetTickets(sprintId.Value);
-
                     vm.Settings = settings;
-                    vm.Sections = vm.Settings.Sections;
+                    vm.Sections = settings.SettingsHistory.Where(sh => sh.SprintId == sprintId).Select(sh => sh.Sections).FirstOrDefault() ?? settings.Sections;
                     vm.Sprint.StartDate = vm.Settings.SprintStart;
                     vm.Sprint.SprintLength = vm.Settings.SprintLength;
                     vm.Sprint.SprintId = sprintId.Value;
