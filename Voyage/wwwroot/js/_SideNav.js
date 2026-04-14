@@ -52,6 +52,7 @@ export function expandSideNavItem(e) {
 export async function init() {
     //handle click events
     let nav = document.querySelector('.side-nav');
+    nav.removeEventListener("click", handleClicks);
     nav.addEventListener("click", handleClicks);
 
     //handle sidenav open icon

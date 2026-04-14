@@ -157,7 +157,7 @@ export async function loadModule(name, params) {
 
     // 3️⃣ Call init if available
     if (typeof jsModule.init === "function") {
-        jsModule.init(params);
+        await jsModule.init(params);
     }
 
     return jsModule;

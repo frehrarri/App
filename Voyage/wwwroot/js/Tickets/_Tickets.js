@@ -3,7 +3,6 @@
 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 const sectionMap = new Map();
 const ticketMap = new Map();
-const allSettings = new Map();
 
 export async function init(sprintId) {
     removeEventListeners();
@@ -88,12 +87,9 @@ async function handleChange(e) {
     if (select.classList.contains('paginate'))
         await updatePaginatedUI(e, sectionTitle);
 
-    if (select.id == "sprint-selector") {
-        debugger;
+    if (select.id == "sprint-selector") 
         await loadModule("tickets", parseInt(select.value));
-    }
-        
-
+    
     toggleSections(e);
 }
 
@@ -111,7 +107,13 @@ async function handleEnter(e) {
 }
 
 function loadSprintHistoryDropdown(sprintId) {
-    const el = document.getElementById('hdn-settings-history');
+    const select = document.getElementById('sprint-selector');
+    if (select.options.length > 0) {
+        select.value = sprintId;
+        return;
+    }
+
+    let el = document.getElementById('hdn-settings-history');
     const latestSettings = JSON.parse(el.dataset.latestsettings);
     const settingsHistory = JSON.parse(el.dataset.settingshistory);
 
@@ -119,19 +121,45 @@ function loadSprintHistoryDropdown(sprintId) {
     settingsHistory.push(latestSettings);
     const sorted = settingsHistory.sort((a, b) => b.sprintId - a.sprintId);
 
+    let selStartDate = null
+    let selEndDate = null;
+
     //add to dropdown
-    const select = document.getElementById('sprint-selector');
     sorted.forEach(s => {
         const option = document.createElement('option');
         option.value = s.sprintId;
         option.selected = s.sprintId == sprintId;
 
-        const endDate = s.sprintEnd ? formatUtc(s.sprintEnd, false) : 'Kanban';
-        option.text = `${s.sprintId} ... ${formatUtc(s.sprintStart, false)} - ${endDate}`;
+        let endDate = null;
+        
+        //historical record
+        if (s.sprintEnd)
+            endDate = s.sprintEnd;
+
+        //sprint with interval that has not ended (current)
+        else if (s.repeatSprintOption != 1) {
+            const startDate = new Date(s.sprintStart);
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + s.sprintLength);
+        }
+
+        //kanban sprint that has not ended (current)
+        else
+            endDate = '∞';
+            
+        option.text = `${s.sprintId} ... ${formatUtc(s.sprintStart, false)} - ${endDate != '∞' ? formatUtc(endDate, false) : endDate}`;
         
         select.appendChild(option);
+
+        if (option.selected) {
+            selStartDate = formatUtc(s.sprintStart);
+            selEndDate = endDate != '∞' ? formatUtc(endDate) : endDate;
+        }
     });
-    debugger;
+
+    //update sprint date heading
+    el = document.getElementById('sprint-dates');
+    el.innerText = `${selStartDate} - ${selEndDate}`;
 }
     
     
@@ -303,7 +331,7 @@ function buildTableRow(tableBody, ticket) {
 
 function deleteTableRow(e) {
     const container = e.target.closest('.section-container');
-    debugger;
+
     var rows = getCheckedRows(e)
     if (rows) {
         //decreaseRecordCount(e, rows);
@@ -472,7 +500,6 @@ function handlePageButtons(e, numPages, pageBtn) {
     const container = e.target.closest('.section-container');
     let selectedPage = null;
 
-    debugger;
     if (!pageBtn || numPages >=5)
         return;
 
@@ -534,7 +561,6 @@ function formatPageButtons(e, anchor, numPages) {
 function handleArrowButtons(e, currentPage, pageBtn, numPages) {
     const sectionContainer = e.target.closest('.section-container');
     const pageBtnContainer = sectionContainer.querySelector('.page-btn-container');
-    debugger;
 
     const pageBtns = Array.from(pageBtnContainer.closest('.page-btn-container').children)
         .filter(el => el.tagName === 'BUTTON');
@@ -625,7 +651,6 @@ function handleManualPageInput(container, selectedPage, numPages) {
     }
 
     applyEllipsis(container, selectedPage, numPages)
-    debugger;
     container.querySelector('.paginate.page-input').value = selectedPage;
 }
 
@@ -722,7 +747,6 @@ function toggleCompletedDiscontinuedBtns(input) {
 
 
 function handleResultAmountDropDown(container, numResults, totalTicketCount) {
-    debugger;
     //start at first page on update
     const currentPage = 1;
 
