@@ -46,14 +46,24 @@ export async function init(params) {
 async function handleClicks(e) {
     const btn = e.target.closest('button');
 
-    if (btn?.id == "submitTicket") 
+    if (btn?.id === "submitTicket") 
         await saveTicket(e);
 
-    if (btn?.id == "deleteTicket")
+    if (btn?.id === "deleteTicket")
         await deleteTicket(e);
 
-    if (btn?.id == "undo-button") 
+    if (btn?.id === "undo-button") 
         undo();
+
+    if (btn?.id === "cancel-button") {
+        const params = {
+            ticketId: document.getElementById('ticketId').value ?? 0,
+            ticketVersion: null
+        }
+
+        await loadModule('ticket', params)
+    }
+        
     
     //clear autocomplete field on click
     if (btn?.className == "btn-delete-circle") {
